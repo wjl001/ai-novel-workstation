@@ -457,11 +457,12 @@ onMounted(() => {
   if (route.query.step === 'chapters') {
     step.value = 'chapters'
     // Restore from store if available
-    if (loreStore.currentNovel.chapters.length > 0) {
-      outlines.value = loreStore.currentNovel.chapters.map(c => ({
+    // Force reactivity update by creating a new array
+    if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
+      outlines.value = [...loreStore.currentNovel.chapters.map(c => ({
         title: c.title,
         summary: c.outline || ''
-      }))
+      }))]
     }
   } else {
     step.value = 'outline'
@@ -474,11 +475,11 @@ onMounted(() => {
 watch(() => route.query.step, (val) => {
   if (val === 'chapters') {
     step.value = 'chapters'
-    if (loreStore.currentNovel.chapters.length > 0) {
-      outlines.value = loreStore.currentNovel.chapters.map(c => ({
+    if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
+      outlines.value = [...loreStore.currentNovel.chapters.map(c => ({
         title: c.title,
         summary: c.outline || ''
-      }))
+      }))]
     }
   } else if (val === 'settings') {
      // If step is settings, we stay on the current view (likely outline or chapters) but open the dialog
@@ -490,13 +491,13 @@ watch(() => route.query.step, (val) => {
 
 // Sync outlines with store changes
 watch(() => loreStore.currentNovel.chapters, (newChapters) => {
-  if (step.value === 'chapters' && newChapters.length > 0) {
-    outlines.value = newChapters.map(c => ({
+  if (newChapters && newChapters.length > 0) {
+    outlines.value = [...newChapters.map(c => ({
       title: c.title,
       summary: c.outline || ''
-    }))
+    }))]
   }
-}, { deep: true })
+}, { deep: true, immediate: true })
 
 // Methods
 const generateCover = async () => {
