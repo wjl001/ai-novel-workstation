@@ -1,7 +1,7 @@
 <template>
   <div class="px-6 py-4 border-b transition-colors duration-300 shadow-md" :class="isLight ? 'bg-white border-slate-200' : 'bg-gradient-to-r from-slate-900 to-slate-800 border-slate-700/50'">
     <div class="max-w-4xl mx-auto">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center justify-center gap-4">
         <div 
           v-for="(label, index) in steps" 
           :key="index"

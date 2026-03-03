@@ -5,13 +5,30 @@ export interface Character {
   id: string;
   name: string;
   role: string;
-  persona: string;
+  age?: string;
+  gender?: string;
+  personality: string; // was persona
+  backstory?: string;
   visual_traits: {
-    gender: string;
     hair: string;
     eyes: string;
     clothing: string;
+    accessories?: string;
   };
+}
+
+export interface Prop {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+}
+
+export interface Scene {
+  id: string;
+  name: string;
+  description: string;
+  atmosphere: string;
 }
 
 export interface Chapter {
@@ -44,6 +61,8 @@ export interface Novel {
 
 export const useLoreStore = defineStore('lore', () => {
   const characters = ref<Character[]>([])
+  const props = ref<Prop[]>([])
+  const scenes = ref<Scene[]>([])
   
   // 当前正在编辑的小说
   const currentNovel = ref<Novel>({
@@ -73,6 +92,36 @@ export const useLoreStore = defineStore('lore', () => {
     }
   }
 
+  const addProp = (prop: Prop) => {
+    props.value.push(prop)
+  }
+
+  const removeProp = (id: string) => {
+    props.value = props.value.filter(p => p.id !== id)
+  }
+
+  const updateProp = (id: string, updates: Partial<Prop>) => {
+    const index = props.value.findIndex(p => p.id === id)
+    if (index !== -1) {
+      props.value[index] = { ...props.value[index], ...updates }
+    }
+  }
+
+  const addScene = (scene: Scene) => {
+    scenes.value.push(scene)
+  }
+
+  const removeScene = (id: string) => {
+    scenes.value = scenes.value.filter(s => s.id !== id)
+  }
+
+  const updateScene = (id: string, updates: Partial<Scene>) => {
+    const index = scenes.value.findIndex(s => s.id === id)
+    if (index !== -1) {
+      scenes.value[index] = { ...scenes.value[index], ...updates }
+    }
+  }
+
   // 小说相关操作
   const updateNovelInfo = (info: Partial<Omit<Novel, 'chapters'>>) => {
     currentNovel.value = { ...currentNovel.value, ...info }
@@ -97,6 +146,14 @@ export const useLoreStore = defineStore('lore', () => {
     updateCharacter,
     updateNovelInfo,
     addChapter,
-    updateChapter
+    updateChapter,
+    props,
+    scenes,
+    addProp,
+    removeProp,
+    updateProp,
+    addScene,
+    removeScene,
+    updateScene
   }
 })

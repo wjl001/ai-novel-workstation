@@ -1027,6 +1027,9 @@ const proceedCreation = () => {
     longMemory: form.longMemory,
   })
 
+  // Clear existing chapters to force new generation
+  loreStore.currentNovel.chapters = []
+
   ElMessage.success('正在构建虚拟世界...')
   setTimeout(() => {
     router.push('/novel-generator')

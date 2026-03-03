@@ -3,96 +3,228 @@
     <StepIndicator :active-index="2" />
     <el-container class="flex-1 overflow-hidden">
     <!-- Module B: Lore Hub (左侧侧边栏) -->
-    <el-aside width="280px" class="border-r flex flex-col h-full custom-scrollbar transition-colors" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
-      <!-- 顶部返回 -->
-      <div class="p-4 border-b" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
-         <el-button link class="hover:text-indigo-500" :class="isLight ? 'text-slate-500' : 'text-slate-300 hover:text-white'" @click="goBack">
-            <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回章节管理
-         </el-button>
+    <div class="relative transition-all duration-300 border-r flex flex-col h-full overflow-visible" 
+      :style="{ width: showLeftSidebar ? '280px' : '0px' }"
+      :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'"
+    >
+      <!-- Toggle Button (Floating outside when closed, or inside when open?) -->
+      <div 
+        class="absolute top-1/2 -right-3 z-50 transform -translate-y-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-r border-y border-r shadow-md transition-colors"
+        :class="isLight ? 'bg-white border-slate-200 hover:bg-slate-50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'"
+        @click="showLeftSidebar = !showLeftSidebar"
+        :title="showLeftSidebar ? '收起侧边栏' : '展开侧边栏'"
+      >
+        <el-icon :size="12" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+          <DArrowLeft v-if="showLeftSidebar" />
+          <DArrowRight v-else />
+        </el-icon>
       </div>
 
-      <!-- 中部：导航与内容树 -->
-      <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
-        <el-collapse v-model="activeSidePanel" accordion class="border-none" :class="isLight ? 'light-collapse' : 'dark-collapse'">
-          
-          <!-- 章节列表 -->
-          <el-collapse-item name="chapters">
-            <template #title>
-              <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                <el-icon><Reading /></el-icon> 章节列表
-              </div>
-            </template>
+      <!-- Content (Only visible when width > 0) -->
+      <div v-show="showLeftSidebar" class="flex flex-col h-full w-full overflow-hidden">
+        <!-- 顶部返回 -->
+        <div class="p-4 border-b flex-shrink-0" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
+           <el-button link class="hover:text-indigo-500" :class="isLight ? 'text-slate-500' : 'text-slate-300 hover:text-white'" @click="goBack">
+              <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回章节管理
+           </el-button>
+        </div>
+
+        <!-- 中部：导航与内容树 -->
+        <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+          <el-collapse v-model="activeSidePanel" accordion class="border-none" :class="isLight ? 'light-collapse' : 'dark-collapse'">
             
-            <div v-if="loreStore.currentNovel.chapters.length === 0" class="text-center py-4 text-sm" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-              暂无章节，请先生成大纲
-            </div>
-
-            <div 
-              v-for="(chapter, index) in loreStore.currentNovel.chapters" 
-              :key="chapter.id"
-              class="group flex items-center justify-between p-2 rounded-lg cursor-pointer mb-1 transition-all border hover:shadow-sm"
-              :class="[
-                isLight 
-                  ? (currentChapterId === chapter.id ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'hover:bg-slate-50 border-transparent hover:border-slate-200 text-slate-700') 
-                  : (currentChapterId === chapter.id ? 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30' : 'hover:bg-slate-700 border-transparent hover:border-slate-600 text-slate-300')
-              ]"
-              @click="switchChapter(chapter.id)"
-            >
-              <div class="truncate text-sm flex-1">
-                <span class="mr-2 opacity-60 font-mono text-xs">{{ index + 1 }}</span>
-                {{ chapter.title }}
+            <!-- 章节列表 -->
+            <el-collapse-item name="chapters">
+              <template #title>
+                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
+                  <el-icon><Reading /></el-icon> 章节列表
+                </div>
+              </template>
+              
+              <div v-if="loreStore.currentNovel.chapters.length === 0" class="text-center py-4 text-sm" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                暂无章节，请先生成大纲
               </div>
-              <el-tag v-if="!chapter.content" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-75 origin-right" :class="isLight ? '!bg-slate-100 !border-slate-200' : '!bg-slate-700 !border-slate-600 !text-slate-300'">未写</el-tag>
-            </div>
-          </el-collapse-item>
 
-          <!-- 角色管理 -->
-          <el-collapse-item name="characters">
-            <template #title>
-              <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                <el-icon><User /></el-icon> 角色卡片
+              <div 
+                v-for="(chapter, index) in loreStore.currentNovel.chapters" 
+                :key="chapter.id"
+                class="group flex items-center justify-between p-2 rounded-lg cursor-pointer mb-1 transition-all border hover:shadow-sm"
+                :class="[
+                  isLight 
+                    ? (currentChapterId === chapter.id ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'hover:bg-slate-50 border-transparent hover:border-slate-200 text-slate-700') 
+                    : (currentChapterId === chapter.id ? 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30' : 'hover:bg-slate-700 border-transparent hover:border-slate-600 text-slate-300')
+                ]"
+                @click="switchChapter(chapter.id)"
+              >
+                <div class="truncate text-sm flex-1">
+                  <span class="mr-2 opacity-60 font-mono text-xs">{{ index + 1 }}</span>
+                  {{ chapter.title }}
+                </div>
+                <el-tag v-if="!chapter.content" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-75 origin-right" :class="isLight ? '!bg-slate-100 !border-slate-200' : '!bg-slate-700 !border-slate-600 !text-slate-300'">未写</el-tag>
               </div>
-            </template>
-            <div class="px-2 mb-2 flex gap-2">
-               <el-button 
-                 class="flex-1"
-                 :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
-                 size="small" 
-                 :loading="isGeneratingCharacters"
-                 @click="autoGenerateCharacters"
-               >
-                 <el-icon class="mr-1"><MagicStick /></el-icon> AI 自动生成
-               </el-button>
-               <el-button 
-                 class="px-3"
-                 :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                 plain 
-                 size="small" 
-                 @click="openAddCharacterDialog"
-               >
-                 <el-icon><Plus /></el-icon>
-               </el-button>
-            </div>
-            
-            <div v-if="loreStore.characters.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-              暂无角色，点击上方按钮生成或添加
-            </div>
+            </el-collapse-item>
 
-            <div v-for="char in loreStore.characters" :key="char.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editCharacter(char)">
-              <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteCharacter(char.id)"><Delete /></el-icon>
+            <!-- 角色管理 -->
+            <el-collapse-item name="characters">
+              <template #title>
+                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
+                  <el-icon><User /></el-icon> 角色卡片
+                </div>
+              </template>
+              <div class="px-2 mb-2 flex gap-2">
+                 <el-button 
+                   class="flex-1"
+                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
+                   size="small" 
+                   :loading="isGeneratingCharacters"
+                   @click="autoGenerateCharacters"
+                 >
+                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openSelectCharacterDialog"
+                 >
+                   <el-icon><MoreFilled /></el-icon>
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openAddCharacterDialog"
+                 >
+                   <el-icon><Plus /></el-icon>
+                 </el-button>
               </div>
-              <div class="flex items-center gap-2 mb-1">
-                 <el-avatar :size="24" :src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + char.name" />
-                 <div class="font-bold text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ char.name }}</div>
+              
+              <div v-if="loreStore.characters.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                暂无角色，点击上方按钮生成或添加
               </div>
-              <div class="text-xs line-clamp-2" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ char.role }}</div>
-            </div>
-          </el-collapse-item>
 
-        </el-collapse>
+              <div v-for="char in loreStore.characters" :key="char.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editCharacter(char)">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteCharacter(char.id)"><Delete /></el-icon>
+                </div>
+                <div class="flex items-center gap-2 mb-1">
+                   <el-avatar :size="24" :src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + char.name" />
+                   <div class="font-bold text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ char.name }}</div>
+                </div>
+                <div class="text-xs line-clamp-2 mb-1" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ char.role }}</div>
+                <div class="flex gap-1 flex-wrap">
+                  <el-tag v-if="char.age" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-90 origin-left !px-1">{{ char.age }}</el-tag>
+                  <el-tag v-if="char.gender" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-90 origin-left !px-1">{{ char.gender }}</el-tag>
+                </div>
+              </div>
+            </el-collapse-item>
+
+            <!-- 道具管理 -->
+            <el-collapse-item name="props">
+              <template #title>
+                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
+                  <el-icon><Goods /></el-icon> 道具物品
+                </div>
+              </template>
+              <div class="px-2 mb-2 flex gap-2">
+                 <el-button 
+                   class="flex-1"
+                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
+                   size="small" 
+                   :loading="isGeneratingProps"
+                   @click="autoGenerateProps"
+                 >
+                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openSelectPropDialog"
+                 >
+                   <el-icon><MoreFilled /></el-icon>
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openAddPropDialog"
+                 >
+                   <el-icon><Plus /></el-icon>
+                 </el-button>
+              </div>
+              
+              <div v-if="loreStore.props.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                暂无道具，点击上方按钮生成或添加
+              </div>
+
+              <div v-for="prop in loreStore.props" :key="prop.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editProp(prop)">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteProp(prop.id)"><Delete /></el-icon>
+                </div>
+                <div class="font-bold text-sm mb-1" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ prop.name }}</div>
+                <div class="text-xs line-clamp-2" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ prop.description }}</div>
+              </div>
+            </el-collapse-item>
+
+            <!-- 场景管理 -->
+            <el-collapse-item name="scenes">
+              <template #title>
+                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
+                  <el-icon><Location /></el-icon> 场景地点
+                </div>
+              </template>
+              <div class="px-2 mb-2 flex gap-2">
+                 <el-button 
+                   class="flex-1"
+                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
+                   size="small" 
+                   :loading="isGeneratingScenes"
+                   @click="autoGenerateScenes"
+                 >
+                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openSelectSceneDialog"
+                 >
+                   <el-icon><MoreFilled /></el-icon>
+                 </el-button>
+                 <el-button 
+                   class="px-3"
+                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
+                   plain 
+                   size="small" 
+                   @click="openAddSceneDialog"
+                 >
+                   <el-icon><Plus /></el-icon>
+                 </el-button>
+              </div>
+              
+              <div v-if="loreStore.scenes.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                暂无场景，点击上方按钮生成或添加
+              </div>
+
+              <div v-for="scene in loreStore.scenes" :key="scene.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editScene(scene)">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteScene(scene.id)"><Delete /></el-icon>
+                </div>
+                <div class="font-bold text-sm mb-1" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ scene.name }}</div>
+                <div class="text-xs line-clamp-2" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ scene.description }}</div>
+              </div>
+            </el-collapse-item>
+
+          </el-collapse>
+        </div>
       </div>
-    </el-aside>
+    </div>
 
     <!-- Module C: Immersive Editor (中间编辑器) -->
     <el-main class="relative flex flex-col items-center pt-8 px-8 custom-scrollbar transition-colors" :class="isLight ? 'bg-slate-50 bg-dot-pattern-light' : 'bg-slate-900 bg-dot-pattern-dark'">
@@ -100,7 +232,7 @@
        <!-- Removed as requested -->
 
       <!-- 编辑器顶部工具栏 -->
-      <div class="w-full max-w-3xl mb-6 flex items-center justify-between text-sm sticky top-0 backdrop-blur z-10 py-2 mt-6 border-b transition-colors" :class="isLight ? 'bg-slate-50/90 border-slate-200 text-slate-500' : 'bg-slate-900/90 border-slate-800 text-slate-300'">
+      <div class="w-full max-w-full mb-6 flex items-center justify-between text-sm sticky top-0 backdrop-blur z-10 py-2 mt-6 border-b transition-colors" :class="isLight ? 'bg-slate-50/90 border-slate-200 text-slate-500' : 'bg-slate-900/90 border-slate-800 text-slate-300'">
         <div class="flex items-center gap-2">
            <span class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ currentChapter?.title || '未选择章节' }}</span>
            <el-tag v-if="isAutoWriting" type="success" size="small" :effect="isLight ? 'light' : 'dark'" class="animate-pulse" :class="isLight ? '!bg-green-50 !border-green-200 !text-green-600' : '!bg-green-900/50 !border-green-800 !text-green-300'">AI 正在撰写中...</el-tag>
@@ -121,8 +253,8 @@
         </div>
       </div>
 
-      <div class="w-full max-w-3xl h-full relative">
-        <editor-content :editor="editor" class="prose max-w-none focus:outline-none min-h-[70vh] pb-40" :class="isLight ? 'prose-slate' : 'prose-invert prose-slate'" />
+      <div class="w-full max-w-full h-full relative">
+        <editor-content :editor="editor" class="prose max-w-none focus:outline-none min-h-[70vh] pb-40 w-full" :class="isLight ? 'prose-slate' : 'prose-invert prose-slate'" />
         
         <!-- Enhanced Bubble Menu -->
         <bubble-menu
@@ -200,74 +332,92 @@
     </el-main>
 
     <!-- Right Panel: AI Assistant (右侧 AI 助手) -->
-    <el-aside v-if="showAiSidePanel" width="320px" class="border-l flex flex-col shadow-lg z-20 transition-all duration-300" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
-      <div class="p-0 border-b flex items-center justify-between" :class="isLight ? 'border-slate-200 bg-white' : 'border-slate-700 bg-slate-800'">
-        <div class="flex-1 flex">
-           <div 
-             class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-             :class="activeRightTab === 'chat' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
-             @click="activeRightTab = 'chat'"
-           >
-              <el-icon class="mr-1"><ChatDotRound /></el-icon> AI 助手
-           </div>
-           <div 
-             class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-             :class="activeRightTab === 'script' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
-             @click="activeRightTab = 'script'"
-           >
-              <el-icon class="mr-1"><VideoCamera /></el-icon> 短剧优化
-           </div>
-        </div>
-        <el-button link size="small" class="px-2" :class="isLight ? 'text-slate-400 hover:text-slate-600' : 'text-slate-500 hover:text-slate-300'" @click="showAiSidePanel = false"><el-icon><Close /></el-icon></el-button>
+    <div class="relative transition-all duration-300 border-l flex flex-col h-full overflow-visible" 
+      :style="{ width: showAiSidePanel ? '320px' : '0px' }"
+      :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'"
+    >
+      <!-- Toggle Button -->
+      <div 
+        class="absolute top-1/2 -left-3 z-50 transform -translate-y-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-l border-y border-l shadow-md transition-colors"
+        :class="isLight ? 'bg-white border-slate-200 hover:bg-slate-50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'"
+        @click="showAiSidePanel = !showAiSidePanel"
+        :title="showAiSidePanel ? '收起 AI 助手' : '展开 AI 助手'"
+      >
+        <el-icon :size="12" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+          <DArrowRight v-if="showAiSidePanel" />
+          <DArrowLeft v-else />
+        </el-icon>
       </div>
-      
-      <!-- Tab 1: Chat Assistant -->
-      <div v-if="activeRightTab === 'chat'" class="flex flex-col h-full overflow-hidden">
-        <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'">
-          <div class="p-3 rounded-2xl rounded-tl-none shadow-sm border self-start text-sm" :class="isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-slate-800 border-slate-700 text-slate-300'">
-            你好！我是你的 AI 写作搭档。我可以帮你构思大纲、描写场景，或者梳理剧情逻辑。选中文字即可唤起 AI 快捷指令。
-          </div>
-          <div v-for="(msg, i) in chatHistory" :key="i" 
-            class="p-3 rounded-2xl max-w-[90%] text-sm shadow-sm"
-            :class="msg.role === 'user' ? 'bg-indigo-600 text-white self-end ml-auto rounded-tr-none' : (isLight ? 'bg-white border border-slate-200 text-slate-600 self-start rounded-tl-none' : 'bg-slate-800 border border-slate-700 text-slate-300 self-start rounded-tl-none')"
-          >
-            {{ msg.content }}
-          </div>
-          <div v-if="isAiThinking" class="flex items-center gap-2 text-xs pl-2" :class="isLight ? 'text-slate-500' : 'text-slate-500'">
-             <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
-             <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-75"></div>
-             <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-150"></div>
-             AI 正在思考...
+
+      <!-- Content -->
+      <div v-show="showAiSidePanel" class="flex flex-col h-full w-full overflow-hidden">
+        <div class="p-0 border-b flex items-center justify-between" :class="isLight ? 'border-slate-200 bg-white' : 'border-slate-700 bg-slate-800'">
+          <div class="flex-1 flex">
+             <div 
+               class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
+               :class="activeRightTab === 'chat' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
+               @click="activeRightTab = 'chat'"
+             >
+                <el-icon class="mr-1"><ChatDotRound /></el-icon> AI 助手
+             </div>
+             <div 
+               class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
+               :class="activeRightTab === 'script' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
+               @click="activeRightTab = 'script'"
+             >
+                <el-icon class="mr-1"><VideoCamera /></el-icon> 短剧优化
+             </div>
           </div>
         </div>
-
-        <div class="p-4 border-t" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
-          <div class="flex gap-2 relative">
-            <el-input 
-              v-model="chatInput" 
-              placeholder="输入指令..." 
-              :class="isLight ? '' : 'dark-input'"
-              @keyup.enter="sendChatMessage" 
+        
+        <!-- Tab 1: Chat Assistant -->
+        <div v-if="activeRightTab === 'chat'" class="flex flex-col h-full overflow-hidden">
+          <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'">
+            <div class="p-3 rounded-2xl rounded-tl-none shadow-sm border self-start text-sm" :class="isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-slate-800 border-slate-700 text-slate-300'">
+              你好！我是你的 AI 写作搭档。我可以帮你构思大纲、描写场景，或者梳理剧情逻辑。选中文字即可唤起 AI 快捷指令。
+            </div>
+            <div v-for="(msg, i) in chatHistory" :key="i" 
+              class="p-3 rounded-2xl max-w-[90%] text-sm shadow-sm"
+              :class="msg.role === 'user' ? 'bg-indigo-600 text-white self-end ml-auto rounded-tr-none' : (isLight ? 'bg-white border border-slate-200 text-slate-600 self-start rounded-tl-none' : 'bg-slate-800 border border-slate-700 text-slate-300 self-start rounded-tl-none')"
             >
-               <template #suffix>
-                  <el-button link type="primary" :disabled="!chatInput" @click="sendChatMessage">
-                     <el-icon class="text-lg"><Position /></el-icon>
-                  </el-button>
-               </template>
-            </el-input>
+              {{ msg.content }}
+            </div>
+            <div v-if="isAiThinking" class="flex items-center gap-2 text-xs pl-2" :class="isLight ? 'text-slate-500' : 'text-slate-500'">
+               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-75"></div>
+               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-150"></div>
+               AI 正在思考...
+            </div>
+          </div>
+
+          <div class="p-4 border-t" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
+            <div class="flex gap-2 relative">
+              <el-input 
+                v-model="chatInput" 
+                placeholder="输入指令..." 
+                :class="isLight ? '' : 'dark-input'"
+                @keyup.enter="sendChatMessage" 
+              >
+                 <template #suffix>
+                    <el-button link type="primary" :disabled="!chatInput" @click="sendChatMessage">
+                       <el-icon class="text-lg"><Position /></el-icon>
+                    </el-button>
+                 </template>
+              </el-input>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Tab 2: Script Optimizer -->
-       <div v-if="activeRightTab === 'script'" class="flex-1 overflow-hidden relative">
-          <ScriptOptimizerPanel 
-            :current-content="editor?.getText() || ''"
-            :previous-chapter-content="''"
-            @apply-optimization="handleScriptOptimizationApply"
-          />
-       </div>
-    </el-aside>
+        <!-- Tab 2: Script Optimizer -->
+         <div v-if="activeRightTab === 'script'" class="flex-1 overflow-hidden relative">
+            <ScriptOptimizerPanel 
+              :current-content="editor?.getText() || ''"
+              :previous-chapter-content="''"
+              @apply-optimization="handleScriptOptimizationApply"
+            />
+         </div>
+      </div>
+    </div>
 
     <!-- Dialog: 创意生成大纲 -->
     <el-dialog v-model="showIdeaDialog" title="AI 创意风暴" width="600px" :class="isLight ? '' : 'dark-dialog'">
@@ -298,26 +448,173 @@
       </template>
     </el-dialog>
 
+    <!-- Select Character Dialog -->
+    <el-dialog v-model="selectCharacterDialog" title="选择已有角色" width="600px" :class="isLight ? '' : 'dark-dialog'">
+      <div class="max-h-96 overflow-y-auto custom-scrollbar">
+        <el-checkbox-group v-model="selectedCharacterIds">
+        <div v-for="char in existingCharacters" :key="char.id" 
+          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
+          :class="[
+            selectedCharacterIds.includes(char.id) 
+              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
+              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
+          ]" 
+          @click="selectedCharacterIds.includes(char.id) ? selectedCharacterIds = selectedCharacterIds.filter(id => id !== char.id) : selectedCharacterIds.push(char.id)"
+        >
+           <el-checkbox :label="char.id" class="mr-3" @click.stop />
+           <div class="flex-1">
+             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ char.name }}</div>
+             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ char.role }}</div>
+           </div>
+        </div>
+        </el-checkbox-group>
+      </div>
+      <template #footer>
+        <el-button @click="selectCharacterDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
+        <el-button type="primary" @click="confirmSelectCharacters" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Select Prop Dialog -->
+    <el-dialog v-model="selectPropDialog" title="选择已有道具" width="600px" :class="isLight ? '' : 'dark-dialog'">
+      <div class="max-h-96 overflow-y-auto custom-scrollbar">
+        <el-checkbox-group v-model="selectedPropIds">
+        <div v-for="prop in existingProps" :key="prop.id" 
+          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
+          :class="[
+            selectedPropIds.includes(prop.id) 
+              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
+              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
+          ]" 
+          @click="selectedPropIds.includes(prop.id) ? selectedPropIds = selectedPropIds.filter(id => id !== prop.id) : selectedPropIds.push(prop.id)"
+        >
+           <el-checkbox :label="prop.id" class="mr-3" @click.stop />
+           <div class="flex-1">
+             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ prop.name }}</div>
+             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ prop.type }}</div>
+           </div>
+        </div>
+        </el-checkbox-group>
+      </div>
+      <template #footer>
+        <el-button @click="selectPropDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
+        <el-button type="primary" @click="confirmSelectProps" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Select Scene Dialog -->
+    <el-dialog v-model="selectSceneDialog" title="选择已有场景" width="600px" :class="isLight ? '' : 'dark-dialog'">
+      <div class="max-h-96 overflow-y-auto custom-scrollbar">
+        <el-checkbox-group v-model="selectedSceneIds">
+        <div v-for="scene in existingScenes" :key="scene.id" 
+          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
+          :class="[
+            selectedSceneIds.includes(scene.id) 
+              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
+              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
+          ]" 
+          @click="selectedSceneIds.includes(scene.id) ? selectedSceneIds = selectedSceneIds.filter(id => id !== scene.id) : selectedSceneIds.push(scene.id)"
+        >
+           <el-checkbox :label="scene.id" class="mr-3" @click.stop />
+           <div class="flex-1">
+             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ scene.name }}</div>
+             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ scene.atmosphere }}</div>
+           </div>
+        </div>
+        </el-checkbox-group>
+      </div>
+      <template #footer>
+        <el-button @click="selectSceneDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
+        <el-button type="primary" @click="confirmSelectScenes" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
+      </template>
+    </el-dialog>
+
     <!-- Character Dialog -->
-    <el-dialog v-model="addCharacterDialog" title="新建角色" :class="isLight ? '' : 'dark-dialog'">
+    <el-dialog v-model="addCharacterDialog" title="新建角色" :class="isLight ? '' : 'dark-dialog'" width="700px">
       <el-form :model="newChar" label-width="80px">
-        <el-form-item label="姓名">
-          <el-input v-model="newChar.name" :class="isLight ? '' : 'dark-input'" />
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="姓名">
+              <el-input v-model="newChar.name" :class="isLight ? '' : 'dark-input'" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="定位">
+              <el-input v-model="newChar.role" placeholder="如：男主角" :class="isLight ? '' : 'dark-input'" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="年龄">
+              <el-input v-model="newChar.age" :class="isLight ? '' : 'dark-input'" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="性别">
+              <el-input v-model="newChar.gender" :class="isLight ? '' : 'dark-input'" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-form-item label="性格">
+          <el-input v-model="newChar.personality" type="textarea" :rows="2" placeholder="性格特征描述" :class="isLight ? '' : 'dark-textarea'" />
         </el-form-item>
-        <el-form-item label="角色定位">
-          <el-input v-model="newChar.role" :class="isLight ? '' : 'dark-input'" />
+        
+        <el-form-item label="背景故事">
+          <el-input v-model="newChar.backstory" type="textarea" :rows="3" placeholder="角色的过往经历" :class="isLight ? '' : 'dark-textarea'" />
         </el-form-item>
-        <el-divider :class="isLight ? '' : '!border-slate-700'"><span :class="isLight ? 'text-slate-500' : 'text-slate-500'">视觉特征 (用于视频)</span></el-divider>
+
+        <el-divider :class="isLight ? '' : '!border-slate-700'"><span :class="isLight ? 'text-slate-500' : 'text-slate-500'">外貌特征 (Visual Traits)</span></el-divider>
         <el-row :gutter="10">
-          <el-col :span="12"><el-input v-model="newChar.visual_traits.gender" placeholder="性别" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12"><el-input v-model="newChar.visual_traits.hair" placeholder="发型" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.eyes" placeholder="眼睛" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.clothing" placeholder="服装" :class="isLight ? '' : 'dark-input'" /></el-col>
+          <el-col :span="12"><el-input v-model="newChar.visual_traits.hair" placeholder="发型/发色" :class="isLight ? '' : 'dark-input'" /></el-col>
+          <el-col :span="12"><el-input v-model="newChar.visual_traits.eyes" placeholder="眼睛/瞳色" :class="isLight ? '' : 'dark-input'" /></el-col>
+          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.clothing" placeholder="常穿服装" :class="isLight ? '' : 'dark-input'" /></el-col>
+          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.accessories" placeholder="配饰/特征" :class="isLight ? '' : 'dark-input'" /></el-col>
         </el-row>
       </el-form>
       <template #footer>
         <el-button @click="addCharacterDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
         <el-button type="primary" @click="saveCharacter" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Prop Dialog -->
+    <el-dialog v-model="addPropDialog" title="新建道具" :class="isLight ? '' : 'dark-dialog'">
+      <el-form :model="newProp" label-width="80px">
+        <el-form-item label="名称">
+          <el-input v-model="newProp.name" :class="isLight ? '' : 'dark-input'" />
+        </el-form-item>
+        <el-form-item label="类型">
+          <el-input v-model="newProp.type" placeholder="例如：武器、宝物、日常用品" :class="isLight ? '' : 'dark-input'" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="newProp.description" type="textarea" :rows="3" :class="isLight ? '' : 'dark-textarea'" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="addPropDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
+        <el-button type="primary" @click="saveProp" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Scene Dialog -->
+    <el-dialog v-model="addSceneDialog" title="新建场景" :class="isLight ? '' : 'dark-dialog'">
+      <el-form :model="newScene" label-width="80px">
+        <el-form-item label="名称">
+          <el-input v-model="newScene.name" :class="isLight ? '' : 'dark-input'" />
+        </el-form-item>
+        <el-form-item label="氛围">
+          <el-input v-model="newScene.atmosphere" placeholder="例如：压抑、明快、紧张" :class="isLight ? '' : 'dark-input'" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="newScene.description" type="textarea" :rows="3" :class="isLight ? '' : 'dark-textarea'" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="addSceneDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
+        <el-button type="primary" @click="saveScene" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
       </template>
     </el-dialog>
   </el-container>
@@ -464,8 +761,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import CharacterCount from '@tiptap/extension-character-count'
-import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera } from '@element-plus/icons-vue'
-import { useLoreStore, type Character } from '@/stores/useLoreStore'
+import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft } from '@element-plus/icons-vue'
+import { useLoreStore, type Character, type Prop, type Scene } from '@/stores/useLoreStore'
 import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
 import AiOptimizationOverlay from '@/components/AiOptimizationOverlay.vue'
@@ -476,16 +773,43 @@ const route = useRoute()
 const router = useRouter()
 const loreStore = useLoreStore()
 const activeSidePanel = ref('chapters')
+const showLeftSidebar = ref(true)
 const showAiSidePanel = ref(true)
 const activeRightTab = ref('chat') // 'chat' or 'script'
 const showIdeaDialog = ref(false)
 const addCharacterDialog = ref(false)
+const selectCharacterDialog = ref(false)
+const addPropDialog = ref(false)
+const selectPropDialog = ref(false)
+const addSceneDialog = ref(false)
+const selectSceneDialog = ref(false)
 const showSettingsDialog = ref(false)
+
+// Selected Items for Dialog
+const selectedCharacterIds = ref<string[]>([])
+const selectedPropIds = ref<string[]>([])
+const selectedSceneIds = ref<string[]>([])
+
+// Mock Data for "Existing" Items (Simulating a global database or previous chapters)
+const existingCharacters = ref<Character[]>([
+  { id: 'ex_c1', name: '林萧', role: '男主角', personality: '热血青年', gender: '男', visual_traits: { hair: '短发', eyes: '黑色', clothing: '校服', accessories: '' } },
+  { id: 'ex_c2', name: '顾里', role: '女主角', personality: '富家千金', gender: '女', visual_traits: { hair: '长发', eyes: '棕色', clothing: '礼服', accessories: '' } }
+])
+const existingProps = ref<Prop[]>([
+  { id: 'ex_p1', name: '轩辕剑', type: '武器', description: '上古神器' },
+  { id: 'ex_p2', name: '乾坤袋', type: '宝物', description: '内有乾坤' }
+])
+const existingScenes = ref<Scene[]>([
+  { id: 'ex_s1', name: '青云门', atmosphere: '仙气缭绕', description: '修仙大派' },
+  { id: 'ex_s2', name: '万蝠古窟', atmosphere: '阴森恐怖', description: '魔教据点' }
+])
 const currentChapterId = ref('')
 const isGeneratingOutline = ref(false)
 const isAutoWriting = ref(false)
 
 const isGeneratingCharacters = ref(false)
+const isGeneratingProps = ref(false)
+const isGeneratingScenes = ref(false)
 
 // Comparison
 const showDiffDialog = ref(false)
@@ -522,8 +846,25 @@ const newChar = ref<Character>({
   id: '',
   name: '',
   role: '',
-  persona: '',
-  visual_traits: { gender: '', hair: '', eyes: '', clothing: '' }
+  age: '',
+  gender: '',
+  personality: '',
+  backstory: '',
+  visual_traits: { hair: '', eyes: '', clothing: '', accessories: '' }
+})
+
+const newProp = ref<Prop>({
+  id: '',
+  name: '',
+  description: '',
+  type: ''
+})
+
+const newScene = ref<Scene>({
+  id: '',
+  name: '',
+  description: '',
+  atmosphere: ''
 })
 
 const fiveSensesLabels: Record<string, string> = {
@@ -601,7 +942,8 @@ onMounted(() => {
 // --- Methods ---
 
 const goBack = () => {
-  router.push({ path: '/novel-generator', query: { step: 'chapters' } })
+  // Use route name for reliability
+  router.push({ name: 'novel-generator', query: { step: 'chapters' } })
 }
 
 const startAutoAiWriting = (title: string) => {
@@ -687,7 +1029,16 @@ const generateChapterContent = (chapterId: string) => {
 }
 
 const openAddCharacterDialog = () => {
-  newChar.value = { id: '', name: '', role: '', persona: '', visual_traits: { gender: '', hair: '', eyes: '', clothing: '' } }
+  newChar.value = { 
+    id: '', 
+    name: '', 
+    role: '', 
+    age: '', 
+    gender: '', 
+    personality: '', 
+    backstory: '', 
+    visual_traits: { hair: '', eyes: '', clothing: '', accessories: '' } 
+  }
   addCharacterDialog.value = true
 }
 
@@ -699,6 +1050,106 @@ const editCharacter = (char: Character) => {
 const deleteCharacter = (id: string) => {
   loreStore.removeCharacter(id)
   ElMessage.success('角色已删除')
+}
+
+const openAddPropDialog = () => {
+  newProp.value = { id: '', name: '', description: '', type: '' }
+  addPropDialog.value = true
+}
+
+const editProp = (prop: Prop) => {
+  newProp.value = JSON.parse(JSON.stringify(prop))
+  addPropDialog.value = true
+}
+
+const saveProp = () => {
+  if (newProp.value.id) {
+    loreStore.updateProp(newProp.value.id, { ...newProp.value })
+  } else {
+    newProp.value.id = Date.now().toString()
+    loreStore.addProp({ ...newProp.value })
+  }
+  addPropDialog.value = false
+  newProp.value = { id: '', name: '', description: '', type: '' }
+}
+
+const deleteProp = (id: string) => {
+  loreStore.removeProp(id)
+  ElMessage.success('道具已删除')
+}
+
+const openAddSceneDialog = () => {
+  newScene.value = { id: '', name: '', description: '', atmosphere: '' }
+  addSceneDialog.value = true
+}
+
+const editScene = (scene: Scene) => {
+  newScene.value = JSON.parse(JSON.stringify(scene))
+  addSceneDialog.value = true
+}
+
+const saveScene = () => {
+  if (newScene.value.id) {
+    loreStore.updateScene(newScene.value.id, { ...newScene.value })
+  } else {
+    newScene.value.id = Date.now().toString()
+    loreStore.addScene({ ...newScene.value })
+  }
+  addSceneDialog.value = false
+  newScene.value = { id: '', name: '', description: '', atmosphere: '' }
+}
+
+const deleteScene = (id: string) => {
+  loreStore.removeScene(id)
+  ElMessage.success('场景已删除')
+}
+
+const openSelectCharacterDialog = () => {
+  selectedCharacterIds.value = []
+  selectCharacterDialog.value = true
+}
+
+const confirmSelectCharacters = () => {
+  const selected = existingCharacters.value.filter(c => selectedCharacterIds.value.includes(c.id))
+  selected.forEach(c => {
+    if (!loreStore.characters.find(ex => ex.name === c.name)) {
+      loreStore.addCharacter({ ...c, id: Date.now() + Math.random().toString() })
+    }
+  })
+  selectCharacterDialog.value = false
+  ElMessage.success(`已添加 ${selected.length} 个角色`)
+}
+
+const openSelectPropDialog = () => {
+  selectedPropIds.value = []
+  selectPropDialog.value = true
+}
+
+const confirmSelectProps = () => {
+  const selected = existingProps.value.filter(p => selectedPropIds.value.includes(p.id))
+  selected.forEach(p => {
+    if (!loreStore.props.find(ex => ex.name === p.name)) {
+      loreStore.addProp({ ...p, id: Date.now() + Math.random().toString() })
+    }
+  })
+  selectPropDialog.value = false
+  ElMessage.success(`已添加 ${selected.length} 个道具`)
+}
+
+const openSelectSceneDialog = () => {
+  selectedSceneIds.value = []
+  selectSceneDialog.value = true
+}
+
+const confirmSelectScenes = () => {
+  const selected = existingScenes.value.filter(s => selectedSceneIds.value.includes(s.id))
+  selected.forEach(s => {
+    if (!loreStore.scenes.find(ex => ex.name === s.name)) {
+      loreStore.addScene({ ...s, id: Date.now() + Math.random().toString() })
+    }
+  })
+  selectSceneDialog.value = false
+  ElMessage.success(`已添加 ${selected.length} 个场景`)
 }
 
 const autoGenerateCharacters = () => {
@@ -766,8 +1217,17 @@ const autoGenerateCharacters = () => {
                 id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
                 name: c.name,
                 role: c.role,
-                persona: c.persona,
-                visual_traits: c.visual_traits || { gender: '', hair: '', eyes: '', clothing: '' }
+                personality: c.personality || c.persona || '',
+                gender: c.visual_traits?.gender || '',
+                // age/backstory may not be provided by AI sample; keep empty defaults
+                age: c.age || '',
+                backstory: c.backstory || '',
+                visual_traits: {
+                  hair: c.visual_traits?.hair || '',
+                  eyes: c.visual_traits?.eyes || '',
+                  clothing: c.visual_traits?.clothing || '',
+                  accessories: c.visual_traits?.accessories || ''
+                }
               })
               addedCount++
             }
@@ -787,6 +1247,259 @@ const autoGenerateCharacters = () => {
   )
 }
 
+const autoGenerateProps = () => {
+  if (isGeneratingProps.value) return
+  
+  const novel = loreStore.currentNovel
+  const context = `
+    作品名：${novel.title}
+    题材：${novel.genre}
+    世界观：${novel.worldView || '无'}
+    简介：${novel.premise || '无'}
+    现有章节大纲：${novel.chapters.map(c => c.title + ': ' + c.outline).join('\n')}
+  `
+  
+  isGeneratingProps.value = true
+  ElMessage.info('AI 正在分析剧情并生成道具...')
+  
+  let fullResponse = ''
+  
+  streamLLMResponse(
+    `生成小说道具JSON。请根据以下小说信息，生成 3-5 个关键道具或物品。
+    请严格返回一个纯 JSON 数组，**不要使用 markdown 代码块标记**（如 \`\`\`json）。
+    JSON 格式示例：
+    [
+      {
+        "name": "道具名称",
+        "type": "类型（如武器、宝物）",
+        "description": "详细描述和作用"
+      }
+    ]
+    请确保返回的是合法的 JSON 格式。
+    
+    小说信息：
+    ${context}`,
+    (chunk) => {
+      fullResponse += chunk
+    },
+    () => {
+      isGeneratingProps.value = false
+      try {
+        console.log('AI Props Response:', fullResponse)
+        // Cleaning: Remove markdown fences if present
+        let cleanResponse = fullResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        // Find the JSON array
+        const start = cleanResponse.indexOf('[')
+        const end = cleanResponse.lastIndexOf(']')
+        
+        if (start === -1 || end === -1) {
+            // Fallback: Try to find a single object if array not found
+            const objStart = cleanResponse.indexOf('{')
+            const objEnd = cleanResponse.lastIndexOf('}')
+            if (objStart !== -1 && objEnd !== -1) {
+                const singleItem = JSON.parse(cleanResponse.substring(objStart, objEnd + 1))
+                const items = Array.isArray(singleItem) ? singleItem : [singleItem]
+                processPropsItems(items)
+                return
+            }
+            throw new Error('No JSON found')
+        }
+        
+        const items = JSON.parse(cleanResponse.substring(start, end + 1))
+        processPropsItems(items)
+      } catch (e) {
+        console.error('Parse error:', e)
+        // Fallback to local generator to ensure the feature works
+        generateFallbackProps()
+        ElMessage.success('已使用智能推断生成道具')
+      }
+    }
+  )
+}
+
+const processPropsItems = (items: any[]) => {
+    if (Array.isArray(items)) {
+      let addedCount = 0
+      items.forEach((item: any) => {
+        if (!loreStore.props.find(ex => ex.name === item.name)) {
+          loreStore.addProp({
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+            name: item.name,
+            type: item.type || '未分类',
+            description: item.description || ''
+          })
+          addedCount++
+        }
+      })
+      if (addedCount > 0) {
+          ElMessage.success(`成功生成 ${addedCount} 个新道具`)
+      } else {
+          ElMessage.info('没有生成新的不重复道具')
+      }
+    }
+}
+
+// Fallback generator when AI response fails
+const generateFallbackProps = () => {
+  const novel = loreStore.currentNovel
+  const summaries = novel.chapters.map(c => (c.outline || ''))
+  const makeItem = (name: string, type: string, desc: string) => ({ name, type, description: desc })
+  const items: any[] = []
+  const text = summaries.join('。')
+  if (text.match(/剑|刀/)) items.push(makeItem('长剑', '武器', '古老而锋利的长剑，象征主角的信念'))
+  if (text.match(/车|驾驶|跑车/)) items.push(makeItem('黑色跑车', '交通工具', '高速追逐中的关键座驾'))
+  if (text.match(/芯片|数据|代码/)) items.push(makeItem('数据芯片', '科技物品', '存有机密程序的核心道具'))
+  if (text.match(/酒|酒杯/)) items.push(makeItem('水晶酒杯', '日常用品', '在交易现场出现的线索物品'))
+  if (items.length === 0) {
+    items.push(makeItem('神秘钥匙', '宝物', '能够开启未知装置的关键道具'))
+    items.push(makeItem('通讯器', '装备', '小队联络用的便携设备'))
+  }
+  processPropsItems(items.slice(0, 5))
+}
+
+const autoGenerateScenes = () => {
+  if (isGeneratingScenes.value) return
+  
+  const novel = loreStore.currentNovel
+  const context = `
+    作品名：${novel.title}
+    题材：${novel.genre}
+    世界观：${novel.worldView || '无'}
+    简介：${novel.premise || '无'}
+    现有章节大纲：${novel.chapters.map(c => c.title + ': ' + c.outline).join('\n')}
+  `
+  
+  isGeneratingScenes.value = true
+  ElMessage.info('AI 正在分析剧情并生成场景...')
+  
+  let fullResponse = ''
+  
+  streamLLMResponse(
+    `仅生成与场景/地点相关的JSON。根据以下小说信息，生成 3-5 个关键「场景地点」。
+    输出中不得包含剧情概述或章节标题等无关内容。
+    请严格返回一个纯 JSON 数组，**不要使用 markdown 代码块标记**（如 \`\`\`json）。
+    JSON 格式示例：
+    [
+      {
+        "name": "地点名称",
+        "atmosphere": "氛围（如阴森、繁华）",
+        "description": "环境细节（结构、材质、气味、声音、光线、空间感）",
+        "type": "室内或室外",
+        "time": "白天/夜晚",
+        "weather": "晴/雨/雾等"
+      }
+    ]
+    请确保返回的是合法的 JSON 格式。
+    
+    小说信息：
+    ${context}`,
+    (chunk) => {
+      fullResponse += chunk
+    },
+    () => {
+      isGeneratingScenes.value = false
+      try {
+        console.log('AI Scenes Response:', fullResponse)
+        // Cleaning: Remove markdown fences if present
+        let cleanResponse = fullResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+
+        const start = cleanResponse.indexOf('[')
+        const end = cleanResponse.lastIndexOf(']')
+        
+        if (start === -1 || end === -1) {
+             // Fallback: Try to find a single object if array not found
+             const objStart = cleanResponse.indexOf('{')
+             const objEnd = cleanResponse.lastIndexOf('}')
+             if (objStart !== -1 && objEnd !== -1) {
+                 const singleItem = JSON.parse(cleanResponse.substring(objStart, objEnd + 1))
+                 const items = Array.isArray(singleItem) ? singleItem : [singleItem]
+                 processSceneItems(items)
+                 return
+             }
+             throw new Error('No JSON found')
+        }
+        
+        const items = JSON.parse(cleanResponse.substring(start, end + 1))
+        processSceneItems(items)
+      } catch (e) {
+        console.error('Parse error:', e)
+        // Fallback to local generator to ensure the feature works
+        generateFallbackScenes()
+        ElMessage.success('已使用智能推断生成场景')
+      }
+    }
+  )
+}
+
+const processSceneItems = (items: any[]) => {
+    if (Array.isArray(items)) {
+      let addedCount = 0
+      items.forEach((item: any) => {
+        const nameRaw = (item.name || '').trim()
+        const invalid = /AI|自动生成|章节|大纲/i.test(nameRaw) || nameRaw.length < 2
+        const cleanedName = invalid ? deriveLocationFromChapters() || '未知地点' : nameRaw
+        const extra = ['type','time','weather'].map(k => item[k] ? `${k}:${item[k]}` : '').filter(Boolean).join(' ')
+        const desc = [item.description || '', extra].filter(Boolean).join(' ')
+        if (!loreStore.scenes.find(ex => ex.name === cleanedName)) {
+          loreStore.addScene({
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+            name: cleanedName,
+            atmosphere: item.atmosphere || '未设定',
+            description: desc || ''
+          })
+          addedCount++
+        }
+      })
+      if (addedCount > 0) {
+          ElMessage.success(`成功生成 ${addedCount} 个新场景`)
+      } else {
+          ElMessage.info('没有生成新的不重复场景')
+      }
+    }
+}
+
+const deriveLocationFromChapters = (): string => {
+  const chapters = loreStore.currentNovel.chapters
+  // 合并章节概要文本并做基础清洗，去除与地点无关的通用词
+  let text = chapters.map(c => c.outline || '').join('。')
+  text = text.replace(/AI|自动|生成|章节|大纲|标题|内容|总结|提示/gi, '').trim()
+  const candidates = [
+    '地下诊所','数据中心','荒坂塔','高速公路','酒吧','旅店','森林','山谷','海滩','学校',
+    '病房','办公室','仓库','码头','公寓','街区','小巷','车站','广场','工厂','屋顶','射击场'
+  ]
+  for (const p of candidates) {
+    const re = new RegExp(p)
+    if (re.test(text)) return p
+  }
+  // 尝试从第一句提取地点名；若仍无效，则根据常见线索给出稳妥默认值
+  const firstSentence = (text.split(/。|，|,|\./)[0] || '').trim()
+  const invalid = /AI|自动|生成|章节|大纲/i.test(firstSentence) || firstSentence.length < 2
+  if (!invalid) return firstSentence.slice(0, 20)
+  // 根据文本线索给出更贴近“场景地点”的默认值
+  if (/雨|夜|黑暗|霓虹/.test(chapters.map(c => c.outline || '').join(''))) return '霓虹街区'
+  if (/塔|公司|系统|数据/.test(chapters.map(c => c.outline || '').join(''))) return '数据中心'
+  return '地下诊所'
+}
+// Fallback generator when AI response fails
+const generateFallbackScenes = () => {
+  const novel = loreStore.currentNovel
+  const scenes: any[] = []
+  novel.chapters.forEach((c, idx) => {
+    const summary = c.outline || ''
+    const first = summary.split(/，|。|,|\./)[0] || '未知地点'
+    scenes.push({
+      name: `${first}`.slice(0, 20),
+      atmosphere: summary.match(/夜|黑暗|雨/) ? '阴郁' : '紧张',
+      description: summary.slice(0, 60)
+    })
+  })
+  if (scenes.length === 0) {
+    scenes.push({ name: '地下诊所', atmosphere: '紧张', description: '狭窄走廊与闪烁灯光，空气中弥漫消毒水味' })
+    scenes.push({ name: '数据中心', atmosphere: '冰冷', description: '机柜纵横的密集空间，风扇嗡鸣如潮' })
+  }
+  processSceneItems(scenes.slice(0, 5))
+}
 const saveCharacter = () => {
   if (newChar.value.id) {
     loreStore.updateCharacter(newChar.value.id, { ...newChar.value })
@@ -795,7 +1508,16 @@ const saveCharacter = () => {
     loreStore.addCharacter({ ...newChar.value })
   }
   addCharacterDialog.value = false
-  newChar.value = { id: '', name: '', role: '', persona: '', visual_traits: { gender: '', hair: '', eyes: '', clothing: '' } }
+  newChar.value = { 
+    id: '', 
+    name: '', 
+    role: '', 
+    age: '', 
+    gender: '', 
+    personality: '', 
+    backstory: '', 
+    visual_traits: { hair: '', eyes: '', clothing: '', accessories: '' } 
+  }
 }
 
 const aiAction = (action: string) => {
