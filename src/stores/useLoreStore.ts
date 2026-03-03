@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 export interface Character {
   id: string;
@@ -60,12 +60,18 @@ export interface Novel {
 }
 
 export const useLoreStore = defineStore('lore', () => {
-  const characters = ref<Character[]>([])
-  const props = ref<Prop[]>([])
-  const scenes = ref<Scene[]>([])
+  // Persistence Helper
+  const loadState = (key: string, defaultVal: any) => {
+    const saved = localStorage.getItem(key)
+    return saved ? JSON.parse(saved) : defaultVal
+  }
+
+  const characters = ref<Character[]>(loadState('lore_characters', []))
+  const props = ref<Prop[]>(loadState('lore_props', []))
+  const scenes = ref<Scene[]>(loadState('lore_scenes', []))
   
   // 当前正在编辑的小说
-  const currentNovel = ref<Novel>({
+  const currentNovel = ref<Novel>(loadState('lore_currentNovel', {
     id: '1',
     title: '未命名作品',
     premise: '',
@@ -75,7 +81,13 @@ export const useLoreStore = defineStore('lore', () => {
     targetAudience: 'general',
     model: 'gpt-4-turbo',
     chapters: []
-  })
+  }))
+
+  // Watch for changes and persist
+  watch(characters, (val) => localStorage.setItem('lore_characters', JSON.stringify(val)), { deep: true })
+  watch(props, (val) => localStorage.setItem('lore_props', JSON.stringify(val)), { deep: true })
+  watch(scenes, (val) => localStorage.setItem('lore_scenes', JSON.stringify(val)), { deep: true })
+  watch(currentNovel, (val) => localStorage.setItem('lore_currentNovel', JSON.stringify(val)), { deep: true })
 
   const addCharacter = (character: Character) => {
     characters.value.push(character)
