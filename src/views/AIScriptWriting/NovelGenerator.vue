@@ -480,10 +480,15 @@ watch(() => route.query.step, (val) => {
         summary: c.outline || ''
       }))
     }
+  } else if (val === 'settings') {
+     // If step is settings, we stay on the current view (likely outline or chapters) but open the dialog
+     // Default to outline if step is just settings
+     if (step.value === '') step.value = 'outline' 
+     showSettingsDialog.value = true
   } else {
     step.value = 'outline'
   }
-})
+}, { immediate: true })
 // Methods
 const generateCover = async () => {
   coverUrl.value = ''

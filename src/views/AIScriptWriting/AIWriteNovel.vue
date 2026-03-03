@@ -17,7 +17,7 @@
         <!-- Header & Top Actions -->
         <div class="flex items-center justify-between mb-8 sticky top-0 z-50 p-4 rounded-xl backdrop-blur-md transition-colors" :class="isLight ? 'bg-white/80 shadow-sm' : 'bg-slate-900/80 shadow-md border border-slate-700/50'">
           <div class="flex items-center">
-            <el-button :icon="ArrowLeft" circle class="mr-4 transition-colors" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-100' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700'" @click="isCreating = false" />
+            <el-button :icon="ArrowLeft" circle class="mr-4 transition-colors" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-100' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700'" @click="exitCreation" />
             <div>
               <h1 class="text-2xl font-bold tracking-tight" :class="isLight ? 'text-slate-900' : 'text-white'">AI剧本工坊</h1>
               <p class="text-xs mt-1 flex items-center gap-2" :class="isLight ? 'text-slate-500' : 'text-slate-400'">
@@ -872,13 +872,18 @@ const handleExport = (command: string) => {
 }
 
 const startCreation = () => {
-  isCreating.value = true
+  router.push({ query: { mode: 'create' } })
+}
+
+const exitCreation = () => {
+  router.push({ name: 'ai-write-novel' })
 }
 
 const openProject = (id: number) => {
-  isCreating.value = true
+  // isCreating.value = true
   // In a real app, you would load the project data here
-  ElMessage.success(`打开项目 #${id}`)
+  // ElMessage.success(`打开项目 #${id}`)
+  router.push({ name: 'novel-generator', query: { id: id.toString() } })
 }
 
 const audiences = [
