@@ -62,8 +62,13 @@ export interface Novel {
 export const useLoreStore = defineStore('lore', () => {
   // Persistence Helper
   const loadState = (key: string, defaultVal: any) => {
-    const saved = localStorage.getItem(key)
-    return saved ? JSON.parse(saved) : defaultVal
+    try {
+      const saved = localStorage.getItem(key)
+      return saved ? JSON.parse(saved) : defaultVal
+    } catch (e) {
+      console.warn(`Failed to load state for ${key}`, e)
+      return defaultVal
+    }
   }
 
   const characters = ref<Character[]>(loadState('lore_characters', []))
