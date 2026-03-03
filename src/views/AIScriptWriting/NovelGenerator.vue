@@ -487,6 +487,17 @@ watch(() => route.query.step, (val) => {
     step.value = 'outline'
   }
 }, { immediate: true })
+
+// Sync outlines with store changes
+watch(() => loreStore.currentNovel.chapters, (newChapters) => {
+  if (step.value === 'chapters' && newChapters.length > 0) {
+    outlines.value = newChapters.map(c => ({
+      title: c.title,
+      summary: c.outline || ''
+    }))
+  }
+}, { deep: true })
+
 // Methods
 const generateCover = async () => {
   coverUrl.value = ''
