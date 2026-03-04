@@ -13,11 +13,23 @@
       </div>
 
       <!-- Project Grid -->
-      <div v-if="projects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="i in 3" :key="i" class="bg-slate-800 rounded-xl border border-slate-700 p-5 shadow-lg animate-pulse">
+          <div class="h-40 bg-slate-700 rounded-lg mb-4"></div>
+          <div class="h-6 bg-slate-700 rounded w-3/4 mb-2"></div>
+          <div class="h-4 bg-slate-700 rounded w-1/2 mb-4"></div>
+          <div class="flex justify-between">
+            <div class="h-4 bg-slate-700 rounded w-1/4"></div>
+            <div class="h-4 bg-slate-700 rounded w-1/4"></div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="projects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
-          v-for="project in projects" 
+          v-for="(project, index) in projects" 
           :key="project.id" 
-          class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg hover:shadow-xl hover:border-indigo-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col"
+          class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg hover:shadow-xl hover:border-indigo-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col animate-fade-slide-up"
+          :style="{ animationDelay: `${index * 100}ms` }"
           @click="openProject(project.id, 'outline')"
         >
           <!-- Cover Image/Placeholder -->
@@ -195,31 +207,39 @@ const props = defineProps<{
   type: 'novel' | 'script'
 }>()
 
+const isLoading = ref(true)
 const emit = defineEmits(['create', 'open'])
 
 // Mock Data
-const projects = ref([
-  { 
-    id: 1, 
-    title: props.type === 'novel' ? '星际迷航：深空' : '霸道总裁爱上我 (短剧)', 
-    cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop', // Earth/Space like first picture
-    status: 'draft', 
-    updatedAt: '2023-10-24',
-    author: 'Admin',
-    views: 128,
-    likes: 45
-  },
-  { 
-    id: 2, 
-    title: props.type === 'novel' ? '修仙模拟器' : '重生之我是龙王 (短剧)', 
-    cover: 'https://images.unsplash.com/photo-1599593462637-c79292c2288e?q=80&w=600&auto=format&fit=crop', // Castle/Foggy like first picture
-    status: 'published', 
-    updatedAt: '2023-10-20',
-    author: 'Admin',
-    views: 1024,
-    likes: 356
-  }
-])
+const projects = ref<any[]>([])
+
+// Simulate loading
+setTimeout(() => {
+  projects.value = [
+    { 
+      id: 1, 
+      title: props.type === 'novel' ? '星际迷航：深空' : '霸道总裁爱上我 (短剧)', 
+      cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop', // Earth/Space like first picture
+      status: 'draft', 
+      updatedAt: '2023-10-24',
+      author: 'Admin',
+      views: 128,
+      likes: 45
+    },
+    { 
+      id: 2, 
+      title: props.type === 'novel' ? '修仙模拟器' : '重生之我是龙王 (短剧)', 
+      cover: 'https://images.unsplash.com/photo-1599593462637-c79292c2288e?q=80&w=600&auto=format&fit=crop', // Castle/Foggy like first picture
+      status: 'published', 
+      updatedAt: '2023-10-20',
+      author: 'Admin',
+      views: 1024,
+      likes: 356
+    }
+  ]
+  isLoading.value = false
+}, 800)
+
 
 const generateDefaultCover = (title: string) => {
   const encodedTitle = encodeURIComponent(title)
@@ -375,5 +395,21 @@ const deleteProject = (id: number) => {
 }
 :deep(.force-white-input .el-textarea__inner::placeholder) {
   color: #94a3b8 !important;
+}
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-up {
+  animation: fade-slide-up 0.5s ease-out forwards;
+  opacity: 0; /* Start hidden */
 }
 </style>
