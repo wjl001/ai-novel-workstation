@@ -942,7 +942,7 @@ onMounted(() => {
 // --- Methods ---
 
 const goBack = () => {
-  // Use route name for reliability
+  sessionStorage.setItem('novel_generator_chapters_cache', JSON.stringify(loreStore.currentNovel.chapters || []))
   router.push({ name: 'novel-generator', query: { step: 'chapters' } })
 }
 

@@ -398,7 +398,7 @@ import {
   Setting, Download, Notebook, Delete, Plus, List, Check, Timer, Edit, MoreFilled, CircleCheck, View, VideoCamera, InfoFilled, Promotion
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { useLoreStore } from '@/stores/useLoreStore'
+import { useLoreStore, type Chapter } from '@/stores/useLoreStore'
 import StepIndicator from '@/components/StepIndicator.vue'
 
 const isLight = inject('isLight', ref(false))
@@ -435,6 +435,46 @@ interface OutlineItem {
 
 const outlines = ref<OutlineItem[]>([])
 
+const getStepQueryValue = () => {
+  if (Array.isArray(route.query.step)) {
+    return route.query.step[0]
+  }
+  return route.query.step
+}
+
+const mapChaptersToOutlines = (chapters: Chapter[]) => {
+  return chapters.map(c => ({
+    title: c.title,
+    summary: c.outline || ''
+  }))
+}
+
+const syncOutlinesFromChapters = () => {
+  if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
+    outlines.value = [...mapChaptersToOutlines(loreStore.currentNovel.chapters)]
+  }
+}
+
+const hydrateChaptersFromSessionCache = () => {
+  if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
+    return
+  }
+  const cache = sessionStorage.getItem('novel_generator_chapters_cache')
+  if (!cache) {
+    return
+  }
+  try {
+    const parsed = JSON.parse(cache)
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      loreStore.currentNovel.chapters = parsed
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    sessionStorage.removeItem('novel_generator_chapters_cache')
+  }
+}
+
 // Computed
 const currentStepLabel = computed(() => {
   return step.value === 'outline' ? '大纲生成' : '章节管理'
@@ -454,16 +494,10 @@ const handleBack = () => {
 
 // Lifecycle
 onMounted(() => {
-  if (route.query.step === 'chapters') {
+  if (getStepQueryValue() === 'chapters') {
     step.value = 'chapters'
-    // Restore from store if available
-    // Force reactivity update by creating a new array
-    if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
-      outlines.value = [...loreStore.currentNovel.chapters.map(c => ({
-        title: c.title,
-        summary: c.outline || ''
-      }))]
-    }
+    hydrateChaptersFromSessionCache()
+    syncOutlinesFromChapters()
   } else {
     step.value = 'outline'
     generateOutline()
@@ -473,14 +507,11 @@ onMounted(() => {
 
 // Ensure step reacts to query changes if navigated with different params
 watch(() => route.query.step, (val) => {
-  if (val === 'chapters') {
+  const stepQuery = Array.isArray(val) ? val[0] : val
+  if (stepQuery === 'chapters') {
     step.value = 'chapters'
-    if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
-      outlines.value = [...loreStore.currentNovel.chapters.map(c => ({
-        title: c.title,
-        summary: c.outline || ''
-      }))]
-    }
+    hydrateChaptersFromSessionCache()
+    syncOutlinesFromChapters()
   } else if (val === 'settings') {
      // If step is settings, we stay on the current view (likely outline or chapters) but open the dialog
      showSettingsDialog.value = true
@@ -492,10 +523,7 @@ watch(() => route.query.step, (val) => {
 // Sync outlines with store changes
 watch(() => loreStore.currentNovel.chapters, (newChapters) => {
   if (newChapters && newChapters.length > 0) {
-    outlines.value = [...newChapters.map(c => ({
-      title: c.title,
-      summary: c.outline || ''
-    }))]
+    outlines.value = [...mapChaptersToOutlines(newChapters)]
   }
 }, { deep: true, immediate: true })
 

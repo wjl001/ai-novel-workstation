@@ -116,60 +116,59 @@
       </div>
     </div>
 
-    <!-- AI Cover Generator Dialog -->
-    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="600px" append-to-body custom-class="dark-dialog">
-      <div class="space-y-4">
-        <div class="p-4 bg-slate-800 rounded-lg border border-slate-700">
-           <div class="text-sm text-slate-400 mb-2">生成描述词 (Prompt)</div>
+    <!-- AI Generator Dialog (Dark Mode) -->
+    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="dark-dialog">
+      <div class="space-y-6">
+        <!-- Prompt Input -->
+        <div class="rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition-colors focus-within:border-indigo-500/50">
+           <div class="text-sm mb-2 font-medium text-slate-300">生成描述词 (Prompt)</div>
            <el-input 
-             v-model="aiPrompt" 
+             v-model="aiPrompt"
              type="textarea" 
-             :rows="3" 
-             placeholder="例如：一个赛博朋克风格的女杀手，站在霓虹灯下的雨夜街头，冷酷，高科技义体..."
-             class="dark-textarea"
+             :rows="4"
+             placeholder="例如：赛博朋克风格，霓虹灯下的雨夜，孤独的黑客背影，高科技义肢..."
+             class="dark-textarea !text-base force-white-input"
            />
-           <div class="mt-2 flex justify-end">
-             <el-button type="primary" size="small" :loading="isGenerating" @click="generateCoverImages">
+           <div class="flex justify-end mt-2">
+             <el-button type="primary" :loading="isGenerating" class="shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
                <el-icon class="mr-1"><MagicStick /></el-icon> 开始生成
              </el-button>
            </div>
         </div>
 
-        <div v-if="generatedImages.length > 0" class="grid grid-cols-2 gap-4">
+        <!-- Result Grid -->
+        <div class="grid grid-cols-2 gap-4 min-h-[300px] relative rounded-xl border border-dashed border-slate-700 bg-slate-800/30 p-4 transition-colors">
+           <div v-if="generatedImages.length === 0 && !isGenerating" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+             <el-icon size="48" class="mb-4 opacity-50"><Picture /></el-icon>
+             <p>输入描述词后点击生成</p>
+           </div>
+           
+           <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black/50 backdrop-blur-sm rounded-xl">
+             <div class="loading-spinner mb-4"></div>
+             <p class="text-indigo-400 animate-pulse">AI 正在绘图...</p>
+           </div>
+
            <div 
              v-for="(img, idx) in generatedImages" 
-             :key="idx" 
+             :key="idx"
              class="relative group cursor-pointer rounded-lg overflow-hidden border-2 transition-all aspect-[2/3]"
-             :class="selectedImage === img ? 'border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-transparent hover:border-slate-500'"
+             :class="selectedImage === img ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.02]' : 'border-transparent hover:border-indigo-300'"
              @click="selectedImage = img"
            >
              <img :src="img" class="w-full h-full object-cover" />
-             <div v-if="selectedImage === img" class="absolute inset-0 bg-indigo-500/20 flex items-center justify-center">
-               <div class="bg-indigo-500 text-white rounded-full p-1">
+             <div class="absolute top-2 right-2" v-if="selectedImage === img">
+               <div class="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg">
                  <el-icon><Check /></el-icon>
                </div>
              </div>
            </div>
         </div>
-        
-        <div v-else-if="isGenerating" class="flex flex-col items-center justify-center py-12 text-slate-500">
-           <el-icon class="is-loading text-indigo-500 mb-2" :size="32"><Loading /></el-icon>
-           <p>AI 正在挥毫泼墨...</p>
-        </div>
-        
-        <div v-else class="text-center py-12 text-slate-600 bg-slate-800/30 rounded-lg border border-dashed border-slate-700">
-           <el-icon :size="48" class="mb-2 opacity-50"><Picture /></el-icon>
-           <p>输入描述词后点击生成</p>
-        </div>
       </div>
-      
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="showAIDialog = false" class="!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white">取消</el-button>
-          <el-button type="primary" :disabled="!selectedImage" @click="confirmAICover" class="!bg-indigo-600 border-none">
-            应用封面
-          </el-button>
-        </span>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+          <el-button @click="showAIDialog = false" class="!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700">取消</el-button>
+          <el-button type="primary" :disabled="!selectedImage" @click="confirmAICover">应用封面</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -203,7 +202,7 @@ const projects = ref([
   { 
     id: 1, 
     title: props.type === 'novel' ? '星际迷航：深空' : '霸道总裁爱上我 (短剧)', 
-    cover: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=400&auto=format&fit=crop&q=60', // Changed to a more "character-like" or interesting image
+    cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop', // Earth/Space like first picture
     status: 'draft', 
     updatedAt: '2023-10-24',
     author: 'Admin',
@@ -213,7 +212,7 @@ const projects = ref([
   { 
     id: 2, 
     title: props.type === 'novel' ? '修仙模拟器' : '重生之我是龙王 (短剧)', 
-    cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400', 
+    cover: 'https://images.unsplash.com/photo-1599593462637-c79292c2288e?q=80&w=600&auto=format&fit=crop', // Castle/Foggy like first picture
     status: 'published', 
     updatedAt: '2023-10-20',
     author: 'Admin',
@@ -223,44 +222,27 @@ const projects = ref([
 ])
 
 const generateDefaultCover = (title: string) => {
-  const encodedTitle = encodeURIComponent(title || '未命名作品')
-  // SVG with abstract character silhouette
-  const svg = `
-  <svg xmlns='http://www.w3.org/2000/svg' width='600' height='900' viewBox='0 0 600 900'>
-    <defs>
-      <linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0%' stop-color='#1e1b4b'/>
-        <stop offset='50%' stop-color='#312e81'/>
-        <stop offset='100%' stop-color='#4338ca'/>
-      </linearGradient>
-      <linearGradient id='char' x1='0.5' y1='0' x2='0.5' y2='1'>
-        <stop offset='0%' stop-color='#818cf8'/>
-        <stop offset='100%' stop-color='#6366f1'/>
-      </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-        <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-    </defs>
-    
-    <!-- Background -->
-    <rect width='100%' height='100%' fill='url(#bg)'/>
-    
-    <!-- Abstract Character Silhouette (Shoulders and Head) -->
-    <path d='M300 550 C 200 550, 150 650, 120 900 L 480 900 C 450 650, 400 550, 300 550 Z' fill='rgba(255,255,255,0.1)' />
-    <circle cx='300' cy='420' r='100' fill='rgba(255,255,255,0.15)' />
-    
-    <!-- Title Area -->
-    <rect x='40' y='60' width='520' height='200' rx='12' fill='rgba(0,0,0,0.3)' />
-    <text x='300' y='160' font-size='48' fill='#ffffff' font-family='Arial, sans-serif' font-weight='bold' text-anchor="middle" filter="url(#glow)">${title}</text>
-    
-    <!-- Decorative Circle -->
-    <circle cx='300' cy='420' r='90' fill='none' stroke='url(#char)' stroke-width='4' opacity='0.5' />
-  </svg>`
-  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg)
+  const encodedTitle = encodeURIComponent(title)
+  // Use a reliable set of high-quality placeholder images instead of SVG to ensure "real image" look
+  const covers = [
+    'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=600&auto=format&fit=crop', // Dark gloomy background
+    'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=600&auto=format&fit=crop', // Fantasy forest
+    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop', // Mine/Cave
+    'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=600&auto=format&fit=crop', // Space/Nebula
+    'https://images.unsplash.com/photo-1614726365723-498aa67c5f7b?q=80&w=600&auto=format&fit=crop', // Character art
+    'https://images.unsplash.com/photo-1626544827763-d516dce335ca?q=80&w=600&auto=format&fit=crop', // Anime/Cyberpunk style
+    'https://images.unsplash.com/photo-1516410541193-6dbf071727d7?q=80&w=600&auto=format&fit=crop', // Pink clouds
+    'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop'  // Urban night
+  ]
+  
+  // Deterministic selection based on title hash
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) {
+    hash = title.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % covers.length;
+  
+  return covers[index]
 }
 
 // Upload Handler
@@ -382,6 +364,16 @@ const deleteProject = (id: number) => {
   color: #f1f5f9 !important;
 }
 .dark-message-box .el-message-box__message {
+  color: #94a3b8 !important;
+}
+
+/* Force white input for AI Dialog */
+:deep(.force-white-input .el-textarea__inner) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #e2e8f0 !important;
+}
+:deep(.force-white-input .el-textarea__inner::placeholder) {
   color: #94a3b8 !important;
 }
 </style>
