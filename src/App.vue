@@ -31,6 +31,7 @@
               <el-select v-model="currentTheme" size="small" class="w-28 custom-header-select" :effect="isLight ? 'light' : 'dark'" @change="updateTheme" :teleported="false">
                 <el-option label="默认深蓝" value="dark" />
                 <el-option label="清爽亮白" value="light" />
+                <el-option label="梦幻紫罗兰" value="dreamy" />
               </el-select>
            </div>
         </div>
@@ -55,14 +56,14 @@
             <el-icon><VideoCameraFilled /></el-icon>
             <span>AI 写剧本</span>
           </el-menu-item>
-          <el-menu-item index="/script-creative" class="menu-item-hover">
+          <!-- <el-menu-item index="/script-creative" class="menu-item-hover">
              <el-icon><MagicStick /></el-icon>
             <span>创意风暴</span>
           </el-menu-item>
           <el-menu-item index="/convert" class="menu-item-hover">
              <el-icon><Refresh /></el-icon>
             <span>剧本转化</span>
-          </el-menu-item>
+          </el-menu-item> -->
         </el-menu>
         
         <div class="p-4 border-t" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
@@ -70,7 +71,7 @@
         </div>
       </el-aside>
 
-      <el-main class="p-0 relative h-full overflow-hidden flex flex-col transition-colors duration-500" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'">
+      <el-main class="p-0 relative h-full overflow-hidden flex flex-col transition-colors duration-500" :class="mainBgClass">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" :is-light="isLight" />
@@ -82,19 +83,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, watch } from 'vue'
+import { ref, provide, watch, computed } from 'vue'
 import { EditPen, VideoCamera, VideoCameraFilled, Picture, MagicStick, Refresh, Cpu, Brush } from '@element-plus/icons-vue'
 import { useLoreStore } from '@/stores/useLoreStore'
 
 const loreStore = useLoreStore()
-const currentTheme = ref('dark')
-const isLight = ref(false)
+const currentTheme = ref('dreamy')
+const isLight = ref(true)
 
 const updateTheme = (val: string) => {
-  isLight.value = val === 'light'
+  isLight.value = val === 'light' || val === 'dreamy'
 }
 
+const mainBgClass = computed(() => {
+  if (currentTheme.value === 'dreamy') {
+    return 'bg-gradient-to-br from-[#F5F3FF] via-[#F8FAFC] to-[#ECFEFF]'
+  }
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
 provide('isLight', isLight)
+provide('theme', currentTheme)
 </script>
 
 <style>

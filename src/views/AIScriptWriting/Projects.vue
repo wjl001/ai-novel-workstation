@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 h-full overflow-y-auto transition-colors duration-300" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'">
+  <div class="p-8 h-full overflow-y-auto transition-colors duration-300" :class="bgClass">
     <div class="flex items-center justify-between mb-8">
       <h1 class="text-3xl font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">我的作品</h1>
       <el-button type="primary" size="large" @click="createNewProject" :class="isLight ? 'bg-indigo-600' : 'bg-indigo-600 border-none'">
@@ -12,7 +12,7 @@
         v-for="project in projects"
         :key="project.id"
         class="group relative rounded-2xl overflow-hidden shadow-lg border transition-all duration-300 hover:-translate-y-1"
-        :class="isLight ? 'bg-white border-slate-200 hover:shadow-xl' : 'bg-slate-800 border-slate-700 hover:shadow-indigo-500/10 hover:border-indigo-500/30'"
+        :class="cardClass"
         @click="openProject(project.id)"
       >
           <div class="relative h-48 overflow-hidden group-hover:scale-105 transition-transform duration-700">
@@ -87,13 +87,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, Picture, Edit, MagicStick } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
+const cardClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 hover:shadow-xl hover:bg-white/80 backdrop-blur-sm'
+  return isLight.value ? 'bg-white border-slate-200 hover:shadow-xl' : 'bg-slate-800 border-slate-700 hover:shadow-indigo-500/10 hover:border-indigo-500/30'
+})
 
 interface Project {
   id: string

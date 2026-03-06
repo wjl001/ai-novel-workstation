@@ -1,9 +1,9 @@
 <template>
-  <el-container class="h-full">
+  <el-container class="h-full transition-colors duration-300" :class="containerClass">
     <!-- 1. 小说/剧本原文 -->
-    <el-aside width="320px" class="border-r bg-white flex flex-col">
-      <div class="p-4 border-b">
-        <h2 class="text-lg font-bold mb-2">1. 剧本/小说原文</h2>
+    <el-aside width="320px" class="border-r flex flex-col" :class="asideClass">
+      <div class="p-4 border-b" :class="headerClass">
+        <h2 class="text-lg font-bold mb-2" :class="textClass">1. 剧本/小说原文</h2>
         <div class="flex items-center justify-between mb-2">
           <el-select v-model="selectedChapter" placeholder="选择小说章节" size="small" class="w-40" @change="importChapter">
             <el-option 
@@ -25,7 +25,7 @@
           placeholder="在此粘贴小说片段或从上方导入..."
         />
       </div>
-      <div class="p-4 border-t bg-gray-50">
+      <div class="p-4 border-t" :class="isLight ? 'bg-gray-50' : 'bg-slate-800'">
         <el-button type="primary" class="w-full" @click="convertToStandardScript">
           <el-icon class="mr-1"><MagicStick /></el-icon> AI 提取标准剧本
         </el-button>
@@ -33,10 +33,10 @@
     </el-aside>
 
     <!-- 2. 标准剧本 -->
-    <el-aside width="350px" class="border-r bg-gray-50 flex flex-col">
-      <div class="p-4 border-b bg-white">
-        <h2 class="text-lg font-bold">2. 标准剧本</h2>
-        <div class="text-xs text-gray-500 mt-1">含画面、环境、对白/旁白</div>
+    <el-aside width="350px" class="border-r flex flex-col" :class="[asideClass, isLight ? 'bg-gray-50' : 'bg-slate-900']">
+      <div class="p-4 border-b" :class="headerClass">
+        <h2 class="text-lg font-bold" :class="textClass">2. 标准剧本</h2>
+        <div class="text-xs mt-1" :class="subTextClass">含画面、环境、对白/旁白</div>
         <div class="mt-2 flex gap-2">
           <el-select v-model="aspectRatio" size="small" class="flex-1" placeholder="画幅">
              <el-option label="16:9 (横屏)" value="16:9" />
@@ -51,31 +51,31 @@
       </div>
       
       <div class="flex-1 overflow-y-auto p-3 space-y-3">
-        <div v-if="scripts.length === 0" class="text-center text-gray-400 mt-10">
+        <div v-if="scripts.length === 0" class="text-center mt-10" :class="subTextClass">
           <el-icon :size="40"><Document /></el-icon>
           <p class="mt-2 text-sm">等待提取...</p>
         </div>
         
-        <div v-for="(script, idx) in scripts" :key="idx" class="bg-white p-3 rounded shadow-sm border border-l-4 border-l-blue-500 relative">
-          <div class="absolute right-2 top-2 text-xs text-gray-400">#{{ idx + 1 }}</div>
+        <div v-for="(script, idx) in scripts" :key="idx" class="p-3 rounded border border-l-4 border-l-blue-500 relative transition-colors" :class="cardClass">
+          <div class="absolute right-2 top-2 text-xs" :class="subTextClass">#{{ idx + 1 }}</div>
           <div class="mb-2">
             <el-tag size="small" effect="plain" class="mr-1">画面</el-tag>
-            <span class="text-sm font-medium">{{ script.visual }}</span>
+            <span class="text-sm font-medium" :class="textClass">{{ script.visual }}</span>
           </div>
           <div class="mb-2">
              <el-tag size="small" type="success" effect="plain" class="mr-1">环境</el-tag>
-             <span class="text-xs text-gray-600">{{ script.environment }}</span>
+             <span class="text-xs" :class="subTextClass">{{ script.environment }}</span>
           </div>
           <div>
              <el-tag size="small" type="warning" effect="plain" class="mr-1">对白</el-tag>
-             <span class="text-xs text-gray-800 italic">{{ script.dialogue }}</span>
+             <span class="text-xs italic" :class="isLight ? 'text-gray-800' : 'text-slate-300'">{{ script.dialogue }}</span>
           </div>
         </div>
       </div>
 
-      <div class="p-4 border-t bg-white">
+      <div class="p-4 border-t" :class="headerClass">
         <div class="flex items-center justify-between mb-2">
-           <span class="text-xs text-gray-500">每10秒生成一个分镜</span>
+           <span class="text-xs" :class="subTextClass">每10秒生成一个分镜</span>
            <el-input-number v-model="totalDuration" size="small" :min="10" :step="10" style="width: 100px" />
         </div>
         <el-button type="success" class="w-full" @click="generateVisualStoryboards">
@@ -85,25 +85,25 @@
     </el-aside>
 
     <!-- 3. 可视化分镜 -->
-    <el-main class="bg-gray-100 flex flex-col p-0">
-      <div class="p-4 border-b bg-white flex justify-between items-center">
-        <h2 class="text-lg font-bold">3. 可视化分镜 ({{ storyboards.length }} 镜)</h2>
+    <el-main class="flex flex-col p-0 transition-colors" :class="mainClass">
+      <div class="p-4 border-b flex justify-between items-center" :class="headerClass">
+        <h2 class="text-lg font-bold" :class="textClass">3. 可视化分镜 ({{ storyboards.length }} 镜)</h2>
         <el-button type="warning" @click="pushToVideoProduction">
           推送制作 <el-icon class="ml-1"><Upload /></el-icon>
         </el-button>
       </div>
       
       <div class="flex-1 overflow-y-auto p-4">
-        <div v-if="storyboards.length === 0" class="text-center text-gray-400 mt-20">
+        <div v-if="storyboards.length === 0" class="text-center mt-20" :class="subTextClass">
           <el-icon :size="48"><VideoCamera /></el-icon>
           <p class="mt-2">等待生成分镜...</p>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div v-for="(shot, index) in storyboards" :key="shot.id" class="bg-white rounded-lg shadow flex flex-col overflow-hidden">
+          <div v-for="(shot, index) in storyboards" :key="shot.id" class="rounded-lg shadow flex flex-col overflow-hidden transition-colors" :class="cardClass">
             <!-- 头部信息 -->
-            <div class="p-2 border-b bg-gray-50 flex justify-between items-center">
-              <span class="font-bold text-gray-700">分镜 #{{ index + 1 }} ({{ shot.timeStart }}s - {{ shot.timeEnd }}s)</span>
+            <div class="p-2 border-b flex justify-between items-center" :class="isLight ? 'bg-gray-50' : 'bg-slate-800/50'">
+              <span class="font-bold" :class="isLight ? 'text-gray-700' : 'text-slate-300'">分镜 #{{ index + 1 }} ({{ shot.timeStart }}s - {{ shot.timeEnd }}s)</span>
               <el-button size="small" type="danger" link @click="removeShot(index)">删除</el-button>
             </div>
 
@@ -121,16 +121,16 @@
               </div>
               
               <div class="flex-1 p-4 flex flex-col gap-3">
-                <div class="flex justify-between items-center border-b pb-2">
-                  <span class="font-bold text-gray-800">#{{ index + 1 }}</span>
+                <div class="flex justify-between items-center border-b pb-2" :class="isLight ? 'border-gray-100' : 'border-slate-700'">
+                  <span class="font-bold" :class="isLight ? 'text-gray-800' : 'text-slate-200'">#{{ index + 1 }}</span>
                   <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-500">时长</span>
+                    <span class="text-xs" :class="subTextClass">时长</span>
                     <el-input-number v-model="shot.duration" :min="1" :max="10" size="small" controls-position="right" style="width: 80px" />
                   </div>
                 </div>
                 
                 <div>
-                  <div class="text-xs font-bold text-gray-500 mb-1">首帧图描 (Prompt)</div>
+                  <div class="text-xs font-bold mb-1" :class="subTextClass">首帧图描 (Prompt)</div>
                   <el-input 
                     v-model="shot.imagePrompt" 
                     type="textarea" 
@@ -141,12 +141,12 @@
                 </div>
                 
                 <div>
-                  <div class="text-xs font-bold text-gray-500 mb-1">画面描述</div>
-                  <div class="text-gray-800 text-sm bg-gray-50 p-2 rounded">{{ shot.visualDesc }}</div>
+                  <div class="text-xs font-bold mb-1" :class="subTextClass">画面描述</div>
+                  <div class="text-sm p-2 rounded" :class="isLight ? 'bg-gray-50 text-gray-800' : 'bg-slate-800 text-slate-300'">{{ shot.visualDesc }}</div>
                 </div>
                 
                 <div>
-                  <div class="text-xs font-bold text-gray-500 mb-1">配音/台词</div>
+                  <div class="text-xs font-bold mb-1" :class="subTextClass">配音/台词</div>
                   <div class="text-sm bg-blue-50 text-blue-800 p-2 rounded border border-blue-100 italic">"{{ shot.audioContent }}"</div>
                 </div>
               </div>
@@ -159,12 +159,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { Upload, Delete, MagicStick, VideoCamera, Document, ArrowRight, Refresh, Picture } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useLoreStore } from '@/stores/useLoreStore'
 
 const loreStore = useLoreStore()
+const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const containerClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
+const asideClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 backdrop-blur-md'
+  return isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+})
+
+const headerClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/40 border-b border-white/50'
+  return isLight.value ? 'bg-white border-b border-slate-200' : 'bg-slate-800 border-b border-slate-700'
+})
+
+const mainClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-gray-100' : 'bg-slate-900'
+})
+
+const cardClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 shadow-sm backdrop-blur-sm'
+  return isLight.value ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-700 border-slate-600 shadow-sm'
+})
+
+const textClass = computed(() => {
+  if (theme.value === 'dreamy') return 'text-slate-800'
+  return isLight.value ? 'text-slate-800' : 'text-slate-200'
+})
+
+const subTextClass = computed(() => {
+  if (theme.value === 'dreamy') return 'text-slate-500'
+  return isLight.value ? 'text-gray-500' : 'text-slate-400'
+})
 
 const sourceText = ref('')
 const selectedChapter = ref('')

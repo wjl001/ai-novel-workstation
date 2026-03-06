@@ -1,11 +1,11 @@
 <template>
-  <div class="h-full bg-slate-900 text-slate-200 p-8 overflow-y-auto custom-scrollbar">
+  <div class="h-full p-8 overflow-y-auto custom-scrollbar transition-colors duration-300" :class="bgClass">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <div class="flex justify-between items-end mb-8 border-b border-slate-800 pb-6">
+      <div class="flex justify-between items-end mb-8 border-b pb-6" :class="isLight ? 'border-slate-200' : 'border-slate-800'">
         <div>
-          <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">{{ title }}</h1>
-          <p class="text-slate-400">{{ description }}</p>
+          <h1 class="text-3xl font-bold mb-2 tracking-tight" :class="isLight ? 'text-slate-800' : 'text-white'">{{ title }}</h1>
+          <p :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ description }}</p>
         </div>
         <el-button type="primary" size="large" class="shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all bg-indigo-600 border-none" @click="createNew">
           <el-icon class="mr-2"><Plus /></el-icon> 新建剧本
@@ -14,13 +14,13 @@
 
       <!-- Project Grid -->
       <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="i in 3" :key="i" class="bg-slate-800 rounded-xl border border-slate-700 p-5 shadow-lg animate-pulse">
-          <div class="h-40 bg-slate-700 rounded-lg mb-4"></div>
-          <div class="h-6 bg-slate-700 rounded w-3/4 mb-2"></div>
-          <div class="h-4 bg-slate-700 rounded w-1/2 mb-4"></div>
+        <div v-for="i in 3" :key="i" class="rounded-xl border p-5 shadow-lg animate-pulse" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
+          <div class="h-40 rounded-lg mb-4" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
+          <div class="h-6 rounded w-3/4 mb-2" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
+          <div class="h-4 rounded w-1/2 mb-4" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
           <div class="flex justify-between">
-            <div class="h-4 bg-slate-700 rounded w-1/4"></div>
-            <div class="h-4 bg-slate-700 rounded w-1/4"></div>
+            <div class="h-4 rounded w-1/4" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
+            <div class="h-4 rounded w-1/4" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
           </div>
         </div>
       </div>
@@ -28,12 +28,13 @@
         <div 
           v-for="(project, index) in projects" 
           :key="project.id" 
-          class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg hover:shadow-xl hover:border-indigo-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col animate-fade-slide-up"
+          class="rounded-xl border shadow-lg hover:shadow-xl hover:border-indigo-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col animate-fade-slide-up"
+          :class="cardClass"
           :style="{ animationDelay: `${index * 100}ms` }"
           @click="openProject(project.id, 'outline')"
         >
           <!-- Cover Image/Placeholder -->
-          <div class="h-40 bg-slate-900 relative overflow-hidden group-hover:opacity-90 transition-opacity">
+          <div class="h-40 relative overflow-hidden group-hover:opacity-90 transition-opacity" :class="isLight ? 'bg-slate-100' : 'bg-slate-900'">
             <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" @error="(e) => (e.target as HTMLImageElement).src = generateDefaultCover(project.title)" />
             <img v-else :src="generateDefaultCover(project.title)" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div class="absolute top-2 right-2">
@@ -62,10 +63,10 @@
 
           <!-- Content -->
           <div class="p-5 flex-1">
-            <h3 class="font-bold text-lg text-white mb-1 line-clamp-1 group-hover:text-indigo-400 transition-colors">{{ project.title }}</h3>
-            <p class="text-xs text-slate-500 mb-4">更新于 {{ project.updatedAt }}</p>
+            <h3 class="font-bold text-lg mb-1 line-clamp-1 group-hover:text-indigo-400 transition-colors" :class="isLight ? 'text-slate-800' : 'text-white'">{{ project.title }}</h3>
+            <p class="text-xs mb-4" :class="isLight ? 'text-slate-500' : 'text-slate-500'">更新于 {{ project.updatedAt }}</p>
             
-            <div class="flex items-center justify-between text-xs text-slate-400">
+            <div class="flex items-center justify-between text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
               <div class="flex items-center gap-2">
                 <el-icon><User /></el-icon> <span>{{ project.author || '我' }}</span>
               </div>
@@ -77,7 +78,7 @@
           </div>
 
           <!-- Action Footer -->
-          <div class="p-3 bg-slate-800/80 border-t border-slate-700 grid grid-cols-6 gap-1">
+          <div class="p-3 border-t grid grid-cols-6 gap-1" :class="isLight ? 'bg-slate-50/80 border-slate-200' : 'bg-slate-800/80 border-slate-700'">
             <el-tooltip content="管理章节" placement="top">
               <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'chapters')">
                 <el-icon><List /></el-icon>
@@ -187,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, Picture, User, View, Star, Edit, Delete, FolderAdd, List, EditPen, Setting, Download, CopyDocument, Upload, MagicStick, Check, Loading } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -209,6 +210,19 @@ const props = defineProps<{
 
 const isLoading = ref(true)
 const emit = defineEmits(['create', 'open'])
+
+const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
+const cardClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 hover:shadow-xl hover:bg-white/80 backdrop-blur-sm'
+  return isLight.value ? 'bg-white border-slate-200 hover:shadow-xl' : 'bg-slate-800 border-slate-700 hover:shadow-indigo-500/10 hover:border-indigo-500/30'
+})
 
 // Mock Data
 const projects = ref<any[]>([])

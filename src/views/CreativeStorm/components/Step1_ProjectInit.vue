@@ -93,15 +93,17 @@
         </div>
       </div>
     </div>
+    </div>
 
     <!-- Right: Specs Setting -->
-    <div class="w-96 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
-      <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
-        <div class="bg-orange-100 text-orange-600 p-2 rounded-lg">
-          <el-icon><Setting /></el-icon>
+    <div class="w-96 rounded-xl flex flex-col transition-colors duration-300" :class="cardClass">
+      <div class="p-6 flex flex-col h-full">
+        <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+          <div class="bg-orange-100 text-orange-600 p-2 rounded-lg">
+            <el-icon><Setting /></el-icon>
+          </div>
+          <h3 class="font-bold text-lg text-slate-800">节点 B: 规格设定</h3>
         </div>
-        <h3 class="font-bold text-lg text-slate-800">节点 B: 短剧规格设定</h3>
-      </div>
 
       <div class="space-y-8">
         <!-- Scale Selection -->
@@ -181,14 +183,14 @@
             <el-icon class="mt-0.5"><InfoFilled /></el-icon>
             <span>AI 将根据标签自动调整后续剧本节奏 (例如: 男频更注重打脸速度，女频更注重情感拉扯)</span>
           </div>
-        </div>
+      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, inject, computed } from 'vue'
 import { 
   Notebook, Setting, Select, MagicStick, Film, User, 
   Female, Male, WarnTriangleFilled, InfoFilled 
@@ -199,6 +201,14 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:projectData'])
+
+const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const cardClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 backdrop-blur-md shadow-sm'
+  return 'bg-white border-slate-200 shadow-sm'
+})
 
 const localData = ref(props.projectData)
 

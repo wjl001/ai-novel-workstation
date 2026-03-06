@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-slate-50">
+  <div class="h-full flex flex-col transition-colors duration-300" :class="bgClass">
     <ProjectList 
       v-if="!isCreating"
       title="AI 剧本创作"
@@ -11,7 +11,7 @@
 
     <div v-else class="h-full flex flex-col">
       <!-- Top Progress Bar -->
-      <header class="bg-white border-b border-slate-200 px-6 py-3 shadow-sm z-10">
+      <header class="px-6 py-3 z-10 transition-colors duration-300" :class="headerClass">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
             <el-button circle size="small" :icon="ArrowLeft" class="mr-2" @click="isCreating = false" />
@@ -19,8 +19,8 @@
               <el-icon><VideoCameraFilled /></el-icon>
             </div>
             <div>
-              <h1 class="font-bold text-lg leading-tight text-slate-800">AI 剧本创作</h1>
-              <div class="text-xs text-slate-500">从网文 IP 到视觉工业化生产</div>
+              <h1 class="font-bold text-lg leading-tight" :class="isLight ? 'text-slate-800' : 'text-white'">AI 剧本创作</h1>
+              <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">从网文 IP 到视觉工业化生产</div>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { VideoCameraFilled, ArrowRight, ArrowLeft, Check } from '@element-plus/icons-vue'
 import ProjectList from '@/components/Common/ProjectList.vue'
 import Step1_ProjectInit from './components/Step1_ProjectInit.vue'
@@ -68,6 +68,19 @@ import Step2_StoryBoard from './components/Step2_StoryBoard.vue'
 import Step3_VisualTranslation from './components/Step3_VisualTranslation.vue'
 import Step4_AssetPublishing from './components/Step4_AssetPublishing.vue'
 import { ElMessage } from 'element-plus'
+
+const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
+const headerClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-b border-white/50 shadow-sm backdrop-blur-md'
+  return isLight.value ? 'bg-white border-b border-slate-200 shadow-sm' : 'bg-slate-800 border-b border-slate-700 shadow-sm'
+})
 
 const isCreating = ref(false)
 const activeStep = ref(1)

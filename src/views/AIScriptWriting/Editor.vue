@@ -1,11 +1,11 @@
 <template>
-  <div v-show="!showAiOverlay && !showFiveSensesDialog" class="h-full flex flex-col transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-100'">
+  <div v-show="!showAiOverlay && !showFiveSensesDialog" class="h-full flex flex-col transition-colors duration-300" :class="bgClass">
     <StepIndicator :active-index="2" />
     <el-container class="flex-1 overflow-hidden">
     <!-- Module B: Lore Hub (左侧侧边栏) -->
     <div class="relative transition-all duration-300 border-r flex flex-col h-full overflow-visible" 
       :style="{ width: showLeftSidebar ? '280px' : '0px' }"
-      :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'"
+      :class="sidebarClass"
     >
       <!-- Toggle Button (Floating outside when closed, or inside when open?) -->
       <div 
@@ -265,7 +265,7 @@
           :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'"
         >
           <!-- Input Area -->
-          <div class="p-2 border-b flex items-center gap-2" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800 border-slate-700'">
+          <div class="p-2 border-b flex items-center gap-2" :class="bubbleMenuInputClass">
              <div class="flex-1 relative">
                 <input 
                   v-model="aiCommandInput" 
@@ -284,7 +284,7 @@
           </div>
 
           <!-- Quick Actions -->
-          <div class="grid grid-cols-4 gap-1 p-2 border-b" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
+          <div class="grid grid-cols-4 gap-1 p-2 border-b" :class="bubbleMenuSectionClass">
              <button class="flex flex-col items-center justify-center gap-1 py-2 rounded transition-colors text-xs" :class="isLight ? 'hover:bg-slate-100 text-slate-500 hover:text-indigo-600' : 'hover:bg-slate-700 text-slate-400 hover:text-indigo-400'" @click="aiAction('continue')">
                <el-icon><EditPen /></el-icon> 续写
              </button>
@@ -300,7 +300,7 @@
           </div>
 
           <!-- Recommendations -->
-          <div class="p-3" :class="isLight ? 'bg-white' : 'bg-slate-800'">
+          <div class="p-3" :class="bubbleMenuFooterClass">
              <div class="text-xs mb-2 font-medium" :class="isLight ? 'text-slate-500' : 'text-slate-500'">推荐指令</div>
              <div class="space-y-1">
                 <button 
@@ -334,7 +334,7 @@
     <!-- Right Panel: AI Assistant (右侧 AI 助手) -->
     <div class="relative transition-all duration-300 border-l flex flex-col h-full overflow-visible" 
       :style="{ width: showAiSidePanel ? '320px' : '0px' }"
-      :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'"
+      :class="rightPanelClass"
     >
       <!-- Toggle Button -->
       <div 
@@ -351,18 +351,18 @@
 
       <!-- Content -->
       <div v-show="showAiSidePanel" class="flex flex-col h-full w-full overflow-hidden">
-        <div class="p-0 border-b flex items-center justify-between" :class="isLight ? 'border-slate-200 bg-white' : 'border-slate-700 bg-slate-800'">
+        <div class="p-0 border-b flex items-center justify-between" :class="rightPanelHeaderClass">
           <div class="flex-1 flex">
              <div 
                class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-               :class="activeRightTab === 'chat' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
+               :class="activeTabClass(activeRightTab === 'chat')"
                @click="activeRightTab = 'chat'"
              >
                 <el-icon class="mr-1"><ChatDotRound /></el-icon> AI 助手
              </div>
              <div 
                class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-               :class="activeRightTab === 'script' ? (isLight ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30') : (isLight ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')"
+               :class="activeTabClass(activeRightTab === 'script')"
                @click="activeRightTab = 'script'"
              >
                 <el-icon class="mr-1"><VideoCamera /></el-icon> 短剧优化
@@ -886,6 +886,58 @@ const fiveSensesContent = reactive<Record<string, string>>({
 const isGeneratingSense = ref(false)
 
 const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
+
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent text-slate-800'
+  return isLight.value ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-100'
+})
+
+const sidebarClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-slate-200/50 backdrop-blur-md'
+  return isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+})
+
+const bubbleMenuClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/80 border-white/50 backdrop-blur-xl shadow-2xl'
+  return isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+})
+
+const bubbleMenuInputClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/40 border-b border-white/50'
+  return isLight.value ? 'bg-slate-50 border-slate-200' : 'bg-slate-800 border-slate-700'
+})
+
+const bubbleMenuSectionClass = computed(() => {
+  if (theme.value === 'dreamy') return 'border-b border-white/50'
+  return isLight.value ? 'border-slate-200' : 'border-slate-700'
+})
+
+const bubbleMenuFooterClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/30'
+  return isLight.value ? 'bg-white' : 'bg-slate-800'
+})
+
+const rightPanelClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-l border-white/50 backdrop-blur-md'
+  return isLight.value ? 'bg-white border-l border-slate-200' : 'bg-slate-800 border-l border-slate-700'
+})
+
+const rightPanelHeaderClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/40 border-b border-white/50'
+  return isLight.value ? 'border-slate-200 bg-white' : 'border-slate-700 bg-slate-800'
+})
+
+const activeTabClass = (isActive: boolean) => {
+  if (theme.value === 'dreamy') {
+    return isActive 
+      ? 'border-indigo-500 text-indigo-600 bg-white/50' 
+      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-white/30'
+  }
+  return isActive 
+    ? (isLight.value ? 'border-indigo-500 text-indigo-600 bg-slate-50' : 'border-indigo-500 text-indigo-400 bg-slate-700/30')
+    : (isLight.value ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-300')
+}
 
 const editor = useEditor({
   content: '',

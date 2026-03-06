@@ -402,9 +402,35 @@ import { useLoreStore, type Chapter } from '@/stores/useLoreStore'
 import StepIndicator from '@/components/StepIndicator.vue'
 
 const isLight = inject('isLight', ref(false))
+const theme = inject('theme', ref('dark'))
 const route = useRoute()
 const router = useRouter()
 const loreStore = useLoreStore()
+
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent text-slate-800'
+  return isLight.value ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-50'
+})
+
+const mainClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+})
+
+const cardClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 shadow-sm backdrop-blur-sm'
+  return isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'
+})
+
+const outlineListClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 shadow-sm backdrop-blur-sm'
+  return isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+})
+
+const outlineHeaderClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-white/40 border-white/50'
+  return isLight.value ? 'bg-slate-50 border-slate-200' : 'bg-slate-800/50 border-slate-700'
+})
 
 // State
 const step = ref<'outline' | 'chapters'>('outline')

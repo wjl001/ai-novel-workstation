@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full transition-colors duration-500" :class="isLight ? 'bg-slate-50 text-slate-800' : 'text-slate-100'">
+  <div class="h-full transition-colors duration-500" :class="bgClass">
     <ProjectList 
       v-if="!isCreating"
       title="一支笔"
@@ -15,7 +15,7 @@
       
       <div class="max-w-7xl mx-auto p-6">
         <!-- Header & Top Actions -->
-        <div class="flex items-center justify-between mb-8 sticky top-0 z-50 p-4 rounded-xl backdrop-blur-md transition-colors" :class="isLight ? 'bg-white/80 shadow-sm' : 'bg-slate-900/80 shadow-md border border-slate-700/50'">
+        <div class="flex items-center justify-between mb-8 sticky top-0 z-50 p-4 rounded-xl backdrop-blur-md transition-colors" :class="headerClass">
           <div class="flex items-center">
             <el-button :icon="ArrowLeft" circle class="mr-4 transition-colors" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-100' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700'" @click="exitCreation" />
             <div>
@@ -75,7 +75,7 @@
         <div class="lg:col-span-4 space-y-6">
           
           <!-- Control Panel -->
-          <div class="rounded-3xl border shadow-2xl relative overflow-hidden group transition-all" :class="isLight ? 'bg-white border-slate-200' : 'bg-[#0B1120] border-slate-800/60'">
+          <div class="rounded-3xl border shadow-2xl relative overflow-hidden group transition-all" :class="controlPanelClass">
             <!-- Background Decorations -->
             <div class="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none" :class="isLight ? 'bg-indigo-200/20' : 'bg-indigo-500/5'"></div>
             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl pointer-events-none" :class="isLight ? 'bg-purple-200/20' : 'bg-purple-500/5'"></div>
@@ -100,7 +100,11 @@
                   <template #reference>
                     <el-button 
                       class="w-full !justify-between !h-12 !px-4 !rounded-xl !border transition-all group"
-                      :class="isLight ? '!bg-slate-50 !border-slate-200 hover:!border-purple-300 !text-slate-700' : '!bg-slate-800/40 !border-slate-700/50 hover:!border-purple-500/30 !text-slate-200'"
+                      :class="[
+                        theme === 'dreamy' ? '!bg-white/40 !border-white/50 hover:!border-purple-300 !text-slate-700' : 
+                        isLight ? '!bg-slate-50 !border-slate-200 hover:!border-purple-300 !text-slate-700' : 
+                        '!bg-slate-800/40 !border-slate-700/50 hover:!border-purple-500/30 !text-slate-200'
+                      ]"
                       @click="showGenreDialog = true"
                     >
                       <span :class="!form.genre && 'opacity-50'">
@@ -158,7 +162,11 @@
                   <template #reference>
                     <div 
                       class="w-full min-h-[48px] rounded-xl border p-2 cursor-pointer transition-all hover:border-pink-500/50 flex flex-wrap gap-2 items-center group relative"
-                      :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800/40 border-slate-700/50'"
+                      :class="[
+                        theme === 'dreamy' ? 'bg-white/40 border-white/50' : 
+                        isLight ? 'bg-slate-50 border-slate-200' : 
+                        'bg-slate-800/40 border-slate-700/50'
+                      ]"
                       @click="showStyleDialog = true"
                     >
                       <span v-if="form.styles.length === 0" class="text-sm px-2 opacity-50 transition-opacity" :class="isLight ? 'text-slate-500' : 'text-slate-400'">
