@@ -128,7 +128,7 @@
 | 字段 | 类型 | 描述 |
 | :--- | :--- | :--- |
 | `chapter_index` | Integer | 章节序号 (1-based) |
-| `title` | String | 章节标题（如：第1章 霓虹雨下的交易） |
+| `title` | String | 章节标题（如：第1章 烽火初燃 血洗村庄） |
 | `summary` | Text | 章节剧情简述（200字以内） |
 | `beat_tags` | Array | [可选] 节拍标签（如：激励事件、高潮） |
 

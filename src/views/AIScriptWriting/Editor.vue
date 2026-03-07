@@ -1,31 +1,30 @@
 <template>
-  <div v-show="!showAiOverlay && !showFiveSensesDialog" class="h-full flex flex-col transition-colors duration-300" :class="bgClass">
+  <div v-show="!showAiOverlay && !showFiveSensesDialog" class="aisw-scale h-full flex flex-col transition-colors duration-300" :class="bgClass">
     <StepIndicator :active-index="2" />
-    <el-container class="flex-1 overflow-hidden">
+    <el-container class="flex-1 overflow-hidden relative">
+    <div 
+      class="absolute top-1/2 z-50 transform -translate-y-1/2 -translate-x-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-r border-y border-r shadow-md transition-all"
+      :style="{ left: showLeftSidebar ? '220px' : '0px' }"
+      :class="isLight ? 'bg-white border-slate-200 hover:bg-slate-50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'"
+      @click="showLeftSidebar = !showLeftSidebar"
+      :title="showLeftSidebar ? '收起侧边栏' : '展开侧边栏'"
+    >
+      <el-icon :size="12" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+        <DArrowLeft v-if="showLeftSidebar" />
+        <DArrowRight v-else />
+      </el-icon>
+    </div>
     <!-- Module B: Lore Hub (左侧侧边栏) -->
     <div class="relative transition-all duration-300 border-r flex flex-col h-full overflow-visible" 
-      :style="{ width: showLeftSidebar ? '280px' : '0px' }"
+      :style="{ width: showLeftSidebar ? '220px' : '0px' }"
       :class="sidebarClass"
     >
-      <!-- Toggle Button (Floating outside when closed, or inside when open?) -->
-      <div 
-        class="absolute top-1/2 -right-3 z-50 transform -translate-y-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-r border-y border-r shadow-md transition-colors"
-        :class="isLight ? 'bg-white border-slate-200 hover:bg-slate-50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'"
-        @click="showLeftSidebar = !showLeftSidebar"
-        :title="showLeftSidebar ? '收起侧边栏' : '展开侧边栏'"
-      >
-        <el-icon :size="12" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
-          <DArrowLeft v-if="showLeftSidebar" />
-          <DArrowRight v-else />
-        </el-icon>
-      </div>
-
       <!-- Content (Only visible when width > 0) -->
       <div v-show="showLeftSidebar" class="flex flex-col h-full w-full overflow-hidden">
         <!-- 顶部返回 -->
         <div class="p-4 border-b flex-shrink-0" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
            <el-button link class="hover:text-indigo-500" :class="isLight ? 'text-slate-500' : 'text-slate-300 hover:text-white'" @click="goBack">
-              <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回章节管理
+              <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回剧集管理
            </el-button>
         </div>
 
@@ -37,12 +36,12 @@
             <el-collapse-item name="chapters">
               <template #title>
                 <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                  <el-icon><Reading /></el-icon> 章节列表
+                  <el-icon><Reading /></el-icon> 剧集列表
                 </div>
               </template>
               
               <div v-if="loreStore.currentNovel.chapters.length === 0" class="text-center py-4 text-sm" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-                暂无章节，请先生成大纲
+                暂无剧集，请先生成大纲
               </div>
 
               <div 
@@ -64,188 +63,32 @@
               </div>
             </el-collapse-item>
 
-            <!-- 角色管理 -->
-            <el-collapse-item name="characters">
-              <template #title>
-                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                  <el-icon><User /></el-icon> 角色卡片
-                </div>
-              </template>
-              <div class="px-2 mb-2 flex gap-2">
-                 <el-button 
-                   class="flex-1"
-                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
-                   size="small" 
-                   :loading="isGeneratingCharacters"
-                   @click="autoGenerateCharacters"
-                 >
-                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openSelectCharacterDialog"
-                 >
-                   <el-icon><MoreFilled /></el-icon>
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openAddCharacterDialog"
-                 >
-                   <el-icon><Plus /></el-icon>
-                 </el-button>
-              </div>
-              
-              <div v-if="loreStore.characters.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-                暂无角色，点击上方按钮生成或添加
-              </div>
-
-              <div v-for="char in loreStore.characters" :key="char.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editCharacter(char)">
-                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteCharacter(char.id)"><Delete /></el-icon>
-                </div>
-                <div class="flex items-center gap-2 mb-1">
-                   <el-avatar :size="24" :src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + char.name" />
-                   <div class="font-bold text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ char.name }}</div>
-                </div>
-                <div class="text-xs line-clamp-2 mb-1" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ char.role }}</div>
-                <div class="flex gap-1 flex-wrap">
-                  <el-tag v-if="char.age" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-90 origin-left !px-1">{{ char.age }}</el-tag>
-                  <el-tag v-if="char.gender" size="small" type="info" :effect="isLight ? 'light' : 'dark'" class="scale-90 origin-left !px-1">{{ char.gender }}</el-tag>
-                </div>
-              </div>
-            </el-collapse-item>
-
-            <!-- 道具管理 -->
-            <el-collapse-item name="props">
-              <template #title>
-                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                  <el-icon><Goods /></el-icon> 道具物品
-                </div>
-              </template>
-              <div class="px-2 mb-2 flex gap-2">
-                 <el-button 
-                   class="flex-1"
-                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
-                   size="small" 
-                   :loading="isGeneratingProps"
-                   @click="autoGenerateProps"
-                 >
-                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openSelectPropDialog"
-                 >
-                   <el-icon><MoreFilled /></el-icon>
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openAddPropDialog"
-                 >
-                   <el-icon><Plus /></el-icon>
-                 </el-button>
-              </div>
-              
-              <div v-if="loreStore.props.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-                暂无道具，点击上方按钮生成或添加
-              </div>
-
-              <div v-for="prop in loreStore.props" :key="prop.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editProp(prop)">
-                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteProp(prop.id)"><Delete /></el-icon>
-                </div>
-                <div class="font-bold text-sm mb-1" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ prop.name }}</div>
-                <div class="text-xs line-clamp-2" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ prop.description }}</div>
-              </div>
-            </el-collapse-item>
-
-            <!-- 场景管理 -->
-            <el-collapse-item name="scenes">
-              <template #title>
-                <div class="flex items-center gap-2 font-medium px-2" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
-                  <el-icon><Location /></el-icon> 场景地点
-                </div>
-              </template>
-              <div class="px-2 mb-2 flex gap-2">
-                 <el-button 
-                   class="flex-1"
-                   :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-200 hover:!bg-indigo-600/30'"
-                   size="small" 
-                   :loading="isGeneratingScenes"
-                   @click="autoGenerateScenes"
-                 >
-                   <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openSelectSceneDialog"
-                 >
-                   <el-icon><MoreFilled /></el-icon>
-                 </el-button>
-                 <el-button 
-                   class="px-3"
-                   :class="isLight ? '!bg-white !border-slate-300 !text-slate-600 hover:!bg-slate-50' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'"
-                   plain 
-                   size="small" 
-                   @click="openAddSceneDialog"
-                 >
-                   <el-icon><Plus /></el-icon>
-                 </el-button>
-              </div>
-              
-              <div v-if="loreStore.scenes.length === 0" class="text-center py-4 text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-                暂无场景，点击上方按钮生成或添加
-              </div>
-
-              <div v-for="scene in loreStore.scenes" :key="scene.id" class="mb-2 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer group relative" :class="isLight ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'" @click="editScene(scene)">
-                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <el-icon class="hover:text-red-400" :class="isLight ? 'text-slate-400' : 'text-slate-300'" @click.stop="deleteScene(scene.id)"><Delete /></el-icon>
-                </div>
-                <div class="font-bold text-sm mb-1" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ scene.name }}</div>
-                <div class="text-xs line-clamp-2" :class="isLight ? 'text-slate-500' : 'text-slate-300'">{{ scene.description }}</div>
-              </div>
-            </el-collapse-item>
-
           </el-collapse>
         </div>
       </div>
     </div>
 
     <!-- Module C: Immersive Editor (中间编辑器) -->
-    <el-main class="relative flex flex-col items-center pt-8 px-8 custom-scrollbar transition-colors" :class="isLight ? 'bg-slate-50 bg-dot-pattern-light' : 'bg-slate-900 bg-dot-pattern-dark'">
+    <el-main class="relative flex flex-col items-center pt-6 px-4 custom-scrollbar transition-colors" :class="isLight ? 'bg-slate-50 bg-dot-pattern-light' : 'bg-slate-900 bg-dot-pattern-dark'">
       <!-- Process Indicator -->
        <!-- Removed as requested -->
 
       <!-- 编辑器顶部工具栏 -->
       <div class="w-full max-w-full mb-6 flex items-center justify-between text-sm sticky top-0 backdrop-blur z-10 py-2 mt-6 border-b transition-colors" :class="isLight ? 'bg-slate-50/90 border-slate-200 text-slate-500' : 'bg-slate-900/90 border-slate-800 text-slate-300'">
         <div class="flex items-center gap-2">
-           <span class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ currentChapter?.title || '未选择章节' }}</span>
+           <span class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-100'">{{ currentChapter?.title || '未选择剧集' }}</span>
            <el-tag v-if="isAutoWriting" type="success" size="small" :effect="isLight ? 'light' : 'dark'" class="animate-pulse" :class="isLight ? '!bg-green-50 !border-green-200 !text-green-600' : '!bg-green-900/50 !border-green-800 !text-green-300'">AI 正在撰写中...</el-tag>
         </div>
         <div class="flex items-center gap-4">
            <el-tooltip content="字数统计" placement="bottom">
               <span class="flex items-center gap-1"><el-icon><DataLine /></el-icon> {{ editor?.storage.characterCount.words() || 0 }} 字</span>
            </el-tooltip>
-           <el-tooltip content="影视化对接" placement="bottom">
-              <el-button size="small" :class="isLight ? '!bg-purple-50 !border-purple-200 !text-purple-600 hover:!bg-purple-100' : '!bg-purple-600/20 !border-purple-500/30 !text-purple-300 hover:!bg-purple-600/30'" @click="{ showAiSidePanel = true; activeRightTab = 'script'; }">
-                <el-icon class="mr-1"><VideoCamera /></el-icon> 对接 AI 短剧
-              </el-button>
-           </el-tooltip>
+           <el-button size="small" :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-300 hover:!bg-indigo-600/30'" @click="{ showAiSidePanel = true; activeRightTab = 'script'; }">
+             <el-icon class="mr-1"><MagicStick /></el-icon> 短剧优化
+           </el-button>
+           <el-button size="small" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!border-indigo-300 hover:!text-indigo-600' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white'" @click="goToShortDramaPlatform">
+             <el-icon class="mr-1"><VideoCamera /></el-icon> 对接AI短剧
+           </el-button>
            <el-tooltip v-if="!showAiSidePanel" content="打开 AI 助手" placement="bottom">
               <el-button circle size="small" :icon="ChatDotRound" :class="isLight ? '!bg-white !border-slate-300 !text-slate-500 hover:!text-slate-700' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white'" @click="{ showAiSidePanel = true; activeRightTab = 'chat'; }" />
            </el-tooltip>
@@ -255,6 +98,11 @@
 
       <div class="w-full max-w-full h-full relative">
         <editor-content :editor="editor" class="prose max-w-none focus:outline-none min-h-[70vh] pb-40 w-full" :class="isLight ? 'prose-slate' : 'prose-invert prose-slate'" />
+        <div class="sticky bottom-0 z-30 py-3 backdrop-blur-md border-t flex justify-end" :class="isLight ? 'bg-white/90 border-slate-200' : 'bg-slate-900/90 border-slate-800'">
+          <el-button type="primary" size="large" class="!h-11 !px-8 !rounded-xl !font-bold shadow-lg shadow-indigo-500/30 !bg-[#4f46e5] !border-[#4f46e5] hover:!bg-[#4338ca] hover:!border-[#4338ca] hover:-translate-y-0.5 transition-all" @click="saveCurrentChapter">
+            <el-icon class="mr-2"><Check /></el-icon> 保存
+          </el-button>
+        </div>
         
         <!-- Enhanced Bubble Menu -->
         <bubble-menu
@@ -443,7 +291,7 @@
       <template #footer>
         <el-button @click="showIdeaDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
         <el-button type="primary" :loading="isGeneratingOutline" @click="startGenerateOutline" :class="isLight ? '' : '!bg-indigo-600 border-none'">
-          生成完整大纲与章节
+          生成完整大纲与剧集
         </el-button>
       </template>
     </el-dialog>
@@ -761,7 +609,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import CharacterCount from '@tiptap/extension-character-count'
-import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft } from '@element-plus/icons-vue'
+import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft, Check } from '@element-plus/icons-vue'
 import { useLoreStore, type Character, type Prop, type Scene } from '@/stores/useLoreStore'
 import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
@@ -975,7 +823,7 @@ onMounted(() => {
       targetChapter = {
         id: Date.now().toString(),
         title: chapterTitle as string,
-        outline: 'AI 自动生成的章节大纲...',
+        outline: 'AI 自动生成的剧集大纲...',
         content: ''
       }
       loreStore.addChapter(targetChapter)
@@ -994,30 +842,129 @@ onMounted(() => {
 // --- Methods ---
 
 const goBack = () => {
+  // 保存当前章节内容到 Store
+  if (currentChapterId.value && editor.value) {
+    loreStore.updateChapter(currentChapterId.value, { content: editor.value.getHTML() })
+  }
+  
+  // 确保数据同步到缓存，以便 NovelGenerator 回显
   sessionStorage.setItem('novel_generator_chapters_cache', JSON.stringify(loreStore.currentNovel.chapters || []))
-  router.push({ name: 'novel-generator', query: { step: 'chapters' } })
+  
+  // 返回到剧集管理页面（携带正确的 ID）
+  const projectId = route.query.id || '1' // 默认 ID 1
+  router.push({ 
+    name: 'novel-generator', 
+    query: { 
+      id: projectId.toString(),
+      step: 'chapters' 
+    } 
+  })
+}
+
+const saveCurrentChapter = () => {
+  if (!currentChapterId.value || !editor.value) {
+    ElMessage.warning('请先选择章节')
+    return
+  }
+  loreStore.updateChapter(currentChapterId.value, { content: editor.value.getHTML() })
+  ElMessage.success('已保存')
+}
+
+const goToShortDramaPlatform = () => {
+  const chapterId = currentChapterId.value || ''
+  const chapterTitle = currentChapter.value?.title || ''
+  const content = editor.value?.getHTML() || ''
+  sessionStorage.setItem('short_drama_chapter_draft', JSON.stringify({ chapterId, chapterTitle, content }))
+  router.push({ name: 'script-creative', query: { chapterId, chapterTitle } })
+}
+
+const buildScriptFormatPrompt = (title: string, outline: string) => {
+  const safeOutline = outline || '待定'
+  return [
+    '请严格按照以下示例格式输出正文，不允许改动标签、顺序、符号，必须完整输出：',
+    '【角色清单】',
+    '',
+    '【男主】赵铁牛',
+    '年龄：26岁',
+    '身份：淮西铁匠/义军领袖',
+    '音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强',
+    '性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力',
+    '背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉',
+    '外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾',
+    '关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明',
+    '成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力',
+    '----------------------------------------',
+    '【反派】耶律齐',
+    '年龄：35岁',
+    '身份：元军百户长',
+    '性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳',
+    '音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗',
+    '背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法',
+    '外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓',
+    '关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵',
+    '关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡',
+    '----------------------------------------',
+    '【道具清单】',
+    '道具名称（用途）',
+    '----------------------------------------',
+    '【场景信息】',
+    '地点：',
+    '时间：',
+    '天气：',
+    '氛围：',
+    '背景环境：',
+    '----------------------------------------',
+    '【分镜 01】',
+    '',
+    '镜头：',
+    '画面：',
+    '人物：',
+    '动作：',
+    '',
+    '镜头：',
+    '画面：',
+    '人物：',
+    '动作：',
+    '',
+    '镜头：',
+    '画面：',
+    '人物：',
+    '动作：',
+    '对白：',
+    '',
+    '镜头：',
+    '画面：',
+    '人物：',
+    '动作：',
+    '对白：',
+    '',
+    '补充要求：',
+    `剧集标题：${title}`,
+    `剧集梗概：${safeOutline}`,
+    `写作风格：${loreStore.currentNovel.genre || '通用'}`,
+    '输出要求：',
+    '1. 只输出正文，不要解释。',
+    '2. 每一项都必须填写，未知填“待定”。',
+    '3. 保持分隔线样式与标签格式完全一致。'
+  ].join('\n')
 }
 
 const startAutoAiWriting = (title: string) => {
   isAutoWriting.value = true
   if (editor.value) {
-    editor.value.commands.setContent(`<h2>${title}</h2><p><i>（AI 正在构思场景...）</i></p><br>`)
-    
-    setTimeout(() => {
-      if (editor.value) {
-        editor.value.commands.setContent(`<h2>${title}</h2>`)
-        streamLLMResponse(
-          `撰写章节：${title}。风格：${loreStore.currentNovel.genre}。`,
-          (chunk) => {
-            editor.value?.commands.insertContent(chunk)
-          },
-          () => {
-             isAutoWriting.value = false
-             ElMessage.success('AI 撰写完成！')
-          }
-        )
+    const chapter = loreStore.currentNovel.chapters.find(c => c.title === title)
+    const outline = chapter?.outline || ''
+    editor.value.commands.setContent('')
+    streamLLMResponse(
+      buildScriptFormatPrompt(title, outline),
+      (chunk) => {
+        editor.value?.commands.insertContent(chunk)
+      },
+      () => {
+        isAutoWriting.value = false
+        ElMessage.success('AI 撰写完成！')
       }
-    }, 1500)
+    )
   }
 }
 
@@ -1046,10 +993,11 @@ const startGenerateOutline = async () => {
   loreStore.currentNovel.chapters = []
   
   const mockChapters = [
-    { title: '第一章：神秘的开端', outline: '主角在日常生活中发现了异常...' },
-    { title: '第二章：意外的相遇', outline: '遇到了一位神秘的导师...' },
-    { title: '第三章：初次试炼', outline: '主角被迫面对第一次挑战...' },
-    { title: '第四章：真相的一角', outline: '发现世界背后的秘密...' },
+    { title: '烽火初燃 血洗村庄', outline: '边境村庄被毁，主角立誓复仇' },
+    { title: '牢狱结义 共谋越狱', outline: '狱中结识豪杰，策划逃亡' },
+    { title: '越狱风云 暗道逃生', outline: '利用暗道躲避追兵' },
+    { title: '揭竿而起 聚民为军', outline: '黑风岭起义' },
+    { title: '初战告捷 反抗伊始', outline: '设伏大破官兵' },
   ]
 
   mockChapters.forEach((c, i) => {
@@ -1517,8 +1465,8 @@ const deriveLocationFromChapters = (): string => {
   let text = chapters.map(c => c.outline || '').join('。')
   text = text.replace(/AI|自动|生成|章节|大纲|标题|内容|总结|提示/gi, '').trim()
   const candidates = [
-    '地下诊所','数据中心','荒坂塔','高速公路','酒吧','旅店','森林','山谷','海滩','学校',
-    '病房','办公室','仓库','码头','公寓','街区','小巷','车站','广场','工厂','屋顶','射击场'
+    '破庙','将军府','黑风寨','官道','客栈','皇宫','森林','山谷','战场','军营',
+    '牢房','密室','悬崖','码头','集市','小巷','荒野','城门','演武场','铁匠铺'
   ]
   for (const p of candidates) {
     const re = new RegExp(p)
@@ -1529,9 +1477,9 @@ const deriveLocationFromChapters = (): string => {
   const invalid = /AI|自动|生成|章节|大纲/i.test(firstSentence) || firstSentence.length < 2
   if (!invalid) return firstSentence.slice(0, 20)
   // 根据文本线索给出更贴近“场景地点”的默认值
-  if (/雨|夜|黑暗|霓虹/.test(chapters.map(c => c.outline || '').join(''))) return '霓虹街区'
-  if (/塔|公司|系统|数据/.test(chapters.map(c => c.outline || '').join(''))) return '数据中心'
-  return '地下诊所'
+  if (/雨|夜|黑暗|烽火/.test(chapters.map(c => c.outline || '').join(''))) return '边境荒野'
+  if (/塔|公司|系统|数据|军营/.test(chapters.map(c => c.outline || '').join(''))) return '敌军大营'
+  return '破庙'
 }
 // Fallback generator when AI response fails
 const generateFallbackScenes = () => {
@@ -1542,13 +1490,13 @@ const generateFallbackScenes = () => {
     const first = summary.split(/，|。|,|\./)[0] || '未知地点'
     scenes.push({
       name: `${first}`.slice(0, 20),
-      atmosphere: summary.match(/夜|黑暗|雨/) ? '阴郁' : '紧张',
+      atmosphere: summary.match(/夜|黑暗|雨/) ? '阴郁' : '肃杀',
       description: summary.slice(0, 60)
     })
   })
   if (scenes.length === 0) {
-    scenes.push({ name: '地下诊所', atmosphere: '紧张', description: '狭窄走廊与闪烁灯光，空气中弥漫消毒水味' })
-    scenes.push({ name: '数据中心', atmosphere: '冰冷', description: '机柜纵横的密集空间，风扇嗡鸣如潮' })
+    scenes.push({ name: '破庙', atmosphere: '荒凉', description: '断壁残垣，杂草丛生，佛像倒塌' })
+    scenes.push({ name: '敌军大营', atmosphere: '肃杀', description: '旌旗蔽日，刀枪林立，巡逻严密' })
   }
   processSceneItems(scenes.slice(0, 5))
 }
@@ -1715,8 +1663,14 @@ const appendAiChanges = () => {
 
 const aiContinue = () => {
   if (!editor.value) return
+  const context = editor.value.getText().slice(-800)
+  const prompt = [
+    '请严格沿用以下已有正文的格式继续生成后续内容，保持标签、顺序、符号完全一致：',
+    context || '暂无正文',
+    '要求：只输出正文，不要解释。继续补充分镜内容，保持“----------------------------------------”分隔线样式不变。'
+  ].join('\n')
   isAutoWriting.value = true
-  streamLLMResponse('续写', (chunk) => {
+  streamLLMResponse(prompt, (chunk) => {
       editor.value?.commands.insertContent(chunk)
   }, () => isAutoWriting.value = false)
 }
@@ -1880,5 +1834,8 @@ onBeforeUnmount(() => {
 :deep(.dark-tabs.el-tabs--border-card .el-tabs__content) {
   padding: 1rem;
   background-color: #1e293b;
+}
+.aisw-scale {
+  font-size: 1.1rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="novel-generator h-full overflow-hidden flex flex-col transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-50'">
+  <div class="novel-generator aisw-scale h-full overflow-hidden flex flex-col transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-50'">
     <StepIndicator :active-index="activeStepIndex" />
     
     <div class="flex-1 flex overflow-hidden">
@@ -49,24 +49,46 @@
               <!-- Outline List -->
               <div class="rounded-xl shadow-sm border transition-colors flex-1" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
                 <div class="p-4 border-b flex justify-between items-center rounded-t-xl" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800/50 border-slate-700'">
-                  <span class="font-bold" :class="isLight ? 'text-slate-700' : 'text-slate-100'">章节大纲预览</span>
-                  <el-tag type="info" size="small" effect="dark" :class="isLight ? '!bg-slate-200 !border-slate-300 !text-slate-600' : '!bg-slate-700 !border-slate-600 !text-slate-200'">共 {{ outlines.length }} 章</el-tag>
+                  <span class="font-bold" :class="isLight ? 'text-slate-700' : 'text-slate-100'">剧集大纲预览</span>
+                  <el-tag type="info" size="small" effect="dark" :class="isLight ? '!bg-slate-200 !border-slate-300 !text-slate-600' : '!bg-slate-700 !border-slate-600 !text-slate-200'">共 {{ outlines.length }} 集</el-tag>
                 </div>
                 
-                <div v-loading="isGeneratingOutline" :element-loading-background="isLight ? 'rgba(255, 255, 255, 0.7)' : 'rgba(15, 23, 42, 0.7)'" class="divide-y min-h-[300px]" :class="isLight ? 'divide-slate-100' : 'divide-slate-700'">
-                  <div v-for="(item, index) in outlines" :key="index" class="p-5 group transition-colors relative" :class="isLight ? 'hover:bg-slate-50' : 'hover:bg-slate-700/50'">
-                    <div class="flex gap-5">
-                      <div class="w-12 pt-1 flex flex-col items-center">
-                        <span class="text-xs font-bold font-mono" :class="isLight ? 'text-slate-400' : 'text-slate-400'">CH.{{ index + 1 }}</span>
+                <div v-loading="isGeneratingOutline" :element-loading-background="isLight ? 'rgba(255, 255, 255, 0.7)' : 'rgba(15, 23, 42, 0.7)'" class="divide-y min-h-[260px]" :class="isLight ? 'divide-slate-100' : 'divide-slate-700'">
+                  <div v-for="(item, index) in outlines" :key="index" class="p-4 group transition-colors relative" :class="isLight ? 'hover:bg-slate-50' : 'hover:bg-slate-700/50'">
+                    <div class="flex gap-4">
+                      <div class="w-10 pt-1 flex flex-col items-center">
+                        <span class="text-xs font-bold font-mono" :class="isLight ? 'text-slate-400' : 'text-slate-400'">第{{ index + 1 }}集</span>
                         <div class="h-full w-px my-2 group-last:hidden" :class="isLight ? 'bg-slate-200' : 'bg-slate-700'"></div>
                       </div>
                       <div class="flex-1">
-                        <div class="flex items-center justify-between mb-2">
-                          <input 
-                            v-model="item.title" 
-                            class="font-bold text-lg bg-transparent border-none focus:ring-0 p-0 w-full"
-                            :class="isLight ? 'text-slate-800 placeholder-slate-400' : 'text-slate-100 placeholder-slate-500'"
-                          />
+                        <div class="flex items-center justify-between gap-3 mb-2">
+                          <div class="flex-1 flex items-center gap-2">
+                            <input 
+                              v-model="item.title" 
+                              class="font-bold text-base bg-transparent border-none focus:ring-0 p-0 w-full"
+                              :class="isLight ? 'text-slate-800 placeholder-slate-400' : 'text-slate-100 placeholder-slate-500'"
+                            />
+                            <div class="flex items-center gap-1.5 shrink-0">
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('scene', index)">
+                                <el-icon class="mr-1"><Picture /></el-icon> 场景
+                              </el-button>
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('roles', index)">
+                                <el-icon class="mr-1"><UserFilled /></el-icon> 角色
+                              </el-button>
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('props', index)">
+                                <el-icon class="mr-1"><Promotion /></el-icon> 道具
+                              </el-button>
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('conflict', index)">
+                                <el-icon class="mr-1"><CircleCheck /></el-icon> 冲突
+                              </el-button>
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('hook', index)">
+                                <el-icon class="mr-1"><Timer /></el-icon> 黄金3秒
+                              </el-button>
+                              <el-button size="small" round class="!h-7 !px-2.5 !text-xs !border-slate-200 !bg-white hover:!border-indigo-300 hover:!text-indigo-600" :class="isLight ? '' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-indigo-300'" @click="openMetaDialog('relation', index)">
+                                <el-icon class="mr-1"><UserFilled /></el-icon> 关系图谱
+                              </el-button>
+                            </div>
+                          </div>
                           <div class="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
                              <el-button size="small" circle text :class="isLight ? '!text-indigo-600 hover:!bg-indigo-50' : '!text-indigo-400 hover:!text-indigo-300'" @click="regenerateSingleChapter(index)">
                                <el-icon><Refresh /></el-icon>
@@ -81,19 +103,19 @@
                         </div>
                         <textarea 
                           v-model="item.summary" 
-                          class="w-full text-base bg-transparent border-none resize-y focus:ring-0 p-2 leading-relaxed rounded-md"
+                          class="w-full text-sm bg-transparent border-none resize-y focus:ring-0 p-2 leading-relaxed rounded-md"
                           :class="isLight ? 'text-slate-700 placeholder-slate-400 hover:bg-slate-100' : 'text-slate-100 placeholder-slate-500 hover:bg-slate-700/30'"
-                          rows="4"
+                          rows="3"
                         ></textarea>
-                        <div class="mt-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                           <!-- Insert Button -->
-                           <el-button size="small" link type="primary" :class="isLight ? '!text-indigo-500 hover:!text-indigo-600' : '!text-indigo-400 hover:!text-indigo-300'" @click="addChapter(index + 1)">
-                             <el-icon class="mr-1"><Plus /></el-icon> 在下方插入新章
-                           </el-button>
-                           
-                           <el-button size="small" type="primary" plain :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-500/10 !border-indigo-500/30 !text-indigo-400 hover:!bg-indigo-500/20'" @click="regenerateSingleChapter(index)">
-                             <el-icon class="mr-1"><MagicStick /></el-icon> AI 重新生成本章
-                           </el-button>
+                        <div class="mt-2 flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                           <div class="flex gap-2">
+                             <el-button size="small" link type="primary" :class="isLight ? '!text-indigo-500 hover:!text-indigo-600' : '!text-indigo-400 hover:!text-indigo-300'" @click="addChapter(index + 1)">
+                               <el-icon class="mr-1"><Plus /></el-icon> 插入新集
+                             </el-button>
+                             <el-button size="small" type="primary" plain :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-500/10 !border-indigo-500/30 !text-indigo-400 hover:!bg-indigo-500/20'" @click="regenerateSingleChapter(index)">
+                               <el-icon class="mr-1"><MagicStick /></el-icon> AI 重新生成
+                             </el-button>
+                           </div>
                         </div>
                       </div>
                     </div>
@@ -102,7 +124,7 @@
                   <!-- Add Chapter Button -->
                   <div class="p-4 text-center">
                     <el-button text type="primary" :class="isLight ? '!text-slate-500 hover:!text-indigo-600' : '!text-slate-300 hover:!text-indigo-400'" @click="addChapter(undefined)">
-                      <el-icon class="mr-1"><Plus /></el-icon> 添加章节
+                      <el-icon class="mr-1"><Plus /></el-icon> 添加剧集
                     </el-button>
                   </div>
                 </div>
@@ -112,7 +134,7 @@
               <div class="sticky bottom-0 z-40 py-4 -mx-8 px-8 backdrop-blur-md transition-colors border-t mt-6 flex items-center justify-end gap-4" :class="isLight ? 'bg-white/90 border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]' : 'bg-slate-900/90 border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]'">
                  <div class="text-sm mr-auto flex items-center gap-2" :class="isLight ? 'text-slate-500' : 'text-slate-400'">
                     <el-icon class="text-indigo-500"><Notebook /></el-icon>
-                    <span>已生成 {{ outlines.length }} 章大纲</span>
+                    <span>已生成 {{ outlines.length }} 集大纲</span>
                  </div>
                  
                  <el-button plain size="large" class="!h-12 !px-6 !rounded-xl !font-bold transition-all" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!border-indigo-300 hover:!text-indigo-600' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!bg-slate-700 hover:!text-white'" @click="regenerateOutline">
@@ -145,8 +167,8 @@
                         <el-icon :size="18"><List /></el-icon>
                      </div>
                      <div>
-                        <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">总章节</div>
-                        <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">{{ outlines.length }} 章</div>
+                        <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">总集数</div>
+                        <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">{{ outlines.length }} 集</div>
                      </div>
                   </div>
                   <div class="p-3 rounded-xl border flex items-center gap-3 transition-all hover:-translate-y-0.5" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800 border-slate-700 shadow-lg'">
@@ -155,7 +177,7 @@
                      </div>
                      <div>
                         <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">已完成</div>
-                        <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">0 章</div>
+                        <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">0 集</div>
                      </div>
                   </div>
                   <!-- Batch Action Card (Compact) -->
@@ -170,7 +192,7 @@
                <!-- Chapter List -->
                <div class="flex-1 overflow-hidden rounded-2xl border shadow-inner flex flex-col" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
                   <div class="p-4 border-b flex justify-between items-center" :class="isLight ? 'border-slate-100 bg-slate-50' : 'border-slate-700 bg-slate-800'">
-                     <h3 class="font-bold text-lg" :class="isLight ? 'text-slate-700' : 'text-white'">章节列表</h3>
+                     <h3 class="font-bold text-lg" :class="isLight ? 'text-slate-700' : 'text-white'">剧集列表</h3>
                      <div class="flex gap-2">
                         <el-button size="small" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300'">倒序</el-button>
                         <el-button size="small" type="primary" plain :class="isLight ? '' : '!bg-indigo-500/20 !border-indigo-500/50 !text-indigo-300'">批量生成</el-button>
@@ -178,25 +200,28 @@
                   </div>
                   <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                       <div v-for="(item, index) in outlines" :key="index" class="p-4 rounded-xl flex items-center justify-between transition-colors border group" :class="isLight ? 'hover:bg-indigo-50 border-slate-100 hover:border-indigo-100' : 'bg-slate-800/50 border-slate-700/50 hover:bg-slate-700 hover:border-indigo-500/30'">
-                         <div>
-                            <div class="font-bold text-lg mb-1 flex items-center" :class="isLight ? 'text-slate-800' : 'text-slate-200 group-hover:text-indigo-300'">
-                              <span class="opacity-50 mr-3 text-base font-normal">第 {{ index + 1 }} 章</span>
-                              {{ item.title }}
-                            </div>
-                            <div class="text-sm line-clamp-1 max-w-2xl" :class="isLight ? 'text-slate-400' : 'text-slate-500 group-hover:text-slate-400'">
-                              <span class="mr-2 inline-block w-1.5 h-1.5 rounded-full" :class="item.summary ? 'bg-orange-500' : 'bg-slate-600'"></span>
-                              {{ item.summary || '暂无概要' }}
-                            </div>
-                            <!-- Insert Chapter Button (Hover) -->
-                            <div class="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                               <el-button size="small" link type="primary" :class="isLight ? '!text-indigo-500 hover:!text-indigo-600' : '!text-indigo-400 hover:!text-indigo-300'" @click="addChapter(index + 1)">
-                                 <el-icon class="mr-1"><Plus /></el-icon> 在下方插入新章
-                               </el-button>
-                            </div>
+                         <div class="flex items-center gap-4 flex-1">
+                            <el-checkbox v-model="item.isSelected" size="large" @click.stop />
+                            <div>
+                                <div class="font-bold text-lg mb-1 flex items-center" :class="isLight ? 'text-slate-800' : 'text-slate-200 group-hover:text-indigo-300'">
+                                  <span class="opacity-50 mr-3 text-base font-normal">第 {{ index + 1 }} 集</span>
+                                  {{ item.title }}
+                                </div>
+                                <div class="text-sm line-clamp-1 max-w-2xl" :class="isLight ? 'text-slate-400' : 'text-slate-500 group-hover:text-slate-400'">
+                                  <span class="mr-2 inline-block w-1.5 h-1.5 rounded-full" :class="item.summary ? 'bg-orange-500' : 'bg-slate-600'"></span>
+                                  {{ item.summary || '暂无概要' }}
+                                </div>
+                                <!-- Insert Chapter Button (Hover) -->
+                                <div class="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                   <el-button size="small" link type="primary" :class="isLight ? '!text-indigo-500 hover:!text-indigo-600' : '!text-indigo-400 hover:!text-indigo-300'" @click="addChapter(index + 1)">
+                                     <el-icon class="mr-1"><Plus /></el-icon> 在下方插入新集
+                                   </el-button>
+                                </div>
+                             </div>
                          </div>
                          <div class="flex items-center gap-3 opacity-80 group-hover:opacity-100 transition-opacity">
-                            <el-tag size="small" :type="item.summary ? 'warning' : 'info'" effect="dark" class="mr-2">
-                               {{ item.summary ? '未完成' : '待设定' }}
+                            <el-tag size="small" :type="item.hasContent ? 'success' : (item.summary ? 'warning' : 'info')" effect="dark" class="mr-2">
+                               {{ item.hasContent ? '已完成' : (item.summary ? '待撰写' : '待设定') }}
                             </el-tag>
                             <el-button size="default" round class="!px-4 transition-transform hover:scale-105" :class="isLight ? '' : '!bg-indigo-600 !border-indigo-500 !text-white shadow-lg shadow-indigo-500/20'" @click="aiWriteChapter(index)">
                               <el-icon class="mr-1"><MagicStick /></el-icon> AI 撰写
@@ -216,7 +241,7 @@
                                 <el-dropdown-menu>
                                   <el-dropdown-item @click="viewChapterDetail(index)"><el-icon><View /></el-icon> 查看详情</el-dropdown-item>
                                   <el-dropdown-item @click="regenerateSingleChapter(index)"><el-icon><Refresh /></el-icon> 重生成概要</el-dropdown-item>
-                                  <el-dropdown-item divided class="!text-red-500" @click="removeChapter(index)"><el-icon><Delete /></el-icon> 删除章节</el-dropdown-item>
+                                  <el-dropdown-item divided class="!text-red-500" @click="removeChapter(index)"><el-icon><Delete /></el-icon> 删除剧集</el-dropdown-item>
                                 </el-dropdown-menu>
                               </template>
                             </el-dropdown>
@@ -227,7 +252,7 @@
                    <!-- Add Chapter Button -->
                    <div class="p-4 border-t" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800 border-slate-700'">
                       <el-button class="w-full !h-12 !text-lg !rounded-xl border-dashed transition-all" :class="isLight ? '!bg-white !border-slate-300 !text-slate-500 hover:!border-indigo-500 hover:!text-indigo-600' : '!bg-slate-800/50 !border-slate-600 !text-slate-400 hover:!bg-slate-800 hover:!border-indigo-500/50 hover:!text-indigo-400'" @click="addChapter">
-                        <el-icon class="mr-2"><Plus /></el-icon> 添加新章节
+                        <el-icon class="mr-2"><Plus /></el-icon> 添加新剧集
                       </el-button>
                    </div>
                </div>
@@ -252,13 +277,13 @@
     </div>
 
     <!-- Chapter Detail Dialog -->
-    <el-dialog v-model="showDetailDialog" title="章节详情" width="600px" :class="isLight ? '' : 'dark-dialog'">
+    <el-dialog v-model="showDetailDialog" title="剧集详情" width="600px" :class="isLight ? '' : 'dark-dialog'">
       <div v-if="currentDetailIndex !== -1">
         <el-form label-position="top">
-          <el-form-item label="章节标题">
+          <el-form-item label="剧集标题">
             <el-input v-model="outlines[currentDetailIndex].title" :class="isLight ? '' : 'dark-input'" />
           </el-form-item>
-          <el-form-item label="章节概要">
+          <el-form-item label="剧集概要">
             <el-input 
               v-model="outlines[currentDetailIndex].summary" 
               type="textarea" 
@@ -275,9 +300,20 @@
            </el-button>
            <div>
              <el-button @click="showDetailDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">关闭</el-button>
-             <el-button type="primary" @click="showDetailDialog = false" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
+             <el-button type="primary" @click="saveChapterDetail" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
            </div>
         </div>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="showMetaDialog" :title="metaDialogTitle" width="520px" :class="isLight ? '' : 'dark-dialog'">
+      <div class="space-y-2">
+        <div v-for="(line, idx) in metaDialogItems" :key="idx" class="px-3 py-2 rounded text-sm border" :class="isLight ? 'bg-slate-50 text-slate-600 border-slate-200' : 'bg-slate-900 text-slate-300 border-slate-700'">
+          {{ line }}
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="showMetaDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">关闭</el-button>
       </template>
     </el-dialog>
 
@@ -333,7 +369,7 @@
       <div class="flex flex-col h-[500px]">
         <div class="mb-4 p-3 rounded text-sm flex items-start gap-2 border" :class="isLight ? 'bg-blue-50 border-blue-100 text-blue-700' : 'bg-slate-800 border-slate-700 text-slate-400'">
            <el-icon class="mt-0.5" :class="isLight ? 'text-blue-600' : 'text-indigo-400'"><InfoFilled /></el-icon>
-           <div>AI 已根据章节内容自动转换为短剧分镜脚本格式，支持一键导出。此格式可直接用于下游 AI 视频生成工具。</div>
+           <div>AI 已根据剧集内容自动转换为短剧分镜脚本格式，支持一键导出。此格式可直接用于下游 AI 视频生成工具。</div>
         </div>
         <el-input
           v-model="scriptContent"
@@ -395,7 +431,7 @@ import { ref, computed, onMounted, inject, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { 
   ArrowLeft, ArrowRight, Refresh, EditPen, Picture, MagicStick, 
-  Setting, Download, Notebook, Delete, Plus, List, Check, Timer, Edit, MoreFilled, CircleCheck, View, VideoCamera, InfoFilled, Promotion
+  Setting, Download, Notebook, Delete, Plus, List, Check, Timer, Edit, MoreFilled, CircleCheck, View, VideoCamera, InfoFilled, Promotion, UserFilled
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useLoreStore, type Chapter } from '@/stores/useLoreStore'
@@ -457,22 +493,86 @@ const isPushingToDraft = ref(false)
 interface OutlineItem {
   title: string
   summary: string
+  isSelected?: boolean
+  hasContent?: boolean
+  id?: string
 }
 
 const outlines = ref<OutlineItem[]>([])
-
-const getStepQueryValue = () => {
-  if (Array.isArray(route.query.step)) {
-    return route.query.step[0]
-  }
-  return route.query.step
-}
+const showMetaDialog = ref(false)
+const metaDialogTitle = ref('')
+const metaDialogItems = ref<string[]>([])
 
 const mapChaptersToOutlines = (chapters: Chapter[]) => {
   return chapters.map(c => ({
+    id: c.id,
     title: c.title,
-    summary: c.outline || ''
+    summary: c.outline || '',
+    isSelected: true,
+    hasContent: !!c.content && c.content.length > 20 // 简单的完成判定
   }))
+}
+
+const openMetaDialog = (type: 'scene' | 'roles' | 'props' | 'conflict' | 'hook' | 'relation', index: number) => {
+  const chapter = outlines.value[index]
+  const summary = chapter?.summary?.replace(/\s+/g, ' ') || '暂无'
+  const brief = summary.length > 50 ? summary.slice(0, 50) + '…' : summary
+  const title = chapter?.title ? `CH.${index + 1} ${chapter.title}` : `CH.${index + 1}`
+
+  const config = {
+    scene: {
+      title: `场景 · 关键地点`,
+      items: [
+        `场景摘要：${brief}`,
+        `地点提示：${summary.includes('雨') ? '雨夜街区' : '未知地点'}`,
+        `氛围：紧张 · 悬疑 · 快节奏`
+      ]
+    },
+    roles: {
+      title: `角色 · 主角/盟友`,
+      items: [
+        `核心人物：主角 · 盟友 · 反派`,
+        `角色动机：围绕“${chapter?.title || '目标' }”展开`,
+        `角色关系：对立与合作并存`
+      ]
+    },
+    props: {
+      title: `道具 · 关键物件`,
+      items: [
+        `关键道具：数据芯片 / 信物 / 机密文档`,
+        `用途提示：推动冲突升级`,
+        `出现时机：剧情转折点`
+      ]
+    },
+    conflict: {
+      title: `核心冲突`,
+      items: [
+        `冲突主题：争夺 / 背叛 / 逃脱`,
+        `矛盾焦点：${brief}`,
+        `对抗走向：逐步升级`
+      ]
+    },
+    hook: {
+      title: `黄金3秒`,
+      items: [
+        `开场钩子：强对比画面 + 紧迫音效`,
+        `短爆点：一句高压台词或突发事件`,
+        `目标：3秒内抓住注意力`
+      ]
+    },
+    relation: {
+      title: `人物关系图谱`,
+      items: [
+        `主角 → 盟友：目标一致，互相试探`,
+        `主角 ↔ 反派：核心对立，利益冲突`,
+        `盟友 → 反派：潜在背叛或双面身份`
+      ]
+    }
+  }[type]
+
+  metaDialogTitle.value = `${title} · ${config.title}`
+  metaDialogItems.value = config.items
+  showMetaDialog.value = true
 }
 
 const syncOutlinesFromChapters = () => {
@@ -482,28 +582,28 @@ const syncOutlinesFromChapters = () => {
 }
 
 const hydrateChaptersFromSessionCache = () => {
-  if (loreStore.currentNovel.chapters && loreStore.currentNovel.chapters.length > 0) {
-    return
-  }
   const cache = sessionStorage.getItem('novel_generator_chapters_cache')
-  if (!cache) {
-    return
-  }
+  if (!cache) return
+  
   try {
     const parsed = JSON.parse(cache)
     if (Array.isArray(parsed) && parsed.length > 0) {
-      loreStore.currentNovel.chapters = parsed
+      // 只有当 store 中没有数据，或者缓存中的数据更多时才更新
+      if (!loreStore.currentNovel.chapters || loreStore.currentNovel.chapters.length === 0) {
+        loreStore.currentNovel.chapters = parsed
+      }
     }
   } catch (error) {
-    console.error(error)
+    console.error('Failed to parse chapters cache:', error)
   } finally {
+    // 成功读取一次后就清除，防止干扰其他会话
     sessionStorage.removeItem('novel_generator_chapters_cache')
   }
 }
 
 // Computed
 const currentStepLabel = computed(() => {
-  return step.value === 'outline' ? '大纲生成' : '章节管理'
+  return step.value === 'outline' ? '大纲生成' : '剧集管理'
 })
 
 const activeStepIndex = computed(() => {
@@ -520,36 +620,43 @@ const handleBack = () => {
 
 // Lifecycle
 onMounted(() => {
-  if (getStepQueryValue() === 'chapters') {
-    step.value = 'chapters'
-    hydrateChaptersFromSessionCache()
-    syncOutlinesFromChapters()
-  } else {
-    step.value = 'outline'
-    generateOutline()
-  }
   generateCover()
 })
 
-// Ensure step reacts to query changes if navigated with different params
-watch(() => route.query.step, (val) => {
-  const stepQuery = Array.isArray(val) ? val[0] : val
+// Consolidated Route Initialization Logic
+watch(() => route.query, (query) => {
+  const stepQuery = Array.isArray(query.step) ? query.step[0] : query.step
+  
   if (stepQuery === 'chapters') {
     step.value = 'chapters'
     hydrateChaptersFromSessionCache()
     syncOutlinesFromChapters()
-  } else if (val === 'settings') {
-     // If step is settings, we stay on the current view (likely outline or chapters) but open the dialog
-     showSettingsDialog.value = true
   } else {
+    // 强制设为 outline 步骤，防止显示空白
     step.value = 'outline'
+    
+    if (stepQuery === 'settings') {
+      showSettingsDialog.value = true
+    }
+    
+    // 如果没有大纲数据，则自动生成
+    // 检查 Store 和当前 outlines 列表
+    if (loreStore.currentNovel.chapters.length === 0 && outlines.value.length === 0 && !isGeneratingOutline.value) {
+      generateOutline()
+    } else if (loreStore.currentNovel.chapters.length > 0 && outlines.value.length === 0) {
+      // 如果 Store 有数据但列表没同步，手动触发同步
+      syncOutlinesFromChapters()
+    }
   }
-}, { immediate: true })
+}, { immediate: true, deep: true })
 
 // Sync outlines with store changes
 watch(() => loreStore.currentNovel.chapters, (newChapters) => {
   if (newChapters && newChapters.length > 0) {
     outlines.value = [...mapChaptersToOutlines(newChapters)]
+  } else {
+    // 如果 Store 中没有章节数据，清空当前大纲列表
+    outlines.value = []
   }
 }, { deep: true, immediate: true })
 
@@ -589,10 +696,7 @@ const useFallbackCover = () => {
 const generateOutline = async () => {
   isGeneratingOutline.value = true
   if (loreStore.currentNovel.chapters.length > 0) {
-    outlines.value = loreStore.currentNovel.chapters.map(c => ({
-      title: c.title,
-      summary: c.outline || ''
-    }))
+    outlines.value = mapChaptersToOutlines(loreStore.currentNovel.chapters)
     isGeneratingOutline.value = false
   } else {
     outlines.value = []
@@ -600,11 +704,11 @@ const generateOutline = async () => {
     try {
       // Simulate streaming AI response
       const mockChapters = [
-      { title: "霓虹雨下的交易", summary: "V接到了中间人‘老船长’的电话，前往歌舞伎区的一个地下诊所取一份神秘的数据芯片。雨夜中，他感觉有人在跟踪自己。" },
-      { title: "荒坂塔的阴影", summary: "芯片解码失败，V不得不寻求黑客朋友T-Bug的帮助。T-Bug发现芯片内竟藏着荒坂公司的最高机密——‘灵魂杀手’2.0的源代码。" },
-      { title: "生死时速", summary: "荒坂的特工部队突袭了藏身处，T-Bug牺牲，V带着芯片驾驶跑车在夜之城的高速公路上展开了一场惊心动魄的追逐战。" },
-      { title: "潜入", summary: "为了彻底摆脱追杀，V决定反其道而行之，潜入荒坂塔底层的数据中心，试图从源头抹除自己的追踪痕迹。" },
-      { title: "觉醒", summary: "在数据中心，V意外激活了芯片中的AI人格。那个传说中的黑客之神‘奥特’的声音在他脑海中响起：‘醒醒，武士，我们要把这座城市烧成灰。’" }
+      { title: "烽火初燃 血洗村庄", summary: "边境村庄被毁，主角立誓复仇" },
+      { title: "牢狱结义 共谋越狱", summary: "狱中结识豪杰，策划逃亡" },
+      { title: "越狱风云 暗道逃生", summary: "利用暗道躲避追兵" },
+      { title: "揭竿而起 聚民为军", summary: "黑风岭起义" },
+      { title: "初战告捷 反抗伊始", summary: "设伏大破官兵" }
     ]
 
     for (const chapter of mockChapters) {
@@ -638,14 +742,44 @@ const viewChapterDetail = (index: number) => {
   showDetailDialog.value = true
 }
 
+const saveChapterDetail = () => {
+  if (currentDetailIndex.value === -1) return
+  
+  const item = outlines.value[currentDetailIndex.value]
+  // 同步回 Store
+  if (item.id) {
+    loreStore.updateChapter(item.id, {
+      title: item.title,
+      outline: item.summary
+    })
+  } else {
+    // 如果没有 ID，说明是新添加的但还没同步过，可以重新同步整个列表
+    syncOutlinesToStore()
+  }
+  
+  showDetailDialog.value = false
+  ElMessage.success('保存成功')
+}
+
+const syncOutlinesToStore = () => {
+  loreStore.currentNovel.chapters = outlines.value.map((o, i) => ({
+    id: o.id || (Date.now().toString() + i),
+    title: o.title,
+    outline: o.summary,
+    content: loreStore.currentNovel.chapters.find(c => c.id === o.id)?.content || ''
+  }))
+}
+
 const removeChapter = (index: number) => {
   outlines.value.splice(index, 1)
+  syncOutlinesToStore()
 }
 
 const addChapter = (index?: number | MouseEvent) => {
   const newChapter = {
-    title: "新章节",
-    summary: "请输入章节概要..."
+    title: "新剧集",
+    summary: "请输入剧集概要...",
+    isSelected: true
   }
   
   if (typeof index === 'number') {
@@ -653,6 +787,7 @@ const addChapter = (index?: number | MouseEvent) => {
   } else {
     outlines.value.push(newChapter)
   }
+  syncOutlinesToStore()
 }
 
 const confirmOutline = () => {
@@ -667,11 +802,11 @@ const confirmOutline = () => {
     content: ''
   }))
   
-  ElMessage.success('大纲已确认，进入章节管理')
+  ElMessage.success('大纲已确认，进入剧集管理')
 }
 
 const aiWriteChapter = (index: number) => {
-  ElMessage.success(`AI 开始撰写第 ${index + 1} 章...`)
+  ElMessage.success(`AI 开始撰写第 ${index + 1} 集...`)
   
   // Sync all chapters to store before navigating
   loreStore.currentNovel.chapters = outlines.value.map((o, i) => ({
@@ -695,36 +830,190 @@ const goToEditor = (index?: number) => {
   router.push(`/editor/${Date.now()}`)
 }
 
+const zhaoTieniuTitles = [
+  '烽火初燃 血洗村庄',
+  '牢狱结义 共谋越狱',
+  '越狱风云 暗道逃生',
+  '揭竿而起 聚民为军',
+  '初战告捷 反抗伊始'
+]
+
+const isZhaoTieniuChapter = (title: string) => {
+  return zhaoTieniuTitles.includes(title)
+}
+
+const shortDramaExportTemplate = `【短剧分镜剧本集】夜之城：数据幽灵
+共 5 集
+================================
+第 1 集：烽火初燃 血洗村庄
+时长：1-2分钟
+-------------------------------
+【角色清单】
+
+【男主】赵铁牛
+年龄：26岁
+身份：淮西铁匠/义军领袖
+性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力
+背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉
+外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾
+音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强
+关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明
+成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力
+----------------------------------------
+【反派】耶律齐
+年龄：35岁
+身份：元军百户长
+性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳
+背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法
+外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓
+音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗
+关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵
+关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡
+----------------------------------------
+【道具清单】
+粗麻绳（捆绑俘虏）
+----------------------------------------
+【场景信息】
+地点：淮西村庄外荒野官道
+时间：白天
+天气：阴天 / 风沙
+氛围：压迫、残酷、悲愤
+背景环境：被焚毁的村庄在远处冒着黑烟，田地被战马践踏，尸体散落。
+----------------------------------------
+【分镜 01】
+
+镜头：远景 → 缓慢推镜
+画面：一支元军押送俘虏的队伍缓慢行进在荒凉的土路上
+人物：赵铁牛、耶律齐、元军士兵
+动作：赵铁牛被五花大绑，衣衫破碎，身上血迹斑斑。
+
+镜头：中景（赵铁牛）
+画面：赵铁牛抬头死死盯着耶律齐，眼中充满仇恨。
+人物：赵铁牛
+动作：咬牙低吼
+对白：耶律齐！你这个卖国求荣的狗贼！
+
+镜头：特写（耶律齐）
+画面：耶律齐微微低头，露出讥讽笑容。
+人物：耶律齐
+动作：冷笑回应
+对白：呵……就凭你？`
+
+const buildZhaoTieniuEpisodeBlock = (episodeNumber: number, chapterTitle: string, isFirst: boolean) => {
+  if (isFirst) {
+    return `第 ${episodeNumber} 集：${chapterTitle}
+时长：1-2分钟
+-------------------------------
+【角色清单】
+
+【男主】赵铁牛
+年龄：26岁
+身份：淮西铁匠/义军领袖
+性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力
+背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉
+外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾
+音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强
+关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明
+成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力
+----------------------------------------
+【反派】耶律齐
+年龄：35岁
+身份：元军百户长
+性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳
+背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法
+外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓
+音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗
+关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵
+关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡
+----------------------------------------
+【道具清单】
+粗麻绳（捆绑俘虏）
+----------------------------------------
+【场景信息】
+地点：淮西村庄外荒野官道
+时间：白天
+天气：阴天 / 风沙
+氛围：压迫、残酷、悲愤
+背景环境：被焚毁的村庄在远处冒着黑烟，田地被战马践踏，尸体散落。
+----------------------------------------
+【分镜 01】
+
+镜头：远景 → 缓慢推镜
+画面：一支元军押送俘虏的队伍缓慢行进在荒凉的土路上
+人物：赵铁牛、耶律齐、元军士兵
+动作：赵铁牛被五花大绑，衣衫破碎，身上血迹斑斑。
+
+镜头：中景（赵铁牛）
+画面：赵铁牛抬头死死盯着耶律齐，眼中充满仇恨。
+人物：赵铁牛
+动作：咬牙低吼
+对白：耶律齐！你这个卖国求荣的狗贼！
+
+镜头：特写（耶律齐）
+画面：耶律齐微微低头，露出讥讽笑容。
+人物：耶律齐
+动作：冷笑回应
+对白：呵……就凭你？`
+  }
+
+  return `第 ${episodeNumber} 集：${chapterTitle}
+时长：1-2分钟
+-------------------------------
+【角色清单】
+
+【男主】赵铁牛
+年龄：26岁
+身份：淮西铁匠/义军领袖
+性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力
+背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉
+外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾
+音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强
+关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明
+成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力
+----------------------------------------
+【反派】耶律齐
+年龄：35岁
+身份：元军百户长
+性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳
+背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法
+外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓
+音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗
+关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵
+关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡
+----------------------------------------
+【道具清单】
+粗麻绳（捆绑俘虏）
+----------------------------------------
+【场景信息】
+地点：淮西村庄外荒野官道
+时间：白天
+天气：阴天 / 风沙
+氛围：压迫、残酷、悲愤
+背景环境：被焚毁的村庄在远处冒着黑烟，田地被战马践踏，尸体散落。
+----------------------------------------
+【分镜 01】
+
+镜头：远景 → 缓慢推镜
+画面：一支元军押送俘虏的队伍缓慢行进在荒凉的土路上
+人物：赵铁牛、耶律齐、元军士兵
+动作：赵铁牛被五花大绑，衣衫破碎，身上血迹斑斑。
+
+镜头：中景（赵铁牛）
+画面：赵铁牛抬头死死盯着耶律齐，眼中充满仇恨。
+人物：赵铁牛
+动作：咬牙低吼
+对白：耶律齐！你这个卖国求荣的狗贼！
+
+镜头：特写（耶律齐）
+画面：耶律齐微微低头，露出讥讽笑容。
+人物：耶律齐
+动作：冷笑回应
+对白：呵……就凭你？`
+}
+
 const openBatchScriptDialog = () => {
   currentScriptChapterIndex.value = -1 // -1 indicates batch mode
-  let script = `【短剧分镜剧本集】${loreStore.currentNovel.title}\n`
-  script += `共 ${outlines.value.length} 集\n`
-  script += `================================\n\n`
-  
-  const roleList = loreStore.characters.length > 0 
-    ? loreStore.characters.map(c => `${c.name}（${c.role}）`).join('，') 
-    : '主角，配角'
-
-  outlines.value.forEach((chapter, index) => {
-    const summaryParts = chapter.summary.split(/，|。/)
-    const location = summaryParts[0] || '未知场景'
-    const timeHint = '夜'
-    const propsGuess: string[] = []
-    if (chapter.summary.match(/剑|刀/)) propsGuess.push('武器：长剑')
-    if (chapter.summary.match(/车|驾驶/)) propsGuess.push('交通工具：跑车')
-    if (chapter.summary.match(/酒|酒杯/)) propsGuess.push('道具：酒杯')
-    if (propsGuess.length === 0) propsGuess.push('道具：待定')
-
-    script += `第 ${index + 1} 集：${chapter.title}\n`
-    script += `时长：1-2分钟\n`
-    script += `--------------------------------\n\n`
-    script += `【角色清单】\n${roleList}\n\n`
-    script += `【道具清单】\n${propsGuess.join('；')}\n\n`
-    script += `【场景信息】\n地点：${location}\n时间：${timeHint}\n氛围：紧张、悬疑\n\n`
-    script += `【SCENE 01】\n镜头：中景/推镜头（Dolly In）\n人物：${roleList}\n动作：${chapter.summary}\n对白：\n  主角（紧张）：这就是传说中的东西？\n  反派（冷笑）：你以为你能带走它？\n\n`
-    script += `【CUT】\n\n`
-    script += `================================\n\n`
-  })
+  const script = shortDramaExportTemplate
   
   scriptContent.value = script
   selectedDownstreamProject.value = '' // Reset selection
@@ -733,36 +1022,7 @@ const openBatchScriptDialog = () => {
 
 const openScriptDialog = (index: number) => {
   currentScriptChapterIndex.value = index
-  const chapter = outlines.value[index]
-  
-  // 标准化短剧剧本格式（包含角色/道具/场景等要素）
-  const summaryParts = chapter.summary.split(/，|。/)
-  const location = summaryParts[0] || '未知场景'
-  const timeHint = '夜'
-  const roleList = loreStore.characters.length > 0 
-    ? loreStore.characters.map(c => `${c.name}（${c.role}）`).join('，') 
-    : '主角，配角'
-  const propsGuess = []
-  if (chapter.summary.match(/剑|刀/)) propsGuess.push('武器：长剑')
-  if (chapter.summary.match(/车|驾驶/)) propsGuess.push('交通工具：跑车')
-  if (chapter.summary.match(/酒|酒杯/)) propsGuess.push('道具：酒杯')
-  if (propsGuess.length === 0) propsGuess.push('道具：待定')
-
-  let script = `【短剧分镜剧本】${loreStore.currentNovel.title}\n`
-  script += `第 ${index + 1} 集：${chapter.title}\n`
-  script += `时长：1-2分钟\n`
-  script += `================================\n\n`
-
-  script += `【角色清单】\n${roleList}\n\n`
-  script += `【道具清单】\n${propsGuess.join('；')}\n\n`
-  script += `【场景信息】\n地点：${location}\n时间：${timeHint}\n氛围：紧张、悬疑\n\n`
-
-  script += `【SCENE 01】\n`
-  script += `镜头：中景/推镜头（Dolly In）\n`
-  script += `人物：${roleList}\n`
-  script += `动作：${chapter.summary}\n`
-  script += `对白：\n  主角（紧张）：这就是传说中的东西？\n  反派（冷笑）：你以为你能带走它？\n\n`
-  script += `【CUT】\n`
+  const script = shortDramaExportTemplate
   
   scriptContent.value = script
   selectedDownstreamProject.value = '' // Reset selection
@@ -865,5 +1125,8 @@ const goToVideoStudio = () => {
 }
 :deep(.custom-dark-select .el-select__placeholder) {
   color: #cbd5e1; /* slate-300 */
+}
+.aisw-scale {
+  font-size: 1.1rem;
 }
 </style>

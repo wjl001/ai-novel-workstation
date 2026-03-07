@@ -34,7 +34,7 @@
           @click="openProject(project.id, 'outline')"
         >
           <!-- Cover Image/Placeholder -->
-          <div class="h-40 relative overflow-hidden group-hover:opacity-90 transition-opacity" :class="isLight ? 'bg-slate-100' : 'bg-slate-900'">
+          <div class="h-40 relative overflow-hidden group-hover:opacity-90 transition-opacity" :class="isLight ? 'bg-slate-100' : 'bg-slate-900'" @click.stop="openSettings(project.id)">
             <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" @error="(e) => (e.target as HTMLImageElement).src = generateDefaultCover(project.title)" />
             <img v-else :src="generateDefaultCover(project.title)" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div class="absolute top-2 right-2">
@@ -49,6 +49,7 @@
                  :show-file-list="false"
                  :on-change="(file) => handleCoverUpload(file, project)"
                  accept="image/*"
+                 @click.stop
                >
                  <el-button size="small" type="primary" plain class="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
                    <el-icon class="mr-1"><Upload /></el-icon> 上传封面
@@ -92,14 +93,14 @@
             </el-tooltip>
 
             <el-tooltip content="基础设定" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'settings')">
+              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openSettings(project.id)">
                 <el-icon><Setting /></el-icon>
               </el-button>
             </el-tooltip>
 
-            <el-tooltip content="下载导出" placement="top">
+            <el-tooltip content="对接短剧" placement="top">
               <el-button text class="!text-slate-400 hover:!text-green-400 !px-0" @click.stop="handleDownload(project)">
-                <el-icon><Download /></el-icon>
+                <el-icon><VideoCamera /></el-icon>
               </el-button>
             </el-tooltip>
 
@@ -129,18 +130,19 @@
       </div>
     </div>
 
-    <!-- AI Generator Dialog (Dark Mode) -->
-    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="dark-dialog">
+    <!-- AI Generator Dialog (Light Mode) -->
+    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="light-dialog">
       <div class="space-y-6">
         <!-- Prompt Input -->
-        <div class="rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition-colors focus-within:border-indigo-500/50">
-           <div class="text-sm mb-2 font-medium text-slate-300">生成描述词 (Prompt)</div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4 transition-colors focus-within:border-indigo-500/50 shadow-sm">
+           <div class="text-sm mb-2 font-medium text-slate-700">生成描述词 (Prompt)</div>
            <el-input 
              v-model="aiPrompt"
              type="textarea" 
              :rows="4"
-             placeholder="例如：赛博朋克风格，霓虹灯下的雨夜，孤独的黑客背影，高科技义肢..."
-             class="dark-textarea !text-base force-white-input"
+             placeholder="例如：古风武侠，边境战火，义军首领手持重锤，背景是燃烧的村庄..."
+             class="!text-base"
+             :input-style="{ backgroundColor: 'white', color: '#1e293b' }"
            />
            <div class="flex justify-end mt-2">
              <el-button type="primary" :loading="isGenerating" class="shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
@@ -150,15 +152,15 @@
         </div>
 
         <!-- Result Grid -->
-        <div class="grid grid-cols-2 gap-4 min-h-[300px] relative rounded-xl border border-dashed border-slate-700 bg-slate-800/30 p-4 transition-colors">
+        <div class="grid grid-cols-2 gap-4 min-h-[300px] relative rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 transition-colors">
            <div v-if="generatedImages.length === 0 && !isGenerating" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
              <el-icon size="48" class="mb-4 opacity-50"><Picture /></el-icon>
              <p>输入描述词后点击生成</p>
            </div>
            
-           <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black/50 backdrop-blur-sm rounded-xl">
-             <div class="loading-spinner mb-4"></div>
-             <p class="text-indigo-400 animate-pulse">AI 正在绘图...</p>
+           <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 backdrop-blur-sm rounded-xl">
+             <div class="loading-spinner mb-4 !border-indigo-500 !border-b-transparent"></div>
+             <p class="text-indigo-600 animate-pulse">AI 正在绘图...</p>
            </div>
 
            <div 
@@ -178,8 +180,8 @@
         </div>
       </div>
       <template #footer>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-          <el-button @click="showAIDialog = false" class="!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700">取消</el-button>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <el-button @click="showAIDialog = false">取消</el-button>
           <el-button type="primary" :disabled="!selectedImage" @click="confirmAICover">应用封面</el-button>
         </div>
       </template>
@@ -190,7 +192,7 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus, Picture, User, View, Star, Edit, Delete, FolderAdd, List, EditPen, Setting, Download, CopyDocument, Upload, MagicStick, Check, Loading } from '@element-plus/icons-vue'
+import { Plus, Picture, User, View, Star, Edit, Delete, FolderAdd, List, EditPen, Setting, Download, CopyDocument, Upload, MagicStick, Check, Loading, VideoCamera } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { UploadFile } from 'element-plus'
 
@@ -214,10 +216,7 @@ const emit = defineEmits(['create', 'open'])
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
 
-const bgClass = computed(() => {
-  if (theme.value === 'dreamy') return 'bg-transparent'
-  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
-})
+const bgClass = computed(() => 'bg-white')
 
 const cardClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 hover:shadow-xl hover:bg-white/80 backdrop-blur-sm'
@@ -232,8 +231,8 @@ setTimeout(() => {
   projects.value = [
     { 
       id: 1, 
-      title: props.type === 'novel' ? '星际迷航：深空' : '霸道总裁爱上我 (短剧)', 
-      cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop', // Earth/Space like first picture
+      title: props.type === 'novel' ? '义军崛起' : '义军崛起 (短剧)', 
+      cover: 'https://images.unsplash.com/photo-1533158307587-828f0a76ef93?q=80&w=600&auto=format&fit=crop', 
       status: 'draft', 
       updatedAt: '2023-10-24',
       author: 'Admin',
@@ -242,8 +241,8 @@ setTimeout(() => {
     },
     { 
       id: 2, 
-      title: props.type === 'novel' ? '修仙模拟器' : '重生之我是龙王 (短剧)', 
-      cover: 'https://images.unsplash.com/photo-1599593462637-c79292c2288e?q=80&w=600&auto=format&fit=crop', // Castle/Foggy like first picture
+      title: props.type === 'novel' ? '剑指天涯' : '剑指天涯 (短剧)', 
+      cover: 'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=600&auto=format&fit=crop', 
       status: 'published', 
       updatedAt: '2023-10-20',
       author: 'Admin',
@@ -358,8 +357,14 @@ const openProject = (id: number, step: string = 'outline') => {
   router.push({ name: 'novel-generator', query: { id: id.toString(), step } })
 }
 
+const openSettings = (id: number) => {
+  // Navigate to AIWriteNovel with mode=create to show the "Basic Settings" page
+  // In a real app, this would also pass the ID to load that project's settings
+  router.push({ name: 'ai-write-novel', query: { mode: 'create', id: id.toString() } })
+}
+
 const handleDownload = (project: any) => {
-  ElMessage.success(`正在打包下载项目《${project.title}》...`)
+  ElMessage.success(`正在对接短剧项目《${project.title}》...`)
 }
 
 const handleClone = (project: any) => {

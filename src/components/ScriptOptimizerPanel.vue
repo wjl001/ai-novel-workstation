@@ -105,25 +105,6 @@
       </div>
     </div>
 
-    <!-- 5. 影视化对接 (AI Video Bridge) -->
-    <div class="feature-card mb-4 p-4 rounded-lg border transition-colors" :class="cardClass('purple')">
-      <div class="flex justify-between items-center mb-2">
-        <div class="font-bold text-sm" :class="textClass">🎥 影视化对接</div>
-        <el-switch v-model="settings.videoBridge.enabled" size="small" active-color="#a855f7" />
-      </div>
-      <div v-if="settings.videoBridge.enabled" class="space-y-2">
-        <div class="text-xs mb-2" :class="subTextClass">
-          生成下游视频制作所需的提示词与分镜脚本。
-        </div>
-        <el-button type="primary" size="small" class="w-full" :class="buttonClass('purple')" @click="runOptimization('visual_prompts')">
-          提取画面提示词 (Midjourney/SD)
-        </el-button>
-        <el-button type="primary" size="small" class="w-full mt-2" :class="buttonClass('purple')" @click="runOptimization('script_format')">
-          生成分镜脚本表格
-        </el-button>
-      </div>
-    </div>
-
     <!-- Result Display Dialog -->
     <el-dialog v-model="showResultDialog" :title="resultTitle" width="600px" :class="dialogClass" append-to-body>
       <div class="flex flex-col gap-4 h-[400px]">
@@ -147,7 +128,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, inject, computed } from 'vue'
-import { VideoCamera, Loading, InfoFilled } from '@element-plus/icons-vue'
+import { Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { streamLLMResponse } from '@/utils/llmClient'
 
@@ -228,9 +209,7 @@ const settings = reactive({
     frontLoadConflict: false,
     cliffhanger: true
   },
-  videoBridge: {
-    enabled: false
-  }
+  
 })
 
 const detectedContextTags = ref(['上一章悬念：未知', '主角状态：正常'])

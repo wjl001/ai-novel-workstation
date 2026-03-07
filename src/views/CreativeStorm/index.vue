@@ -60,7 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { VideoCameraFilled, ArrowRight, ArrowLeft, Check } from '@element-plus/icons-vue'
 import ProjectList from '@/components/Common/ProjectList.vue'
 import Step1_ProjectInit from './components/Step1_ProjectInit.vue'
@@ -71,6 +72,7 @@ import { ElMessage } from 'element-plus'
 
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
+const route = useRoute()
 
 const bgClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-transparent'
@@ -119,6 +121,35 @@ const projectData = ref({
   assets: [] as any[],
 })
 
+const hydrateFromRoute = () => {
+  const chapterId = Array.isArray(route.query.chapterId) ? route.query.chapterId[0] : route.query.chapterId
+  const chapterTitle = Array.isArray(route.query.chapterTitle) ? route.query.chapterTitle[0] : route.query.chapterTitle
+  if (!chapterId && !chapterTitle) return
+  isCreating.value = true
+  activeStep.value = 2
+  if (chapterTitle) {
+    projectData.value.originalIdea = `章节：${chapterTitle}`
+    projectData.value.episodes = [
+      { title: chapterTitle, summary: '从编辑器导入', duration: '1-2分钟', wordCount: 0 }
+    ]
+  }
+  const cached = sessionStorage.getItem('short_drama_chapter_draft')
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached)
+      if (parsed?.chapterTitle) {
+        projectData.value.originalIdea = `章节：${parsed.chapterTitle}`
+        projectData.value.episodes = [
+          { title: parsed.chapterTitle, summary: '从编辑器导入', duration: '1-2分钟', wordCount: (parsed.content || '').length }
+        ]
+      }
+    } catch (e) {
+    } finally {
+      sessionStorage.removeItem('short_drama_chapter_draft')
+    }
+  }
+}
+
 const currentStepComponent = computed(() => {
   switch (activeStep.value) {
     case 1: return Step1_ProjectInit
@@ -144,6 +175,9 @@ const saveProject = () => {
 const finishProject = () => {
   ElMessage.success('项目已完成并推流')
 }
+
+onMounted(hydrateFromRoute)
+watch(() => route.query, hydrateFromRoute, { deep: true })
 </script>
 
 <style scoped>

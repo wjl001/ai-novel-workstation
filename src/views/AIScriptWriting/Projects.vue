@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 h-full overflow-y-auto transition-colors duration-300" :class="bgClass">
+  <div class="aisw-scale p-8 h-full overflow-y-auto transition-colors duration-300" :class="bgClass">
     <div class="flex items-center justify-between mb-8">
       <h1 class="text-3xl font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">我的作品</h1>
       <el-button type="primary" size="large" @click="createNewProject" :class="isLight ? 'bg-indigo-600' : 'bg-indigo-600 border-none'">
@@ -115,9 +115,9 @@ interface Project {
 }
 
 const projects = ref<Project[]>([
-  { id: '1', title: '赛博侦探', wordCount: 12500, updatedAt: '2小时前', cover: 'https://images.unsplash.com/photo-1614726365723-49cfae973d4d?w=800' },
-  { id: '2', title: '巨龙的最后一口气', wordCount: 45000, updatedAt: '1天前' },
-  { id: '3', title: '量子之恋', wordCount: 8200, updatedAt: '3天前' },
+  { id: '1', title: '义军崛起', wordCount: 12500, updatedAt: '2小时前', cover: 'https://images.unsplash.com/photo-1533158307587-828f0a76ef93?w=800' },
+  { id: '2', title: '剑指天涯', wordCount: 45000, updatedAt: '1天前' },
+  { id: '3', title: '深宫谍影', wordCount: 8200, updatedAt: '3天前' },
 ])
 
 const showCoverDialog = ref(false)
@@ -201,5 +201,8 @@ const selectCover = (url: string) => {
   background-color: #0f172a;
   box-shadow: 0 0 0 1px #334155;
   color: #e2e8f0;
+}
+.aisw-scale {
+  font-size: 1.1rem;
 }
 </style>
