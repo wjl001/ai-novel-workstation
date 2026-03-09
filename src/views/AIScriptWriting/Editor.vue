@@ -905,7 +905,8 @@ const buildScriptFormatPrompt = (title: string, outline: string) => {
     '关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡',
     '----------------------------------------',
     '【道具清单】',
-    '道具名称（用途）',
+    '道具名称：',
+    '道具描述：',
     '----------------------------------------',
     '【场景信息】',
     '地点：',
@@ -1834,8 +1835,5 @@ onBeforeUnmount(() => {
 :deep(.dark-tabs.el-tabs--border-card .el-tabs__content) {
   padding: 1rem;
   background-color: #1e293b;
-}
-.aisw-scale {
-  font-size: 1.1rem;
 }
 </style>

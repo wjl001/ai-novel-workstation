@@ -78,7 +78,7 @@ export const useLoreStore = defineStore('lore', () => {
   // 当前正在编辑的小说
   const currentNovel = ref<Novel>(loadState('lore_currentNovel', {
     id: '1',
-    title: '未命名作品',
+    title: '开局一根棍，我掀了元廷这烂摊子！',
     premise: '',
     genre: '玄幻',
     episodeCount: 12,

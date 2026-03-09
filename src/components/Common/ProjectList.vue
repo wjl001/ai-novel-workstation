@@ -216,7 +216,10 @@ const emit = defineEmits(['create', 'open'])
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
 
-const bgClass = computed(() => 'bg-white')
+const bgClass = computed(() => {
+  if (theme.value === 'dreamy') return 'bg-transparent'
+  return isLight.value ? 'bg-white' : 'bg-slate-900'
+})
 
 const cardClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 hover:shadow-xl hover:bg-white/80 backdrop-blur-sm'
@@ -231,7 +234,7 @@ setTimeout(() => {
   projects.value = [
     { 
       id: 1, 
-      title: props.type === 'novel' ? '义军崛起' : '义军崛起 (短剧)', 
+      title: props.type === 'novel' ? '开局一根棍，我掀了元廷这烂摊子！' : '开局一根棍，我掀了元廷这烂摊子！(短剧)', 
       cover: 'https://images.unsplash.com/photo-1533158307587-828f0a76ef93?q=80&w=600&auto=format&fit=crop', 
       status: 'draft', 
       updatedAt: '2023-10-24',

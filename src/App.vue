@@ -71,10 +71,15 @@
         </div>
       </el-aside>
 
-      <el-main class="p-0 relative h-full overflow-hidden flex flex-col transition-colors duration-500" :class="mainBgClass">
+      <el-main class="p-0 relative h-full min-h-0 overflow-hidden flex flex-col transition-colors duration-500" :class="mainBgClass">
+        <div v-if="runtimeError" class="absolute top-4 left-4 right-4 z-50 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-lg">
+          {{ runtimeError }}
+        </div>
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
-            <component :is="Component" :is-light="isLight" />
+            <div :key="$route.path" class="flex-1 flex flex-col min-h-0 h-full">
+              <component :is="Component" :is-light="isLight" class="flex-1 flex flex-col min-h-0 h-full w-full" />
+            </div>
           </transition>
         </router-view>
       </el-main>
@@ -83,13 +88,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, watch, computed } from 'vue'
+import { ref, provide, watch, computed, onErrorCaptured } from 'vue'
 import { EditPen, VideoCamera, VideoCameraFilled, Picture, MagicStick, Refresh, Cpu, Brush } from '@element-plus/icons-vue'
 import { useLoreStore } from '@/stores/useLoreStore'
 
 const loreStore = useLoreStore()
 const currentTheme = ref('dreamy')
 const isLight = ref(true)
+const runtimeError = ref<string | null>(null)
 
 const updateTheme = (val: string) => {
   isLight.value = val === 'light' || val === 'dreamy'
@@ -104,6 +110,11 @@ const mainBgClass = computed(() => {
 
 provide('isLight', isLight)
 provide('theme', currentTheme)
+
+onErrorCaptured((error) => {
+  runtimeError.value = error instanceof Error ? error.message : String(error)
+  return false
+})
 </script>
 
 <style>

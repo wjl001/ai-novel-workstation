@@ -202,7 +202,4 @@ const selectCover = (url: string) => {
   box-shadow: 0 0 0 1px #334155;
   color: #e2e8f0;
 }
-.aisw-scale {
-  font-size: 1.1rem;
-}
 </style>

@@ -763,7 +763,7 @@ watch(() => route.query.mode, (newMode) => {
 const loadProjectData = (id: string) => {
   // Mock loading data for existing project
   const existingProject = {
-    title: "义军崛起",
+    title: "开局一根棍，我掀了元廷这烂摊子！",
     genre: "东方玄幻",
     episodeCount: 12,
     episodeDuration: 30,
@@ -901,7 +901,7 @@ const aiHelpWrite = async (field: keyof typeof form) => {
     mainPlot: "赵铁牛本是边境村庄的铁匠，村庄被官兵血洗后，他立誓复仇。在牢狱中结识豪杰，越狱后聚民为军，最终推翻暴政。",
     characterInfo: "主角：赵铁牛，20岁，铁匠出身。性格耿直，嫉恶如仇，力大无穷，善使一把玄铁重锤。",
     synopsis: "边境村庄突遭官兵屠戮，幸存少年赵铁牛背负血海深仇。从死牢囚犯到义军统帅，他将用手中的铁锤砸碎这黑暗的旧世道！",
-    title: "义军崛起",
+    title: "开局一根棍，我掀了元廷这烂摊子！",
     requirements: "1. 突出战争的残酷和兄弟情义\n2. 打斗场面要拳拳到肉，硬桥硬马"
   }
 
@@ -1286,9 +1286,6 @@ const proceedCreation = () => {
   --el-button-hover-bg-color: #4338ca;
   --el-button-hover-border-color: #4338ca;
   height: 56px;
-}
-.aisw-scale {
-  font-size: 1.1rem;
 }
 </style>
 

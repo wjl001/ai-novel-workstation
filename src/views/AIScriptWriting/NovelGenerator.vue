@@ -693,7 +693,7 @@ const defaultCover = () => {
 const useFallbackCover = () => {
   coverUrl.value = defaultCover()
 }
-const generateOutline = async () => {
+async function generateOutline() {
   isGeneratingOutline.value = true
   if (loreStore.currentNovel.chapters.length > 0) {
     outlines.value = mapChaptersToOutlines(loreStore.currentNovel.chapters)
@@ -1125,8 +1125,5 @@ const goToVideoStudio = () => {
 }
 :deep(.custom-dark-select .el-select__placeholder) {
   color: #cbd5e1; /* slate-300 */
-}
-.aisw-scale {
-  font-size: 1.1rem;
 }
 </style>
