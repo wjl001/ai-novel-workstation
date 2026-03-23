@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>AI Video Workflow</title>
+    </head>
+    <body>
+        <outline text="AI视频创作工作流">
+            <outline text="1. 作品初始化 (Project Init)">
+                <outline text="基本信息">
+                    <outline text="剧集总数: 10集"/>
+                    <outline text="作品类型"/>
+                    <outline text="作品简介">
+                        <outline text="角色档案">
+                            <outline text="名字"/>
+                            <outline text="设定"/>
+                        </outline>
+                    </outline>
+                </outline>
+                <outline text="故事大纲">
+                    <outline text="标题"/>
+                    <outline text="概要"/>
+                    <outline text="*逻辑: 基于概要扩充 -> 指向剧本创作"/>
+                </outline>
+            </outline>
+            <outline text="2. 剧本创作 (Script Writing)">
+                <outline text="上：剧集脚本 (Episode Script)">
+                    <outline text="标题"/>
+                    <outline text="剧情内容"/>
+                    <outline text="主体要素 (Entities)">
+                        <outline text="角色 (Character): 名称, 描述, 音色"/>
+                        <outline text="道具 (Props): 名称, 描述"/>
+                        <outline text="场景 (Scene): 名称, 描述"/>
+                    </outline>
+                </outline>
+                <outline text="下：分镜脚本 (Storyboard Script) (交付)">
+                    <outline text="1. 分镜编号"/>
+                    <outline text="2. 标题"/>
+                    <outline text="3. 总时长 (10-15s)"/>
+                    <outline text="4. 主体画面 (Key Visual)"/>
+                    <outline text="5. 镜头列表 (Shots) (多个)">
+                        <outline text="① 编号"/>
+                        <outline text="② 画面描述"/>
+                        <outline text="③ 音效"/>
+                        <outline text="④ BGM"/>
+                    </outline>
+                </outline>
+            </outline>
+            <outline text="3. 资产生成 (Asset Generation)">
+                <outline text="1> 主体生成">
+                    <outline text="角色图片"/>
+                    <outline text="道具图片"/>
+                    <outline text="场景图片"/>
+                </outline>
+                <outline text="2> 分镜细化">
+                    <outline text="输入: 基于分镜脚本"/>
+                    <outline text="首帧图描述"/>
+                    <outline text="画面详细描述"/>
+                </outline>
+            </outline>
+            <outline text="4. 视频合成 (Video Synthesis)">
+                <outline text="3> 视频生成">
+                    <outline text="封面生成">
+                        <outline text="来源: 剧情 + 主体"/>
+                    </outline>
+                    <outline text="分镜视频 (多个)">
+                        <outline text="来源: 首帧图 + 画面描述 + 主体"/>
+                        <outline text="步骤">
+                            <outline text="生成首帧图"/>
+                            <outline text="生成视频片段"/>
+                        </outline>
+                    </outline>
+                    <outline text="背景音乐">
+                        <outline text="来源: 剧情情感分析"/>
+                    </outline>
+                </outline>
+                <outline text="4> 最终合成">
+                    <outline text="输出: 纯视频文件"/>
+                </outline>
+            </outline>
+        </outline>
+    </body>
+</opml>

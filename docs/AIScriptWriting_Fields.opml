@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>AI Script Writing Fields</title>
+    </head>
+    <body>
+        <outline text="AI剧本创作 (AI Script Writing)">
+            <outline text="1. 基础设定 (Basic Settings)">
+                <outline text="核心参数 (Core Params)">
+                    <outline text="题材设定 (Genre)"/>
+                    <outline text="风格倾向 (Style Tendency)"/>
+                    <outline text="核心受众 (Target Audience)"/>
+                    <outline text="剧本叙事 (Narrative Style)"/>
+                    <outline text="标签 (Tags)"/>
+                </outline>
+                <outline text="规格参数 (Specs)">
+                    <outline text="生成集数 (Episode Count)"/>
+                    <outline text="单集时长 (Episode Duration)"/>
+                    <outline text="深度记忆引擎 (Deep Memory Engine)"/>
+                </outline>
+                <outline text="内容设定 (Content Settings)">
+                    <outline text="作品名称 (Title)"/>
+                    <outline text="世界观设定 (World View)"/>
+                    <outline text="核心金手指 (Golden Finger)"/>
+                    <outline text="主线剧情 (Main Plot)"/>
+                    <outline text="角色档案 (Character Info)"/>
+                    <outline text="作品简介 (Synopsis)"/>
+                    <outline text="创作要求 (Requirements)"/>
+                </outline>
+            </outline>
+            <outline text="2. 大纲生成 (Outline Generation)">
+                <outline text="大纲列表 (Outline List)">
+                    <outline text="集数 (Episode Number)"/>
+                    <outline text="标题 (Title)"/>
+                    <outline text="概要 (Summary)"/>
+                    <outline text="状态 (Status)"/>
+                </outline>
+                <outline text="元数据设定 (Meta Data)">
+                    <outline text="场景 (Scene)"/>
+                    <outline text="角色 (Roles)"/>
+                    <outline text="道具 (Props)"/>
+                    <outline text="冲突 (Conflict)"/>
+                    <outline text="黄金3秒 (Hook)"/>
+                    <outline text="关系图谱 (Relation)"/>
+                </outline>
+            </outline>
+            <outline text="3. 剧本撰写 (Script Writing)">
+                <outline text="编辑器 (Editor)">
+                    <outline text="剧集标题 (Chapter Title)"/>
+                    <outline text="正文内容 (Content)"/>
+                    <outline text="字数统计 (Word Count)"/>
+                </outline>
+                <outline text="脚本格式标签 (Script Tags)">
+                    <outline text="[EP] 剧集"/>
+                    <outline text="[INFO] 信息"/>
+                    <outline text="[ROLE] 角色"/>
+                    <outline text="[PROP] 道具"/>
+                    <outline text="[SCENE] 场景"/>
+                    <outline text="[STORY] 大纲"/>
+                    <outline text="[SHOT] 分镜"/>
+                    <outline text="[CAM] 镜头"/>
+                    <outline text="[SFX] 音效"/>
+                    <outline text="[TIME] 时长"/>
+                    <outline text="[BGM] 背景音乐"/>
+                </outline>
+                <outline text="辅助功能 (Assistants)">
+                    <outline text="AI 助手 (AI Chat)"/>
+                    <outline text="五感描写填充 (Five Senses)"/>
+                    <outline text="润色/续写/扩写 (AI Actions)"/>
+                </outline>
+            </outline>
+        </outline>
+    </body>
+</opml>

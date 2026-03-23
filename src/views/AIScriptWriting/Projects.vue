@@ -1,7 +1,12 @@
 <template>
   <div class="aisw-scale p-8 h-full overflow-y-auto transition-colors duration-300" :class="bgClass">
     <div class="flex items-center justify-between mb-8">
-      <h1 class="text-3xl font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">我的作品</h1>
+      <div class="flex items-center gap-4">
+        <h1 class="text-3xl font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">我的作品</h1>
+        <el-button type="primary" plain class="!rounded-xl" @click="showPrototypeHelp = true">
+          <el-icon class="mr-1"><InfoFilled /></el-icon> 原型图交互说明
+        </el-button>
+      </div>
       <el-button type="primary" size="large" @click="createNewProject" :class="isLight ? 'bg-indigo-600' : 'bg-indigo-600 border-none'">
         <el-icon class="mr-2"><Plus /></el-icon> 新建项目
       </el-button>
@@ -83,16 +88,51 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- Prototype Explanation Drawer -->
+    <el-drawer
+      v-model="showPrototypeHelp"
+      title="💡 作品列表交互原型说明"
+      direction="rtl"
+      size="400px"
+    >
+      <div class="space-y-6">
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 项目卡片交互</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            卡片式管理所有剧本项目。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>悬停动效：</strong> 鼠标移入卡片时，封面图片会轻微放大，同时浮现操作遮罩层。</li>
+            <li><strong>快速编辑：</strong> 点击遮罩层上的 <el-icon><Edit /></el-icon> 按钮或直接点击卡片可进入编辑器。</li>
+            <li><strong>智能封面：</strong> 点击遮罩层上的 <el-icon><MagicStick /></el-icon> 按钮可呼出AI封面生成器。</li>
+          </ul>
+        </div>
+
+        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. AI 封面生成器</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            为剧本自动生成具有吸引力的封面图。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li>弹窗内可自定义 Prompt 描述词。</li>
+            <li>点击生成后，系统模拟AI作画过程，分批次展示多张变体封面（轮播图形式）。</li>
+            <li>选中喜欢的封面后，将自动应用并更新到对应的项目卡片上。</li>
+          </ul>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus, Picture, Edit, MagicStick } from '@element-plus/icons-vue'
+import { Plus, Picture, Edit, MagicStick, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const showPrototypeHelp = ref(false)
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
 
@@ -114,8 +154,46 @@ interface Project {
   cover?: string
 }
 
+const generateDefaultCover = (title: string, variant: number = 0) => {
+  const gradients = [
+    ['#4f46e5', '#0ea5e9'], // Indigo to Sky
+    ['#db2777', '#9333ea'], // Pink to Purple
+    ['#059669', '#10b981'], // Emerald
+    ['#d97706', '#f59e0b'], // Amber
+    ['#2563eb', '#3b82f6'], // Blue
+    ['#ef4444', '#f97316'], // Red to Orange
+    ['#8b5cf6', '#6366f1'], // Violet to Indigo
+    ['#10b981', '#3b82f6']  // Emerald to Blue
+  ]
+  
+  // Deterministic selection based on title hash
+  let hash = variant;
+  for (let i = 0; i < title.length; i++) {
+    hash = title.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colorIndex = Math.abs(hash) % gradients.length;
+  const [c1, c2] = gradients[colorIndex];
+  
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+    <defs>
+      <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}" />
+        <stop offset="100%" stop-color="${c2}" />
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#g)" />
+    <rect x="60" y="60" width="480" height="780" rx="30" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3)">
+      ${title.length > 6 ? title.substring(0, 6) + '...' : title}
+    </text>
+  </svg>`
+  
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg.trim().replace(/\s+/g, ' '))
+}
+
 const projects = ref<Project[]>([
-  { id: '1', title: '义军崛起', wordCount: 12500, updatedAt: '2小时前', cover: 'https://images.unsplash.com/photo-1533158307587-828f0a76ef93?w=800' },
+  { id: '1', title: '义军崛起', wordCount: 12500, updatedAt: '2小时前', cover: '' },
   { id: '2', title: '剑指天涯', wordCount: 45000, updatedAt: '1天前' },
   { id: '3', title: '深宫谍影', wordCount: 8200, updatedAt: '3天前' },
 ])
@@ -157,11 +235,12 @@ const startGeneration = async () => {
   generatedCovers.value = []
   
   // 模拟 AI 生成过程，分批次返回图片
+  // 使用本地 SVG 生成替代 Unsplash
   const mockImages = [
-    'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800',
-    'https://images.unsplash.com/photo-1635322966219-b75ed3a90e2d?w=800',
-    'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800'
+    generateDefaultCover(activeProject.value?.title || '封面', Date.now()),
+    generateDefaultCover(activeProject.value?.title || '封面', Date.now() + 1),
+    generateDefaultCover(activeProject.value?.title || '封面', Date.now() + 2),
+    generateDefaultCover(activeProject.value?.title || '封面', Date.now() + 3)
   ]
 
   // 模拟进度条或逐步加载

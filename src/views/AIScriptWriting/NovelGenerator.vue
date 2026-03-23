@@ -35,7 +35,12 @@
 
                 <!-- Title & Info -->
                 <div class="flex-1">
-                   <h1 class="text-xl font-bold mb-1" :class="isLight ? 'text-slate-900' : 'text-white'">{{ loreStore.currentNovel.title || '未命名作品' }}</h1>
+                   <div class="flex items-center gap-4 mb-1">
+                     <h1 class="text-xl font-bold" :class="isLight ? 'text-slate-900' : 'text-white'">{{ loreStore.currentNovel.title || '未命名作品' }}</h1>
+                     <el-button type="primary" plain size="small" class="!rounded-full !px-3" @click="showPrototypeHelp = true">
+                       <el-icon class="mr-1"><InfoFilled /></el-icon> 原型说明
+                     </el-button>
+                   </div>
                    <div class="text-sm opacity-70 mb-2" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ loreStore.currentNovel.genre }} · {{ loreStore.currentNovel.episodeCount }}集</div>
                    <div class="flex items-center gap-2">
                       <el-tag size="small" effect="plain" :type="isLight ? 'primary' : 'info'">AI 智能大纲生成中</el-tag>
@@ -153,14 +158,20 @@
             <div v-if="step === 'chapters'" class="flex-1 flex flex-col h-full overflow-hidden">
                <!-- Stats Row: small and compact, shares line with cover -->
                <div class="grid grid-cols-4 gap-3 mb-3 items-center">
-                  <div class="p-3 rounded-xl border flex items-center gap-3 transition-all hover:-translate-y-0.5 cursor-pointer group" :class="isLight ? 'bg-white border-slate-200 shadow-sm hover:border-indigo-300' : 'bg-slate-800 border-slate-700 shadow-lg hover:border-indigo-500/50'" @click="handleBack">
-                     <div class="w-9 h-9 rounded-full flex items-center justify-center transition-colors group-hover:bg-indigo-500/20" :class="isLight ? 'bg-slate-50 text-slate-500 group-hover:text-indigo-600' : 'bg-slate-700/50 text-slate-400 group-hover:text-indigo-400'">
-                        <el-icon :size="18"><ArrowLeft /></el-icon>
+                  <div class="p-3 rounded-xl border flex items-center justify-between transition-all hover:-translate-y-0.5 cursor-pointer group" :class="isLight ? 'bg-white border-slate-200 shadow-sm hover:border-indigo-300' : 'bg-slate-800 border-slate-700 shadow-lg hover:border-indigo-500/50'">
+                     <div class="flex items-center gap-3" @click="handleBack">
+                       <div class="w-9 h-9 rounded-full flex items-center justify-center transition-colors group-hover:bg-indigo-500/20" :class="isLight ? 'bg-slate-50 text-slate-500 group-hover:text-indigo-600' : 'bg-slate-700/50 text-slate-400 group-hover:text-indigo-400'">
+                          <el-icon :size="18"><ArrowLeft /></el-icon>
+                       </div>
+                       <div>
+                          <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">返回</div>
+                          <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">大纲列表</div>
+                       </div>
                      </div>
-                     <div>
-                        <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">返回</div>
-                        <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">大纲列表</div>
-                     </div>
+                     <!-- Prototype Explanation Button for Step 2 -->
+                     <el-button type="primary" plain size="small" class="!rounded-full !px-3" @click.stop="showPrototypeHelp = true">
+                       <el-icon class="mr-1"><InfoFilled /></el-icon> 原型说明
+                     </el-button>
                   </div>
                   <div class="p-3 rounded-xl border flex items-center gap-3 transition-all hover:-translate-y-0.5" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800 border-slate-700 shadow-lg'">
                      <div class="w-9 h-9 rounded-full flex items-center justify-center" :class="isLight ? 'bg-blue-50 text-blue-600' : 'bg-blue-500/20 text-blue-400'">
@@ -193,10 +204,6 @@
                <div class="flex-1 overflow-hidden rounded-2xl border shadow-inner flex flex-col" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
                   <div class="p-4 border-b flex justify-between items-center" :class="isLight ? 'border-slate-100 bg-slate-50' : 'border-slate-700 bg-slate-800'">
                      <h3 class="font-bold text-lg" :class="isLight ? 'text-slate-700' : 'text-white'">剧集列表</h3>
-                     <div class="flex gap-2">
-                        <el-button size="small" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300'">倒序</el-button>
-                        <el-button size="small" type="primary" plain :class="isLight ? '' : '!bg-indigo-500/20 !border-indigo-500/50 !text-indigo-300'">批量生成</el-button>
-                     </div>
                   </div>
                   <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                       <div v-for="(item, index) in outlines" :key="index" class="p-4 rounded-xl flex items-center justify-between transition-colors border group" :class="isLight ? 'hover:bg-indigo-50 border-slate-100 hover:border-indigo-100' : 'bg-slate-800/50 border-slate-700/50 hover:bg-slate-700 hover:border-indigo-500/30'">
@@ -276,6 +283,49 @@
       </main>
     </div>
 
+    <!-- Prototype Explanation Drawer -->
+    <el-drawer
+      v-model="showPrototypeHelp"
+      title="💡 大纲生成与管理原型说明"
+      direction="rtl"
+      size="400px"
+    >
+      <div class="space-y-6">
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 剧集大纲预览 (步骤1)</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            AI 根据基础设定自动生成的多集大纲。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>卡片化展示：</strong> 每集大纲包含标题和摘要，可直接在输入框中进行修改。</li>
+            <li><strong>六维设定矩阵：</strong> 每集标题下方提供场景、角色、道具等 6 个维度的细化设定入口。</li>
+            <li><strong>悬停交互：</strong> 鼠标悬停在某集上，右侧会显示刷新（单集重生成）、查看详情和删除按钮。摘要下方会显示插入新集按钮。</li>
+            <li><strong>全局控制：</strong> 底部吸底操作栏提供全局重新生成和确认大纲（进入下一步）的功能。</li>
+          </ul>
+        </div>
+
+        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 大纲列表管理 (步骤2)</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            进入内容创作阶段的核心调度台。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>顶部数据栏：</strong> 显示总集数、已完成集数，并提供"批量短剧转换"入口。</li>
+            <li><strong>单集创作操作：</strong> 列表右侧提供三种创作模式："AI撰写"（直接生成正文）、"手写"（跳转至编辑器）、"对接短剧"（将单集内容发送至短剧生成台）。</li>
+            <li><strong>状态管理：</strong> 左侧复选框支持多选，右侧标签实时显示当前集的内容状态（待设定/待撰写/已完成）。</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 高级扩展功能</h4>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>封面重绘：</strong> 悬停在左上角作品封面上，可点击重绘或上传自定义封面。</li>
+            <li><strong>作品设置：</strong> 点击标题下方的"作品设置"可呼出抽屉，随时调整全局基础设定。</li>
+          </ul>
+        </div>
+      </div>
+    </el-drawer>
+
     <!-- Chapter Detail Dialog -->
     <el-dialog v-model="showDetailDialog" title="剧集详情" width="600px" :class="isLight ? '' : 'dark-dialog'">
       <div v-if="currentDetailIndex !== -1">
@@ -283,7 +333,7 @@
           <el-form-item label="剧集标题">
             <el-input v-model="outlines[currentDetailIndex].title" :class="isLight ? '' : 'dark-input'" />
           </el-form-item>
-          <el-form-item label="剧集概要">
+          <el-form-item label="剧集正文">
             <el-input 
               v-model="outlines[currentDetailIndex].summary" 
               type="textarea" 
@@ -294,15 +344,6 @@
         </el-form>
       </div>
       <template #footer>
-        <div class="flex justify-between w-full">
-           <el-button type="primary" plain :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600' : '!bg-indigo-500/10 !border-indigo-500/30 !text-indigo-400 hover:!bg-indigo-500/20'" @click="regenerateSingleChapter(currentDetailIndex)">
-             <el-icon class="mr-1"><MagicStick /></el-icon> AI 重新生成
-           </el-button>
-           <div>
-             <el-button @click="showDetailDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">关闭</el-button>
-             <el-button type="primary" @click="saveChapterDetail" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
-           </div>
-        </div>
       </template>
     </el-dialog>
 
@@ -346,7 +387,7 @@
             <div class="p-3 rounded text-sm max-h-32 overflow-y-auto border custom-scrollbar" :class="isLight ? 'bg-slate-50 text-slate-600 border-slate-200' : 'bg-slate-900 text-slate-300 border-slate-700'">{{ loreStore.currentNovel.goldenFinger || '无' }}</div>
           </div>
           <div>
-            <div class="text-sm text-slate-400 mb-2">主线剧情（Main Plot）</div>
+            <div class="text-sm text-slate-400 mb-2">作品简介（Main Plot）</div>
             <div class="p-3 rounded text-sm max-h-32 overflow-y-auto border custom-scrollbar" :class="isLight ? 'bg-slate-50 text-slate-600 border-slate-200' : 'bg-slate-900 text-slate-300 border-slate-700'">{{ loreStore.currentNovel.mainPlot || '未设定' }}</div>
           </div>
           <div>
@@ -365,11 +406,11 @@
     </el-dialog>
 
     <!-- Script Dialog -->
-    <el-dialog v-model="showScriptDialog" title="AI 短剧剧本导出" width="800px" :class="isLight ? '' : 'dark-dialog'">
+    <el-dialog v-model="showScriptDialog" title="AI 短剧剧本对接" width="800px" :class="isLight ? '' : 'dark-dialog'">
       <div class="flex flex-col h-[500px]">
         <div class="mb-4 p-3 rounded text-sm flex items-start gap-2 border" :class="isLight ? 'bg-blue-50 border-blue-100 text-blue-700' : 'bg-slate-800 border-slate-700 text-slate-400'">
            <el-icon class="mt-0.5" :class="isLight ? 'text-blue-600' : 'text-indigo-400'"><InfoFilled /></el-icon>
-           <div>AI 已根据剧集内容自动转换为短剧分镜脚本格式，支持一键导出。此格式可直接用于下游 AI 视频生成工具。</div>
+           <div>AI 已根据剧集内容自动转换为短剧分镜脚本格式，支持一键对接。此格式可直接用于下游 AI 视频生成工具。</div>
         </div>
         <el-input
           v-model="scriptContent"
@@ -381,44 +422,11 @@
         />
       </div>
       <template #footer>
-        <div class="flex justify-between items-center w-full">
+        <div class="flex justify-end items-center w-full">
            <div class="flex items-center gap-2">
-             <span class="text-sm text-slate-400">推送到项目：</span>
-             <el-select 
-               v-model="selectedDownstreamProject" 
-               placeholder="选择下游短剧项目" 
-               class="w-48"
-               :class="isLight ? '' : 'dark-select'"
-               size="default"
-               :effect="isLight ? 'light' : 'dark'"
-             >
-               <el-option
-                 v-for="item in downstreamProjects"
-                 :key="item.id"
-                 :label="item.title"
-                 :value="item.id"
-               />
-             </el-select>
-             <el-button 
-               type="success" 
-               plain 
-               :loading="isPushingToDraft"
-               :disabled="!selectedDownstreamProject"
-               :class="isLight ? '' : '!bg-green-500/10 !border-green-500/30 !text-green-400 hover:!bg-green-500/20'"
-               @click="pushToDraft"
-             >
-               <el-icon class="mr-1"><Promotion /></el-icon> 推送草稿
-             </el-button>
              <el-button type="primary" plain :class="isLight ? '' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-300'" @click="goToVideoStudio">
                <el-icon class="mr-1"><VideoCamera /></el-icon> 前往AI创作视频
              </el-button>
-           </div>
-           
-           <div class="flex gap-2">
-              <el-button @click="showScriptDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">关闭</el-button>
-              <el-button type="primary" @click="exportScript" :class="isLight ? '' : '!bg-indigo-600 border-none'">
-                 <el-icon class="mr-1"><Download /></el-icon> 导出剧本
-              </el-button>
            </div>
         </div>
       </template>
@@ -442,6 +450,7 @@ const theme = inject('theme', ref('dark'))
 const route = useRoute()
 const router = useRouter()
 const loreStore = useLoreStore()
+const showPrototypeHelp = ref(false)
 
 const bgClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-transparent text-slate-800'
@@ -519,6 +528,15 @@ const openMetaDialog = (type: 'scene' | 'roles' | 'props' | 'conflict' | 'hook' 
   const brief = summary.length > 50 ? summary.slice(0, 50) + '…' : summary
   const title = chapter?.title ? `CH.${index + 1} ${chapter.title}` : `CH.${index + 1}`
 
+  // 获取角色列表供动态填充
+  const chars = loreStore.characters || []
+  const charNames = chars.length > 0 
+    ? chars.map(c => c.name).join(' · ') 
+    : '主角 · 盟友 · 反派'
+  
+  const mainChar = chars.find(c => c.role.includes('主角') || c.role.includes('男主') || c.role.includes('女主'))
+  const villain = chars.find(c => c.role.includes('反派') || c.role.includes('对手'))
+
   const config = {
     scene: {
       title: `场景 · 关键地点`,
@@ -531,9 +549,9 @@ const openMetaDialog = (type: 'scene' | 'roles' | 'props' | 'conflict' | 'hook' 
     roles: {
       title: `角色 · 主角/盟友`,
       items: [
-        `核心人物：主角 · 盟友 · 反派`,
+        `核心人物：${charNames}`,
         `角色动机：围绕“${chapter?.title || '目标' }”展开`,
-        `角色关系：对立与合作并存`
+        `主要角色：${chars.slice(0, 3).map(c => `${c.name}(${c.role})`).join('、') || '暂无详细角色'}`
       ]
     },
     props: {
@@ -562,7 +580,11 @@ const openMetaDialog = (type: 'scene' | 'roles' | 'props' | 'conflict' | 'hook' 
     },
     relation: {
       title: `人物关系图谱`,
-      items: [
+      items: chars.length >= 2 ? [
+        `${chars[0].name} ↔ ${chars[1]?.name || '?'}: 核心羁绊/冲突`,
+        mainChar && villain ? `${mainChar.name} ↔ ${villain.name}: 宿命对决` : `主要对抗：正邪较量`,
+        `其他关系：${chars.slice(2).map(c => c.name).join('、') || '多方势力混战'}`
+      ] : [
         `主角 → 盟友：目标一致，互相试探`,
         `主角 ↔ 反派：核心对立，利益冲突`,
         `盟友 → 反派：潜在背叛或双面身份`

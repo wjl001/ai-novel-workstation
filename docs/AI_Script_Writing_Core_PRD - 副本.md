@@ -75,8 +75,8 @@
 #### 2.1.1 剧本规格配置 (Script Specs)
 | 字段名称 | 类型 | 必填 | 逻辑/限制 |
 | :--- | :--- | :--- | :--- |
-| `episode_count` | Number | 是 | 范围 1-100。短剧通常 80-100，长剧 30-40。影响后续节拍规划。 |
-| `episode_duration` | Number | 是 | 单位：分钟。范围 1-120。影响单集目标字数（1min ≈ 300字）。 |
+| `episode_count` | Number | 是 | 范围 1-100。短剧通常 1-100，长剧 30-40。影响后续节拍规划。 |
+| `episode_duration` | Number | 是 | 单位：秒。范围 30-120。影响单集目标字数（1min ≈ 300字）。 |
 | `target_audience` | Enum | 是 | 选项：`female_romance` (女频), `male_warrior` (男频), `suspense` (悬疑)。影响AI文风。 |
 
 #### 2.1.2 题材与风格 (Genre & Style)

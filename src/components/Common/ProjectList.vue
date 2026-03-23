@@ -80,21 +80,21 @@
 
           <!-- Action Footer -->
           <div class="p-3 border-t grid grid-cols-6 gap-1" :class="isLight ? 'bg-slate-50/80 border-slate-200' : 'bg-slate-800/80 border-slate-700'">
-            <el-tooltip content="管理章节" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'chapters')">
-                <el-icon><List /></el-icon>
+            <el-tooltip content="基础设定" placement="top">
+              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openSettings(project.id)">
+                <el-icon><Setting /></el-icon>
               </el-button>
             </el-tooltip>
-            
+
             <el-tooltip content="编辑大纲" placement="top">
               <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'outline')">
                 <el-icon><EditPen /></el-icon>
               </el-button>
             </el-tooltip>
 
-            <el-tooltip content="基础设定" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openSettings(project.id)">
-                <el-icon><Setting /></el-icon>
+            <el-tooltip content="管理章节" placement="top">
+              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'chapters')">
+                <el-icon><List /></el-icon>
               </el-button>
             </el-tooltip>
 
@@ -235,8 +235,8 @@ setTimeout(() => {
     { 
       id: 1, 
       title: props.type === 'novel' ? '开局一根棍，我掀了元廷这烂摊子！' : '开局一根棍，我掀了元廷这烂摊子！(短剧)', 
-      cover: 'https://images.unsplash.com/photo-1533158307587-828f0a76ef93?q=80&w=600&auto=format&fit=crop', 
-      status: 'draft', 
+      cover: '', // Empty cover to trigger default generation
+      status: 'writing', 
       updatedAt: '2023-10-24',
       author: 'Admin',
       views: 128,
@@ -245,40 +245,64 @@ setTimeout(() => {
     { 
       id: 2, 
       title: props.type === 'novel' ? '剑指天涯' : '剑指天涯 (短剧)', 
-      cover: 'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=600&auto=format&fit=crop', 
+      cover: '', // Empty cover to trigger default generation
       status: 'published', 
       updatedAt: '2023-10-20',
       author: 'Admin',
       views: 1024,
       likes: 356
+    },
+    { 
+      id: 3, 
+      title: '星际迷航：失落的文明', 
+      cover: '', // Empty cover to trigger default generation
+      status: 'outline', 
+      updatedAt: '2023-10-25',
+      author: 'Admin',
+      views: 56,
+      likes: 12
     }
   ]
   isLoading.value = false
 }, 800)
 
 
-const generateDefaultCover = (title: string) => {
-  const encodedTitle = encodeURIComponent(title)
-  // Use a reliable set of high-quality placeholder images instead of SVG to ensure "real image" look
-  const covers = [
-    'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=600&auto=format&fit=crop', // Dark gloomy background
-    'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=600&auto=format&fit=crop', // Fantasy forest
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop', // Mine/Cave
-    'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=600&auto=format&fit=crop', // Space/Nebula
-    'https://images.unsplash.com/photo-1614726365723-498aa67c5f7b?q=80&w=600&auto=format&fit=crop', // Character art
-    'https://images.unsplash.com/photo-1626544827763-d516dce335ca?q=80&w=600&auto=format&fit=crop', // Anime/Cyberpunk style
-    'https://images.unsplash.com/photo-1516410541193-6dbf071727d7?q=80&w=600&auto=format&fit=crop', // Pink clouds
-    'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop'  // Urban night
+const generateDefaultCover = (title: string, variant: number = 0) => {
+  const gradients = [
+    ['#4f46e5', '#0ea5e9'], // Indigo to Sky
+    ['#db2777', '#9333ea'], // Pink to Purple
+    ['#059669', '#10b981'], // Emerald
+    ['#d97706', '#f59e0b'], // Amber
+    ['#2563eb', '#3b82f6'], // Blue
+    ['#ef4444', '#f97316'], // Red to Orange
+    ['#8b5cf6', '#6366f1'], // Violet to Indigo
+    ['#10b981', '#3b82f6']  // Emerald to Blue
   ]
   
   // Deterministic selection based on title hash
-  let hash = 0;
+  let hash = variant;
   for (let i = 0; i < title.length; i++) {
     hash = title.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % covers.length;
+  const colorIndex = Math.abs(hash) % gradients.length;
+  const [c1, c2] = gradients[colorIndex];
   
-  return covers[index]
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+    <defs>
+      <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}" />
+        <stop offset="100%" stop-color="${c2}" />
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#g)" />
+    <rect x="60" y="60" width="480" height="780" rx="30" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3)">
+      ${title.length > 6 ? title.substring(0, 6) + '...' : title}
+    </text>
+  </svg>`
+  
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg.trim().replace(/\s+/g, ' '))
 }
 
 // Upload Handler
@@ -308,37 +332,35 @@ const generateCoverImages = () => {
   isGenerating.value = true
   generatedImages.value = []
   
-  // Simulate AI Generation with high-quality placeholders
-  // In a real app, call Stable Diffusion / Midjourney API here
+  // Simulate AI generation delay
   setTimeout(() => {
-    // Using Unsplash source with specific keywords related to the prompt (simulated)
-    // To ensure different images, we add random params
-    const keywords = ['fantasy', 'cyberpunk', 'portrait', 'anime']
-    const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)]
-    
+    // Generate 4 variations
     generatedImages.value = [
-      `https://images.unsplash.com/photo-1614726365723-498aa67c5f7b?w=400&q=80&auto=format&fit=crop&t=${Date.now()}`, // Fantasy character
-      `https://images.unsplash.com/photo-1563089145-599997674d42?w=400&q=80&auto=format&fit=crop&t=${Date.now()+1}`, // Neon/Cyberpunk
-      `https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80&auto=format&fit=crop&t=${Date.now()+2}`, // Portrait
-      `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80&auto=format&fit=crop&t=${Date.now()+3}`  // Portrait
+      generateDefaultCover(currentProjectForAI.value.title, Date.now()),
+      generateDefaultCover(currentProjectForAI.value.title, Date.now() + 1),
+      generateDefaultCover(currentProjectForAI.value.title, Date.now() + 2),
+      generateDefaultCover(currentProjectForAI.value.title, Date.now() + 3)
     ]
     isGenerating.value = false
-  }, 2000)
+  }, 1500)
 }
 
 const confirmAICover = () => {
   if (currentProjectForAI.value && selectedImage.value) {
     currentProjectForAI.value.cover = selectedImage.value
     showAIDialog.value = false
-    ElMessage.success('AI 封面已应用')
+    ElMessage.success('封面更新成功')
   }
 }
 
 const getStatusType = (status: string) => {
   const map: Record<string, string> = {
     draft: 'info',
+    outline: 'warning',
+    writing: 'primary',
+    completed: 'success',
     published: 'success',
-    archived: 'warning'
+    archived: 'info'
   }
   return map[status] || 'info'
 }
@@ -346,8 +368,11 @@ const getStatusType = (status: string) => {
 const getStatusLabel = (status: string) => {
   const map: Record<string, string> = {
     draft: '草稿',
-    published: '已发布',
-    archived: '归档'
+    outline: '大纲已成',
+    writing: '连载中',
+    completed: '已完结',
+    published: '已完结',
+    archived: '已归档'
   }
   return map[status] || status
 }

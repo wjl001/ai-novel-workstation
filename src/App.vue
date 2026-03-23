@@ -2,11 +2,11 @@
   <el-container class="h-screen w-screen overflow-hidden transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-200'">
     <el-header class="border-b flex items-center justify-between px-6 z-10 shadow-md transition-colors duration-300" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <el-icon :size="24" class="text-white"><EditPen /></el-icon>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">      
+          <el-icon :size="24" class="text-white"><VideoPlay /></el-icon>
         </div>
         <h1 class="text-xl font-bold tracking-wide hidden sm:block" :class="isLight ? 'text-slate-800' : 'text-white'">
-          一支笔
+          跃影
         </h1>
       </div>
       
@@ -52,18 +52,18 @@
           :text-color="isLight ? '#475569' : '#ffffff'"
           active-text-color="#818cf8"
         >
-          <el-menu-item index="/ai-write-novel" class="menu-item-hover">
-            <el-icon><VideoCameraFilled /></el-icon>
-            <span>AI 写剧本</span>
+          <el-menu-item index="/home" class="menu-item-hover">
+            <el-icon><HomeFilled /></el-icon>
+            <span>首页</span>
           </el-menu-item>
-          <!-- <el-menu-item index="/script-creative" class="menu-item-hover">
-             <el-icon><MagicStick /></el-icon>
-            <span>创意风暴</span>
+          <el-menu-item index="/ai-write-novel" class="menu-item-hover">        
+            <el-icon><EditPen /></el-icon>
+            <span>AI 剧本</span>
           </el-menu-item>
-          <el-menu-item index="/convert" class="menu-item-hover">
-             <el-icon><Refresh /></el-icon>
-            <span>剧本转化</span>
-          </el-menu-item> -->
+          <el-menu-item index="/ai-video" class="menu-item-hover">  
+             <el-icon><VideoCameraFilled /></el-icon>
+            <span>AI 短剧</span>
+          </el-menu-item>
         </el-menu>
         
         <div class="p-4 border-t" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
@@ -89,7 +89,8 @@
 
 <script setup lang="ts">
 import { ref, provide, watch, computed, onErrorCaptured } from 'vue'
-import { EditPen, VideoCamera, VideoCameraFilled, Picture, MagicStick, Refresh, Cpu, Brush } from '@element-plus/icons-vue'
+import { EditPen, VideoPlay, VideoCameraFilled, Picture, MagicStick, Refresh, 
+Cpu, Brush, HomeFilled } from '@element-plus/icons-vue'
 import { useLoreStore } from '@/stores/useLoreStore'
 
 const loreStore = useLoreStore()

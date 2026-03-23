@@ -104,6 +104,7 @@ const props = defineProps<{
   visible: boolean
   originalText: string
   actionType: string
+  context?: string
 }>()
 
 const emit = defineEmits(['update:visible', 'apply'])
@@ -155,10 +156,12 @@ const generateVariant = (index: number) => {
   results.value[index].loading = true
   results.value[index].content = ''
   
+  const contextPrompt = props.context ? `\n\n【相关背景信息】：\n${props.context}` : ''
+  
   const prompts = [
-    `请对以下文本进行【${props.actionType}】：\n${props.originalText}`,
-    `请尝试另一种风格，对以下文本进行【${props.actionType}】：\n${props.originalText}`,
-    `请用更大胆的创意，对以下文本进行【${props.actionType}】：\n${props.originalText}`
+    `请对以下文本进行【${props.actionType}】。${contextPrompt}\n\n【原文】：\n${props.originalText}`,
+    `请尝试另一种风格，对以下文本进行【${props.actionType}】。${contextPrompt}\n\n【原文】：\n${props.originalText}`,
+    `请用更大胆的创意，对以下文本进行【${props.actionType}】。${contextPrompt}\n\n【原文】：\n${props.originalText}`
   ]
 
   streamLLMResponse(

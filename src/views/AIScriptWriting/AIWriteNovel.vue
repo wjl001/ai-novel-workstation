@@ -16,10 +16,13 @@
              <el-button :icon="ArrowLeft" circle size="small" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-100' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700'" @click="exitCreation" />
              <div>
                 <h1 class="text-lg font-bold flex items-center gap-2" :class="isLight ? 'text-slate-800' : 'text-slate-100'">
-                   AI剧本工坊
+                   AI剧本
                    <el-tag size="small" effect="plain" round class="ml-2">基础设定</el-tag>
                 </h1>
              </div>
+             <el-button type="primary" plain size="small" class="!rounded-full !px-3 ml-2" @click="showPrototypeHelp = true">
+               <el-icon class="mr-1"><InfoFilled /></el-icon> 原型说明
+             </el-button>
           </div>
           
           <div class="flex-1 max-w-2xl mx-8">
@@ -72,6 +75,7 @@
                 <div id="section-genre">
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span> 题材设定
+                      <el-tooltip :content="definitions.genre" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <el-form-item prop="genre" class="!mb-0">
                       <el-popover placement="right" :width="280" trigger="click" :effect="isLight ? 'light' : 'dark'">
@@ -95,12 +99,27 @@
                 <div id="section-style">
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       <span class="w-1.5 h-1.5 bg-pink-500 rounded-full"></span> 风格倾向
+                      <el-tooltip :content="definitions.style" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <el-form-item prop="styles" class="!mb-0">
-                      <div class="w-full min-h-[40px] rounded-lg border p-2 cursor-pointer transition-all flex flex-wrap gap-2 items-center" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800/40 border-slate-700/50'" @click="showStyleDialog = true">
-                         <span v-if="form.styles.length === 0" class="text-xs px-1 opacity-50">{{ stylePlaceholder }}</span>
-                         <el-tag v-for="style in form.styles" :key="style" size="small" closable :effect="isLight ? 'light' : 'dark'" @close.stop="removeStyle(style)">{{ style }}</el-tag>
-                      </div>
+                      <el-select 
+                        v-model="form.styles[0]" 
+                        placeholder="请选择风格倾向" 
+                        class="w-full" 
+                        :class="isLight ? 'custom-select-light' : 'custom-select-dark'"
+                      >
+                        <el-option 
+                          v-for="style in POPULAR_STYLES.slice(0, 5)" 
+                          :key="style" 
+                          :label="style" 
+                          :value="style" 
+                        />
+                        <template #footer>
+                           <div class="flex justify-center p-2 border-t" :class="isLight ? 'border-slate-100' : 'border-slate-700'">
+                              <el-button link type="primary" @click="showStyleDialog = true">更多风格...</el-button>
+                           </div>
+                        </template>
+                      </el-select>
                    </el-form-item>
                 </div>
 
@@ -108,6 +127,7 @@
                 <div id="section-audience">
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 核心受众
+                      <el-tooltip :content="definitions.audience" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <div class="p-1 rounded-lg flex border" :class="isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-900/80 border-slate-800'">
                       <div v-for="audience in audiences" :key="audience.value" class="flex-1 text-center py-1.5 text-xs font-medium cursor-pointer rounded-md transition-all" :class="form.audience === audience.value ? (isLight ? 'text-indigo-600 bg-white shadow-sm' : 'text-white bg-slate-700 shadow-sm') : 'opacity-60'" @click="form.audience = audience.value">{{ audience.label }}</div>
@@ -118,6 +138,7 @@
                 <div id="section-script-style">
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> 剧本叙事
+                      <el-tooltip :content="definitions.narrative" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <el-popover placement="right" :width="300" trigger="hover" :effect="isLight ? 'light' : 'dark'">
                       <template #reference>
@@ -139,6 +160,7 @@
                 <div>
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       标签
+                      <el-tooltip :content="definitions.tags" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <div class="rounded-lg p-2 border min-h-[40px] cursor-pointer" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-800/40 border-slate-700/50'" @click="showTagDialog = true">
                       <div class="flex flex-wrap gap-2">
@@ -152,15 +174,16 @@
                 <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
                    <h3 class="font-bold mb-3 flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-700' : 'text-slate-200'">
                       <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 剧本规格
+                      <el-tooltip :content="definitions.specs" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </h3>
                    <div class="grid grid-cols-2 gap-3">
                       <div>
-                         <div class="text-xs mb-1 opacity-70">生成集数</div>
-                         <el-input-number v-model="form.episodeCount" :min="1" :max="100" size="small" class="!w-full" controls-position="right" />
+                         <div class="text-xs mb-1 opacity-70">生成集数 (2-15)</div>
+                         <el-input-number v-model="form.episodeCount" :min="2" :max="15" size="small" class="!w-full" controls-position="right" />
                       </div>
                       <div>
-                         <div class="text-xs mb-1 opacity-70">单集时长(分)</div>
-                         <el-input-number v-model="form.episodeDuration" :min="1" :max="120" size="small" class="!w-full" controls-position="right" />
+                         <div class="text-xs mb-1 opacity-70">单集时长 (30-120秒)</div>
+                         <el-input-number v-model="form.episodeDuration" :min="30" :max="120" :step="10" size="small" class="!w-full" controls-position="right" />
                       </div>
                    </div>
                 </div>
@@ -174,6 +197,7 @@
                       <div class="flex items-center justify-between mb-2 relative z-10">
                          <div class="flex items-center gap-2 text-white font-bold text-sm">
                             <el-icon class="text-white animate-pulse"><Cpu /></el-icon> 深度记忆引擎
+                            <el-tooltip :content="definitions.memory" placement="top"><el-icon class="cursor-help opacity-80 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                          </div>
                          <el-switch v-model="form.longMemory" size="small" active-color="#a855f7" />
                       </div>
@@ -193,6 +217,7 @@
                 <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-indigo-200 dark:hover:border-indigo-500/30 flex items-center gap-4 shrink-0">
                    <div class="shrink-0 text-sm font-bold text-slate-500 flex items-center gap-2 w-24">
                      <span class="w-1 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span> 作品名称
+                     <el-tooltip :content="definitions.title" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip>
                    </div>
                    <div class="flex-1 flex items-center gap-2">
                      <el-form-item prop="title" class="!mb-0 flex-1">
@@ -201,7 +226,11 @@
                           class="!text-xl font-bold custom-input-title transition-all" 
                           :class="isLight ? 'light-input' : 'dark-input'" 
                           placeholder="请输入引人注目的标题..." 
+                          maxlength="50"
                         />
+                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-1 rounded pointer-events-none">
+                            {{ form.title?.length || 0 }}/50 字
+                        </span>
                      </el-form-item>
                      <el-button link type="primary" size="small" @click="aiHelpWrite('title')" class="hover:rotate-180 transition-transform duration-500"><el-icon class="mr-1"><Refresh /></el-icon> 换个名字</el-button>
                    </div>
@@ -213,7 +242,7 @@
                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-300 dark:hover:border-blue-500/30 h-full relative overflow-hidden">
                       <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-bl-full pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
                       <div class="flex justify-between items-center mb-2 shrink-0 relative z-10">
-                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-blue-400 group-hover:animate-bounce"><Place /></el-icon> 世界观设定</span>
+                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-blue-400 group-hover:animate-bounce"><Place /></el-icon> 世界观设定 <el-tooltip :content="definitions.world" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip></span>
                          <el-button size="small" type="primary" plain round @click="aiHelpWrite('worldView')" class="!px-2 !h-6 !text-xs !rounded-lg shadow-sm">AI 生成</el-button>
                       </div>
                       <div class="flex-1 min-h-0 relative z-10">
@@ -225,14 +254,18 @@
                           placeholder="赛博朋克 / 修仙界 / 维多利亚蒸汽朋克..." 
                           :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
                           class="h-full custom-textarea !text-sm leading-relaxed" 
+                          maxlength="300"
                         />
+                        <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
+                            {{ form.worldView?.length || 0 }}/300 字
+                        </div>
                       </div>
                    </div>
                    <!-- Cheat -->
                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-yellow-300 dark:hover:border-yellow-500/30 h-full relative overflow-hidden">
                       <div class="absolute top-0 right-0 w-16 h-16 bg-yellow-500/5 rounded-bl-full pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
                       <div class="flex justify-between items-center mb-2 shrink-0 relative z-10">
-                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-yellow-400 group-hover:animate-spin-slow"><Key /></el-icon> 核心金手指</span>
+                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-yellow-400 group-hover:animate-spin-slow"><Key /></el-icon> 核心金手指 <el-tooltip :content="definitions.cheat" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip></span>
                          <el-button size="small" type="primary" plain round @click="aiHelpWrite('goldenFinger')" class="!px-2 !h-6 !text-xs !rounded-lg shadow-sm">AI 生成</el-button>
                       </div>
                       <div class="flex-1 min-h-0 relative z-10">
@@ -244,7 +277,11 @@
                           placeholder="系统 / 老爷爷 / 特殊异能..." 
                           :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
                           class="h-full custom-textarea !text-sm leading-relaxed" 
+                          maxlength="200"
                         />
+                        <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
+                            {{ form.goldenFinger?.length || 0 }}/200 字
+                        </div>
                       </div>
                    </div>
                 </div>
@@ -253,7 +290,7 @@
                 <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-red-300 dark:hover:border-red-500/30 flex-[0.8] min-h-[120px] flex flex-col relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-bl-full pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
                     <div class="flex justify-between items-center mb-2 shrink-0 relative z-10">
-                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-red-400 group-hover:scale-110 transition-transform"><TrendCharts /></el-icon> 主线剧情</span>
+                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-red-400 group-hover:scale-110 transition-transform"><TrendCharts /></el-icon> 作品简介 <el-tooltip :content="definitions.plot" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip></span>
                          <el-button size="small" type="primary" plain round @click="aiHelpWrite('mainPlot')" class="!px-2 !h-6 !text-xs !rounded-lg shadow-sm">AI 生成</el-button>
                     </div>
                     <div class="flex-1 min-h-0 relative z-10">
@@ -265,42 +302,59 @@
                           placeholder="讲述一个怎样的故事？起承转合..." 
                           :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
                           class="h-full custom-textarea !text-sm leading-relaxed" 
+                          maxlength="500"
                         />
+                        <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
+                            {{ form.mainPlot?.length || 0 }}/500 字
+                        </div>
                     </div>
                 </div>
 
-                <!-- Character & Synopsis & Requirements Grid (Expanded) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-[2] min-h-[300px]">
+                <!-- Character & Requirements Grid (Expanded) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-[2] min-h-[300px]">
                     <!-- Character Info -->
                     <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow group">
                         <div class="flex justify-between items-center mb-2 shrink-0">
-                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors">角色档案</span>
+                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors flex items-center gap-1">角色档案 <el-tooltip :content="definitions.character" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity text-slate-500"><QuestionFilled /></el-icon></el-tooltip></span>
                            <el-button size="small" text class="!px-1 !h-6 !text-xs" @click.stop="aiHelpWrite('characterInfo')">AI 生成</el-button>
                         </div>
-                        <div class="flex-1 min-h-0">
-                            <el-input v-model="form.characterInfo" type="textarea" resize="none" :rows="10" :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" placeholder="主角姓名、性格..." class="h-full custom-textarea !text-sm" />
-                        </div>
-                    </div>
-
-                    <!-- Synopsis -->
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow group">
-                        <div class="flex justify-between items-center mb-2 shrink-0">
-                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors">作品简介</span>
-                           <el-button size="small" text class="!px-1 !h-6 !text-xs" @click.stop="aiHelpWrite('synopsis')">AI 生成</el-button>
-                        </div>
-                        <div class="flex-1 min-h-0">
-                            <el-input v-model="form.synopsis" type="textarea" resize="none" :rows="10" :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" placeholder="吸引读者的简介..." class="h-full custom-textarea !text-sm" />
+                        <div class="flex-1 min-h-0 relative z-10">
+                            <el-input 
+                              v-model="form.characterInfo" 
+                              type="textarea" 
+                              resize="none" 
+                              :rows="10" 
+                              :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
+                              placeholder="主角姓名、性格..." 
+                              class="h-full custom-textarea !text-sm" 
+                              maxlength="500"
+                            />
+                            <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
+                                {{ form.characterInfo?.length || 0 }}/500 字
+                            </div>
                         </div>
                     </div>
 
                     <!-- Requirements -->
                     <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow group">
                         <div class="flex justify-between items-center mb-2 shrink-0">
-                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors">创作要求</span>
+                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors flex items-center gap-1">创作要求 <el-tooltip :content="definitions.requirements" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity text-slate-500"><QuestionFilled /></el-icon></el-tooltip></span>
                            <el-button size="small" text class="!px-1 !h-6 !text-xs" @click.stop="aiHelpWrite('requirements')">AI 生成</el-button>
                         </div>
-                        <div class="flex-1 min-h-0">
-                            <el-input v-model="form.requirements" type="textarea" resize="none" :rows="10" :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" placeholder="额外的创作要求..." class="h-full custom-textarea !text-sm" />
+                        <div class="flex-1 min-h-0 relative z-10">
+                            <el-input 
+                              v-model="form.requirements" 
+                              type="textarea" 
+                              resize="none" 
+                              :rows="10" 
+                              :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
+                              placeholder="额外的创作要求..." 
+                              class="h-full custom-textarea !text-sm" 
+                              maxlength="500"
+                            />
+                            <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
+                                {{ form.requirements?.length || 0 }}/500 字
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -358,6 +412,52 @@
       </div>
     </div>
 
+    <!-- Prototype Explanation Drawer -->
+    <el-drawer
+      v-model="showPrototypeHelp"
+      title="💡 基础设定原型说明"
+      direction="rtl"
+      size="400px"
+    >
+      <div class="space-y-6">
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 左侧参数配置面板</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            核心剧本方向控制中枢。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>题材设定：</strong> 支持点击弹出大型题材选择弹窗，进行精细化分类选择。</li>
+            <li><strong>风格倾向：</strong> 提供单选模式的直观按钮，点击"更多"可搜索或自定义风格。</li>
+            <li><strong>深度记忆引擎：</strong> Pro版独有功能开关，展示AI长篇连贯性技术能力。</li>
+          </ul>
+        </div>
+
+        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 右侧核心内容生成区</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            灵活的人机共创卡片组。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li>每个模块卡片（世界观、金手指、作品简介等）右上角均有独立的 <strong>"AI 生成"</strong> 按钮。</li>
+            <li>所有输入框支持手动精修，右下角带有实时字数统计。</li>
+            <li>作品名称旁边有"换个名字"刷新按钮，提供即时灵感。</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 底部悬浮操作区</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            控制整体工作流的流转。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>基于设定补全：</strong> 点击后仅填充页面上尚未填写内容的模块。</li>
+            <li><strong>从零生成全部：</strong> 危险操作，将覆盖用户当前在右侧的所有手写内容。</li>
+            <li><strong>开始创作：</strong> 将当前所有参数和内容传递至下一个"大纲生成"环节。</li>
+          </ul>
+        </div>
+      </div>
+    </el-drawer>
+
     <!-- Genre Dialog -->
     <el-dialog v-model="showGenreDialog" title="选择题材" width="600px" append-to-body :class="isLight ? '' : 'dark-dialog'">
       <div class="flex flex-col h-[400px]">
@@ -380,25 +480,52 @@
       </div>
     </el-dialog>
 
-    <!-- Style Dialog -->
-    <el-dialog v-model="showStyleDialog" title="选择风格" width="700px" append-to-body :class="isLight ? '' : 'dark-dialog'">
-      <div class="flex flex-col h-[500px]">
-        <el-input v-model="styleSearch" placeholder="搜索风格..." :prefix-icon="Search" class="mb-4" :class="isLight ? '' : 'dark-input'" clearable />
-        <div class="flex-1 overflow-y-auto custom-scrollbar p-1">
-           <div class="flex flex-wrap gap-2">
-             <div 
-               v-for="style in filteredStyles" 
-               :key="style"
-               class="px-4 py-2 text-sm font-bold rounded-full border cursor-pointer transition-all hover:border-pink-500 hover:text-pink-400"
-               :class="form.styles.includes(style) ? (isLight ? 'border-pink-500 bg-pink-50 text-pink-600' : 'border-pink-500 bg-pink-500/20 text-pink-100') : (isLight ? 'border-slate-200 bg-white text-slate-600' : 'border-slate-700 bg-slate-800 text-slate-200')"
-               @click="toggleStyle(style)"
-             >
-               {{ style }}
-             </div>
-           </div>
+      <!-- Style Dialog -->
+      <el-dialog v-model="showStyleDialog" title="热门风格推荐" width="700px" append-to-body :class="isLight ? '' : 'dark-dialog'">
+        <div class="flex flex-col h-[500px]">
+          <div class="flex gap-2 mb-4">
+             <el-input v-model="styleSearch" placeholder="搜索风格..." :prefix-icon="Search" :class="isLight ? '' : 'dark-input'" clearable class="flex-1" />
+             <el-button type="primary" :disabled="!styleSearch" @click="addCustomStyle">新增 "{{ styleSearch }}"</el-button>
+          </div>
+          
+          <div class="mb-4">
+            <h4 class="font-bold text-sm mb-3 flex items-center gap-2" :class="isLight ? 'text-slate-800' : 'text-slate-200'">
+              <span class="text-xl">🔥</span> 今日热门风格
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div 
+                v-for="hotStyle in ['废土赛博', '中式恐怖', '极简冷淡', '唯美古风']" 
+                :key="hotStyle"
+                class="relative overflow-hidden rounded-xl border-2 cursor-pointer group transition-all h-20"
+                :class="form.styles[0] === hotStyle ? 'border-indigo-500 shadow-lg shadow-indigo-500/20' : (isLight ? 'border-slate-200 hover:border-indigo-300' : 'border-slate-700 hover:border-indigo-500/50')"
+                @click="form.styles[0] = hotStyle; showStyleDialog = false"
+              >
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 z-0"></div>
+                <div class="absolute inset-0 flex items-center justify-center z-10 font-bold" :class="form.styles[0] === hotStyle ? 'text-indigo-600 dark:text-indigo-400' : (isLight ? 'text-slate-700' : 'text-slate-300')">
+                  {{ hotStyle }}
+                </div>
+                <div v-if="form.styles[0] === hotStyle" class="absolute top-1 right-1 w-4 h-4 bg-indigo-500 rounded-full flex items-center justify-center text-white z-20">
+                  <el-icon size="10"><Check /></el-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <el-divider border-style="dashed" />
+
+          <h4 class="font-bold text-sm mb-3" :class="isLight ? 'text-slate-800' : 'text-slate-200'">所有风格</h4>
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-1">
+             <el-radio-group v-model="form.styles[0]" class="w-full flex flex-wrap gap-2">
+               <el-radio-button 
+                 v-for="style in filteredStyles" 
+                 :key="style"
+                 :label="style"
+                 :value="style"
+               />
+             </el-radio-group>
+          </div>
         </div>
-      </div>
-    </el-dialog>
+      </el-dialog>
 
     <!-- Tag Dialog -->
     <el-dialog v-model="showTagDialog" title="选择标签" width="700px" append-to-body :class="isLight ? '' : 'dark-dialog'">
@@ -503,6 +630,23 @@ const isCreating = ref(false)
 const ruleFormRef = ref<FormInstance>()
 const activeCollapse = ref(['characterInfo', 'synopsis', 'requirements']) // Default open
 
+const definitions = {
+  genre: "决定作品的整体类型和世界背景，如玄幻、都市、科幻等。",
+  style: "设定作品的情感基调和叙事风格，如热血、黑暗、轻松等。",
+  audience: "目标读者群体，决定作品的用词深度和爽点设置。",
+  narrative: "决定故事的讲述方式，是侧重画面描写的电影感，还是侧重心理的小说感。",
+  tags: "用于细分作品特色的关键词，帮助AI更精准地把握创作方向。",
+  specs: "设定生成的剧本集数和单集时长，影响故事的节奏和体量。",
+  memory: "启用后AI将建立并维护世界知识图谱，确保长篇连载的情节连贯性。",
+  title: "具有吸引力的书名，能直接影响读者的点击欲望。",
+  world: "故事发生的背景设定，包括地理、势力、力量体系等。",
+  cheat: "主角的特殊优势或外挂，是推动剧情发展的关键动力。",
+  plot: "故事的主要发展脉络，包含起承转合的关键节点。",
+  character: "主要角色的姓名、性格、外貌及背景故事。",
+  synopsis: "用于展示给读者的故事梗概，需精炼且具吸引力。",
+  requirements: "对AI创作的特殊指令，如避雷点、特定的行文习惯等。"
+}
+
 // Nav Items
 const navItems = [
   { id: 'section-genre', label: '题材设定' },
@@ -521,7 +665,7 @@ const navItems = [
 
 // Constants
 const POPULAR_GENRES = ['东方玄幻', '赛博朋克', '家族世仇', '大女主', '无限流', '克苏鲁', '规则怪谈', '末世求生']
-const POPULAR_STYLES = ['轻松', '黑暗', '热血', '正剧', '群像', '智斗', '治愈', '反转']
+const POPULAR_STYLES = ['皮克斯风格', '美漫废土风', 'Q版暗黑风', '二次元拟真', '3D厚涂二次元', '魔法少女二次元', '都市二次元', '漫威动画']
 
 // Placeholders
 const genrePlaceholderIndex = ref(0)
@@ -650,42 +794,10 @@ const addCustomGenre = () => {
 const styleSearch = ref('')
 const customStyle = ref('')
 const allStyles = [
-  '马', '契约婚姻', '先婚后爱', '欢喜冤家', '前世情缘', '主仆羁绊', '死对头', '契约情侣', '家族联姻', 
-  '师徒禁忌', '兄弟阋墙', '爱而不得', '杀父之仇', '家族世仇', '利益联姻', '阶级鸿沟', '病娇', '黑化', 
-  '逆袭', '团宠', '马甲文', '女强', '男强', '双强', '女尊', '男尊', '女扮男装', '男扮女装', '真假千金', 
-  '真假少爷', '盗贼', '特工', '黑客', '明星', '特种兵', '杀手', '老师', '学生', '胖子', '医生', '鉴宝师', 
-  '孤儿', '宅男', '冷酷', '腹黑', '阳光', '狡猾', '机智', '猥琐', '嚣张', '淡定', '女王', '公主', '王子', 
-  '骑士', '贵族', '平民', '奴隶', '反派', '英雄', '兽化人', '变种人', '穿越者', '重生者', 'AI角色', '言灵之力', 
-  '召唤契约', '天赋异能', '娱乐圈', '电竞圈', '电竞文', '娱乐圈文', '娱圈甜宠', '娱圈虐恋', '热血', '爽文', 
-  '励志', '搞笑', '恶搞', '爆笑', '日常', '短故事', '中短篇', '蜀山', '魔王附体', '亡灵', '吸血鬼', '龙', 
-  '鬼怪', '僵尸', '丧尸', '魔兽', '玄学', '阵法', '丹药', '西游', '位面', '洪荒流', '学院流', '种田文', 
-  '争霸流', '异兽流', '系统流', '随身流', '软饭流', '迪化流', '无敌文', '练功流', '召唤流', '群穿', '重生', 
-  '穿越', '无限流', '技术流', '凡人流', '变身', '强者回归', '星际', '机甲', '末世', '灵异', '道士', '妖修', 
-  '修真', '仙侠', '江湖', '武侠', '权谋', '宫斗', '商战', '间谍', '侦探', '探险', '秘境', '异能', '超能力', 
-  '神话', '传说', '史诗', '战争', '和平', '职场', '赚钱', '宠物', '卡片', '手游', 'LOL', '机器人', '人工智能', 
-  '虚拟现实', '梦境', '幻觉', '心理', '艺术', '音乐', '舞蹈', '美食', '旅行', '自然', '生态', '环保', '科技', 
-  '历史', '现代', '古代', '东方', '西方', '海洋', '天空', '地下', '森林', '沙漠', '草原', '雪山', '河流', 
-  '湖泊', '岛屿', '城市', '乡村', '校园', '家庭', '社会', '国家', '民族', '文化', '宗教', '信仰', '习俗', 
-  '传统', '节日', '庆典', '仪式', '婚礼', '葬礼', '生日', '纪念日', '未来星际', '修仙时代', '蒸汽朋克', '末日废墟', 
-  '魔法大陆', '赛博都市', '修仙门派', '奴隶社会', '星际帝国', '修真世界', '异能世界', '理想国度', '反乌托邦', '联邦政府', 
-  '灵气爆发', '元素魔法', '科技主宰', '神力体系', '机械进化', '基因变异', '废土世界', '星际联邦', '时间循环', '平行宇宙', 
-  '魔法学院', '基因锁界', '双生灵魂', '亡灵魔法', '修真境界', '仙星融合', '武蒸结合', '校园异能', '历史系统', '职场玄幻', 
-  '末日萌宠', '古风悬疑', '科幻宫斗', '乙女无限', '上古神话', '商周时期', '秦汉岁月', '唐宋风华', '盛唐气象', '北宋烟云', 
-  '架空古代', '未来星际历', '平行世界', '远古洪荒', '近未来', '中世纪', '民国时期', '蒸汽时代', '修仙小世界', '星际联盟', 
-  '废土沙漠', '深海秘境', '兽人部落', '精灵森林', '亡灵国度', '机械城邦', '海底亚特兰蒂斯', '奴隶制王朝', '联邦制星际帝国', 
-  '修真门派林立', '兽人母系社会', '虫族蜂巢文明', '末世基地市', '魔法学院制', '封建贵族社会', '星际海盗联盟', '异能者公会', 
-  '灵气枯竭世界', '无魔世界', '丧尸病毒爆发区', '精神力统治时代', '基因锁世界', '机械文明巅峰', '兽潮平原', '神魔古战场', 
-  '时间紊乱区', '星际流放地', '修真文明', '魔法文明', '科技修真融合', '虫族文明', '机械文明', '亚特兰蒂斯文明', 
-  '精灵文明', '矮人锻造文明', '亡灵魔法文明', '共生体文明', '契约升级', '荒野求生', '种族战争', '宫廷政变', '宗门大比', 
-  '星际大战', '丧尸围城', '正邪对抗', '资源争夺', '拍卖会', '阴谋诡计', '灭门惨案', '时空裂缝', '反转逆袭', '真相揭露', 
-  '身份互换', '时空穿越', '记忆复苏', '卧底潜伏', '假死逃生', '魂穿夺舍', '预言成真', '秘境探险', '星际漫游', '重生复仇', 
-  '科举之路', '主角光环', '温暖治愈', '虐心催泪', '暗黑压抑', '悬疑惊悚', '热血燃情', '悲伤哀婉', '温情脉脉', '冷峻肃杀', 
-  '快节奏', '慢节奏', '一路开挂', '逆袭流', '群像戏', '单元剧', '平铺直叙', '跌宕起伏', '奇幻瑰丽', '科幻硬核', 
-  '古风古韵', '现代都市', '末日废土', '蒸汽朋克', '赛博朋克', '童话风格', '现实向', '架空历史', '轻小说', '正剧', 
-  '爽虐交织', '致郁治愈', '无厘头', '意识流', '哥特风', '清新脱俗', '科幻迷', '推理爱好者', '古风爱好', '游戏玩家', 
-  '二次元', '青少年向', '成年向', '儿童亲子', '耽美腐向', '乙女恋爱', '百合情感', '中老年读者', '游戏玩家向', 
-  'ABO设定', '克苏鲁风', '星际机甲', '萌宠兽世', '修罗情场', '打脸逆袭', '伪骨科', '末世基建', '逆后宫', '女尊男卑', 
-  '因果武器', '机器定律', '血契之约', '能量晶核', '神格之力', '轮回转世'
+  '皮克斯风格', '美漫废土风', 'Q版暗黑风', '二次元拟真', '3D厚涂二次元', '魔法少女二次元', 
+  '都市二次元', '漫威动画', '暗黑哥特二次元', '国潮二次元', '悬疑二次元', '恐怖二次元', 
+  '水彩动漫风格', '国风二次元', '未来科技风', '香港电影', '赛博朋克', '胶片复古', 
+  '惊悚写实风', '恐怖科幻风'
 ]
 
 const filteredStyles = computed(() => {
@@ -706,9 +818,12 @@ const removeStyle = (style: string) => {
 }
 
 const addCustomStyle = () => {
-  if (customStyle.value && !form.styles.includes(customStyle.value)) {
-    form.styles.push(customStyle.value)
-    customStyle.value = ''
+  if (styleSearch.value && !form.styles.includes(styleSearch.value)) {
+    form.styles.push(styleSearch.value)
+    styleSearch.value = ''
+    ElMessage.success('已添加新风格')
+  } else if (form.styles.includes(styleSearch.value)) {
+    ElMessage.warning('该风格已存在')
   }
 }
 
@@ -770,7 +885,7 @@ const loadProjectData = (id: string) => {
     audience: "general",
     worldView: "乱世之中，朝廷腐败，民不聊生。边境战火连天，各路义军揭竿而起。",
     goldenFinger: "主角赵铁牛天生神力，且拥有祖传兵法《武穆遗书》残卷。",
-    mainPlot: "赵铁牛本是边境村庄的铁匠，村庄被官兵血洗后，他立誓复仇。在牢狱中结识豪杰，越狱后聚民为军，最终推翻暴政。",
+    mainPlot: "公元1356年，元末乱世，民不聊生。淮西村落惨遭元军血洗，赵铁牛父母双亡，怒执木棍反抗，终被俘入狱。牢中结识王二狗等热血汉子，同仇敌忾，共谋越狱。暗道逃生、揭竿起义、聚民为军，从一根木棍到千军万马，一场席卷乱世的反抗风暴悄然掀起。面对铁骑压境，他以血肉之躯筑长城，誓要掀翻这腐朽元廷！史诗级战争巨制，再现草根英雄崛起之路！",
     characterInfo: "主角：赵铁牛，20岁，铁匠出身。性格耿直，嫉恶如仇，力大无穷，善使一把玄铁重锤。",
     synopsis: "边境村庄突遭官兵屠戮，幸存少年赵铁牛背负血海深仇。从死牢囚犯到义军统帅，他将用手中的铁锤砸碎这黑暗的旧世道！",
     requirements: "1. 突出战争的残酷和兄弟情义\n2. 打斗场面要拳拳到肉，硬桥硬马",
@@ -888,7 +1003,7 @@ const audiences = [
   { label: '大众向', value: 'general' },
   { label: '硬核向', value: 'hardcore' },
   { label: '情感向', value: 'emotional' },
-  { label: '二次元', value: 'acg' },
+  { label: '脑洞向', value: 'imaginative' },
 ]
 
 const aiHelpWrite = async (field: keyof typeof form) => {
@@ -898,7 +1013,7 @@ const aiHelpWrite = async (field: keyof typeof form) => {
   const mockData: Record<string, string> = {
     worldView: "乱世之中，朝廷腐败，民不聊生。边境战火连天，各路义军揭竿而起。",
     goldenFinger: "主角赵铁牛天生神力，且拥有祖传兵法《武穆遗书》残卷。",
-    mainPlot: "赵铁牛本是边境村庄的铁匠，村庄被官兵血洗后，他立誓复仇。在牢狱中结识豪杰，越狱后聚民为军，最终推翻暴政。",
+    mainPlot: "公元1356年，元末乱世，民不聊生。淮西村落惨遭元军血洗，赵铁牛父母双亡，怒执木棍反抗，终被俘入狱。牢中结识王二狗等热血汉子，同仇敌忾，共谋越狱。暗道逃生、揭竿起义、聚民为军，从一根木棍到千军万马，一场席卷乱世的反抗风暴悄然掀起。面对铁骑压境，他以血肉之躯筑长城，誓要掀翻这腐朽元廷！史诗级战争巨制，再现草根英雄崛起之路！",
     characterInfo: "主角：赵铁牛，20岁，铁匠出身。性格耿直，嫉恶如仇，力大无穷，善使一把玄铁重锤。",
     synopsis: "边境村庄突遭官兵屠戮，幸存少年赵铁牛背负血海深仇。从死牢囚犯到义军统帅，他将用手中的铁锤砸碎这黑暗的旧世道！",
     title: "开局一根棍，我掀了元廷这烂摊子！",

@@ -1,6 +1,5 @@
 <template>
   <div v-show="!showAiOverlay && !showFiveSensesDialog" class="aisw-scale h-full flex flex-col transition-colors duration-300" :class="bgClass">
-    <StepIndicator :active-index="2" />
     <el-container class="flex-1 overflow-hidden relative">
     <div 
       class="absolute top-1/2 z-50 transform -translate-y-1/2 -translate-x-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-r border-y border-r shadow-md transition-all"
@@ -22,9 +21,12 @@
       <!-- Content (Only visible when width > 0) -->
       <div v-show="showLeftSidebar" class="flex flex-col h-full w-full overflow-hidden">
         <!-- 顶部返回 -->
-        <div class="p-4 border-b flex-shrink-0" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
+        <div class="p-4 border-b flex-shrink-0 flex items-center justify-between" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
            <el-button link class="hover:text-indigo-500" :class="isLight ? 'text-slate-500' : 'text-slate-300 hover:text-white'" @click="goBack">
-              <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回剧集管理
+              <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回
+           </el-button>
+           <el-button type="primary" plain size="small" class="!rounded-full !px-3" @click="showPrototypeHelp = true">
+             <el-icon class="mr-1"><InfoFilled /></el-icon> 说明
            </el-button>
         </div>
 
@@ -70,9 +72,6 @@
 
     <!-- Module C: Immersive Editor (中间编辑器) -->
     <el-main class="relative flex flex-col items-center pt-6 px-4 custom-scrollbar transition-colors" :class="isLight ? 'bg-slate-50 bg-dot-pattern-light' : 'bg-slate-900 bg-dot-pattern-dark'">
-      <!-- Process Indicator -->
-       <!-- Removed as requested -->
-
       <!-- 编辑器顶部工具栏 -->
       <div class="w-full max-w-full mb-6 flex items-center justify-between text-sm sticky top-0 backdrop-blur z-10 py-2 mt-6 border-b transition-colors" :class="isLight ? 'bg-slate-50/90 border-slate-200 text-slate-500' : 'bg-slate-900/90 border-slate-800 text-slate-300'">
         <div class="flex items-center gap-2">
@@ -83,12 +82,32 @@
            <el-tooltip content="字数统计" placement="bottom">
               <span class="flex items-center gap-1"><el-icon><DataLine /></el-icon> {{ editor?.storage.characterCount.words() || 0 }} 字</span>
            </el-tooltip>
-           <el-button size="small" :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-300 hover:!bg-indigo-600/30'" @click="{ showAiSidePanel = true; activeRightTab = 'script'; }">
-             <el-icon class="mr-1"><MagicStick /></el-icon> 短剧优化
-           </el-button>
-           <el-button size="small" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!border-indigo-300 hover:!text-indigo-600' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white'" @click="goToShortDramaPlatform">
+           <el-button size="small" :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600 hover:!bg-indigo-100' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-300 hover:!bg-indigo-600/30'" @click="startConversion">
              <el-icon class="mr-1"><VideoCamera /></el-icon> 对接AI短剧
            </el-button>
+           <el-popover placement="bottom" :width="200" trigger="hover" :effect="isLight ? 'light' : 'dark'">
+              <template #reference>
+                <el-button circle size="small" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!border-indigo-300 hover:!text-indigo-600' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white'">
+                  <el-icon><InfoFilled /></el-icon>
+                </el-button>
+              </template>
+              <div class="text-xs space-y-1">
+                <div class="font-bold mb-2">脚本格式标签说明</div>
+                <div class="grid grid-cols-[40px_1fr] gap-2">
+                  <span class="font-mono text-indigo-500">[EP]</span><span>剧集</span>
+                  <span class="font-mono text-indigo-500">[INFO]</span><span>信息</span>
+                  <span class="font-mono text-indigo-500">[ROLE]</span><span>角色</span>
+                  <span class="font-mono text-indigo-500">[PROP]</span><span>道具</span>
+                  <span class="font-mono text-indigo-500">[SCENE]</span><span>场景</span>
+                  <span class="font-mono text-indigo-500">[STORY]</span><span>大纲</span>
+                  <span class="font-mono text-indigo-500">[SHOT]</span><span>分镜</span>
+                  <span class="font-mono text-indigo-500">[CAM]</span><span>镜头</span>
+                  <span class="font-mono text-indigo-500">[SFX]</span><span>音效</span>
+                  <span class="font-mono text-indigo-500">[TIME]</span><span>时长</span>
+                  <span class="font-mono text-indigo-500">[BGM]</span><span>背景音乐</span>
+                </div>
+              </div>
+           </el-popover>
            <el-tooltip v-if="!showAiSidePanel" content="打开 AI 助手" placement="bottom">
               <el-button circle size="small" :icon="ChatDotRound" :class="isLight ? '!bg-white !border-slate-300 !text-slate-500 hover:!text-slate-700' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white'" @click="{ showAiSidePanel = true; activeRightTab = 'chat'; }" />
            </el-tooltip>
@@ -179,374 +198,186 @@
       </div>
     </el-main>
 
-    <!-- Right Panel: AI Assistant (右侧 AI 助手) -->
-    <div class="relative transition-all duration-300 border-l flex flex-col h-full overflow-visible" 
+    <!-- Module D: Right AI Assistant Panel (右侧侧边栏) -->
+    <div class="relative transition-all duration-300 border-l flex flex-col h-full overflow-hidden" 
       :style="{ width: showAiSidePanel ? '320px' : '0px' }"
       :class="rightPanelClass"
     >
-      <!-- Toggle Button -->
-      <div 
-        class="absolute top-1/2 -left-3 z-50 transform -translate-y-1/2 cursor-pointer w-3 h-12 flex items-center justify-center rounded-l border-y border-l shadow-md transition-colors"
-        :class="isLight ? 'bg-white border-slate-200 hover:bg-slate-50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'"
-        @click="showAiSidePanel = !showAiSidePanel"
-        :title="showAiSidePanel ? '收起 AI 助手' : '展开 AI 助手'"
-      >
-        <el-icon :size="12" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
-          <DArrowRight v-if="showAiSidePanel" />
-          <DArrowLeft v-else />
-        </el-icon>
-      </div>
-
-      <!-- Content -->
-      <div v-show="showAiSidePanel" class="flex flex-col h-full w-full overflow-hidden">
-        <div class="p-0 border-b flex items-center justify-between" :class="rightPanelHeaderClass">
-          <div class="flex-1 flex">
-             <div 
-               class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-               :class="activeTabClass(activeRightTab === 'chat')"
-               @click="activeRightTab = 'chat'"
-             >
-                <el-icon class="mr-1"><ChatDotRound /></el-icon> AI 助手
-             </div>
-             <div 
-               class="flex-1 py-3 text-center cursor-pointer text-sm font-bold border-b-2 transition-colors"
-               :class="activeTabClass(activeRightTab === 'script')"
-               @click="activeRightTab = 'script'"
-             >
-                <el-icon class="mr-1"><VideoCamera /></el-icon> 短剧优化
-             </div>
-          </div>
-        </div>
-        
-        <!-- Tab 1: Chat Assistant -->
-        <div v-if="activeRightTab === 'chat'" class="flex flex-col h-full overflow-hidden">
-          <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'">
-            <div class="p-3 rounded-2xl rounded-tl-none shadow-sm border self-start text-sm" :class="isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-slate-800 border-slate-700 text-slate-300'">
-              你好！我是你的 AI 写作搭档。我可以帮你构思大纲、描写场景，或者梳理剧情逻辑。选中文字即可唤起 AI 快捷指令。
-            </div>
-            <div v-for="(msg, i) in chatHistory" :key="i" 
-              class="p-3 rounded-2xl max-w-[90%] text-sm shadow-sm"
-              :class="msg.role === 'user' ? 'bg-indigo-600 text-white self-end ml-auto rounded-tr-none' : (isLight ? 'bg-white border border-slate-200 text-slate-600 self-start rounded-tl-none' : 'bg-slate-800 border border-slate-700 text-slate-300 self-start rounded-tl-none')"
+      <div v-show="showAiSidePanel" class="flex flex-col h-full w-full">
+        <!-- Panel Header -->
+        <div class="flex items-center justify-between p-3 border-b shrink-0" :class="rightPanelHeaderClass">
+          <div class="flex gap-1 bg-slate-100/50 p-1 rounded-lg" :class="isLight ? 'bg-slate-100' : 'bg-slate-700/50'">
+            <button 
+              class="px-3 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-1"
+              :class="activeTabClass(activeRightTab === 'chat')"
+              @click="activeRightTab = 'chat'"
             >
-              {{ msg.content }}
+              <el-icon><ChatDotRound /></el-icon> AI 助手
+            </button>
+            <button 
+              class="px-3 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-1"
+              :class="activeTabClass(activeRightTab === 'optimize')"
+              @click="activeRightTab = 'optimize'"
+            >
+              <el-icon><VideoCamera /></el-icon> 短剧优化
+            </button>
+          </div>
+          <el-button link size="small" :class="isLight ? 'text-slate-400 hover:text-slate-600' : 'text-slate-500 hover:text-slate-300'" @click="showAiSidePanel = false">
+            <el-icon><Close /></el-icon>
+          </el-button>
+        </div>
+
+        <!-- Panel Content -->
+        <div class="flex-1 overflow-hidden relative">
+          <!-- Chat Mode -->
+          <div v-show="activeRightTab === 'chat'" class="h-full flex flex-col">
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+              <div v-if="chatHistory.length === 0" class="flex flex-col items-center justify-center h-full text-center opacity-40 space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-2">
+                   <el-icon :size="32" class="text-indigo-500"><ChatDotRound /></el-icon>
+                </div>
+                <div class="text-sm">有什么可以帮你的吗？<br>你可以问我关于剧情的建议</div>
+              </div>
+              <div v-for="(msg, i) in chatHistory" :key="i" class="flex flex-col gap-1" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
+                <div class="text-xs opacity-50 ml-1">{{ msg.role === 'user' ? '你' : 'AI 助手' }}</div>
+                <div class="p-3 rounded-2xl text-sm max-w-[90%] shadow-sm border"
+                  :class="msg.role === 'user' 
+                    ? (isLight ? 'bg-indigo-600 text-white border-indigo-600 rounded-br-none' : 'bg-indigo-600 text-white border-indigo-600 rounded-br-none')
+                    : (isLight ? 'bg-white border-slate-200 text-slate-700 rounded-bl-none' : 'bg-slate-700 border-slate-600 text-slate-200 rounded-bl-none')"
+                >
+                  {{ msg.content }}
+                </div>
+              </div>
+              <div v-if="isAiThinking" class="flex items-center gap-2 text-xs opacity-50 ml-2">
+                <el-icon class="is-loading"><Loading /></el-icon> AI 正在思考...
+              </div>
             </div>
-            <div v-if="isAiThinking" class="flex items-center gap-2 text-xs pl-2" :class="isLight ? 'text-slate-500' : 'text-slate-500'">
-               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
-               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-75"></div>
-               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-150"></div>
-               AI 正在思考...
+            <div class="p-3 border-t" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
+              <div class="relative">
+                <input 
+                  v-model="chatInput" 
+                  class="w-full text-sm border rounded-xl py-2.5 pl-3 pr-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-sm"
+                  :class="isLight ? 'bg-slate-50 border-slate-200 text-slate-800 placeholder-slate-400' : 'bg-slate-900 border-slate-600 text-slate-200 placeholder-slate-500'"
+                  placeholder="输入问题..."
+                  @keyup.enter="sendChatMessage"
+                />
+                <button 
+                  class="absolute right-1.5 top-1.5 p-1.5 rounded-lg text-white transition-colors"
+                  :class="chatInput ? 'bg-indigo-600 hover:bg-indigo-500' : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700'"
+                  :disabled="!chatInput"
+                  @click="sendChatMessage"
+                >
+                  <el-icon><Position /></el-icon>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="p-4 border-t" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
-            <div class="flex gap-2 relative">
-              <el-input 
-                v-model="chatInput" 
-                placeholder="输入指令..." 
-                :class="isLight ? '' : 'dark-input'"
-                @keyup.enter="sendChatMessage" 
-              >
-                 <template #suffix>
-                    <el-button link type="primary" :disabled="!chatInput" @click="sendChatMessage">
-                       <el-icon class="text-lg"><Position /></el-icon>
-                    </el-button>
-                 </template>
-              </el-input>
+          <!-- Optimization Mode (短剧优化) -->
+          <div v-show="activeRightTab === 'optimize'" class="h-full flex flex-col overflow-y-auto custom-scrollbar p-4 space-y-4">
+            <div class="mb-2">
+              <h3 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                AI 短剧剧本优化引擎
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                专为短视频节奏打造，一键解决口语化、节奏感、连贯性与爽点痛点。
+              </p>
+            </div>
+
+            <!-- Optimization Modules -->
+            <div class="space-y-4">
+              
+              <!-- Module 1: 口语化重写 -->
+              <div class="border rounded-xl p-4 transition-all" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/50 border-slate-700'">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="font-bold flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-200'">
+                    <span class="text-purple-500">🗣️</span> 口语化重写
+                  </div>
+                  <el-switch v-model="optConfig.spoken.enabled" size="small" />
+                </div>
+                
+                <div v-if="optConfig.spoken.enabled" class="space-y-3 animate-fade-in-up">
+                  <div>
+                    <div class="text-xs text-slate-500 mb-1 flex justify-between">
+                      <span>句式拆解强度</span>
+                    </div>
+                    <el-slider v-model="optConfig.spoken.intensity" :step="10" size="small" />
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-600 dark:text-slate-300">语气词注入</span>
+                    <el-switch v-model="optConfig.spoken.particles" size="small" />
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-600 dark:text-slate-300">第二人称互动</span>
+                    <el-switch v-model="optConfig.spoken.interactive" size="small" />
+                  </div>
+
+                  <el-button type="primary" plain size="small" class="w-full mt-2 !rounded-lg" @click="runOptimization('spoken')">
+                    执行口语化重写
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Module 2: 听觉节奏控制 -->
+              <div class="border rounded-xl p-4 transition-all" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/50 border-slate-700'">
+                <div class="flex items-center justify-between">
+                  <div class="font-bold flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-200'">
+                    <span class="text-indigo-500">🎵</span> 听觉节奏控制
+                  </div>
+                  <el-switch v-model="optConfig.rhythm.enabled" size="small" />
+                </div>
+                
+                <div v-if="optConfig.rhythm.enabled" class="mt-4 space-y-3 animate-fade-in-up">
+                  <el-button type="primary" plain size="small" class="w-full !rounded-lg" @click="runOptimization('rhythm')">
+                    执行节奏优化
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Module 3: 剧情连贯性记忆链 -->
+              <div class="border rounded-xl p-4 transition-all" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/50 border-slate-700'">
+                <div class="flex items-center justify-between">
+                  <div class="font-bold flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-200'">
+                    <span class="text-pink-500">🔗</span> 剧情连贯性记忆链
+                  </div>
+                  <el-switch v-model="optConfig.logic.enabled" size="small" />
+                </div>
+                
+                <div v-if="optConfig.logic.enabled" class="mt-4 space-y-3 animate-fade-in-up">
+                  <el-button type="primary" plain size="small" class="w-full !rounded-lg" @click="runOptimization('logic')">
+                    执行连贯性检查
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Module 4: 爽点/钩子强化 -->
+              <div class="border rounded-xl p-4 transition-all" :class="isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/50 border-slate-700'">
+                <div class="flex items-center justify-between">
+                  <div class="font-bold flex items-center gap-2 text-sm" :class="isLight ? 'text-slate-800' : 'text-slate-200'">
+                    <span class="text-orange-500">🔥</span> 爽点/钩子强化
+                  </div>
+                  <el-switch v-model="optConfig.hook.enabled" size="small" />
+                </div>
+                
+                <div v-if="optConfig.hook.enabled" class="mt-4 space-y-3 animate-fade-in-up">
+                  <el-button type="primary" plain size="small" class="w-full !rounded-lg" @click="runOptimization('hook')">
+                    执行爽点强化
+                  </el-button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
-
-        <!-- Tab 2: Script Optimizer -->
-         <div v-if="activeRightTab === 'script'" class="flex-1 overflow-hidden relative">
-            <ScriptOptimizerPanel 
-              :current-content="editor?.getText() || ''"
-              :previous-chapter-content="''"
-              @apply-optimization="handleScriptOptimizationApply"
-            />
-         </div>
       </div>
     </div>
-
-    <!-- Dialog: 创意生成大纲 -->
-    <el-dialog v-model="showIdeaDialog" title="AI 创意风暴" width="600px" :class="isLight ? '' : 'dark-dialog'">
-      <el-form label-position="top">
-        <el-form-item label="作品类型">
-          <el-radio-group v-model="ideaForm.genre" :class="isLight ? '' : 'dark-radio-group'">
-            <el-radio-button label="玄幻" />
-            <el-radio-button label="科幻" />
-            <el-radio-button label="悬疑" />
-            <el-radio-button label="都市" />
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="核心梗 / 一句话简介">
-          <el-input 
-            v-model="ideaForm.premise" 
-            type="textarea" 
-            :rows="3" 
-            placeholder="例如：一个能听见古董说话的鉴定师，卷入了一场跨越千年的阴谋。"
-            :class="isLight ? '' : 'dark-textarea'"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showIdeaDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" :loading="isGeneratingOutline" @click="startGenerateOutline" :class="isLight ? '' : '!bg-indigo-600 border-none'">
-          生成完整大纲与剧集
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Select Character Dialog -->
-    <el-dialog v-model="selectCharacterDialog" title="选择已有角色" width="600px" :class="isLight ? '' : 'dark-dialog'">
-      <div class="max-h-96 overflow-y-auto custom-scrollbar">
-        <el-checkbox-group v-model="selectedCharacterIds">
-        <div v-for="char in existingCharacters" :key="char.id" 
-          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
-          :class="[
-            selectedCharacterIds.includes(char.id) 
-              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
-              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
-          ]" 
-          @click="selectedCharacterIds.includes(char.id) ? selectedCharacterIds = selectedCharacterIds.filter(id => id !== char.id) : selectedCharacterIds.push(char.id)"
-        >
-           <el-checkbox :label="char.id" class="mr-3" @click.stop />
-           <div class="flex-1">
-             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ char.name }}</div>
-             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ char.role }}</div>
-           </div>
-        </div>
-        </el-checkbox-group>
-      </div>
-      <template #footer>
-        <el-button @click="selectCharacterDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="confirmSelectCharacters" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Select Prop Dialog -->
-    <el-dialog v-model="selectPropDialog" title="选择已有道具" width="600px" :class="isLight ? '' : 'dark-dialog'">
-      <div class="max-h-96 overflow-y-auto custom-scrollbar">
-        <el-checkbox-group v-model="selectedPropIds">
-        <div v-for="prop in existingProps" :key="prop.id" 
-          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
-          :class="[
-            selectedPropIds.includes(prop.id) 
-              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
-              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
-          ]" 
-          @click="selectedPropIds.includes(prop.id) ? selectedPropIds = selectedPropIds.filter(id => id !== prop.id) : selectedPropIds.push(prop.id)"
-        >
-           <el-checkbox :label="prop.id" class="mr-3" @click.stop />
-           <div class="flex-1">
-             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ prop.name }}</div>
-             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ prop.type }}</div>
-           </div>
-        </div>
-        </el-checkbox-group>
-      </div>
-      <template #footer>
-        <el-button @click="selectPropDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="confirmSelectProps" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Select Scene Dialog -->
-    <el-dialog v-model="selectSceneDialog" title="选择已有场景" width="600px" :class="isLight ? '' : 'dark-dialog'">
-      <div class="max-h-96 overflow-y-auto custom-scrollbar">
-        <el-checkbox-group v-model="selectedSceneIds">
-        <div v-for="scene in existingScenes" :key="scene.id" 
-          class="flex items-center p-3 mb-2 border rounded cursor-pointer transition-colors" 
-          :class="[
-            selectedSceneIds.includes(scene.id) 
-              ? (isLight ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500 bg-indigo-900/30') 
-              : (isLight ? 'border-slate-200 hover:bg-slate-50' : 'border-slate-700 hover:bg-slate-700/50')
-          ]" 
-          @click="selectedSceneIds.includes(scene.id) ? selectedSceneIds = selectedSceneIds.filter(id => id !== scene.id) : selectedSceneIds.push(scene.id)"
-        >
-           <el-checkbox :label="scene.id" class="mr-3" @click.stop />
-           <div class="flex-1">
-             <div class="font-bold" :class="isLight ? 'text-slate-800' : 'text-slate-200'">{{ scene.name }}</div>
-             <div class="text-xs" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ scene.atmosphere }}</div>
-           </div>
-        </div>
-        </el-checkbox-group>
-      </div>
-      <template #footer>
-        <el-button @click="selectSceneDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="confirmSelectScenes" :class="isLight ? '' : '!bg-indigo-600 border-none'">确认添加</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Character Dialog -->
-    <el-dialog v-model="addCharacterDialog" title="新建角色" :class="isLight ? '' : 'dark-dialog'" width="700px">
-      <el-form :model="newChar" label-width="80px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="姓名">
-              <el-input v-model="newChar.name" :class="isLight ? '' : 'dark-input'" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="定位">
-              <el-input v-model="newChar.role" placeholder="如：男主角" :class="isLight ? '' : 'dark-input'" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="年龄">
-              <el-input v-model="newChar.age" :class="isLight ? '' : 'dark-input'" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="性别">
-              <el-input v-model="newChar.gender" :class="isLight ? '' : 'dark-input'" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-form-item label="性格">
-          <el-input v-model="newChar.personality" type="textarea" :rows="2" placeholder="性格特征描述" :class="isLight ? '' : 'dark-textarea'" />
-        </el-form-item>
-        
-        <el-form-item label="背景故事">
-          <el-input v-model="newChar.backstory" type="textarea" :rows="3" placeholder="角色的过往经历" :class="isLight ? '' : 'dark-textarea'" />
-        </el-form-item>
-
-        <el-divider :class="isLight ? '' : '!border-slate-700'"><span :class="isLight ? 'text-slate-500' : 'text-slate-500'">外貌特征 (Visual Traits)</span></el-divider>
-        <el-row :gutter="10">
-          <el-col :span="12"><el-input v-model="newChar.visual_traits.hair" placeholder="发型/发色" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12"><el-input v-model="newChar.visual_traits.eyes" placeholder="眼睛/瞳色" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.clothing" placeholder="常穿服装" :class="isLight ? '' : 'dark-input'" /></el-col>
-          <el-col :span="12" class="mt-2"><el-input v-model="newChar.visual_traits.accessories" placeholder="配饰/特征" :class="isLight ? '' : 'dark-input'" /></el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <el-button @click="addCharacterDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="saveCharacter" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Prop Dialog -->
-    <el-dialog v-model="addPropDialog" title="新建道具" :class="isLight ? '' : 'dark-dialog'">
-      <el-form :model="newProp" label-width="80px">
-        <el-form-item label="名称">
-          <el-input v-model="newProp.name" :class="isLight ? '' : 'dark-input'" />
-        </el-form-item>
-        <el-form-item label="类型">
-          <el-input v-model="newProp.type" placeholder="例如：武器、宝物、日常用品" :class="isLight ? '' : 'dark-input'" />
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="newProp.description" type="textarea" :rows="3" :class="isLight ? '' : 'dark-textarea'" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="addPropDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="saveProp" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Scene Dialog -->
-    <el-dialog v-model="addSceneDialog" title="新建场景" :class="isLight ? '' : 'dark-dialog'">
-      <el-form :model="newScene" label-width="80px">
-        <el-form-item label="名称">
-          <el-input v-model="newScene.name" :class="isLight ? '' : 'dark-input'" />
-        </el-form-item>
-        <el-form-item label="氛围">
-          <el-input v-model="newScene.atmosphere" placeholder="例如：压抑、明快、紧张" :class="isLight ? '' : 'dark-input'" />
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="newScene.description" type="textarea" :rows="3" :class="isLight ? '' : 'dark-textarea'" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="addSceneDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" @click="saveScene" :class="isLight ? '' : '!bg-indigo-600 border-none'">保存</el-button>
-      </template>
-    </el-dialog>
-  </el-container>
-  </div>
-
-  <!-- Comparison Dialog -->
-  <el-dialog v-model="showDiffDialog" :title="`AI 结果 - ${currentAiAction}`" width="900px" destroy-on-close :class="isLight ? '' : 'dark-dialog'">
-    <div class="grid grid-cols-2 gap-6 mb-6 h-[500px]">
-      <!-- Original Text -->
-      <div class="flex flex-col h-full">
-        <div class="text-sm font-bold mb-2 flex justify-between" :class="isLight ? 'text-slate-500' : 'text-slate-500'">
-           <span>原文</span>
-           <el-tag size="small" type="info" :effect="isLight ? 'light' : 'dark'" :class="isLight ? '!bg-slate-100 !border-slate-200' : '!bg-slate-700 !border-slate-600'">只读</el-tag>
-        </div>
-        <div class="flex-1 rounded-lg p-4 overflow-y-auto border leading-relaxed whitespace-pre-wrap custom-scrollbar" :class="isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-800 border-slate-700 text-slate-400'">
-           {{ originalText }}
-        </div>
-      </div>
-      
-      <!-- AI Generated Text -->
-      <div class="flex flex-col h-full relative">
-        <div class="text-sm font-bold text-indigo-400 mb-2 flex justify-between items-center">
-          <span>AI {{ currentAiAction }}结果</span>
-          <span v-if="isAutoWriting" class="text-xs animate-pulse bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">生成中...</span>
-        </div>
-        <el-input
-          v-model="generatedText"
-          type="textarea"
-          resize="none"
-          class="flex-1 h-full !p-0"
-          :class="isLight ? '' : 'dark-textarea-full'"
-          :input-style="isLight ? { height: '100%', padding: '1rem' } : { height: '100%', backgroundColor: '#1e293b', color: '#e2e8f0', padding: '1rem', border: '1px solid #334155' }"
-        />
-      </div>
+    </el-container>
     </div>
     
-    <template #footer>
-      <div class="flex justify-end gap-3">
-        <el-button @click="showDiffDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">取消</el-button>
-        <el-button type="primary" plain :disabled="isAutoWriting" @click="appendAiChanges" :class="isLight ? '!bg-indigo-50 !border-indigo-200 !text-indigo-600' : '!bg-indigo-500/10 !border-indigo-500/30 !text-indigo-400 hover:!bg-indigo-500/20'">
-          保留原文并追加
-        </el-button>
-        <el-button type="primary" color="#4f46e5" :disabled="isAutoWriting" @click="applyAiChanges" :class="isLight ? '' : '!bg-indigo-600 border-none'">
-          替换原文
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
-  
-  <!-- Settings Dialog -->
-  <el-dialog v-model="showSettingsDialog" title="作品设置" width="700px" :class="isLight ? '' : 'dark-dialog'">
-      <el-descriptions :column="2" border :class="isLight ? '' : 'dark-descriptions'">
-        <el-descriptions-item label="作品名称">{{ loreStore.currentNovel.title }}</el-descriptions-item>
-        <el-descriptions-item label="题材">{{ loreStore.currentNovel.genre }}</el-descriptions-item>
-        <el-descriptions-item label="生成集数">{{ loreStore.currentNovel.episodeCount }}</el-descriptions-item>
-        <el-descriptions-item label="每集时长">{{ loreStore.currentNovel.episodeDuration }}分钟</el-descriptions-item>
-        <el-descriptions-item label="目标受众">{{ loreStore.currentNovel.targetAudience }}</el-descriptions-item>
-        <el-descriptions-item label="叙事风格">{{ loreStore.currentNovel.style }}</el-descriptions-item>
-      </el-descriptions>
-      
-      <div class="mt-4">
-        <div class="text-sm text-slate-400 mb-2">世界观设定</div>
-        <div class="p-3 rounded text-sm max-h-32 overflow-y-auto border custom-scrollbar" :class="isLight ? 'bg-slate-50 text-slate-600 border-slate-200' : 'bg-slate-900 text-slate-300 border-slate-700'">{{ loreStore.currentNovel.worldView || '无' }}</div>
-      </div>
-      
-      <div class="mt-4">
-        <div class="text-sm text-slate-400 mb-2">核心金手指</div>
-        <div class="p-3 rounded text-sm max-h-32 overflow-y-auto border custom-scrollbar" :class="isLight ? 'bg-slate-50 text-slate-600 border-slate-200' : 'bg-slate-900 text-slate-300 border-slate-700'">{{ loreStore.currentNovel.goldenFinger || '无' }}</div>
-      </div>
-
-      <template #footer>
-        <el-button @click="showSettingsDialog = false" :class="isLight ? '' : '!bg-slate-700 !border-slate-600 !text-slate-300 hover:!text-white'">关闭</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- Five Senses Dialog -->
-    <el-dialog 
-      v-model="showFiveSensesDialog" 
-      title="五感填充引擎" 
-      width="800px" 
-      :class="isLight ? '' : 'dark-dialog'" 
-      :close-on-click-modal="false"
-      :show-close="true"
-    >
+    <!-- Dialogs -->
+    <el-dialog v-model="showFiveSensesDialog" title="五感描写填充" width="600px" :class="isLight ? '' : 'dark-dialog'">
       <!-- Original Text Display -->
       <div class="mb-4 border rounded-lg p-4" :class="isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-700'">
         <div class="text-sm font-bold text-slate-500 mb-2">原文</div>
@@ -594,13 +425,119 @@
       </template>
     </el-dialog>
 
-    <!-- Full Screen AI Optimization Overlay -->
-    <AiOptimizationOverlay
-      v-model:visible="showAiOverlay"
-      :original-text="aiOverlayOriginalText"
-      :action-type="aiOverlayActionType"
-      @apply="handleAiOverlayApply"
-    />
+    <!-- Conversion Progress Dialog -->
+    <el-dialog
+      v-model="showConversionDialog"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      width="400px"
+      center
+      :class="isLight ? 'conversion-dialog-light' : 'conversion-dialog-dark'"
+    >
+      <div class="flex flex-col items-center py-8">
+        <div class="relative w-32 h-32 mb-6">
+          <!-- Water Drop Style Progress -->
+          <div class="water-drop-container">
+            <el-progress
+              type="circle"
+              :percentage="Math.floor(conversionProgress)"
+              :width="120"
+              :stroke-width="8"
+              :color="[
+                { color: '#6366f1', percentage: 20 },
+                { color: '#4f46e5', percentage: 40 },
+                { color: '#4338ca', percentage: 60 },
+                { color: '#3730a3', percentage: 80 },
+                { color: '#312e81', percentage: 100 },
+              ]"
+            >
+              <template #default="{ percentage }">
+                <div class="flex flex-col items-center">
+                  <span class="text-2xl font-bold" :class="isLight ? 'text-indigo-600' : 'text-indigo-400'">{{ percentage }}%</span>
+                </div>
+              </template>
+            </el-progress>
+            <!-- Water Drop Animation Overlay -->
+             <div class="water-drop-wave" :style="{ height: conversionProgress + '%' }"></div>
+           </div>
+        </div>
+        <div class="text-lg font-medium mb-2 text-white drop-shadow-md">剧本格式转换中</div>
+        <div class="text-sm text-slate-100 opacity-90 drop-shadow">正在深度分析剧本并转换为短剧格式...</div>
+      </div>
+    </el-dialog>
+
+    <!-- Script Dialog -->
+    <el-dialog v-model="showScriptDialog" title="AI 短剧剧本对接" width="800px" :class="isLight ? '' : 'dark-dialog'">
+      <div class="flex flex-col h-[500px]">
+        <div class="mb-4 p-3 rounded text-sm flex items-start gap-2 border" :class="isLight ? 'bg-blue-50 border-blue-100 text-blue-700' : 'bg-slate-800 border-slate-700 text-slate-400'">
+           <el-icon class="mt-0.5" :class="isLight ? 'text-blue-600' : 'text-indigo-400'"><InfoFilled /></el-icon>
+           <div>AI 已根据剧集内容自动转换为短剧分镜脚本格式，支持一键对接。此格式可直接用于下游 AI 视频生成工具。</div>
+        </div>
+        <el-input
+          v-model="scriptContent"
+          type="textarea"
+          resize="none"
+          class="flex-1 h-full"
+          :class="isLight ? '' : 'dark-textarea-full'"
+          :input-style="isLight ? { height: '100%', padding: '1rem', fontFamily: 'monospace' } : { height: '100%', backgroundColor: '#0f172a', color: '#cbd5e1', padding: '1rem', fontFamily: 'monospace', border: '1px solid #334155' }"
+        />
+      </div>
+      <template #footer>
+        <div class="flex justify-end items-center w-full">
+           <div class="flex items-center gap-2">
+             <el-button type="primary" plain :class="isLight ? '' : '!bg-indigo-600/20 !border-indigo-500/30 !text-indigo-300'" @click="goToShortDramaPlatform">
+               <el-icon class="mr-1"><VideoCamera /></el-icon> 前往AI创作视频
+             </el-button>
+           </div>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- Prototype Explanation Drawer -->
+    <el-drawer
+      v-model="showPrototypeHelp"
+      title="💡 剧本编辑器交互原型说明"
+      direction="rtl"
+      size="400px"
+    >
+      <div class="space-y-6">
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 沉浸式编辑器</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            提供专注的文字创作体验。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li><strong>划词菜单 (Bubble Menu)：</strong> 选中文本后自动弹出，提供 AI 润色、续写、扩写和改写功能。也可以直接在输入框中输入指令。</li>
+            <li><strong>悬浮菜单 (Floating Menu)：</strong> 在空行处显示，提供快速的 AI 续写按钮。</li>
+            <li><strong>对接短剧：</strong> 顶部工具栏提供一键将当前剧本转换并发送至 AI 短剧生成工具的入口。</li>
+          </ul>
+        </div>
+
+        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 左侧剧集导航</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            管理多集剧本的结构。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li>可快速在不同剧集之间切换，标签会显示该集是否已撰写。</li>
+            <li>点击侧边中部的折叠按钮可以隐藏侧边栏，获得更宽广的创作视野。</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
+          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 右侧 AI 助手</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+            随时唤出的智能伴写系统。
+          </p>
+          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+            <li>点击顶部工具栏的对话图标唤出，以侧边栏形式存在。</li>
+            <li>支持多模态对话，可就当前剧情走向、设定细节等向 AI 提问。</li>
+            <li>底部提供常用快捷指令按钮（如"情节建议"、"审查逻辑"）。</li>
+          </ul>
+        </div>
+      </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -609,16 +546,15 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import CharacterCount from '@tiptap/extension-character-count'
-import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft, Check } from '@element-plus/icons-vue'
+import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft, Check, InfoFilled } from '@element-plus/icons-vue'
 import { useLoreStore, type Character, type Prop, type Scene } from '@/stores/useLoreStore'
 import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
 import AiOptimizationOverlay from '@/components/AiOptimizationOverlay.vue'
-import ScriptOptimizerPanel from '@/components/ScriptOptimizerPanel.vue'
-import StepIndicator from '@/components/StepIndicator.vue'
 
 const route = useRoute()
 const router = useRouter()
+const showPrototypeHelp = ref(false)
 const loreStore = useLoreStore()
 const activeSidePanel = ref('chapters')
 const showLeftSidebar = ref(true)
@@ -631,12 +567,34 @@ const addPropDialog = ref(false)
 const selectPropDialog = ref(false)
 const addSceneDialog = ref(false)
 const selectSceneDialog = ref(false)
-const showSettingsDialog = ref(false)
+const showScriptDialog = ref(false)
+const scriptContent = ref('')
+const optConfig = reactive({
+  spoken: { enabled: true, intensity: 80, particles: true, interactive: false },
+  rhythm: { enabled: false },
+  logic: { enabled: false },
+  hook: { enabled: false }
+})
 
-// Selected Items for Dialog
+const runOptimization = (type: string) => {
+  ElMessage.success(`正在执行优化... (${type})`)
+  // Mock optimization process
+  setTimeout(() => {
+    ElMessage.success('优化完成！')
+  }, 1500)
+}
+
 const selectedCharacterIds = ref<string[]>([])
 const selectedPropIds = ref<string[]>([])
 const selectedSceneIds = ref<string[]>([])
+
+const goToShortDramaPlatform = () => {
+  const chapterId = currentChapterId.value || ''
+  const chapterTitle = currentChapter.value?.title || ''
+  const content = editor.value?.getHTML() || ''
+  sessionStorage.setItem('short_drama_chapter_draft', JSON.stringify({ chapterId, chapterTitle, content }))
+  router.push({ name: 'script-creative', query: { chapterId, chapterTitle } })
+}
 
 // Mock Data for "Existing" Items (Simulating a global database or previous chapters)
 const existingCharacters = ref<Character[]>([
@@ -655,6 +613,42 @@ const currentChapterId = ref('')
 const isGeneratingOutline = ref(false)
 const isAutoWriting = ref(false)
 
+const isSaved = ref(true)
+const showConversionDialog = ref(false)
+const conversionProgress = ref(0)
+const isConverting = ref(false)
+
+const startConversion = () => {
+  if (isAutoWriting.value) {
+    ElMessage.warning('请等待剧本流式输出完成后再操作')
+    return
+  }
+  if (!isSaved.value) {
+    ElMessage.warning('请先点击保存按钮保存当前剧本')
+    return
+  }
+
+  isConverting.value = true
+  showConversionDialog.value = true
+  conversionProgress.value = 0
+  
+  const totalDuration = 60000 // 60 seconds
+  const interval = 100 // Update every 100ms
+  const step = (interval / totalDuration) * 100
+  
+  const timer = setInterval(() => {
+    conversionProgress.value += step
+    if (conversionProgress.value >= 100) {
+      conversionProgress.value = 100
+      clearInterval(timer)
+      isConverting.value = false
+      showConversionDialog.value = false
+      ElMessage.success('剧本格式转换成功！')
+      showScriptDialog.value = true
+    }
+  }, interval)
+}
+
 const isGeneratingCharacters = ref(false)
 const isGeneratingProps = ref(false)
 const isGeneratingScenes = ref(false)
@@ -669,6 +663,7 @@ const currentAiAction = ref('优化')
 const showAiOverlay = ref(false)
 const aiOverlayOriginalText = ref('')
 const aiOverlayActionType = ref('')
+const aiOverlayContext = ref('')
 const chatInput = ref('')
 const chatHistory = ref<{role: string, content: string}[]>([])
 const isAiThinking = ref(false)
@@ -802,6 +797,7 @@ const editor = useEditor({
     // 实时保存当前章节内容
     if (currentChapterId.value) {
       loreStore.updateChapter(currentChapterId.value, { content: editor.getHTML() })
+      isSaved.value = false
     }
   }
 })
@@ -813,6 +809,7 @@ const currentChapter = computed(() => {
 // --- Lifecycle ---
 
 onMounted(() => {
+  scriptContent.value = buildScriptFormatPrompt('夜之城：数据幽灵', '')
   const { autoStart, chapterTitle } = route.query
   
   if (autoStart === 'true' && chapterTitle) {
@@ -867,87 +864,17 @@ const saveCurrentChapter = () => {
     return
   }
   loreStore.updateChapter(currentChapterId.value, { content: editor.value.getHTML() })
+  isSaved.value = true
   ElMessage.success('已保存')
 }
 
-const goToShortDramaPlatform = () => {
-  const chapterId = currentChapterId.value || ''
-  const chapterTitle = currentChapter.value?.title || ''
-  const content = editor.value?.getHTML() || ''
-  sessionStorage.setItem('short_drama_chapter_draft', JSON.stringify({ chapterId, chapterTitle, content }))
-  router.push({ name: 'script-creative', query: { chapterId, chapterTitle } })
-}
-
-const buildScriptFormatPrompt = (title: string, outline: string) => {
-  const safeOutline = outline || '待定'
-  return [
-    '请严格按照以下示例格式输出正文，不允许改动标签、顺序、符号，必须完整输出：',
-    '【角色清单】',
-    '',
-    '【男主】赵铁牛',
-    '年龄：26岁',
-    '身份：淮西铁匠/义军领袖',
-    '音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强',
-    '性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力',
-    '背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉',
-    '外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾',
-    '关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明',
-    '成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力',
-    '----------------------------------------',
-    '【反派】耶律齐',
-    '年龄：35岁',
-    '身份：元军百户长',
-    '性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳',
-    '音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗',
-    '背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法',
-    '外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓',
-    '关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵',
-    '关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡',
-    '----------------------------------------',
-    '【道具清单】',
-    '道具名称：',
-    '道具描述：',
-    '----------------------------------------',
-    '【场景信息】',
-    '地点：',
-    '时间：',
-    '天气：',
-    '氛围：',
-    '背景环境：',
-    '----------------------------------------',
-    '【分镜 01】',
-    '',
-    '镜头：',
-    '画面：',
-    '人物：',
-    '动作：',
-    '',
-    '镜头：',
-    '画面：',
-    '人物：',
-    '动作：',
-    '',
-    '镜头：',
-    '画面：',
-    '人物：',
-    '动作：',
-    '对白：',
-    '',
-    '镜头：',
-    '画面：',
-    '人物：',
-    '动作：',
-    '对白：',
-    '',
-    '补充要求：',
-    `剧集标题：${title}`,
-    `剧集梗概：${safeOutline}`,
-    `写作风格：${loreStore.currentNovel.genre || '通用'}`,
-    '输出要求：',
-    '1. 只输出正文，不要解释。',
-    '2. 每一项都必须填写，未知填“待定”。',
-    '3. 保持分隔线样式与标签格式完全一致。'
-  ].join('\n')
+const switchChapter = (id: string) => {
+  currentChapterId.value = id
+  const chapter = loreStore.currentNovel.chapters.find(c => c.id === id)
+  if (chapter && editor.value) {
+    editor.value.commands.setContent(chapter.content || `<p><h2>${chapter.title}</h2><p>${chapter.outline}</p></p>`)
+    isSaved.value = true
+  }
 }
 
 const startAutoAiWriting = (title: string) => {
@@ -969,12 +896,69 @@ const startAutoAiWriting = (title: string) => {
   }
 }
 
-const switchChapter = (id: string) => {
-  currentChapterId.value = id
-  const chapter = loreStore.currentNovel.chapters.find(c => c.id === id)
-  if (chapter && editor.value) {
-    editor.value.commands.setContent(chapter.content || `<p><h2>${chapter.title}</h2><p>${chapter.outline}</p></p>`)
-  }
+const buildScriptFormatPrompt = (title: string, outline: string) => {
+  const safeOutline = outline || '待定'
+  return [
+    `[EP] 第 1 集：${title}`,
+    '[TIME] 时长：1-2分钟',
+    '[BGM] 背景音乐：悲壮的战鼓声混杂着风声',
+    '[INFO] 备注：注重画面质感与光影对比',
+    '-------------------------------',
+    '[STORY] 【剧集大纲】',
+    safeOutline,
+    '-------------------------------',
+    '[ROLE] 【角色清单】',
+    '',
+    '【男主】赵铁牛',
+    '年龄：26岁',
+    '身份：淮西铁匠/义军领袖',
+    '性格特质：暴烈如火却粗中有细，幼年随父打铁锤炼出惊人臂力，父母被杀后形成“以命换命”的搏杀风格，习惯用草绳缠柄增强武器握持力',
+    '背景故事：元至正十二年，元军强征铁器时父母反抗被杀，目睹惨状后觉醒反抗意识，成为方圆百里第一个敢正面硬刚元军的硬汉',
+    '外在表现：身高九尺满脸虬髯，常穿浸透汗渍的粗布短打，右臂纹着家传的玄铁锤图腾',
+    '音色：低沉粗犷，带火气与压抑感，咬字重，爆发力强',
+    '关系网络：与王二狗形成“猛虎配狡狐”组合，暗中倾慕医女柳三娘却不敢言明',
+    '成长弧光：从孤胆莽夫蜕变为懂得凝聚人心的领袖，学会用智谋代替蛮力',
+    '----------------------------------------',
+    '【反派】耶律齐',
+    '年龄：35岁',
+    '身份：元军百户长',
+    '性格特质：残忍狡诈的猎手，擅长用心理战瓦解对手，随身携带记录抗元义军弱点的羊皮卷，每杀一人便在刀柄系红绳',
+    '背景故事：曾是金国贵族，家族被元军灭门后反投鞑子，掌握着三套针对不同地形作战的秘传战法',
+    '外在表现：左脸有道蜈蚣状疤痕，总穿猩红披风，马鞍上挂着九个鞑靼风格的人皮鼓',
+    '音色：冷静阴沉，语速平稳但带讥讽尾音，低笑令人不寒而栗',
+    '关系网络：与王二狗有灭门之仇，视赵铁牛为值得尊重的对手，暗中策反义军中的逃兵',
+    '关键事件：初战中故意留出破绽诱敌深入，其训练的狼牙箭手造成义军重大伤亡',
+    '----------------------------------------',
+    '[PROP] 【道具清单】',
+    '粗麻绳（捆绑俘虏）',
+    '----------------------------------------',
+    '[SCENE] 【场景信息】',
+    '地点：淮西村庄外荒野官道',
+    '时间：白天',
+    '天气：阴天 / 风沙',
+    '氛围：压迫、残酷、悲愤',
+    '背景环境：被焚毁的村庄在远处冒着黑烟，田地被战马践踏，尸体散落。',
+    '----------------------------------------',
+    '[SHOT] 【分镜 01】',
+    '',
+    '[CAM] 镜头：远景 → 缓慢推镜',
+    '[SFX] 音效：呼啸的风声与马蹄声',
+    '画面：一支元军押送俘虏的队伍缓慢行进在荒凉的土路上',
+    '人物：赵铁牛、耶律齐、元军士兵',
+    '动作：赵铁牛被五花大绑，衣衫破碎，身上血迹斑斑。',
+    '',
+    '[CAM] 镜头：中景（赵铁牛）',
+    '画面：赵铁牛抬头死死盯着耶律齐，眼中充满仇恨。',
+    '人物：赵铁牛',
+    '动作：咬牙低吼',
+    '对白：耶律齐！你这个卖国求荣的狗贼！',
+    '',
+    '[CAM] 镜头：特写（耶律齐）',
+    '画面：耶律齐微微低头，露出讥讽笑容。',
+    '人物：耶律齐',
+    '动作：冷笑回应',
+    '对白：呵……就凭你？'
+  ].join('\n')
 }
 
 const startGenerateOutline = async () => {
@@ -1538,6 +1522,11 @@ const aiAction = (action: string) => {
   // Open full screen overlay for all actions as requested
   aiOverlayOriginalText.value = text
   aiOverlayActionType.value = actionName
+  
+  // Build context
+  const chars = loreStore.characters.map(c => `${c.name}(${c.role})`).join('、')
+  aiOverlayContext.value = chars ? `相关角色：${chars}` : ''
+  
   showAiOverlay.value = true
 }
 
@@ -1632,6 +1621,11 @@ const aiActionWithPrompt = (promptCmd: string) => {
      // If text selected, use the new overlay
      aiOverlayOriginalText.value = text
      aiOverlayActionType.value = promptCmd
+     
+     // Build context
+     const chars = loreStore.characters.map(c => `${c.name}(${c.role})`).join('、')
+     aiOverlayContext.value = chars ? `相关角色：${chars}` : ''
+     
      showAiOverlay.value = true
   } else {
      // Direct insert if no text selected (fallback, though usually these commands need context)
@@ -1725,6 +1719,37 @@ onBeforeUnmount(() => {
   font-weight: 700;
   text-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
   font-size: 16px;
+}
+
+/* Conversion Dialog Styles */
+.water-drop-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% 50% 50% 5% ;
+  transform: rotate(-45deg);
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+  border: 4px solid #4f46e5;
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.water-drop-container :deep(.el-progress) {
+  transform: rotate(45deg);
+}
+
+.water-drop-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, #4f46e5, #818cf8);
+  opacity: 0.3;
+  transition: height 0.3s ease;
+  z-index: -1;
 }
 
 /* Custom scrollbar for webkit */
@@ -1835,5 +1860,34 @@ onBeforeUnmount(() => {
 :deep(.dark-tabs.el-tabs--border-card .el-tabs__content) {
   padding: 1rem;
   background-color: #1e293b;
+}
+</style>
+
+<style>
+/* Conversion Dialog Styles (Global to affect teleported el-dialog) */
+.el-dialog.conversion-dialog-light,
+.el-dialog.conversion-dialog-dark,
+.conversion-dialog-light .el-dialog,
+.conversion-dialog-dark .el-dialog {
+  --el-dialog-bg-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.el-dialog.conversion-dialog-light .el-dialog__header,
+.el-dialog.conversion-dialog-dark .el-dialog__header,
+.el-dialog.conversion-dialog-light .el-dialog__body,
+.el-dialog.conversion-dialog-dark .el-dialog__body,
+.el-dialog.conversion-dialog-light .el-dialog__footer,
+.el-dialog.conversion-dialog-dark .el-dialog__footer,
+.conversion-dialog-light .el-dialog .el-dialog__header,
+.conversion-dialog-dark .el-dialog .el-dialog__header,
+.conversion-dialog-light .el-dialog .el-dialog__body,
+.conversion-dialog-dark .el-dialog .el-dialog__body,
+.conversion-dialog-light .el-dialog .el-dialog__footer,
+.conversion-dialog-dark .el-dialog .el-dialog__footer {
+  background: transparent !important;
+  border: none !important;
 }
 </style>
