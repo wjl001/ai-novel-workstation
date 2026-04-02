@@ -64,6 +64,10 @@
              <el-icon><VideoCameraFilled /></el-icon>
             <span>AI 短剧</span>
           </el-menu-item>
+          <el-menu-item index="/ai-short-drama-creator/works" class="menu-item-hover">
+            <el-icon><MagicStick /></el-icon>
+            <span>AI短剧创作</span>
+          </el-menu-item>
         </el-menu>
         
         <div class="p-4 border-t" :class="isLight ? 'border-slate-200' : 'border-slate-700'">

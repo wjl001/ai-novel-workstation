@@ -132,7 +132,12 @@
                   <h4 class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ item.title }}</h4>
                   <div class="flex items-center gap-3 mt-1 text-xs text-slate-500">
                     <span class="flex items-center gap-1"><el-icon><Document /></el-icon>{{ item.desc }}</span>
-                    <span>·</span>
+                    <span
+                      class="px-2 py-0.5 rounded-full font-medium"
+                      :class="item.type === '短剧视频' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300'"
+                    >
+                      {{ item.type === '短剧视频' ? '短剧' : '剧本' }}
+                    </span>
                     <span class="flex items-center gap-1"><el-icon><Clock /></el-icon>{{ item.time }}</span>
                   </div>
                 </div>

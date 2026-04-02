@@ -555,6 +555,7 @@ import AiOptimizationOverlay from '@/components/AiOptimizationOverlay.vue'
 const route = useRoute()
 const router = useRouter()
 const showPrototypeHelp = ref(false)
+const showSettingsDialog = ref(false)
 const loreStore = useLoreStore()
 const activeSidePanel = ref('chapters')
 const showLeftSidebar = ref(true)

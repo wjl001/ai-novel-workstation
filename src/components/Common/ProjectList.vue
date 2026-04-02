@@ -35,10 +35,10 @@
         >
           <!-- Cover Image/Placeholder -->
           <div class="h-40 relative overflow-hidden group-hover:opacity-90 transition-opacity" :class="isLight ? 'bg-slate-100' : 'bg-slate-900'" @click.stop="openSettings(project.id)">
-            <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" @error="(e) => (e.target as HTMLImageElement).src = generateDefaultCover(project.title)" />
+            <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" @error="handleImageError($event, project)" />
             <img v-else :src="generateDefaultCover(project.title)" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div class="absolute top-2 right-2">
-              <el-tag size="small" effect="dark" :type="getStatusType(project.status) as any" class="!bg-opacity-80 backdrop-blur-sm shadow-sm">{{ getStatusLabel(project.status) }}</el-tag>
+              <el-tag size="small" effect="dark" :type="getStatusType(project.status)" class="!bg-opacity-80 backdrop-blur-sm shadow-sm">{{ getStatusLabel(project.status) }}</el-tag>
             </div>
             
             <!-- Cover Actions Overlay -->
@@ -353,8 +353,14 @@ const confirmAICover = () => {
   }
 }
 
-const getStatusType = (status: string) => {
-  const map: Record<string, string> = {
+const handleImageError = (e: Event, project: any) => {
+  if (e.target) {
+    (e.target as HTMLImageElement).src = generateDefaultCover(project.title)
+  }
+}
+
+const getStatusType = (status: string): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
+  const map: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
     draft: 'info',
     outline: 'warning',
     writing: 'primary',

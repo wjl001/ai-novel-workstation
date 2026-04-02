@@ -22,6 +22,8 @@ export interface Prop {
   name: string;
   description: string;
   type: string;
+  image?: string;
+  appeared_episodes?: number[];
 }
 
 export interface Scene {
@@ -29,6 +31,8 @@ export interface Scene {
   name: string;
   description: string;
   atmosphere: string;
+  image?: string;
+  appeared_episodes?: number[];
 }
 
 export interface Chapter {

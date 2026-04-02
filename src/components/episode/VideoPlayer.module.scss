@@ -1,0 +1,160 @@
+@use "@/styles/tokens" as *;
+
+.player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoArea {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  items-center: center;
+  justify-content: center;
+  gap: $skylark-space-2;
+  color: $skylark-color-text-muted;
+  background-color: #1a1a1a;
+}
+
+.topOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: $skylark-space-2 $skylark-space-3;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+  color: #fff;
+}
+
+.episodeTitle {
+  font-size: $skylark-font-size-md;
+  font-weight: 500;
+}
+
+.countdownOverlay {
+  position: absolute;
+  bottom: $skylark-space-4;
+  right: $skylark-space-4;
+  background-color: rgba(0,0,0,0.8);
+  padding: $skylark-space-2 $skylark-space-3;
+  border-radius: $skylark-radius-md;
+  backdrop-blur: 8px;
+  color: #fff;
+  z-index: 10;
+}
+
+.countdownContent {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-2;
+}
+
+.countdownTimer {
+  font-size: $skylark-font-size-lg;
+  font-weight: 700;
+  color: $skylark-color-primary;
+}
+
+.controls {
+  height: 48px;
+  background-color: rgba(0,0,0,0.9);
+  display: flex;
+  items-center: center;
+  padding: 0 $skylark-space-2;
+  gap: $skylark-space-2;
+  color: #fff;
+}
+
+.left {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-1;
+}
+
+.center {
+  flex: 1;
+}
+
+.right {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-2;
+}
+
+.time {
+  font-size: $skylark-font-size-xs;
+  color: #ccc;
+  min-width: 100px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  position: relative;
+}
+
+.progressInner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: $skylark-color-primary;
+  border-radius: 2px;
+}
+
+.ctrlText {
+  font-size: $skylark-font-size-xs;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: $skylark-radius-sm;
+  transition: background $skylark-transition-duration;
+
+  &:hover {
+    background-color: rgba(255,255,255,0.1);
+  }
+}
+
+.popMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popItem {
+  padding: 8px 12px;
+  font-size: $skylark-font-size-xs;
+  cursor: pointer;
+  border-radius: $skylark-radius-sm;
+  transition: all $skylark-transition-duration;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: $skylark-color-primary;
+  }
+
+  &.active {
+    background-color: #e6f7ff;
+    color: $skylark-color-primary;
+    font-weight: 600;
+  }
+}

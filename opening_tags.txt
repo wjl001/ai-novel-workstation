@@ -1,0 +1,86 @@
+2: <div class="flex h-full w-full overflow-hidden p-6 gap-6 text-[#1f2329] bg-[#F0F2F5]" :class="{'is-left-collapsed': isLeftCollapsed, 'is-right-collapsed': !isRightPanelVisible}">
+5: <div class="left-panel flex flex-col shrink-0 min-h-0 h-full bg-white rounded-[8px] shadow-[0_4px_12px_0_rgba(0,0,0,0.08)] relative transition-all duration-300 z-10" :style="{ width: isLeftCollapsed ? '48px' : leftPanelWidth + 'px' }">
+7: <div
+14: <div
+25: <div v-show="isLeftCollapsed" class="flex flex-col items-center py-6 gap-6 w-[48px] h-full">
+31: <div v-show="!isLeftCollapsed" class="flex flex-col h-full w-full min-h-0 overflow-hidden">
+33: <div class="flex items-center border-b border-slate-100 shrink-0 px-2 pt-2">
+34: <div
+41: <div
+51: <div v-show="activeLeftTab === 'basic-settings'" class="flex-1 overflow-y-auto custom-scrollbar p-3 min-h-0">
+53: <div v-if="isInfoLoading" class="space-y-4">
+57: <div v-else class="space-y-4 text-[14px] leading-[1.5]">
+58: <div class="flex flex-col gap-1">
+67: <div class="flex flex-col gap-1">
+74: <div class="flex flex-col gap-1">
+79: <div class="flex flex-col gap-1">
+84: <div class="flex gap-4">
+85: <div class="flex flex-col gap-1 flex-1">
+89: <div class="flex flex-col gap-1 flex-1">
+99: <div class="flex flex-col gap-2 relative mb-8 group mt-8">
+100: <div class="flex justify-between items-center mb-1">
+111: <div class="flex flex-col gap-3">
+113: <div class="flex justify-end gap-2">
+122: <div class="flex justify-between items-center absolute -bottom-5 left-0 w-full">
+130: <div class="flex flex-col gap-2 relative mb-8 group mt-8">
+131: <div class="flex justify-between items-center mb-1">
+142: <div class="flex flex-col gap-3">
+144: <div class="flex justify-end gap-2">
+153: <div class="flex justify-between items-center absolute -bottom-5 left-0 w-full">
+161: <div v-show="activeLeftTab === 'episode-outline'" class="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-4 min-h-0">
+162: <div class="flex items-center justify-between">
+168: <div class="flex flex-col gap-3">
+169: <div
+178: <div class="flex justify-between items-center mb-2">
+182: <div class="flex flex-col gap-2 text-[12px]">
+190: <div v-if="form.episodesData.length === 0" class="text-center py-8 text-slate-400 text-[12px]">
+199: <div class="right-panel flex-1 flex gap-6 h-full min-h-0 overflow-hidden transition-all duration-300">
+202: <div class="flex-1 flex flex-col h-full min-h-0 bg-white rounded-[8px] shadow-[0_4px_12px_0_rgba(0,0,0,0.08)] overflow-hidden">
+205: <div class="flex items-center justify-between p-4 border-b border-slate-100 shrink-0 bg-white">
+206: <div class="flex items-center gap-4">
+211: <div class="flex items-center gap-3">
+212: <div v-if="isGenerating" class="flex items-center gap-2 text-indigo-500 text-[13px]">
+246: <div class="flex-1 min-h-0 relative bg-[#F8FAFC] flex flex-col">
+248: <div
+253: <div class="min-h-full bg-white border border-slate-200 rounded-lg shadow-sm relative">
+255: <div v-show="contextMenuVisible" class="fixed z-50 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden text-[13px] text-slate-700 w-[280px] flex flex-col" :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }" @click.stop>
+257: <div class="p-3 border-b border-slate-100 flex items-center gap-2 bg-indigo-50/50">
+263: <div class="flex justify-between items-center p-3 border-b border-slate-100 text-slate-500 bg-white">
+264: <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-indigo-600 transition-colors" @click="applyAIAction('续写')">
+267: <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-indigo-600 transition-colors" @click="applyAIAction('润色')">
+270: <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-indigo-600 transition-colors" @click="applyAIAction('扩写')">
+273: <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-indigo-600 transition-colors" @click="applyAIAction('改写')">
+279: <div class="p-2 flex flex-col bg-white max-h-[200px] overflow-y-auto custom-scrollbar">
+280: <div class="text-[12px] text-slate-400 px-2 py-1 mb-1">推荐指令</div>
+281: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('情感渲染')">
+284: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('五感填充')">
+287: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('角度转换')">
+290: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('内容升华')">
+293: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('加个例子')">
+296: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('增加反差')">
+299: <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 cursor-pointer rounded-md transition-colors" @click="applyAIAction('强化金句')">
+305: <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-white/80 z-10 rounded-lg backdrop-blur-[2px]">
+308: <div class="flex items-center gap-4">
+322: <div class="h-10 border-t border-slate-100 flex items-center justify-between px-4 text-[12px] text-slate-500 bg-slate-50 shrink-0">
+323: <div class="flex items-center gap-4">
+327: <div class="flex items-center gap-2">
+335: <div
+340: <div
+347: <div
+355: <div v-show="!isRightPanelVisible" class="flex flex-col items-center py-6 gap-6 w-[48px] h-full overflow-hidden">
+365: <div v-show="isRightPanelVisible" class="flex-1 flex flex-col gap-6 h-full overflow-y-auto custom-scrollbar p-5">
+367: <div class="bg-white rounded-[8px] border border-slate-100 flex flex-col shrink-0 overflow-hidden" :class="isQuickSettingsExpanded ? 'h-auto' : 'h-auto'">
+368: <div
+376: <div v-show="isQuickSettingsExpanded" class="p-4 flex flex-col gap-4">
+377: <div class="flex flex-col gap-2">
+379: <div class="flex gap-2 items-center">
+385: <div class="flex items-center justify-between">
+394: <div class="flex-1 min-h-0 bg-white rounded-[8px] border border-slate-100 flex flex-col overflow-hidden" :class="isAIAssistantExpanded ? 'flex-1' : 'h-auto shrink-0'">
+395: <div
+402: <div v-show="isAIAssistantExpanded" class="flex-1 flex flex-col bg-[#F8FAFC] min-h-0">
+403: <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4 p-4 text-[13px]" ref="rightPanelChatRef">
+405: <div class="flex flex-col gap-1 items-start">
+407: <div class="bg-white p-3 rounded-[8px] shadow-sm text-slate-700 border border-slate-100 leading-relaxed">我随时可以协助您生成内容或润色剧本。</div>
+410: <div
+421: <div
+431: <div class="mt-auto shrink-0 flex gap-2 p-3 bg-white border-t border-slate-100">

@@ -5,9 +5,19 @@ import Convert from '../views/ScriptConversion/Convert.vue'
 import AIWriteNovel from '../views/AIScriptWriting/AIWriteNovel.vue'
 import NovelGenerator from '../views/AIScriptWriting/NovelGenerator.vue'        
 import ScriptCreative from '../views/CreativeStorm/index.vue'
-import AIScript from '../views/AIDrama/ScriptView.vue'
-import AIVideo from '../views/AIDrama/VideoView.vue'
+import AIScript from '../views/AIShortDrama/ScriptView.vue'
+import AIVideo from '../views/AIShortDrama/VideoView.vue'
 import AIDramaHome from '../views/AIDrama/HomeView.vue'
+import OutlineView from '../views/AIShortDrama/OutlineView.vue'
+import AssetsView from '../views/AIShortDrama/AssetsView.vue'
+import EpisodesView from '../views/AIShortDrama/EpisodesView.vue'
+import DramaWorks from '../views/AIShortDrama/DramaWorks.vue'
+import NewDrama from '../views/AIShortDrama/NewDrama.vue'
+import DramaCreatorLayout from '../views/AIShortDrama/DramaCreatorLayout.vue'
+import StoryboardView from '../views/AIShortDrama/StoryboardView.vue'
+
+// Placeholder component for the new workflow
+const UnderConstruction = { template: '<div class="p-8 text-center text-lg">正在建设中...</div>' };
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,6 +70,42 @@ const router = createRouter({
       path: '/convert',
       name: 'convert',
       component: Convert
+    },
+    {
+      path: '/ai-short-drama-creator/works',
+      name: 'drama-works',
+      component: DramaWorks
+    },
+    {
+      path: '/ai-short-drama-creator/new',
+      name: 'drama-new',
+      component: NewDrama
+    },
+    {
+      path: '/storyboard/:id',
+      name: 'storyboard-detail',
+      component: StoryboardView
+    },
+    {
+      path: '/ai-short-drama-creator',
+      component: DramaCreatorLayout,
+      children: [
+        {
+          path: 'outline',
+          name: 'drama-outline',
+          component: OutlineView
+        },
+        {
+          path: 'assets',
+          name: 'drama-assets',
+          component: AssetsView
+        },
+        {
+          path: 'episodes',
+          name: 'drama-episodes',
+          component: EpisodesView
+        }
+      ]
     }
   ]
 })

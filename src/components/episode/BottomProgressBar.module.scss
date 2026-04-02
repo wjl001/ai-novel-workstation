@@ -1,0 +1,92 @@
+@use "@/styles/tokens" as *;
+
+.bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: $skylark-color-surface;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  border-top: 1px solid $skylark-color-border;
+  z-index: 50;
+  transition: all $skylark-transition-duration $skylark-ease-out;
+  display: flex;
+  items-center: center;
+
+  &.mini {
+    height: 40px;
+    opacity: 0.95;
+    
+    .actions {
+      display: none;
+    }
+
+    .info {
+      font-size: $skylark-font-size-xs;
+    }
+
+    .track {
+      height: 2px;
+    }
+  }
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 $skylark-space-3;
+}
+
+.content {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-3;
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+  transition: all $skylark-transition-duration;
+}
+
+.label {
+  font-size: $skylark-font-size-xs;
+  color: $skylark-color-text-secondary;
+}
+
+.status {
+  font-size: $skylark-font-size-md;
+  font-weight: 700;
+  color: $skylark-color-text-main;
+}
+
+.track {
+  flex: 1;
+  height: 6px;
+  background-color: $skylark-color-bg;
+  border-radius: $skylark-radius-full;
+  position: relative;
+  overflow: hidden;
+  transition: all $skylark-transition-duration;
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(to right, $skylark-color-primary, $skylark-color-secondary);
+  border-radius: $skylark-radius-full;
+  transition: width 0.5s $skylark-ease-out;
+}
+
+.actions {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-2;
+}

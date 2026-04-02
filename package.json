@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build", 
+    "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
+    "test": "vitest run tests/",
+    "test:e2e": "playwright test",
     "deploy": "npm run build && copy dist\\index.html dist\\404.html"
   },
   "dependencies": {
@@ -21,15 +23,20 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.0",
     "@types/node": "^20.11.19",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.17",
     "gh-pages": "^6.3.0",
+    "jsdom": "^29.0.1",
     "postcss": "^8.4.35",
+    "sass-embedded": "^1.98.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.4",
+    "vitest": "^4.1.2",
     "vue-tsc": "^3.2.5"
   },
-  "homepage": "https://wjl001.github.io/ai-novel-workstation" 
+  "homepage": "https://wjl001.github.io/ai-novel-workstation"
 }

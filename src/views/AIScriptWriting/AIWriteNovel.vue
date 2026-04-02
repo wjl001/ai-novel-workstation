@@ -178,12 +178,17 @@
                    </h3>
                    <div class="grid grid-cols-2 gap-3">
                       <div>
-                         <div class="text-xs mb-1 opacity-70">生成集数 (2-15)</div>
-                         <el-input-number v-model="form.episodeCount" :min="2" :max="15" size="small" class="!w-full" controls-position="right" />
+                         <div class="text-xs mb-1 opacity-70">生成集数</div>
+                         <el-input-number v-model="form.episodeCount" :min="2" :max="15" placeholder="2-15" size="small" class="!w-full" controls-position="right" />
                       </div>
                       <div>
-                         <div class="text-xs mb-1 opacity-70">单集时长 (30-120秒)</div>
-                         <el-input-number v-model="form.episodeDuration" :min="30" :max="120" :step="10" size="small" class="!w-full" controls-position="right" />
+                         <div class="text-xs mb-1 opacity-70 flex items-center gap-1">
+                            <span>单集时长(秒)</span>
+                            <el-tooltip :content="definitions.episodeDuration" placement="top">
+                               <el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon>
+                            </el-tooltip>
+                         </div>
+                         <el-input-number v-model="form.episodeDuration" :min="30" :max="120" :step="10" placeholder="30-120" size="small" class="!w-full" controls-position="right" />
                       </div>
                    </div>
                 </div>
@@ -286,51 +291,51 @@
                    </div>
                 </div>
 
-                <!-- Plot -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-red-300 dark:hover:border-red-500/30 flex-[0.8] min-h-[120px] flex flex-col relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-bl-full pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
-                    <div class="flex justify-between items-center mb-2 shrink-0 relative z-10">
-                         <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-red-400 group-hover:scale-110 transition-transform"><TrendCharts /></el-icon> 作品简介 <el-tooltip :content="definitions.plot" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip></span>
-                         <el-button size="small" type="primary" plain round @click="aiHelpWrite('mainPlot')" class="!px-2 !h-6 !text-xs !rounded-lg shadow-sm">AI 生成</el-button>
+                <!-- Character -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow group">
+                    <div class="flex justify-between items-center mb-2 shrink-0">
+                       <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors flex items-center gap-1">角色档案 <el-tooltip :content="definitions.character" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity text-slate-500"><QuestionFilled /></el-icon></el-tooltip></span>
+                       <el-button size="small" text class="!px-1 !h-6 !text-xs" @click.stop="aiHelpWrite('characterInfo')">AI 生成</el-button>
                     </div>
                     <div class="flex-1 min-h-0 relative z-10">
                         <el-input 
-                          v-model="form.mainPlot" 
+                          v-model="form.characterInfo" 
                           type="textarea" 
                           resize="none" 
-                          :rows="3"
-                          placeholder="讲述一个怎样的故事？起承转合..." 
+                          :rows="10" 
                           :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
-                          class="h-full custom-textarea !text-sm leading-relaxed" 
+                          placeholder="主角姓名、性格..." 
+                          class="h-full custom-textarea !text-sm" 
                           maxlength="500"
                         />
                         <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
-                            {{ form.mainPlot?.length || 0 }}/500 字
+                            {{ form.characterInfo?.length || 0 }}/500 字
                         </div>
                     </div>
                 </div>
 
-                <!-- Character & Requirements Grid (Expanded) -->
+                <!-- Synopsis & Requirements Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-[2] min-h-[300px]">
-                    <!-- Character Info -->
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow group">
-                        <div class="flex justify-between items-center mb-2 shrink-0">
-                           <span class="font-bold text-sm group-hover:text-indigo-500 transition-colors flex items-center gap-1">角色档案 <el-tooltip :content="definitions.character" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity text-slate-500"><QuestionFilled /></el-icon></el-tooltip></span>
-                           <el-button size="small" text class="!px-1 !h-6 !text-xs" @click.stop="aiHelpWrite('characterInfo')">AI 生成</el-button>
+                    <!-- Synopsis -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 group transition-all hover:shadow-lg hover:-translate-y-0.5 hover:border-red-300 dark:hover:border-red-500/30 flex-[0.8] min-h-[120px] flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-bl-full pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+                        <div class="flex justify-between items-center mb-2 shrink-0 relative z-10">
+                             <span class="font-bold text-sm flex items-center gap-2"><el-icon class="text-red-400 group-hover:scale-110 transition-transform"><TrendCharts /></el-icon> 作品简介 <el-tooltip :content="definitions.synopsis" placement="top"><el-icon class="cursor-help opacity-50 hover:opacity-100 transition-opacity"><QuestionFilled /></el-icon></el-tooltip></span>
+                             <el-button size="small" type="primary" plain round @click="aiHelpWrite('synopsis')" class="!px-2 !h-6 !text-xs !rounded-lg shadow-sm">AI 生成</el-button>
                         </div>
                         <div class="flex-1 min-h-0 relative z-10">
                             <el-input 
-                              v-model="form.characterInfo" 
+                              v-model="form.synopsis" 
                               type="textarea" 
                               resize="none" 
-                              :rows="10" 
+                              :rows="3"
+                              placeholder="一句话吸引读者..." 
                               :class="isLight ? 'light-textarea h-full' : 'dark-textarea h-full'" 
-                              placeholder="主角姓名、性格..." 
-                              class="h-full custom-textarea !text-sm" 
+                              class="h-full custom-textarea !text-sm leading-relaxed" 
                               maxlength="500"
                             />
                             <div class="absolute bottom-2 right-2 text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 rounded pointer-events-none">
-                                {{ form.characterInfo?.length || 0 }}/500 字
+                                {{ form.synopsis?.length || 0 }}/500 字
                             </div>
                         </div>
                     </div>
@@ -623,6 +628,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useLoreStore } from '@/stores/useLoreStore'
 import _ from 'lodash'
 
+const showPrototypeHelp = ref(false)
 const router = useRouter()
 const route = useRoute()
 const loreStore = useLoreStore()
@@ -644,7 +650,8 @@ const definitions = {
   plot: "故事的主要发展脉络，包含起承转合的关键节点。",
   character: "主要角色的姓名、性格、外貌及背景故事。",
   synopsis: "用于展示给读者的故事梗概，需精炼且具吸引力。",
-  requirements: "对AI创作的特殊指令，如避雷点、特定的行文习惯等。"
+  requirements: "对AI创作的特殊指令，如避雷点、特定的行文习惯等。",
+  episodeDuration: "AI生成时会以此为参考，但时长会有一定浮动"
 }
 
 // Nav Items
