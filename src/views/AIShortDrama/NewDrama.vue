@@ -1,119 +1,170 @@
 <template>
-  <div class="h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 p-6 overflow-y-auto custom-scrollbar">
-    <!-- Header: Redesigned for attraction -->
-    <div class="text-center mb-10 max-w-2xl px-4">
-      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white mb-4 tracking-tight">
-        {{ t('hero.title') }}
-      </h1>
-      <p class="text-slate-500 dark:text-slate-400 text-base md:text-lg leading-relaxed">
-        {{ t('hero.description') }}
-      </p>
-    </div>
+  <div class="h-full flex flex-col bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <!-- Main Content: Top Creation Area -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
+      <div class="max-w-6xl mx-auto flex flex-col items-center">
+        <!-- Header: Centered and Attractive -->
+        <div class="text-center mb-10 max-w-2xl">
+          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white mb-4 tracking-tight">
+            智能极速创作，打造爆款短剧
+          </h1>
+          <p class="text-slate-500 dark:text-slate-400 text-base md:text-lg leading-relaxed">
+            AI全流程辅助，零门槛创作，内置高转化剧情模板，让创意触手及。
+          </p>
+        </div>
 
-    <!-- Main Card -->
-    <div class="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-700 transition-all duration-300">
-      <!-- Tabs Header: Custom designed for clarity -->
-      <div class="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 p-1">
-        <button 
-          class="flex-1 py-4 text-center font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-2xl m-1"
-          :class="activeTab === 'ai' 
-            ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' 
-            : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'"
-          @click="activeTab = 'ai'"
-        >
-          <el-icon><Document /></el-icon> {{ t('tabs.ai') }}
-        </button>
-        <button 
-          class="flex-1 py-4 text-center font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-2xl m-1"
-          :class="activeTab === 'upload' 
-            ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' 
-            : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'"
-          @click="activeTab = 'upload'"
-        >
-          <el-icon><Upload /></el-icon> {{ t('tabs.upload') }}
-        </button>
-      </div>
-
-      <!-- Tab Content -->
-      <div class="p-8">
-        <!-- AI Generate Tab -->
-        <div v-if="activeTab === 'ai'" class="flex flex-col min-h-[300px]">
-          <div class="relative flex-1 group">
-            <textarea 
-              v-model="aiPrompt"
-              class="w-full h-48 md:h-64 resize-none bg-slate-50/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500/50 rounded-2xl outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-400 text-lg p-5 transition-all duration-300"
-              :placeholder="t('ai.placeholder')"
-            ></textarea>
-            
-            <!-- AI Inspiration Button -->
+        <!-- Creation Card: Simplified for speed -->
+        <div class="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden mb-16 transition-all duration-300">
+          <div class="p-1 bg-slate-50/50 dark:bg-slate-900/50 flex border-b border-slate-100 dark:border-slate-700">
             <button 
-              class="absolute bottom-4 right-4 flex items-center gap-1.5 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-sm"
-              @click="showAssistant = true"
+              class="flex-1 py-3 text-sm font-bold transition-all rounded-xl m-1 flex items-center justify-center gap-2"
+              :class="activeTab === 'ai' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500'"
+              @click="activeTab = 'ai'"
             >
-              <el-icon><MagicStick /></el-icon> {{ t('ai.noInspiration') }}
+              <el-icon><MagicStick /></el-icon> AI 生成剧本
+            </button>
+            <button 
+              class="flex-1 py-3 text-sm font-bold transition-all rounded-xl m-1 flex items-center justify-center gap-2"
+              :class="activeTab === 'upload' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500'"
+              @click="activeTab = 'upload'"
+            >
+              <el-icon><Upload /></el-icon> 上传我的剧本
             </button>
           </div>
-          
-          <div class="flex flex-col items-center gap-3 mt-8">
-            <el-button 
-              type="primary" 
-              size="large" 
-              class="!px-12 !h-14 !rounded-full !text-lg !font-bold shadow-lg shadow-indigo-500/30 hover:scale-105 transition-transform"
-              :disabled="!aiPrompt.trim() && !isGenerating"
-              :loading="isGenerating"
-              @click="startCreation"
-            >
-              {{ t('ai.startBtn') }}
-            </el-button>
-            <span class="text-xs text-slate-400 dark:text-slate-500">
-              {{ t('billing.freeHint') }}
-            </span>
+
+          <div class="p-6 md:p-8">
+            <div v-if="activeTab === 'ai'" class="flex flex-col">
+              <div class="relative group">
+                <textarea 
+                  v-model="aiPrompt"
+                  class="w-full h-40 md:h-52 resize-none bg-slate-50/30 dark:bg-slate-900/30 border-2 border-transparent focus:border-indigo-500/30 rounded-2xl outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-400 text-lg p-5 transition-all"
+                  placeholder="在此输入你构想的故事内容。可以尝试输入这些要素：故事设定、主角特征、剧情脉络、最终结局等等"
+                ></textarea>
+                <button 
+                  class="absolute bottom-4 right-4 flex items-center gap-1.5 px-4 py-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 transition-colors shadow-sm"
+                  @click="showAssistant = true"
+                >
+                  <el-icon><EditPen /></el-icon> 灵感助手
+                </button>
+              </div>
+              
+              <div class="flex flex-col items-center gap-4 mt-8">
+                <el-button 
+                  type="primary" 
+                  size="large" 
+                  class="!px-16 !h-14 !rounded-full !text-lg !font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                  :disabled="!aiPrompt.trim() && !isGenerating"
+                  :loading="isGenerating"
+                  @click="startCreation"
+                >
+                  立即开始创作
+                </el-button>
+                <p class="text-xs text-slate-400">目前支持：微短剧、电影大纲、长篇剧集等多种体裁</p>
+              </div>
+            </div>
+
+            <div v-if="activeTab === 'upload'" class="py-10">
+              <el-upload
+                drag
+                action="#"
+                :auto-upload="false"
+                class="w-full"
+                @change="handleFileUpload"
+              >
+                <el-icon class="el-icon--upload !text-indigo-500/40"><upload-filled /></el-icon>
+                <div class="el-upload__text text-slate-500">
+                  将文件拖到此处，或 <em>点击上传</em>
+                </div>
+                <template #tip>
+                  <div class="el-upload__tip text-center mt-4 text-slate-400">
+                    支持 docx, pdf, txt 格式，单个文件不超过 20MB
+                  </div>
+                </template>
+              </el-upload>
+            </div>
           </div>
         </div>
 
-        <!-- Upload Tab -->
-        <div v-if="activeTab === 'upload'" class="flex flex-col items-center justify-center min-h-[300px]">
-          <el-upload
-            class="w-full"
-            drag
-            action="#"
-            :auto-upload="false"
-            :show-file-list="false"
-            @change="handleFileUpload"
-          >
-            <div class="py-10">
-              <el-icon class="text-6xl text-indigo-500/50 mb-4"><UploadFilled /></el-icon>
-              <div class="text-slate-600 dark:text-slate-300 text-xl font-medium mb-2">{{ t('upload.dragHint') }}</div>
-              <div class="text-slate-400 text-sm">{{ t('upload.formatHint') }}</div>
+        <!-- Recent Projects Section -->
+        <div class="w-full">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+              我的项目 <span class="text-slate-400 font-normal text-sm">(最近制作)</span>
+            </h2>
+            <el-button text @click="router.push('/ai-short-drama-creator/works')" class="!bg-slate-100 hover:!bg-slate-200 !px-4 !rounded-lg text-slate-600 font-medium">
+              管理 <el-icon class="ml-1"><ArrowRight /></el-icon>
+            </el-button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div 
+              v-for="work in recentWorks" 
+              :key="work.id"
+              class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+              @click="router.push('/ai-short-drama-creator/outline')"
+            >
+              <!-- Previews Area -->
+              <div class="h-40 bg-slate-100 dark:bg-slate-900 flex p-2 gap-1.5 overflow-hidden relative">
+                <template v-if="work.previews && work.previews.length > 0">
+                  <!-- Case for 3 images like in the screenshot -->
+                  <div 
+                    v-for="(img, idx) in work.previews" 
+                    :key="idx"
+                    class="flex-1 h-full rounded-lg overflow-hidden bg-slate-200"
+                  >
+                    <img :src="img" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  </div>
+                </template>
+                <!-- Large gray placeholder if no previews -->
+                <div v-else class="w-full h-full flex items-center justify-center text-slate-300 bg-[#E5E7EB] rounded-lg">
+                   <el-icon size="48" class="opacity-20"><Picture /></el-icon>
+                </div>
+                <!-- Overlay badge for status/example -->
+                <div v-if="work.isExample" class="absolute top-3 left-3 px-2 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded shadow-sm z-10">示例</div>
+              </div>
+
+              <div class="p-4 bg-slate-50/30">
+                <h3 class="font-bold text-slate-800 dark:text-white mb-1.5 truncate text-[15px]" :title="work.title">
+                  {{ work.title }}
+                </h3>
+                <div class="flex items-center text-[12px] text-slate-400 gap-3">
+                  <span v-if="work.episodes">{{ work.episodes }} 集</span>
+                  <span class="flex items-center gap-1"><el-icon><Clock /></el-icon> {{ work.updatedAt }}</span>
+                </div>
+              </div>
             </div>
-          </el-upload>
+          </div>
+
+          <!-- Empty State for Recent Projects -->
+          <div v-if="recentWorks.length === 0" class="py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl text-slate-400">
+            <el-icon size="40" class="mb-2 opacity-30"><VideoCamera /></el-icon>
+            <p>暂无制作中的短剧</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- AI Inspiration Assistant Dialog -->
+    <!-- AI Assistant Dialog -->
     <el-dialog
       v-model="showAssistant"
-      :title="t('assistant.title')"
-      width="90%"
-      max-width="600px"
-      class="inspiration-dialog !rounded-3xl overflow-hidden"
-      append-to-body
+      title="AI 创作助手"
+      width="540px"
+      class="inspiration-dialog !rounded-3xl"
     >
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+      <div class="grid grid-cols-2 gap-4 p-2">
         <div 
           v-for="feature in assistantFeatures" 
           :key="feature.key"
-          class="p-5 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 cursor-pointer transition-all group"
+          class="p-4 rounded-2xl border border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/30 cursor-pointer transition-all group"
           @click="applyAssistant(feature.key)"
         >
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
               <el-icon :size="20"><component :is="feature.icon" /></el-icon>
             </div>
-            <span class="font-bold text-slate-800 dark:text-slate-100">{{ t(`assistant.features.${feature.key}.label`) }}</span>
+            <span class="font-bold text-slate-800">{{ feature.label }}</span>
           </div>
-          <p class="text-sm text-slate-500 dark:text-slate-400">{{ t(`assistant.features.${feature.key}.desc`) }}</p>
+          <p class="text-xs text-slate-500">{{ feature.desc }}</p>
         </div>
       </div>
     </el-dialog>
@@ -121,135 +172,91 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, computed } from 'vue';
+import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   Upload, 
-  Document, 
   UploadFilled, 
   MagicStick, 
   EditPen, 
   DocumentAdd, 
   Refresh,
   Brush,
-  TrendCharts
+  Picture,
+  Clock,
+  ArrowRight,
+  VideoCamera
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const isLight = inject('isLight', ref(true));
-const isDark = computed(() => !isLight.value);
 
 // --- State Management ---
-const activeTab = ref('ai'); // 'ai' | 'upload'
+const activeTab = ref('ai'); 
 const aiPrompt = ref('');
 const showAssistant = ref(false);
 const isGenerating = ref(false);
 
-// --- i18n Logic (Local) ---
-const locale = ref('zh-CN');
-const messages: Record<string, any> = {
-  'zh-CN': {
-    hero: {
-      title: '智能极速创作，打造爆款短剧',
-      description: 'AI全流程辅助，零门槛创作，内置高转化剧情模板，让创意触手可及。'
-    },
-    tabs: {
-      ai: 'AI 生成剧本',
-      upload: '上传我的剧本'
-    },
-    ai: {
-      placeholder: '在此输入你构想的故事内容。可以尝试输入这些要素：故事设定、主角特征、剧情脉络、最终结局等等',
-      noInspiration: '灵感枯竭？',
-      startBtn: '开始创作'
-    },
-    billing: {
-      freeHint: '当前处于免费试用阶段，生成剧本暂不消耗积分',
-      toast: '免费试用中'
-    },
-    upload: {
-      dragHint: '点击或将文件拖拽到这里上传',
-      formatHint: '支持 txt, doc, docx, pdf 格式'
-    },
-    assistant: {
-      title: 'AI 灵感助手',
-      features: {
-        generate: { label: '一键生成', desc: '根据热门趋势生成完整短剧大纲', icon: 'DocumentAdd' },
-        polish: { label: '文本润色', desc: '修饰语言，使对白更具戏剧张力', icon: 'Brush' },
-        expand: { label: '情节扩写', desc: '增加细节描述，丰富故事层次感', icon: 'EditPen' },
-        rewrite: { label: '创意改写', desc: '变换故事角度，发掘更多可能性', icon: 'Refresh' }
-      }
-    }
+// Mock Recent Works Data based on user screenshot
+const recentWorks = ref([
+  { 
+    id: 1, 
+    title: '誓要掀', 
+    episodes: 1, 
+    updatedAt: '2026-04-01 14:11',
+    previews: [
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=300&fit=crop'
+    ]
   },
-  'en-US': {
-    hero: {
-      title: 'Intelligent Speed Creation, Build Hit Dramas',
-      description: 'AI full-process assistance, zero-threshold creation, built-in high-conversion templates.'
-    },
-    tabs: {
-      ai: 'AI Script Generation',
-      upload: 'Upload My Script'
-    },
-    ai: {
-      placeholder: 'Enter your story ideas here. Try elements like setting, characters, plot points, etc.',
-      noInspiration: 'No inspiration?',
-      startBtn: 'Start Creation'
-    },
-    billing: {
-      freeHint: 'Currently in free trial, no points consumed for generation.',
-      toast: 'Free trial in progress'
-    },
-    upload: {
-      dragHint: 'Click or drag file here to upload',
-      formatHint: 'Supports txt, doc, docx, pdf formats'
-    },
-    assistant: {
-      title: 'AI Inspiration Assistant',
-      features: {
-        generate: { label: 'One-click Generate', desc: 'Generate full outline based on trends', icon: 'DocumentAdd' },
-        polish: { label: 'Polish Text', desc: 'Refine language for dramatic tension', icon: 'Brush' },
-        expand: { label: 'Expand Plot', desc: 'Add detail and enrich story layers', icon: 'EditPen' },
-        rewrite: { label: 'Creative Rewrite', desc: 'Change perspectives for more possibilities', icon: 'Refresh' }
-      }
-    }
+  { 
+    id: 2, 
+    title: '烽火铁牛：开局掀翻元廷', 
+    updatedAt: '2026-03-23 12:01',
+    previews: [] // Test empty state
+  },
+  { 
+    id: 3, 
+    title: '从弃女到巅峰：苏家千金归来', 
+    episodes: 5, 
+    updatedAt: '2026-03-19 10:48',
+    isExample: true,
+    previews: [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&h=300&fit=crop'
+    ]
+  },
+  { 
+    id: 4, 
+    title: '末世：我以为我是废柴，其实我是神', 
+    episodes: 5, 
+    updatedAt: '2026-03-16 14:10',
+    isExample: true,
+    previews: [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=200&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=300&fit=crop'
+    ]
   }
-};
+]);
 
-const t = (path: string) => {
-  const keys = path.split('.');
-  let result = messages[locale.value];
-  for (const key of keys) {
-    if (result) result = result[key];
-  }
-  return result || path;
-};
-
-// --- Features Data ---
 const assistantFeatures = [
-  { key: 'generate', icon: DocumentAdd },
-  { key: 'polish', icon: Brush },
-  { key: 'expand', icon: EditPen },
-  { key: 'rewrite', icon: Refresh }
+  { key: 'generate', label: '一键生成', desc: '根据热门趋势生成完整短剧大纲', icon: DocumentAdd },
+  { key: 'polish', label: '文本润色', desc: '修饰语言，使对白更具戏剧张力', icon: Brush },
+  { key: 'expand', label: '情节扩写', desc: '增加细节描述，丰富故事层次感', icon: EditPen },
+  { key: 'rewrite', label: '创意改写', desc: '变换故事角度，发掘更多可能性', icon: Refresh }
 ];
 
-// --- Handlers ---
 const applyAssistant = (key: string) => {
   showAssistant.value = false;
   isGenerating.value = true;
-  
-  // Mock AI response
   setTimeout(() => {
-    const mockResponses: Record<string, string> = {
-      generate: '【一键生成结果】：这是一段由AI为您精心构思的爆款短剧大纲。背景设定在繁华都市，讲述了一个关于身份反转与救赎的故事...',
-      polish: aiPrompt.value ? `【润色后】：${aiPrompt.value}（已针对对白张力和叙事节奏进行深度优化）` : '请先输入一段内容，我再为您润色。',
-      expand: aiPrompt.value ? `【扩写后】：${aiPrompt.value}。窗外的雨越下越大，仿佛在诉说着她内心无法言说的忧伤...` : '请先输入内容，我将为您扩写细节。',
-      rewrite: aiPrompt.value ? `【改写后】：换个角度看这个故事——如果这一切其实是一场梦中梦？${aiPrompt.value}` : '请输入内容，让我为您换个思路。'
-    };
-    
-    aiPrompt.value = mockResponses[key] || '';
+    aiPrompt.value = '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
     isGenerating.value = false;
-    ElMessage.success(t('billing.toast'));
-  }, 1500);
+  }, 1000);
 };
 
 const startCreation = () => {
@@ -257,29 +264,22 @@ const startCreation = () => {
     showAssistant.value = true;
     return;
   }
-  
-  ElMessage.success(t('billing.toast'));
-  ElMessage.info('正在为您处理剧本...');
-  
+  isGenerating.value = true;
   setTimeout(() => {
     router.push('/ai-short-drama-creator/outline');
-  }, 800);
+    isGenerating.value = false;
+  }, 1000);
 };
 
 const handleFileUpload = (file: any) => {
-  ElMessage.success(`文件 ${file.name} 解析中...`);
-  setTimeout(() => {
-    router.push('/ai-short-drama-creator/outline');
-  }, 1000);
+  ElMessage.success(`文件解析中...`);
+  setTimeout(() => router.push('/ai-short-drama-creator/outline'), 1000);
 };
 </script>
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #e2e8f0;
@@ -300,21 +300,10 @@ const handleFileUpload = (file: any) => {
   color: #1e293b;
 }
 
-.dark :deep(.inspiration-dialog .el-dialog__title) {
-  color: #f1f5f9;
-}
-
 :deep(.el-upload-dragger) {
   border-radius: 1.5rem;
   border-width: 2px;
   background-color: transparent;
-}
-
-.dark :deep(.el-upload-dragger) {
-  border-color: #334155;
-}
-
-.dark :deep(.el-upload-dragger:hover) {
-  border-color: #6366f1;
+  padding: 40px 20px;
 }
 </style>

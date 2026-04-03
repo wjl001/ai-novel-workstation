@@ -180,7 +180,6 @@
                 <el-button type="danger" link @click="removeEpisode(index)"><el-icon><Delete /></el-icon></el-button>
               </div>
               <div class="flex flex-col gap-2 text-[12px]">
-                <el-input v-model="ep.title" placeholder="分集标题" size="small" @blur="validatePlotNode(index)" />
                 <el-input v-model="ep.summary" type="textarea" :rows="2" placeholder="一句话梗概" size="small" />
                 <el-input v-model="ep.scenes" placeholder="主要场景 (用逗号分隔)" size="small" />
                 <el-input v-model="ep.characters" placeholder="出场角色 (用逗号分隔)" size="small" />
@@ -735,13 +734,7 @@ const getWordCountColor = (field: 'synopsis' | 'background') => {
 };
 
 const validatePlotNode = (index: number) => {
-  const node = form.episodesData[index];
-  const len = node?.title.length || 0;
-  if (len < 1 || len > 50) {
-    errors[`plot_${index}`] = '标题字数需在1-50之间';
-  } else {
-    delete errors[`plot_${index}`];
-  }
+  // No longer validating title as it's removed
 };
 
 const isFormValid = computed(() => {
@@ -749,10 +742,6 @@ const isFormValid = computed(() => {
   if ((form.synopsis?.length || 0) < 450 || (form.synopsis?.length || 0) > 550) return false;
   if ((form.background?.length || 0) < 675 || (form.background?.length || 0) > 825) return false;
   if (form.episodesData.length === 0) return false;
-  for (let i = 0; i < form.episodesData.length; i++) {
-    const len = form.episodesData[i].title.length;
-    if (len < 1 || len > 50) return false;
-  }
   return Object.values(errors).every(err => !err);
 });
 

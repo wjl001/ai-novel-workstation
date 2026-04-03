@@ -1,14 +1,65 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden">
     <!-- Header Steps -->
-    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
-      <div class="max-w-7xl mx-auto">
-        <div class="bg-[#F8FAFC] dark:bg-slate-900/50 rounded-full px-10 py-3">
-          <el-steps :active="activeStep" finish-status="success" class="custom-steps">
-            <el-step title="剧本" @click="$router.push('/ai-short-drama-creator/outline')" />
-            <el-step title="主体设置" @click="$router.push('/ai-short-drama-creator/assets')" />
-            <el-step title="分集视频" @click="$router.push('/ai-short-drama-creator/episodes')" />
-          </el-steps>
+    <div class="bg-white dark:bg-gray-800 p-4 border-b border-slate-100 dark:border-slate-700 shadow-sm shrink-0 flex justify-center">
+      <div class="bg-[#F3F5F9] dark:bg-slate-800/80 rounded-full px-8 py-2.5 flex items-center min-w-[600px] justify-between">
+        <!-- Step 1 -->
+        <div 
+          class="flex items-center gap-2 cursor-pointer group relative"
+          @click="$router.push('/ai-short-drama-creator/outline')"
+        >
+          <div 
+            class="w-6 h-6 rounded-full flex items-center justify-center text-[12px] transition-all"
+            :class="activeStep >= 0 ? (activeStep > 0 ? 'bg-[#EEF2FF] text-[#6366f1]' : 'bg-[#6366f1] text-white font-bold') : 'border border-slate-300 text-slate-400 bg-white'"
+          >
+            <el-icon v-if="activeStep > 0"><Check /></el-icon>
+            <span v-else>1</span>
+          </div>
+          <span 
+            class="text-[14px] transition-colors"
+            :class="activeStep >= 0 ? 'text-slate-900 font-bold' : 'text-slate-400 font-medium'"
+          >剧本</span>
+          
+          <!-- Dashed Line 1-2 -->
+          <div class="absolute left-[calc(100%+12px)] w-[120px] border-t border-dashed border-slate-300 top-1/2 -translate-y-1/2"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div 
+          class="flex items-center gap-2 cursor-pointer group relative ml-12"
+          @click="$router.push('/ai-short-drama-creator/assets')"
+        >
+          <div 
+            class="w-6 h-6 rounded-full flex items-center justify-center text-[12px] transition-all"
+            :class="activeStep >= 1 ? (activeStep > 1 ? 'bg-[#EEF2FF] text-[#6366f1]' : 'bg-[#6366f1] text-white font-bold') : 'border border-slate-300 text-slate-400 bg-white'"
+          >
+            <el-icon v-if="activeStep > 1"><Check /></el-icon>
+            <span v-else>2</span>
+          </div>
+          <span 
+            class="text-[14px] transition-colors"
+            :class="activeStep >= 1 ? 'text-slate-900 font-bold' : 'text-slate-400 font-medium'"
+          >主体设置</span>
+
+          <!-- Dashed Line 2-3 -->
+          <div class="absolute left-[calc(100%+12px)] w-[120px] border-t border-dashed border-slate-300 top-1/2 -translate-y-1/2"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div 
+          class="flex items-center gap-2 cursor-pointer group ml-12"
+          @click="$router.push('/ai-short-drama-creator/episodes')"
+        >
+          <div 
+            class="w-6 h-6 rounded-full flex items-center justify-center text-[12px] transition-all"
+            :class="activeStep >= 2 ? 'bg-[#6366f1] text-white font-bold' : 'border border-slate-300 text-slate-400 bg-white'"
+          >
+            <span>3</span>
+          </div>
+          <span 
+            class="text-[14px] transition-colors"
+            :class="activeStep >= 2 ? 'text-slate-900 font-bold' : 'text-slate-400 font-medium'"
+          >分集视频</span>
         </div>
       </div>
     </div>
@@ -31,6 +82,8 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { Check } from '@element-plus/icons-vue';
+
 const route = useRoute();
 
 const activeStep = computed(() => {
@@ -44,109 +97,8 @@ const activeStep = computed(() => {
 </script>
 
 <style scoped>
-/* 容器样式 */
-.custom-steps {
-  --step-active-color: #6366f1;
-  --step-success-bg: #eef2ff;
-  --step-text-color: #1f2329;
-}
-
-/* 强制横向排列图标和文字 */
-.custom-steps :deep(.el-step) {
-  flex-basis: auto !important;
-  flex-shrink: 0;
-  flex-grow: 1;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center;
-}
-
-.custom-steps :deep(.el-step.is-center .el-step__main) {
-  text-align: left !important;
-}
-
-.custom-steps :deep(.el-step__head) {
-  flex-grow: 0;
-  width: auto;
-  display: flex;
-  align-items: center;
-}
-
-.custom-steps :deep(.el-step__main) {
-  display: flex !important;
-  align-items: center;
-  padding-left: 8px !important; /* 文字紧贴图标右侧 */
-  white-space: nowrap;
-}
-
-/* 标题样式调整 */
-.custom-steps :deep(.el-step__title) {
-  margin-top: 0 !important;
-  line-height: 24px !important;
-}
-
-/* 隐藏默认图标背景 */
-.custom-steps :deep(.el-step__icon) {
-  background: transparent;
-  width: 24px;
-  height: 24px;
-  font-size: 13px;
-}
-
-/* 未完成节点 */
-.custom-steps :deep(.el-step__head.is-wait) {
-  color: #94a3b8;
-  border-color: #e2e8f0;
-}
-
-/* 进行中节点样式 */
-.custom-steps :deep(.el-step__head.is-process .el-step__icon) {
-  background-color: var(--step-active-color);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-}
-.custom-steps :deep(.el-step__title.is-process) {
-  color: var(--step-text-color);
-  font-weight: 800;
-  font-size: 14px;
-}
-
-/* 已完成节点样式 */
-.custom-steps :deep(.el-step__head.is-success .el-step__icon) {
-  background-color: var(--step-success-bg);
-  color: var(--step-active-color);
-  border: none;
-  border-radius: 50%;
-}
-.custom-steps :deep(.el-step__title.is-success) {
-  color: var(--step-text-color);
-  font-weight: 800;
-  font-size: 14px;
-}
-
-/* 连接线样式 - 虚线效果 */
-.custom-steps :deep(.el-step__line) {
-  background-color: transparent;
-  border-top: 1px dashed #cbd5e1;
-  top: 50% !important;
-  transform: translateY(-50%);
-  left: auto !important;
-  right: 10px !important;
-  width: calc(100% - 100px) !important; /* 动态计算长度，避开左侧图标和文字 */
-}
-
-.custom-steps :deep(.el-step__line-inner) {
-  display: none;
-}
-
-/* 最后一个节点的线隐藏 */
-.custom-steps :deep(.el-step:last-of-type .el-step__line) {
-  display: none;
-}
-
 /* 整个步骤项 */
-.el-step {
+.cursor-pointer {
   cursor: pointer;
 }
 </style>
