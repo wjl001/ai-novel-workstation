@@ -506,7 +506,7 @@
                 <button 
                   v-else 
                   class="flex items-center gap-2 text-indigo-600 bg-white hover:bg-indigo-600 hover:text-white px-5 py-2 rounded-full shadow-md border border-indigo-100 transition-all font-bold"
-                  @click.stop="handleGenerateSingleScene(idx)"
+                  @click="handleGenerateSingleScene(idx)"
                 >
                   <el-icon><MagicStick /></el-icon>
                   <span class="text-[13px]">生成</span>
@@ -1155,11 +1155,14 @@ const toggleMultiSelect = () => {
 };
 
 const toggleSceneSelection = (idx: number) => {
+  // 无论是否多选，点击分镜卡片都应当切换当前的预览/编辑器视图
+  currentSceneIdx.value = idx;
+  
   if (!isMultiSelectMode.value) {
-    currentSceneIdx.value = idx;
     activeLeftTab.value = 'basic-settings'; // 切换节点时默认显示基础设定
     return;
   }
+  
   const pos = selectedScenes.value.indexOf(idx);
   if (pos > -1) {
     selectedScenes.value.splice(pos, 1);

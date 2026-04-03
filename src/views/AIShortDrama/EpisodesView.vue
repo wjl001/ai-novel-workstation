@@ -121,7 +121,7 @@
               <span v-if="ep.status === 'generating'" class="flex items-center gap-2 text-indigo-600 font-bold text-sm">
                 <el-icon class="is-loading"><Loading /></el-icon> 分镜脚本生成中...
               </span>
-</span>
+            </div>
                 <span class="text-red-500 flex items-center gap-1 text-sm"><el-icon><Warning /></el-icon> 生成失败</span>
                 <button 
                   @click.stop="handleGenerate(ep)"
@@ -129,12 +129,16 @@
                 >
                   重试
                 </button>
-              </span>
+            </div>
+            </template>
             </div>
           </div>
 
           <!-- Pending/Generating Status Text -->
           <div v-if="ep.status !== 'success'" :class="s.statusText">
+            <span v-if="ep.status === 'pending'" :class="s.pending">等待生成</span>
+            <span v-else-if="ep.status === 'failed'" :class="s.failed">生成失败</span>
+          </div>
             <span v-if="ep.status === 'pending'" :class="s.pending">等待生成</span>
           </div>
         </div>

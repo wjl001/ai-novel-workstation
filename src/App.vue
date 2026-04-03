@@ -11,31 +11,6 @@
       </div>
       
       <div class="flex items-center gap-4">
-        <!-- Global Settings moved from AIWriteNovel.vue -->
-        <div class="flex items-center gap-4 mr-4 p-1.5 rounded-full border transition-colors duration-300" :class="isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-700/50 border-slate-600/50'">
-           <!-- Model Selector -->
-           <div class="flex items-center gap-2 px-2">
-              <el-icon class="text-indigo-400"><Cpu /></el-icon>
-              <el-select v-model="loreStore.currentNovel.model" size="small" class="w-32 custom-header-select" :effect="isLight ? 'light' : 'dark'" :teleported="false">
-                <el-option label="GPT-4-Turbo" value="gpt-4-turbo" />
-                <el-option label="Claude-3-Opus" value="claude-3-opus" />
-                <el-option label="Gemini-Pro" value="gemini-pro" />
-              </el-select>
-           </div>
-           
-           <div class="w-px h-4" :class="isLight ? 'bg-slate-300' : 'bg-slate-600'"></div>
-
-           <!-- Theme Selector -->
-           <div class="flex items-center gap-2 px-2">
-              <el-icon class="text-purple-400"><Brush /></el-icon>
-              <el-select v-model="currentTheme" size="small" class="w-28 custom-header-select" :effect="isLight ? 'light' : 'dark'" @change="updateTheme" :teleported="false">
-                <el-option label="默认深蓝" value="dark" />
-                <el-option label="清爽亮白" value="light" />
-                <el-option label="梦幻紫罗兰" value="dreamy" />
-              </el-select>
-           </div>
-        </div>
-
         <div class="flex items-center gap-2 pl-2 border-l" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
            <el-avatar :size="32" class="!bg-indigo-600">A</el-avatar>
            <span class="text-sm font-medium" :class="isLight ? 'text-slate-600' : 'text-slate-300'">Admin</span>
@@ -94,17 +69,11 @@
 <script setup lang="ts">
 import { ref, provide, watch, computed, onErrorCaptured } from 'vue'
 import { EditPen, VideoPlay, VideoCameraFilled, Picture, MagicStick, Refresh, 
-Cpu, Brush, HomeFilled } from '@element-plus/icons-vue'
-import { useLoreStore } from '@/stores/useLoreStore'
+HomeFilled } from '@element-plus/icons-vue'
 
-const loreStore = useLoreStore()
 const currentTheme = ref('dreamy')
 const isLight = ref(true)
 const runtimeError = ref<string | null>(null)
-
-const updateTheme = (val: string) => {
-  isLight.value = val === 'light' || val === 'dreamy'
-}
 
 const mainBgClass = computed(() => {
   if (currentTheme.value === 'dreamy') {
