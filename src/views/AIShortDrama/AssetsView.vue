@@ -204,114 +204,12 @@
     </el-dialog>
 
     <!-- Asset Edit Modal -->
-    <el-dialog 
-      v-model="editModalVisible" 
-      :title="`编辑${getAssetTypeName(currentAssetType)} - ${editingAsset?.name || '未命名'}`"
-      width="85%"
-      top="5vh"
-      destroy-on-close
-      class="asset-edit-modal"
-    >
-      <div class="h-[70vh] min-h-[500px] overflow-hidden" v-if="editingAsset">
-        <el-row :gutter="24" class="h-full m-0">
-          <!-- Left: Asset Details (Settings Panel) -->
-          <el-col :xs="24" :md="10" :lg="9" class="h-full flex flex-col overflow-hidden pb-2">
-            <div class="bg-white p-4 rounded-[8px] shadow-sm border border-slate-100 flex flex-col h-full overflow-y-auto custom-scrollbar">
-              <h3 class="text-[16px] font-bold pb-2 mb-4 border-b theme-primary-border theme-primary-text">设置面板</h3>
-              
-              <div class="flex flex-col gap-2 mb-4">
-                <label class="text-[14px] font-bold text-slate-700">名称</label>
-                <el-input v-model="editingAsset.name" placeholder="请输入中文名称" />
-              </div>
-              
-              <div class="flex flex-col gap-2 mb-4">
-                <label class="text-[14px] font-bold text-slate-700">描述</label>
-                <el-input 
-                  v-model="editingAsset.description" 
-                  type="textarea" 
-                  :rows="5" 
-                  placeholder="请输入详细的中文描述，这将作为AI生成画面的重要参考..." 
-                />
-              </div>
-              
-              <div class="flex flex-col gap-2 flex-1 min-h-[150px]">
-                <label class="text-[14px] font-bold text-slate-700">画面生成提示词 (强制中文)</label>
-                <el-input 
-                  v-model="editingAsset.prompt" 
-                  type="textarea" 
-                  :rows="6" 
-                  placeholder="请输入画面生成的正向提示词（强制使用简体中文）..." 
-                />
-                <div class="text-[12px] text-slate-400 flex items-center justify-between mt-2">
-                  <span>提示词越详细，生成的画面越准确</span>
-                  <button 
-                    @click="optimizePrompt"
-                    class="flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[12px] font-bold hover:bg-indigo-100 transition-colors"
-                  >
-                    <el-icon><MagicStick /></el-icon>
-                    一键优化 (中文)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </el-col>
-
-          <!-- Right: Image Preview & Actions (Canvas) -->
-          <el-col :xs="24" :md="14" :lg="15" class="h-full flex flex-col pb-2">
-            <div class="bg-[#f8fafc] p-6 rounded-2xl border border-slate-200 flex flex-col h-full items-center relative overflow-hidden">
-              <h3 class="text-[16px] font-bold text-slate-800 w-full text-left mb-6">实时预览画布</h3>
-              
-              <div 
-                class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 flex items-center justify-center relative flex-1 w-full max-w-[80%] mx-auto transition-all"
-                :class="[currentAssetType === 'character' ? 'aspect-[3/4] max-h-[75%]' : currentAssetType === 'scene' ? 'aspect-video max-h-[65%]' : 'aspect-square max-h-[75%]']"
-                style="min-height: 0;"
-              >
-                <el-image 
-                  v-if="editingAsset.image" 
-                  :src="editingAsset.image" 
-                  class="w-full h-full object-contain"
-                  fit="contain"
-                />
-                <div v-else class="flex flex-col items-center justify-center text-slate-400 h-full w-full bg-slate-50">
-                  <el-icon size="64" class="mb-4 text-slate-200"><Picture /></el-icon>
-                  <span class="text-[14px] font-medium">等待生成画面</span>
-                </div>
-              </div>
-              
-              <div class="flex gap-6 justify-center mt-8 w-full max-w-[80%] shrink-0">
-                <button 
-                  @click="generateImage"
-                  class="flex-1 h-12 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
-                >
-                  <el-icon><MagicStick /></el-icon> AI 生成画面
-                </button>
-                <button 
-                  class="flex-1 h-12 bg-white text-slate-600 border border-slate-200 rounded-full text-[15px] font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
-                >
-                  <el-icon><Upload /></el-icon> 本地上传
-                </button>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      <template #footer>
-        <div class="flex justify-end gap-4 pt-4 border-t border-slate-100">
-          <button 
-            @click="editModalVisible = false"
-            class="h-11 px-8 bg-white text-slate-500 rounded-full text-[15px] font-bold hover:text-slate-700 transition-all"
-          >
-            取消
-          </button>
-          <button 
-            @click="saveAsset"
-            class="h-11 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
-          >
-            保存设置
-          </button>
-        </div>
-      </template>
-    </el-dialog>
+    <SubjectEditDialog
+      v-model="editModalVisible"
+      :subject="editingAsset"
+      :is-edit="isEditAsset"
+      @save="saveAsset"
+    />
   </div>
 </template>
 
@@ -320,6 +218,7 @@ import { ref, reactive, computed } from 'vue';
 import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
+import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 
 const router = useRouter();
 const activeTab = ref('characters');
@@ -363,6 +262,7 @@ const propsList = ref([
 
 // Modal State
 const editModalVisible = ref(false);
+const isEditAsset = ref(false);
 const currentAssetType = ref<'character' | 'scene' | 'prop'>('character');
 const editingAsset = ref<any>(null);
 
@@ -376,6 +276,8 @@ const getAssetTypeName = (type: string) => {
 const openEditModal = (asset: any, type: 'character' | 'scene' | 'prop') => {
   currentAssetType.value = type;
   editingAsset.value = JSON.parse(JSON.stringify(asset)); // clone
+  editingAsset.value.type = type;
+  isEditAsset.value = true;
   editModalVisible.value = true;
 };
 
@@ -386,57 +288,33 @@ const addAsset = (type: 'character' | 'scene' | 'prop') => {
     name: '',
     description: '',
     prompt: '',
+    type: type,
     image: ''
   };
+  isEditAsset.value = false;
   editModalVisible.value = true;
 };
 
-const saveAsset = () => {
-  if (!editingAsset.value.name) {
+const saveAsset = (data: any) => {
+  if (!data.name) {
     ElMessage.warning('请输入名称');
     return;
   }
   
   let targetList;
-  if (currentAssetType.value === 'character') targetList = characters.value;
-  else if (currentAssetType.value === 'scene') targetList = scenes.value;
+  if (data.type === 'character') targetList = characters.value;
+  else if (data.type === 'scene') targetList = scenes.value;
   else targetList = propsList.value;
 
-  const index = targetList.findIndex(a => a.id === editingAsset.value.id);
+  const index = targetList.findIndex((a: any) => a.id === data.id);
   if (index > -1) {
-    targetList[index] = editingAsset.value;
+    targetList[index] = data;
   } else {
-    targetList.push(editingAsset.value);
+    targetList.push(data);
   }
   
   ElMessage.success('保存成功');
   editModalVisible.value = false;
-};
-
-const generateImage = () => {
-  ElMessage.info('AI 正在生成画面，请稍候...');
-  setTimeout(() => {
-    // Mock new image based on type
-    if (currentAssetType.value === 'character') {
-      editingAsset.value.image = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80&t=${Date.now()}`;
-    } else if (currentAssetType.value === 'scene') {
-      editingAsset.value.image = `https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80&t=${Date.now()}`;
-    } else {
-      editingAsset.value.image = `https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80&t=${Date.now()}`;
-    }
-    ElMessage.success('画面生成成功！');
-  }, 1500);
-};
-
-const optimizePrompt = () => {
-  if (!editingAsset.value.description) {
-    ElMessage.warning('请先输入描述，AI 将根据描述优化提示词');
-    return;
-  }
-  ElMessage.success('正在优化提示词...');
-  setTimeout(() => {
-    editingAsset.value.prompt = `（杰作，最高画质：1.2），细节丰富，${editingAsset.value.description}，电影级光影，8k分辨率`;
-  }, 500);
 };
 
 // Expose internal state for testing

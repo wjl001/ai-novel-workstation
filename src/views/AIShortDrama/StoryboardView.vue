@@ -248,7 +248,6 @@
                 v-if="!isEditingScript"
                 class="p-6 text-[14px] text-slate-700 leading-[1.8] outline-none flex-1 min-h-[400px] cursor-text"
                 v-html="currentScript"
-                @click="handleEditScript"
               >
               </div>
 
@@ -1072,10 +1071,10 @@ const timelineScenes = ref([
     id: 'scene-2',
     status: 'pending', 
     video: null,
-    image: 'https://picsum.photos/seed/scene2/180/100',
-    duration: 7.0,
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
+    duration: 4.0,
     progress: 0,
-    script: '分镜2：光线灰暗，空气中弥漫着血腥与尘土的气息。镜头从一片瓦砾堆中摇过...'
+    script: `分镜2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
   },
 ]);
 
@@ -1270,7 +1269,9 @@ const handleGenerateSingleScene = (idx: number) => {
       clearInterval(interval);
       setTimeout(() => {
         scene.status = 'success';
-        scene.video = 'https://www.w3schools.com/html/mov_bbb.mp4';
+        scene.video = idx === 1 
+          ? '/src/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4' 
+          : 'https://www.w3schools.com/html/mov_bbb.mp4';
         ElMessage.success(`分镜 ${idx + 1} 视频生成成功！`);
       }, 500);
     }
