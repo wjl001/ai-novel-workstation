@@ -174,24 +174,69 @@
     <el-dialog
       v-model="showAssistant"
       title="AI 创作助手"
-      width="580px"
-      class="inspiration-dialog-v2"
+      width="640px"
+      class="inspiration-dialog-v3"
+      destroy-on-close
     >
-      <div class="grid grid-cols-2 gap-5 p-2">
+      <template #header>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+            <el-icon :size="20"><MagicStick /></el-icon>
+          </div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800 dark:text-white leading-none">AI 创作助手</h3>
+            <p class="text-xs text-slate-400 font-medium mt-1.5 uppercase tracking-widest">AI Creative Assistant</p>
+          </div>
+        </div>
+      </template>
+
+      <div class="grid grid-cols-2 gap-6 p-1">
         <div 
           v-for="feature in assistantFeatures" 
           :key="feature.key"
-          class="p-5 rounded-[28px] border-2 border-slate-50 dark:border-slate-800 hover:border-indigo-500/30 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 cursor-pointer transition-all group"
+          class="relative group cursor-pointer"
           @click="applyAssistant(feature.key)"
         >
-          <div class="flex items-center gap-4 mb-3">
-            <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 group-hover:scale-110 group-hover:rotate-3 transition-all">
-              <el-icon :size="24"><component :is="feature.icon" /></el-icon>
+          <!-- Card Background & Border -->
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative p-6 rounded-[32px] bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 shadow-sm group-hover:shadow-xl group-hover:shadow-indigo-500/10 group-hover:-translate-y-1 transition-all duration-500">
+            
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <!-- Icon with Dynamic Background -->
+                <div 
+                  class="w-14 h-14 rounded-[22px] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
+                  :class="getFeatureColorClass(feature.key)"
+                >
+                  <el-icon :size="28"><component :is="feature.icon" /></el-icon>
+                </div>
+                
+                <!-- Hover Arrow -->
+                <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+                  <el-icon><ArrowRight /></el-icon>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="font-black text-slate-800 dark:text-slate-100 text-[17px] mb-1.5 group-hover:text-indigo-600 transition-colors">
+                  {{ feature.label }}
+                </h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  {{ feature.desc }}
+                </p>
+              </div>
             </div>
-            <span class="font-black text-slate-800 dark:text-slate-100 text-lg">{{ feature.label }}</span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{{ feature.desc }}</p>
         </div>
+      </div>
+
+      <div class="mt-8 p-4 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100/50 dark:border-indigo-500/10 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm">
+          <el-icon :size="20"><InfoFilled /></el-icon>
+        </div>
+        <p class="text-xs text-indigo-700 dark:text-indigo-300 font-bold">
+          点击上方功能，AI 将立即为您提供创作灵感或优化现有内容。
+        </p>
       </div>
     </el-dialog>
   </div>
@@ -211,7 +256,8 @@ import {
   Picture,
   Clock,
   ArrowRight,
-  VideoCamera
+  VideoCamera,
+  InfoFilled
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
@@ -276,6 +322,16 @@ const assistantFeatures = [
   { key: 'rewrite', label: '创意改写', desc: '变换故事角度，发掘更多可能性', icon: Refresh }
 ];
 
+const getFeatureColorClass = (key: string) => {
+  const map: Record<string, string> = {
+    generate: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
+    polish: 'bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400',
+    expand: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400',
+    rewrite: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400'
+  };
+  return map[key] || 'bg-slate-50 text-slate-600';
+};
+
 const applyAssistant = (key: string) => {
   showAssistant.value = false;
   isGenerating.value = true;
@@ -315,30 +371,45 @@ const handleFileUpload = (file: any) => {
   background: #334155;
 }
 
-:deep(.inspiration-dialog-v2 .el-dialog) {
-  border-radius: 40px !important;
-  padding: 10px;
+:deep(.inspiration-dialog-v3 .el-dialog) {
+  border-radius: 48px !important;
+  padding: 12px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.1) !important;
 }
-.dark :deep(.inspiration-dialog-v2 .el-dialog) {
-  background-color: #1e293b !important;
+.dark :deep(.inspiration-dialog-v3 .el-dialog) {
+  background-color: #0f172a !important;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-:deep(.inspiration-dialog-v2 .el-dialog__header) {
+:deep(.inspiration-dialog-v3 .el-dialog__header) {
   margin-right: 0;
-  padding: 30px 30px 10px;
+  padding: 40px 40px 20px;
 }
 
-:deep(.inspiration-dialog-v2 .el-dialog__title) {
-  font-weight: 900;
-  font-size: 1.5rem;
-  color: #1e293b;
-  letter-spacing: -0.025em;
+:deep(.inspiration-dialog-v3 .el-dialog__body) {
+  padding: 0 40px 40px;
 }
-.dark :deep(.inspiration-dialog-v2 .el-dialog__title) {
-  color: #f1f5f9;
+
+:deep(.inspiration-dialog-v3 .el-dialog__headerbtn) {
+  top: 40px;
+  right: 40px;
+  width: 40px;
+  height: 40px;
+  background: #f8fafc;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+.dark :deep(.inspiration-dialog-v3 .el-dialog__headerbtn) {
+  background: #1e293b;
+}
+:deep(.inspiration-dialog-v3 .el-dialog__headerbtn:hover) {
+  background: #fee2e2;
+  transform: rotate(90deg);
+}
+:deep(.inspiration-dialog-v3 .el-dialog__headerbtn:hover .el-dialog__close) {
+  color: #ef4444;
 }
 
 :deep(.custom-upload-v2 .el-upload-dragger) {
