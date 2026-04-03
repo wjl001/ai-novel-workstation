@@ -12,7 +12,7 @@
             <el-icon :size="20"><VideoCamera /></el-icon>
           </div>
           <h1 class="text-3xl lg:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
-            我的短剧作品
+            我的作品
           </h1>
           <div class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
             Library

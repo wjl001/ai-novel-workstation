@@ -102,7 +102,7 @@
           <div class="flex items-center justify-between mb-8">
             <h2 class="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
               <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
-              我的近期作品
+              近期作品
               <span class="text-slate-300 font-light text-xl">/</span>
               <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Recent Projects</span>
             </h2>
@@ -110,7 +110,7 @@
               @click="router.push('/ai-short-drama-creator/works')" 
               class="group h-11 px-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm transition-all flex items-center gap-2 shadow-xl shadow-slate-200 dark:shadow-none hover:scale-105 active:scale-95"
             >
-              <span>管理我的作品</span>
+              <span>管理作品</span>
               <el-icon class="group-hover:translate-x-1 transition-transform"><ArrowRight /></el-icon>
             </button>
           </div>
