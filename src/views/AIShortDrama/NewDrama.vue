@@ -87,7 +87,7 @@
         <div class="w-full">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-              我的项目 <span class="text-slate-400 font-normal text-sm">(最近制作)</span>
+              我的短剧 <span class="text-slate-400 font-normal text-sm"></span>
             </h2>
             <button 
               @click="router.push('/ai-short-drama-creator/works')" 
