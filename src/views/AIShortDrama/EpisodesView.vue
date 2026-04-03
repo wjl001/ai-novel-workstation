@@ -81,7 +81,7 @@
             
             <div v-else :class="s.status">
               <span v-if="ep.status === 'generating'" :class="s.generating">分镜脚本生成中...</span>
-              <span v-else-if="ep.status === 'failed'" :class="s.failed">
+<span>
                 <el-icon><Warning /></el-icon> 生成失败
                 <el-button link type="primary" size="small" @click.stop="handleGenerate(ep)">重试</el-button>
               </span>

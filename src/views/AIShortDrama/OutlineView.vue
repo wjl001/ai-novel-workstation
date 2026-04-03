@@ -205,40 +205,11 @@
         <div class="flex items-center justify-between p-4 border-b border-slate-100 shrink-0 bg-white">
           <div class="flex items-center gap-4">
             <h3 class="text-[16px] font-bold flex items-center gap-2">
-              <span class="w-1.5 h-4 bg-indigo-500 rounded-full"></span> 剧本
+              <span class="w-1.5 h-4 bg-[#1890ff] rounded-full"></span> 剧本
             </h3>
           </div>
           <div class="flex items-center gap-3">
-            <div v-if="isGenerating" class="flex items-center gap-2 text-indigo-500 text-[13px]">
-              <el-icon class="is-loading" v-if="!isPaused"><Loading /></el-icon> 
-              {{ isPaused ? '已暂停' : '正在生成...' }}
-              <el-button type="warning" link @click="isPaused = !isPaused" size="small">
-                <el-icon class="mr-1"><VideoPause v-if="!isPaused"/><VideoPlay v-else/></el-icon> {{ isPaused ? '继续' : '暂停' }}
-              </el-button>
-            </div>
-            <el-button 
-              v-if="!isGenerating && !editorTextContent" 
-              type="primary" 
-              plain 
-              size="small" 
-              @click="generateScriptBody"
-            >
-              <el-icon class="mr-1"><MagicStick /></el-icon> 生成剧本
-            </el-button>
-            <el-button 
-              v-if="!isGenerating && editorTextContent" 
-              type="primary" 
-              plain 
-              size="small" 
-              @click="generateScriptBody"
-            >
-              <el-icon class="mr-1"><Refresh /></el-icon> 重新生成
-            </el-button>
-
-            <el-button type="primary" size="small" :loading="isSavingScript" @click="saveScriptContent">
-              <el-icon class="mr-1" v-if="!isSavingScript"><Check /></el-icon> {{ isSavingScript ? '保存中...' : '确认并进入主体设定' }}
-            </el-button>
-            <el-tooltip content="Ctrl+\\ 切换右侧面板"><el-button size="small" @click="isRightPanelVisible = !isRightPanelVisible"><el-icon><Expand /></el-icon></el-button></el-tooltip>
+            <el-tooltip content="Ctrl+\ 切换右侧面板"><el-button size="small" @click="isRightPanelVisible = !isRightPanelVisible"><el-icon><Expand /></el-icon></el-button></el-tooltip>
           </div>
         </div>
 
@@ -306,7 +277,7 @@
                 <el-icon size="48" class="mb-4 text-slate-300"><Document /></el-icon>
                 <p class="mb-4 text-[14px]">剧本内容为空，快让 AI 帮你生成吧！</p>
                 <div class="flex items-center gap-4">
-                  <el-button type="primary" size="large" @click="generateScriptBody">
+                  <el-button type="primary" size="large" class="theme-primary-btn" @click="generateScriptBody">
                     <el-icon class="mr-1"><MagicStick /></el-icon> 一键生成剧本正文
                   </el-button>
                   <el-button size="large" @click="showEmptyPlaceholder = false">
@@ -329,6 +300,37 @@
             <el-tooltip content="重做 (Ctrl+Y)"><el-button link size="small" @click="tiptapEditor?.commands.redo()"><el-icon><RefreshRight /></el-icon></el-button></el-tooltip>
           </div>
         </div>
+
+        <!-- Action Footer -->
+        <div class="flex justify-end items-center p-6 border-t border-slate-100 bg-white shrink-0 gap-4">
+          <div v-if="isGenerating" class="flex items-center gap-2 text-[#1890ff] text-[13px] mr-auto">
+            <el-icon class="is-loading" v-if="!isPaused"><Loading /></el-icon> 
+            {{ isPaused ? '已暂停' : '正在生成...' }}
+            <el-button type="warning" link @click="isPaused = !isPaused" size="small">
+              <el-icon class="mr-1"><VideoPause v-if="!isPaused"/><VideoPlay v-else/></el-icon> {{ isPaused ? '继续' : '暂停' }}
+            </el-button>
+          </div>
+
+          <el-button 
+            v-if="!isGenerating" 
+            class="theme-primary-outline-btn !h-11 !px-6 text-[15px]"
+            @click="generateScriptBody"
+          >
+            <el-icon class="mr-1" v-if="!editorTextContent"><MagicStick /></el-icon>
+            <el-icon class="mr-1" v-else><Refresh /></el-icon>
+            {{ editorTextContent ? '重新生成' : '生成剧本' }}
+          </el-button>
+
+          <el-button 
+            type="primary" 
+            class="theme-primary-btn !h-11 !px-10 text-[15px] font-bold" 
+            :loading="isSavingScript" 
+            @click="saveScriptContent"
+          >
+            确认并进入主体设定
+            <el-icon class="ml-2" v-if="!isSavingScript"><ArrowRight /></el-icon>
+          </el-button>
+        </div>
       </div>
 
       <!-- Right Properties Panel -->
@@ -345,33 +347,6 @@
         </div>
 
         <div v-show="isRightPanelVisible" class="flex flex-col gap-6 h-full overflow-hidden">
-          <!-- Quick Settings -->
-          <div class="bg-white rounded-[8px] shadow-[0_4px_12px_0_rgba(0,0,0,0.08)] flex flex-col shrink-0" :class="isQuickSettingsExpanded ? 'h-[320px]' : 'h-auto'">
-            <div 
-              class="h-[48px] px-4 flex items-center justify-between cursor-pointer border-b border-slate-100 hover:bg-slate-50 transition-colors"
-              @click="isQuickSettingsExpanded = !isQuickSettingsExpanded"
-            >
-              <span class="font-bold text-[14px] flex items-center gap-2"><el-icon><Setting /></el-icon> 快速设定</span>
-              <el-icon class="transition-transform duration-250" :class="{'rotate-180': isQuickSettingsExpanded}"><ArrowDown /></el-icon>
-            </div>
-            
-            <div v-show="isQuickSettingsExpanded" class="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-4">
-              <div class="flex flex-col gap-2">
-                <label class="text-[12px] font-bold text-slate-600">默认生成字数</label>
-                <div class="flex gap-2 items-center">
-                  <el-input-number v-model="wordCountMin" :min="100" :max="3000" :step="100" controls-position="right" class="!w-full" placeholder="下限" />
-                  <span class="text-slate-400">-</span>
-                  <el-input-number v-model="wordCountMax" :min="100" :max="3000" :step="100" controls-position="right" class="!w-full" placeholder="上限" />
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-[12px] font-bold text-slate-600">开启实时预览</span>
-                <el-switch v-model="isPreviewEnabled" />
-              </div>
-              <el-button type="primary" class="w-full !h-10 mt-auto" @click="generateScriptBody">生成剧本</el-button>
-            </div>
-          </div>
-
           <!-- AI Assistant / Properties -->
           <div class="flex-1 min-h-0 bg-white rounded-[8px] shadow-[0_4px_12px_0_rgba(0,0,0,0.08)] flex flex-col overflow-hidden" :class="isAIAssistantExpanded ? 'flex-1' : 'h-auto shrink-0'">
             <div 
@@ -967,6 +942,25 @@ const confirmAndSave = () => { // unused
 </script>
 
 <style scoped>
+.theme-primary-btn {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  border-radius: 8px !important;
+}
+.theme-primary-btn:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+.theme-primary-outline-btn {
+  color: #1890ff !important;
+  border-color: #1890ff !important;
+  border-radius: 8px !important;
+}
+.theme-primary-outline-btn:hover {
+  background-color: #e6f7ff !important;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;

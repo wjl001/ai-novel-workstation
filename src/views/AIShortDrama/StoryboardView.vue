@@ -71,60 +71,10 @@
 
     <!-- Main Workspace -->
     <main class="flex-1 flex gap-4 overflow-hidden p-4 bg-[#f8fafc]">
-      <!-- Left Sidebar: Subject Library & Basic Settings -->
+      <!-- Left Sidebar: Subject Library -->
       <aside class="w-[300px] bg-white rounded-xl shadow-sm flex flex-col overflow-hidden shrink-0">
-        <!-- Tabs -->
-        <div class="flex items-center border-b border-slate-50 shrink-0">
-          <div 
-            class="flex-1 py-4 text-[14px] font-bold text-center cursor-pointer transition-all border-b-2"
-            :class="activeLeftTab === 'basic-settings' ? 'text-indigo-600 border-indigo-600 bg-indigo-50/30' : 'text-slate-400 border-transparent hover:text-slate-600'"
-            @click="activeLeftTab = 'basic-settings'"
-          >
-            基础设定
-          </div>
-          <div 
-            class="flex-1 py-4 text-[14px] font-bold text-center cursor-pointer transition-all border-b-2"
-            :class="activeLeftTab === 'subjects' ? 'text-indigo-600 border-indigo-600 bg-indigo-50/30' : 'text-slate-400 border-transparent hover:text-slate-600'"
-            @click="activeLeftTab = 'subjects'"
-          >
-            主体库
-          </div>
-        </div>
-
-        <!-- Basic Settings Content -->
-        <div v-if="activeLeftTab === 'basic-settings'" class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6">
-          <div class="space-y-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-bold text-slate-700">剧本名称</label>
-              <el-input v-model="dramaSettings.title" size="small" placeholder="请输入剧本名称" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-bold text-slate-700">剧本类型</label>
-              <el-select v-model="dramaSettings.type" size="small" class="w-full">
-                <el-option label="微短剧" value="short_drama" />
-                <el-option label="电影" value="movie" />
-                <el-option label="长篇剧集" value="long_drama" />
-              </el-select>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-bold text-slate-700">题材</label>
-              <el-select v-model="dramaSettings.genre" size="small" class="w-full">
-                <el-option v-for="item in ['古装权谋', '民国谍战', '都市情感', '科幻未来', '草根逆袭']" :key="item" :label="item" :value="item" />
-              </el-select>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-bold text-slate-700">时代背景</label>
-              <el-input v-model="dramaSettings.era" size="small" placeholder="例如：现代都市" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-bold text-slate-700">故事梗概</label>
-              <el-input v-model="dramaSettings.synopsis" type="textarea" :rows="6" size="small" placeholder="请输入故事梗概..." class="custom-textarea" />
-            </div>
-          </div>
-        </div>
-
         <!-- Subject Library Content -->
-        <div v-else-if="activeLeftTab === 'subjects'" class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden">
           <div class="p-5 border-b border-slate-50 flex justify-between items-center shrink-0">
             <span class="font-bold text-[14px] text-slate-800 tracking-wide">主体库</span>
             <el-tooltip content="打开主体库弹窗" placement="top">
@@ -348,7 +298,7 @@
                         @click="insertMention(item)"
                       >
                         <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50">
-                          <img v-if="item.image" :src="item.image" class="w-full h-full object-cover" />
+                          <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover" />
                           <el-icon v-else class="text-slate-400" size="18"><component :is="item.icon" /></el-icon>
                         </div>
                         <div class="flex flex-col min-w-0">
@@ -1232,7 +1182,11 @@ const addTimelineScene = () => {
   timelineScenes.value.push({ 
     id: `scene-${Date.now()}`,
     status: 'pending', 
-    video: null 
+    video: null,
+    image: '',
+    duration: 0,
+    progress: 0,
+    script: ''
   });
   currentSceneIdx.value = timelineScenes.value.length - 1;
 };
