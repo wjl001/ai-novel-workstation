@@ -1,17 +1,26 @@
 <template>
   <div class="h-full flex flex-col p-4 bg-gray-50 dark:bg-gray-900">
     <!-- Header Steps -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm flex items-center justify-between">
-      <div class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-        <el-button @click="router.back()" :icon="ArrowLeft" circle size="small" />
-        <span class="font-medium text-sm border-r pr-4 mr-2">AI剧本</span>
-        <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-500 mr-2">短剧共创</span>
-        <el-button type="primary" plain size="small" class="!rounded-full !px-3" @click="showPrototypeHelp = true">
-          <el-icon class="mr-1"><InfoFilled /></el-icon> 原型说明
-        </el-button>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-6 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-700">
+      <div class="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+        <button 
+          @click="router.back()" 
+          class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        >
+          <el-icon><ArrowLeft /></el-icon>
+        </button>
+        <span class="font-bold text-[15px] border-r border-slate-200 dark:border-slate-700 pr-4 mr-2">AI剧本</span>
+        <span class="text-[11px] bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full text-indigo-600 font-bold mr-4">短剧共创</span>
+        <button 
+          @click="showPrototypeHelp = true"
+          class="flex items-center gap-1.5 px-3 py-1 bg-white text-indigo-600 border border-indigo-200 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+        >
+          <el-icon><InfoFilled /></el-icon>
+          原型说明
+        </button>
       </div>
       
-      <el-steps :active="activeStep" class="flex-1 max-w-2xl mx-auto" finish-status="success">
+      <el-steps :active="activeStep" class="flex-1 max-w-2xl mx-auto custom-steps" finish-status="success">
         <el-step title="剧本设定" />
         <el-step title="大纲生成" />
         <el-step title="剧本生成" />
@@ -95,21 +104,32 @@
       <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 overflow-y-auto flex flex-col">
         <div class="space-y-6 flex-1">
           <!-- Title -->
-          <div class="flex items-center gap-4 border-b pb-4 dark:border-gray-700">
-            <div class="text-sm font-medium whitespace-nowrap"><span class="text-red-500">*</span> 作品名称</div>
-            <el-input v-model="form.title" placeholder="请输入作品名称" maxlength="50" show-word-limit class="flex-1">
+          <div class="flex items-center gap-4 border-b pb-6 dark:border-gray-700">
+            <div class="text-sm font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap"><span class="text-red-500 mr-1">*</span>作品名称</div>
+            <el-input v-model="form.title" placeholder="请输入作品名称" maxlength="50" show-word-limit class="flex-1 custom-input-large">
               <template #append>
-                <el-button :icon="RefreshRight">随机名字</el-button>
+                <button 
+                  @click="form.title = '随机生成的大片名字'"
+                  class="px-4 h-full bg-slate-50 hover:bg-slate-100 transition-colors flex items-center gap-1.5 text-slate-600 font-bold text-xs"
+                >
+                  <el-icon><RefreshRight /></el-icon>
+                  随机名字
+                </button>
               </template>
             </el-input>
           </div>
 
           <div class="grid grid-cols-2 gap-6">
             <!-- World Setting -->
-            <div class="border rounded-lg p-4 dark:border-gray-700">
-              <div class="flex justify-between items-center mb-2">
-                <div class="text-sm font-medium"><span class="text-purple-500 mr-1">●</span> 世界观设定</div>
-                <el-button type="primary" link size="small" :icon="MagicStick">AI生成</el-button>
+            <div class="border rounded-2xl p-5 dark:border-gray-700 bg-slate-50/50">
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-sm font-bold text-slate-800 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 世界观设定</div>
+                <button 
+                  @click="form.worldSetting = 'AI 生成的世界观...'"
+                  class="flex items-center gap-1 px-3 py-1 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+                >
+                  <el-icon><MagicStick /></el-icon> AI生成
+                </button>
               </div>
               <el-input
                 v-model="form.worldSetting"
@@ -118,14 +138,20 @@
                 placeholder="描述世界观、背景与规则"
                 maxlength="300"
                 show-word-limit
+                class="custom-textarea-round"
               />
             </div>
 
             <!-- Core Plot -->
-            <div class="border rounded-lg p-4 dark:border-gray-700">
-              <div class="flex justify-between items-center mb-2">
-                <div class="text-sm font-medium"><span class="text-blue-500 mr-1">●</span> 核心金手指</div>
-                <el-button type="primary" link size="small" :icon="MagicStick">AI生成</el-button>
+            <div class="border rounded-2xl p-5 dark:border-gray-700 bg-slate-50/50">
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-sm font-bold text-slate-800 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 核心金手指</div>
+                <button 
+                  @click="form.coreCheat = 'AI 生成的金手指...'"
+                  class="flex items-center gap-1 px-3 py-1 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+                >
+                  <el-icon><MagicStick /></el-icon> AI生成
+                </button>
               </div>
               <el-input
                 v-model="form.coreCheat"
@@ -134,15 +160,21 @@
                 placeholder="描述主角获取的金手指与目标"
                 maxlength="200"
                 show-word-limit
+                class="custom-textarea-round"
               />
             </div>
           </div>
 
           <!-- Synopsis -->
-          <div class="border rounded-lg p-4 dark:border-gray-700">
-            <div class="flex justify-between items-center mb-2">
-              <div class="text-sm font-medium"><span class="text-red-500">*</span> 作品简介</div>
-              <el-button type="primary" link size="small" :icon="MagicStick">AI生成</el-button>
+          <div class="border rounded-2xl p-5 dark:border-gray-700 bg-slate-50/50">
+            <div class="flex justify-between items-center mb-3">
+              <div class="text-sm font-bold text-slate-800 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> 作品简介</div>
+              <button 
+                @click="form.synopsis = 'AI 生成的简介...'"
+                class="flex items-center gap-1 px-3 py-1 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+              >
+                <el-icon><MagicStick /></el-icon> AI生成
+              </button>
             </div>
             <el-input
               v-model="form.synopsis"
@@ -151,15 +183,21 @@
               placeholder="用一句话概括故事主线"
               maxlength="500"
               show-word-limit
+              class="custom-textarea-round"
             />
           </div>
 
           <div class="grid grid-cols-2 gap-6">
             <!-- Characters -->
-            <div class="border rounded-lg p-4 dark:border-gray-700">
-              <div class="flex justify-between items-center mb-2">
-                <div class="text-sm font-medium"><span class="text-red-500">*</span> 角色档案</div>
-                <el-button type="primary" link size="small" :icon="MagicStick">AI生成</el-button>
+            <div class="border rounded-2xl p-5 dark:border-gray-700 bg-slate-50/50">
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-sm font-bold text-slate-800 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 角色档案</div>
+                <button 
+                  @click="form.characters = 'AI 生成的角色...'"
+                  class="flex items-center gap-1 px-3 py-1 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+                >
+                  <el-icon><MagicStick /></el-icon> AI生成
+                </button>
               </div>
               <el-input
                 v-model="form.characters"
@@ -168,14 +206,20 @@
                 placeholder="主角配角：性格、动机与关系"
                 maxlength="500"
                 show-word-limit
+                class="custom-textarea-round"
               />
             </div>
 
             <!-- Direction -->
-            <div class="border rounded-lg p-4 dark:border-gray-700">
-              <div class="flex justify-between items-center mb-2">
-                <div class="text-sm font-medium"><span class="text-green-500 mr-1">●</span> 剧情要求</div>
-                <el-button type="primary" link size="small" :icon="MagicStick">AI生成</el-button>
+            <div class="border rounded-2xl p-5 dark:border-gray-700 bg-slate-50/50">
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-sm font-bold text-slate-800 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> 剧情要求</div>
+                <button 
+                  @click="form.direction = 'AI 生成的剧情要求...'"
+                  class="flex items-center gap-1 px-3 py-1 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+                >
+                  <el-icon><MagicStick /></el-icon> AI生成
+                </button>
               </div>
               <el-input
                 v-model="form.direction"
@@ -184,31 +228,40 @@
                 placeholder="例如：开头冲突、节奏、禁用套路"
                 maxlength="500"
                 show-word-limit
+                class="custom-textarea-round"
               />
             </div>
           </div>
         </div>
 
         <!-- Footer Actions -->
-        <div class="mt-6 flex gap-4 pt-4 border-t dark:border-gray-700">
-          <div class="flex-1 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 flex items-center gap-3 cursor-pointer hover:bg-purple-100 transition-colors">
-            <el-icon class="text-purple-500" :size="24"><EditPen /></el-icon>
+        <div class="mt-6 flex gap-6 pt-6 border-t dark:border-gray-700">
+          <div class="flex-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:bg-indigo-100 transition-all border border-indigo-100 group">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform">
+              <el-icon :size="24"><EditPen /></el-icon>
+            </div>
             <div>
-              <div class="font-medium text-purple-700 dark:text-purple-300">基于设定补全</div>
-              <div class="text-xs text-purple-500/80 mt-1">保证已有内容，仅生成空白项</div>
+              <div class="font-bold text-indigo-700 dark:text-indigo-300">基于设定补全</div>
+              <div class="text-xs text-indigo-500/80 mt-1">智能分析已有内容，仅填充缺失的空白项</div>
             </div>
           </div>
           
-          <div class="flex-1 bg-gray-50 dark:bg-gray-800 border rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-            <div>
-              <div class="font-medium">从零生成全部</div>
-              <div class="text-xs text-gray-500 mt-1">将覆盖当前所有内容</div>
+          <div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all group">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
+                <el-icon :size="24"><Refresh /></el-icon>
+              </div>
+              <div>
+                <div class="font-bold text-slate-700 dark:text-slate-200">从零生成全部</div>
+                <div class="text-xs text-slate-400 mt-1">系统将根据题材设定，重构并覆盖所有内容</div>
+              </div>
             </div>
           </div>
 
-          <el-button type="primary" size="large" class="h-auto px-12 text-lg rounded-lg bg-indigo-600 hover:bg-indigo-700 border-none">
-            开始创作<br><span class="text-xs font-normal opacity-80">生成大纲</span>
-          </el-button>
+          <button class="h-16 px-12 bg-indigo-600 text-white rounded-2xl text-lg font-bold shadow-xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex flex-col items-center justify-center leading-tight">
+            <span>开始创作</span>
+            <span class="text-[11px] font-normal opacity-70 mt-1">生成剧本大纲</span>
+          </button>
         </div>
       </div>
     </div>

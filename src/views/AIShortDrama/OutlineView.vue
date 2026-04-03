@@ -111,9 +111,24 @@
                 <div class="flex flex-col gap-3">
                   <el-input v-model="aiPromptInput" type="textarea" :rows="3" placeholder="请输入生成要求..." />
                   <div class="flex justify-end gap-2">
-                    <el-button size="small" @click="handleAIGenerateAction('background', 'cancel')">取消</el-button>
-                    <el-button size="small" type="primary" plain @click="handleAIGenerateAction('background', 'append')">追加</el-button>
-                    <el-button size="small" type="primary" @click="handleAIGenerateAction('background', 'replace')">替换</el-button>
+                    <button 
+                      @click="handleAIGenerateAction('background', 'cancel')"
+                      class="px-3 py-1 bg-white text-slate-500 border border-slate-200 rounded-full text-[12px] font-bold hover:bg-slate-50 transition-all"
+                    >
+                      取消
+                    </button>
+                    <button 
+                      @click="handleAIGenerateAction('background', 'append')"
+                      class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[12px] font-bold hover:bg-indigo-100 transition-all"
+                    >
+                      追加
+                    </button>
+                    <button 
+                      @click="handleAIGenerateAction('background', 'replace')"
+                      class="px-3 py-1 bg-indigo-600 text-white rounded-full text-[12px] font-bold hover:bg-indigo-700 transition-all"
+                    >
+                      替换
+                    </button>
                   </div>
                 </div>
               </el-popover>
@@ -142,9 +157,24 @@
                 <div class="flex flex-col gap-3">
                   <el-input v-model="aiPromptInput" type="textarea" :rows="3" placeholder="请输入生成要求..." />
                   <div class="flex justify-end gap-2">
-                    <el-button size="small" @click="handleAIGenerateAction('synopsis', 'cancel')">取消</el-button>
-                    <el-button size="small" type="primary" plain @click="handleAIGenerateAction('synopsis', 'append')">追加</el-button>
-                    <el-button size="small" type="primary" @click="handleAIGenerateAction('synopsis', 'replace')">替换</el-button>
+                    <button 
+                      @click="handleAIGenerateAction('synopsis', 'cancel')"
+                      class="px-3 py-1 bg-white text-slate-500 border border-slate-200 rounded-full text-[12px] font-bold hover:bg-slate-50 transition-all"
+                    >
+                      取消
+                    </button>
+                    <button 
+                      @click="handleAIGenerateAction('synopsis', 'append')"
+                      class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[12px] font-bold hover:bg-indigo-100 transition-all"
+                    >
+                      追加
+                    </button>
+                    <button 
+                      @click="handleAIGenerateAction('synopsis', 'replace')"
+                      class="px-3 py-1 bg-indigo-600 text-white rounded-full text-[12px] font-bold hover:bg-indigo-700 transition-all"
+                    >
+                      替换
+                    </button>
                   </div>
                 </div>
               </el-popover>
@@ -157,11 +187,15 @@
             </div>
           </div>
         </div>
-        <!-- 剧集大纲 (Episode Outline Tab) -->
         <div v-show="activeLeftTab === 'episode-outline'" class="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-4 min-h-0">
-          <div class="flex items-center justify-between">
-            <span class="text-[12px] text-slate-500">共 {{ form.episodesData.length }} 集</span>
-            <el-button type="primary" link size="small" @click="addEpisode"><el-icon class="mr-1"><Plus /></el-icon> 新增分集</el-button>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[12px] text-slate-400 font-medium">共 {{ form.episodesData.length }} 集</span>
+            <button 
+              @click="addEpisode"
+              class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[12px] font-bold hover:bg-indigo-100 transition-colors"
+            >
+              <el-icon><Plus /></el-icon> 新增分集
+            </button>
           </div>
 
           <!-- Virtual/Draggable List -->
@@ -169,15 +203,20 @@
             <div 
               v-for="(ep, index) in form.episodesData" 
               :key="ep.id"
-              class="bg-white border border-slate-100 rounded-[8px] p-3 shadow-sm cursor-move hover:border-indigo-300 transition-colors"
+              class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm cursor-move hover:border-indigo-300 transition-all group relative"
               draggable="true"
               @dragstart="onDragStartEpisode($event, index)"
               @dragover.prevent
               @drop="onDropEpisode($event, index)"
             >
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-bold text-[14px] text-indigo-600">第 {{ index + 1 }} 集</span>
-                <el-button type="danger" link @click="removeEpisode(index)"><el-icon><Delete /></el-icon></el-button>
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-bold text-[14px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">第 {{ index + 1 }} 集</span>
+                <button 
+                  @click="removeEpisode(index)"
+                  class="w-7 h-7 flex items-center justify-center rounded-full text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <el-icon><Delete /></el-icon>
+                </button>
               </div>
               <div class="flex flex-col gap-2 text-[12px]">
                 <el-input v-model="ep.summary" type="textarea" :rows="2" placeholder="一句话梗概" size="small" />
@@ -208,7 +247,14 @@
             </h3>
           </div>
           <div class="flex items-center gap-3">
-            <el-tooltip content="Ctrl+\ 切换右侧面板"><el-button size="small" @click="isRightPanelVisible = !isRightPanelVisible"><el-icon><Expand /></el-icon></el-button></el-tooltip>
+            <el-tooltip content="Ctrl+\ 切换右侧面板">
+              <button 
+                @click="isRightPanelVisible = !isRightPanelVisible"
+                class="w-8 h-8 flex items-center justify-center bg-white text-slate-500 border border-slate-200 rounded-lg hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm"
+              >
+                <el-icon><Expand /></el-icon>
+              </button>
+            </el-tooltip>
           </div>
         </div>
 
@@ -225,8 +271,19 @@
             <div v-show="contextMenuVisible" class="fixed z-50 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden text-[13px] text-slate-700 w-[280px] flex flex-col" :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }" @click.stop>
               <!-- AI Input Area -->
               <div class="p-3 border-b border-slate-100 flex items-center gap-2 bg-indigo-50/50">
-                <el-input v-model="aiPromptInput" placeholder="输入编辑或优化指令..." size="small" class="flex-1" @keyup.enter="applyAIAction('自定义指令')" />
-                <el-button type="primary" circle size="small" @click="applyAIAction('自定义指令')"><el-icon><Top /></el-icon></el-button>
+                <el-input 
+                  v-model="aiPromptInput" 
+                  placeholder="输入编辑或优化指令..." 
+                  size="small" 
+                  class="flex-1 custom-search-input" 
+                  @keyup.enter="applyAIAction('自定义指令')" 
+                />
+                <button 
+                  @click="applyAIAction('自定义指令')"
+                  class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all shadow-md"
+                >
+                  <el-icon><Top /></el-icon>
+                </button>
               </div>
 
               <!-- Action Icons Row -->
@@ -272,16 +329,24 @@
               </div>
             </div>
             <editor-content v-if="tiptapEditor" :editor="tiptapEditor as any" class="p-8 outline-none min-h-[400px]" />
-            <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-white/80 z-10 rounded-lg backdrop-blur-[2px]">
-                <el-icon size="48" class="mb-4 text-slate-300"><Document /></el-icon>
-                <p class="mb-4 text-[14px]">剧本内容为空，快让 AI 帮你生成吧！</p>
-                <div class="flex items-center gap-4">
-                  <el-button type="primary" size="large" class="theme-primary-btn" @click="generateScriptBody">
-                    <el-icon class="mr-1"><MagicStick /></el-icon> 一键生成剧本正文
-                  </el-button>
-                  <el-button size="large" @click="showEmptyPlaceholder = false">
-                    <el-icon class="mr-1"><Edit /></el-icon> 手动输入
-                  </el-button>
+            <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-white/95 z-10 rounded-lg backdrop-blur-[2px]">
+                <div class="w-20 h-20 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200 mb-6 border border-slate-100">
+                  <el-icon size="40"><Document /></el-icon>
+                </div>
+                <p class="mb-8 text-[15px] font-medium text-slate-500">剧本内容为空，快让 AI 帮你生成吧！</p>
+                <div class="flex items-center gap-6">
+                  <button 
+                    @click="generateScriptBody"
+                    class="h-14 px-10 bg-indigo-600 text-white rounded-full text-base font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    <el-icon><MagicStick /></el-icon> 一键生成剧本正文
+                  </button>
+                  <button 
+                    @click="showEmptyPlaceholder = false"
+                    class="h-14 px-10 bg-white text-slate-600 border border-slate-200 rounded-full text-base font-bold hover:bg-slate-50 transition-all flex items-center gap-2"
+                  >
+                    <el-icon><Edit /></el-icon> 手动输入
+                  </button>
                 </div>
               </div>
             </div>
@@ -295,40 +360,58 @@
             <span>预计阅读: {{ Math.ceil((tiptapEditor?.storage.characterCount.words() || 0) / 250) }} 分钟</span>
           </div>
           <div class="flex items-center gap-2">
-            <el-tooltip content="撤销 (Ctrl+Z)"><el-button link size="small" @click="tiptapEditor?.commands.undo()"><el-icon><RefreshLeft /></el-icon></el-button></el-tooltip>
-            <el-tooltip content="重做 (Ctrl+Y)"><el-button link size="small" @click="tiptapEditor?.commands.redo()"><el-icon><RefreshRight /></el-icon></el-button></el-tooltip>
+            <el-tooltip content="撤销 (Ctrl+Z)">
+              <button 
+                @click="tiptapEditor?.commands.undo()"
+                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+              >
+                <el-icon><RefreshLeft /></el-icon>
+              </button>
+            </el-tooltip>
+            <el-tooltip content="重做 (Ctrl+Y)">
+              <button 
+                @click="tiptapEditor?.commands.redo()"
+                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+              >
+                <el-icon><RefreshRight /></el-icon>
+              </button>
+            </el-tooltip>
           </div>
         </div>
 
         <!-- Action Footer -->
         <div class="flex justify-end items-center p-6 border-t border-slate-100 bg-white shrink-0 gap-4">
-          <div v-if="isGenerating" class="flex items-center gap-2 text-[#1890ff] text-[13px] mr-auto">
+          <div v-if="isGenerating" class="flex items-center gap-3 text-indigo-600 text-[14px] mr-auto bg-indigo-50 px-4 py-2 rounded-full font-medium">
             <el-icon class="is-loading" v-if="!isPaused"><Loading /></el-icon> 
-            {{ isPaused ? '已暂停' : '正在生成...' }}
-            <el-button type="warning" link @click="isPaused = !isPaused" size="small">
-              <el-icon class="mr-1"><VideoPause v-if="!isPaused"/><VideoPlay v-else/></el-icon> {{ isPaused ? '继续' : '暂停' }}
-            </el-button>
+            <span>{{ isPaused ? '已暂停' : '正在智能生成中...' }}</span>
+            <button 
+              @click="isPaused = !isPaused" 
+              class="flex items-center gap-1 px-2 py-0.5 bg-white rounded-md text-indigo-600 shadow-sm hover:bg-indigo-100 transition-colors"
+            >
+              <el-icon><VideoPause v-if="!isPaused"/><VideoPlay v-else/></el-icon> 
+              {{ isPaused ? '继续' : '暂停' }}
+            </button>
           </div>
 
-          <el-button 
+          <button 
             v-if="!isGenerating" 
-            class="theme-primary-outline-btn !h-11 !px-6 text-[15px]"
             @click="generateScriptBody"
+            class="h-12 px-6 bg-white text-indigo-600 border border-indigo-200 rounded-full text-[15px] font-bold hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-2"
           >
-            <el-icon class="mr-1" v-if="!editorTextContent"><MagicStick /></el-icon>
-            <el-icon class="mr-1" v-else><Refresh /></el-icon>
+            <el-icon v-if="!editorTextContent"><MagicStick /></el-icon>
+            <el-icon v-else><Refresh /></el-icon>
             {{ editorTextContent ? '重新生成' : '生成剧本' }}
-          </el-button>
+          </button>
 
-          <el-button 
-            type="primary" 
-            class="theme-primary-btn !h-11 !px-10 text-[15px] font-bold" 
-            :loading="isSavingScript" 
+          <button 
             @click="saveScriptContent"
+            :disabled="isSavingScript"
+            class="h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
-            确认并进入主体设定
-            <el-icon class="ml-2" v-if="!isSavingScript"><ArrowRight /></el-icon>
-          </el-button>
+            <el-icon v-if="isSavingScript" class="is-loading"><Loading /></el-icon>
+            <span>确认并进入主体设定</span>
+            <el-icon v-if="!isSavingScript"><ArrowRight /></el-icon>
+          </button>
         </div>
       </div>
 
@@ -360,7 +443,7 @@
                 <!-- Initial Welcome Message -->
                 <div class="flex flex-col gap-1 items-start">
                   <span class="text-[12px] text-slate-400 flex items-center gap-1"><el-icon><MagicStick /></el-icon> AI 助手</span>
-                  <div class="bg-white p-3 rounded-[8px] shadow-sm text-slate-700 border border-slate-100">我随时可以协助您生成内容或润色剧本。</div>
+                  <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-slate-700 border border-slate-100">我随时可以协助您生成内容或润色剧本。</div>
                 </div>
                 <!-- Shared Chat logs -->
                 <div 
@@ -375,8 +458,8 @@
                     {{ msg.role === 'ai' ? 'AI 助手' : '我' }}
                   </span>
                   <div 
-                    class="p-3 rounded-[8px] shadow-sm text-[13px] leading-relaxed max-w-[90%] break-words"
-                    :class="msg.role === 'ai' ? 'bg-white text-slate-700 border border-slate-100' : 'bg-indigo-600 text-white'"
+                    class="p-3 rounded-2xl text-[13px] leading-relaxed max-w-[90%] break-words shadow-sm"
+                    :class="msg.role === 'ai' ? 'bg-white text-slate-700 border border-slate-100 rounded-tl-none' : 'bg-indigo-600 text-white rounded-tr-none'"
                   >
                     {{ msg.content }}
                   </div>
@@ -384,9 +467,19 @@
               </div>
               
               <!-- Chat Input -->
-              <div class="mt-auto shrink-0 flex gap-2 p-4 bg-white border-t border-slate-100">
-                <el-input v-model="aiPromptInput" placeholder="告诉 AI 你的想法..." @keyup.enter="handleAIGenerateAction('bubble', 'append')" />
-                <el-button type="primary" @click="handleAIGenerateAction('bubble', 'append')">发送</el-button>
+              <div class="mt-auto shrink-0 flex gap-2 p-4 bg-white border-t border-slate-100 items-center">
+                <el-input 
+                  v-model="aiPromptInput" 
+                  placeholder="告诉 AI 你的想法..." 
+                  class="custom-search-input flex-1"
+                  @keyup.enter="handleAIGenerateAction('bubble', 'append')" 
+                />
+                <button 
+                  @click="handleAIGenerateAction('bubble', 'append')"
+                  class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  发送
+                </button>
               </div>
             </div>
           </div>
@@ -548,24 +641,22 @@ const fetchAutoPrefillInfo = () => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        title: '繁星之城',
+        title: '淮西烽火',
         scriptType: 'short_drama',
-        genre: '都市情感',
-        eraBackground: '现代都市',
-        targetAudience: '18-35岁职场女性',
-        episodesCount: 80,
+        genre: '揭竿而起',
+        eraBackground: '元末明初',
+        targetAudience: '历史爱好者，热血青年',
+        episodesCount: 12,
         expectedDuration: 120,
         characters: [
-          { id: '1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软。' },
-          { id: '2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。' }
+          { id: '1', name: '赵铁牛', description: '淮西农夫，父母双亡，心中燃起反抗元廷的烈火。' },
+          { id: '2', name: '王二狗', description: '赵铁牛的狱友，机智幽默，同样有着深仇大恨。' }
         ],
-        synopsis: '林星在即将升任合伙人之际，面临公司内部的权力斗争，同时她与相恋多年的男友分手。在人生低谷期，她重新遇到了青梅竹马的陈宇。陈宇的洒脱让林星开始反思自己真正想要的生活。最终，林星放弃了冷酷的职场斗争，选择创办自己的独立工作室，并与陈宇走到了一起。'.padEnd(500, '这是补充字数的内容，为了满足字数限制。'),
-        background: '故事发生在一线城市“繁星市”，这里充满机遇也伴随着巨大的压力。现代职场竞争激烈，年轻人普遍面临着高压工作与生活平衡的难题。林星所在的公司正处于转型期，内部派系林立。'.padEnd(750, '这是补充字数的内容，为了满足字数限制。'),
+        synopsis: '公元1356年，元军残暴，淮西村落化作焦土。农夫赵铁牛在父母被杀后被俘，在监狱中遇到志同道合的王二狗。两人密谋越狱，从此开启了一段波澜壮阔的反抗生涯。故事展现了底层人民在绝境中的觉醒与勇气。'.padEnd(500, ' '),
+        background: '元朝末年，政治腐败，社会动荡。元军铁蹄肆意践踏中原大地，百姓生活在水深火热之中。淮西地区作为反元势力的活跃地带，遭到了元军的残酷镇压。在这一片废墟之上，反抗的种子正在悄然生根发芽。'.padEnd(750, ' '),
         episodesData: [
-          { id: 'p1', title: '第一集', summary: '林星在公司提案中大获成功，有望升职，但当晚却撞见男友出轨。', scenes: '公司会议室, 林星公寓', characters: '林星, 男友' },
-          { id: 'p2', title: '第二集', summary: '林星搬出公寓，偶然租到了陈宇对面的房子，两人重新产生交集。', scenes: '出租屋', characters: '林星, 陈宇' },
-          { id: 'p3', title: '第三集', summary: '公司副总窃取了林星的创意，林星面临被排挤的危机，陈宇在一旁默默支持她。', scenes: '公司, 街道', characters: '林星, 副总, 陈宇' },
-          { id: 'p4', title: '第四集', summary: '林星公开揭露副总，随后主动辞职，成立独立工作室，与陈宇在星空下拥吻。', scenes: '公司, 星空下', characters: '林星, 副总, 陈宇' }
+          { id: 'p1', title: '第一集', summary: '赵铁牛亲眼目睹家园被毁，父母双亡，愤怒反抗却不幸被俘。', scenes: '淮西村落, 废墟', characters: '赵铁牛, 元军士兵' },
+          { id: 'p2', title: '第二集', summary: '赵铁牛在监狱中遇到王二狗，两人在阴暗的牢房中达成共识，计划越狱。', scenes: '元廷监狱, 牢房', characters: '赵铁牛, 王二狗' }
         ]
       });
     }, 400); // <= 800ms
@@ -833,27 +924,55 @@ const generateScriptBody = async () => {
     isPaused.value = false;
     
     return new Promise((resolve) => {
-      // Mock SSE streaming
-      let i = 0;
-      // We will generate a mock text that is roughly 'targetWords' long
-      const sentence = '【场景转换】：从喧闹的市区切换到静谧的房间。\n【情绪转折】：她的眼神由坚定变为犹豫。\n【潜台词】：(我不想再这样下去了，但我别无选择)\n【动作】：她轻轻叹了口气，走向窗边。这是一个关于成长与救赎的故事，展现了人物内心深处的挣扎与觉醒。\n\n'; 
-      const repeatCount = Math.ceil(targetWords / sentence.length);
-      
-      // Deliberately fail sometimes for testing retry logic
-      const willFail = Math.random() < 0.3; 
-      let mockText = sentence.repeat(willFail ? repeatCount / 2 : repeatCount); // If fail, generate too short
+      // 使用用户提供的剧本内容
+      const mockText = `1-1日 外 场景：淮西村落-废墟 
+人物：赵铁牛、元军士兵 
+服装：赵铁牛（破布麻衣）、元军士兵（铁甲布衫） 
+道具：木棍、屠刀 
+旁白：公元1356年，淮西村落化作一片焦土，元军铁蹄践踏过的地方，连野草都不敢生长。 
+旁白：废墟之中，一个叫赵铁牛的汉子攥着染血的木棍，眼睁睁看着父母倒在血泊里。 
+△元军士兵挥舞屠刀，在村中肆意杀戮。 
+△赵铁牛咬牙切齿，攥紧手中的木棍，浑身颤抖。 
+赵铁牛（咬牙切齿）：总有一天……总有一天我要掀翻这元廷！ 
+△赵铁牛怒吼着冲向元军士兵，木棍狠狠砸下。 
+△元军士兵转身，轻松制服赵铁牛，将他踩在脚下。 
+元军士兵（冷笑）：找死！ 
+旁白：赵铁牛被俘了，可他心里那团火，灭不了。 
 
+
+1-2日 内 场景：元廷监狱-牢房 
+人物：赵铁牛、王二狗 
+服装：赵铁牛（囚服）、王二狗（囚服） 
+道具：破旧稻草、铁链 
+旁白：铁链锁住的不只是手脚，还有那颗想要复仇的心。 
+旁白：阴暗潮湿的牢房里，赵铁牛靠在冰冷的墙壁上，手脚的铁链随着他的动作发出刺耳的响声。 
+△王二狗从稻草堆里爬过来，一屁股坐在赵铁牛身旁。 
+△王二狗伸出手，在赵铁牛肩膀上重重拍了一下。 
+王二狗（压低声音）：兄弟，这元廷早该反了！ 
+△赵铁牛猛地转头，目光如炬地盯着王二狗。 
+△两人对视，眼神中燃起同样的火焰。 
+旁白：一个眼神，胜过千言万语，两人心中都有一颗想要掀翻元廷的种子。 
+赵铁牛（低声）：你也有这心思？ 
+王二狗（嘿嘿一笑）：俺家也被元军害惨了，早就想找个机会干一票大的！ 
+△赵铁牛嘴角微微上扬，握紧了拳头。 
+赵铁牛（沉声道）：好汉所见略同，这破地方，咱们得想办法出去。 
+△王二狗凑近赵铁牛，两人脑袋凑在一起，低声密谋。 
+旁白：越狱的念头，在这阴暗的牢房里悄然生根发芽。`;
+      
       // Simulate First-byte latency <= 800ms
       setTimeout(() => {
+        let i = 0;
         const streamInterval = setInterval(() => {
-            if (isPaused.value) return; // Wait if paused
+          if (isPaused.value) return; // Wait if paused
 
-            // Push a sentence at a time (mocking 80-120ms interval per sentence)
-            const charsCount = Math.floor(Math.random() * 10) + 15;
+          // 模拟流式输出，每次输出 3-8 个字符，模仿打字机效果
+          const charsCount = Math.floor(Math.random() * 5) + 3;
           const chars = mockText.substring(i, i + charsCount);
           scriptBodyContent.value += chars;
           if (tiptapEditor.value) {
-            tiptapEditor.value.commands.insertContent(chars);
+            // 将换行符转换为 <p> 标签或 <br>，以便在编辑器中正确显示
+            const formattedChars = chars.replace(/\n/g, '<br>');
+            tiptapEditor.value.commands.insertContent(formattedChars);
           }
           i += charsCount;
           
@@ -861,16 +980,10 @@ const generateScriptBody = async () => {
 
           if (i >= mockText.length) {
             clearInterval(streamInterval);
-            
-            // Validate
-            if (validateGeneratedWordCount(scriptBodyContent.value, minWords, maxWords)) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
+            resolve(true);
           }
-        }, Math.random() * 40 + 80); // 80-120ms
-      }, Math.random() * 300 + 500); // 500-800ms
+        }, Math.random() * 20 + 30); // 30-50ms，稍微快一点的打字速度
+      }, 500); 
     });
   };
 

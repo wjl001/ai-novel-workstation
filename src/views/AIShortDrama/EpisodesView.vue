@@ -3,14 +3,32 @@
     <!-- Header: Title and Batch Action -->
     <div :class="s.header">
       <div :class="s.left">
-        <h2 :class="s.title">共 {{ episodes.length }} 集</h2>
-        <p :class="s.subtitle"></p>
+        <h2 class="text-2xl font-black text-slate-800 tracking-tight">共 {{ episodes.length }} 集</h2>
+        <p class="text-slate-400 text-sm mt-1">智能生成分镜脚本，开启你的短剧创作之旅</p>
       </div>
-      <div :class="s.right">
-        <el-button v-if="!isMultiSelect" @click="isMultiSelect = true" :class="s.batchBtn">多选</el-button>
+      <div :class="s.right" class="flex items-center gap-3">
+        <button 
+          v-if="!isMultiSelect" 
+          @click="isMultiSelect = true" 
+          class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-sm"
+        >
+          多选
+        </button>
         <template v-else>
-          <el-button @click="cancelMultiSelect">取消</el-button>
-          <el-button type="primary" :disabled="selectedIds.length === 0" @click="handleBatchGenerate">批量生成</el-button>
+          <button 
+            @click="cancelMultiSelect"
+            class="h-10 px-6 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all"
+          >
+            取消
+          </button>
+          <button 
+            :disabled="selectedIds.length === 0" 
+            @click="handleBatchGenerate"
+            class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
+          >
+            <el-icon><MagicStick /></el-icon>
+            批量生成
+          </button>
         </template>
       </div>
     </div>
@@ -60,30 +78,57 @@
             <!-- 脚本生成后且未合成全集，只显示编辑按钮 -->
             <template v-if="ep.status === 'success' && ep.storyboardGenerated">
               <template v-if="ep.synthesisStatus === 'success'">
-                <el-button size="small" :icon="VideoPlay" @click.stop="handlePreview(ep)">预览</el-button>
-                <el-button size="small" :icon="Edit" @click.stop="navigateToDetail(ep)">编辑</el-button>
-                <el-button size="small" :icon="Download" class="!bg-black !text-white !border-black" @click.stop="handleExport(ep)">导出</el-button>
+                <button 
+                  class="h-9 px-4 bg-indigo-50 text-indigo-600 rounded-lg text-[13px] font-bold hover:bg-indigo-100 transition-all flex items-center gap-1.5"
+                  @click.stop="handlePreview(ep)"
+                >
+                  <el-icon><VideoPlay /></el-icon> 预览
+                </button>
+                <button 
+                  class="h-9 px-4 bg-white text-slate-600 border border-slate-200 rounded-lg text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-100 transition-all flex items-center gap-1.5"
+                  @click.stop="navigateToDetail(ep)"
+                >
+                  <el-icon><Edit /></el-icon> 编辑
+                </button>
+                <button 
+                  class="h-9 px-4 bg-slate-900 text-white rounded-lg text-[13px] font-bold hover:bg-black transition-all flex items-center gap-1.5 shadow-sm"
+                  @click.stop="handleExport(ep)"
+                >
+                  <el-icon><Download /></el-icon> 导出
+                </button>
               </template>
               <template v-else>
-                <el-button size="small" :icon="Edit" @click.stop="navigateToDetail(ep)">编辑</el-button>
+                <button 
+                  class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-indigo-500/10"
+                  @click.stop="navigateToDetail(ep)"
+                >
+                  <el-icon><Edit /></el-icon> 进入编辑
+                </button>
               </template>
             </template>
 
             <!-- 未生成状态显示生成按钮 -->
-            <el-button 
+            <button 
               v-else-if="ep.status === 'pending' || ep.status === 'failed'" 
-              type="primary" 
-              size="small"
               @click.stop="handleGenerate(ep)"
+              class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-indigo-500/10"
             >
-              生成
-            </el-button>
+              <el-icon><MagicStick /></el-icon>
+              立即生成
+            </button>
             
-            <div v-else :class="s.status">
-              <span v-if="ep.status === 'generating'" :class="s.generating">分镜脚本生成中...</span>
-<span>
-                <el-icon><Warning /></el-icon> 生成失败
-                <el-button link type="primary" size="small" @click.stop="handleGenerate(ep)">重试</el-button>
+            <div v-else :class="s.status" class="flex items-center gap-2">
+              <span v-if="ep.status === 'generating'" class="flex items-center gap-2 text-indigo-600 font-bold text-sm">
+                <el-icon class="is-loading"><Loading /></el-icon> 分镜脚本生成中...
+              </span>
+</span>
+                <span class="text-red-500 flex items-center gap-1 text-sm"><el-icon><Warning /></el-icon> 生成失败</span>
+                <button 
+                  @click.stop="handleGenerate(ep)"
+                  class="text-indigo-600 font-bold text-sm hover:underline"
+                >
+                  重试
+                </button>
               </span>
             </div>
           </div>

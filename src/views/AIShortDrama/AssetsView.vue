@@ -6,12 +6,16 @@
         <div class="flex flex-col h-full p-6">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-[#1890ff] rounded-full"></span>
-              <h2 class="text-[18px] font-bold text-slate-800">主体库 · 角色 <span class="text-slate-400 font-normal ml-1">({{ characters.length }})</span></h2>
+              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
+              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 角色 <span class="text-slate-400 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
-            <el-button type="primary" class="theme-primary-btn" @click="addAsset('character')">
-              <el-icon class="mr-1"><Plus /></el-icon>新增角色
-            </el-button>
+            <button 
+              @click="addAsset('character')"
+              class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+            >
+              <el-icon><Plus /></el-icon>
+              新增角色
+            </button>
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 pb-6">
@@ -54,12 +58,16 @@
         <div class="flex flex-col h-full p-6">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-[#1890ff] rounded-full"></span>
-              <h2 class="text-[18px] font-bold text-slate-800">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
+              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
+              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
-            <el-button type="primary" class="theme-primary-btn" @click="addAsset('scene')">
-              <el-icon class="mr-1"><Plus /></el-icon>新增场景
-            </el-button>
+            <button 
+              @click="addAsset('scene')"
+              class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+            >
+              <el-icon><Plus /></el-icon>
+              新增场景
+            </button>
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-6">
@@ -101,12 +109,16 @@
         <div class="flex flex-col h-full p-6">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-[#1890ff] rounded-full"></span>
-              <h2 class="text-[18px] font-bold text-slate-800">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
+              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
+              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
-            <el-button type="primary" class="theme-primary-btn" @click="addAsset('prop')">
-              <el-icon class="mr-1"><Plus /></el-icon>新增道具
-            </el-button>
+            <button 
+              @click="addAsset('prop')"
+              class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+            >
+              <el-icon><Plus /></el-icon>
+              新增道具
+            </button>
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-6">
@@ -144,7 +156,6 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!-- Bottom Actions: Next Step -->
     <div class="flex justify-end items-center p-6 border-t border-slate-100 bg-white shrink-0">
       <el-tooltip
         :disabled="isAssetsComplete"
@@ -152,15 +163,14 @@
         placement="top"
       >
         <span class="inline-block">
-          <el-button 
-            type="primary" 
-            class="theme-primary-btn !h-11 !px-10 text-[15px] font-bold" 
-            :disabled="!isAssetsComplete"
+          <button 
             @click="handleNextStep"
+            :disabled="!isAssetsComplete"
+            class="h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
-            下一步：分集生成
-            <el-icon class="ml-2"><ArrowRight /></el-icon>
-          </el-button>
+            <span>下一步：分集生成</span>
+            <el-icon><ArrowRight /></el-icon>
+          </button>
         </span>
       </el-tooltip>
     </div>
@@ -176,9 +186,19 @@
         <p class="text-[15px] text-slate-700">您还有未保存的修改，确定要离开吗？</p>
       </div>
       <template #footer>
-        <div class="flex justify-center gap-4">
-          <el-button @click="confirmVisible = false">取消</el-button>
-          <el-button type="primary" class="theme-primary-btn" @click="goToEpisodes">确定</el-button>
+        <div class="flex justify-center gap-4 pb-2">
+          <button 
+            @click="confirmVisible = false"
+            class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200"
+          >
+            取消
+          </button>
+          <button 
+            @click="goToEpisodes"
+            class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            确定
+          </button>
         </div>
       </template>
     </el-dialog>
@@ -224,9 +244,13 @@
                 />
                 <div class="text-[12px] text-slate-400 flex items-center justify-between mt-2">
                   <span>提示词越详细，生成的画面越准确</span>
-                  <el-button type="primary" link size="small" @click="optimizePrompt" class="theme-primary-text">
-                    <el-icon class="mr-1"><MagicStick /></el-icon>一键优化 (中文)
-                  </el-button>
+                  <button 
+                    @click="optimizePrompt"
+                    class="flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[12px] font-bold hover:bg-indigo-100 transition-colors"
+                  >
+                    <el-icon><MagicStick /></el-icon>
+                    一键优化 (中文)
+                  </button>
                 </div>
               </div>
             </div>
@@ -234,11 +258,11 @@
 
           <!-- Right: Image Preview & Actions (Canvas) -->
           <el-col :xs="24" :md="14" :lg="15" class="h-full flex flex-col pb-2">
-            <div class="bg-[#f8fafc] p-4 rounded-[8px] shadow-sm border border-slate-200 flex flex-col h-full items-center relative overflow-hidden">
-              <h3 class="text-[16px] font-bold text-slate-800 w-full text-left mb-4">实时预览画布</h3>
+            <div class="bg-[#f8fafc] p-6 rounded-2xl border border-slate-200 flex flex-col h-full items-center relative overflow-hidden">
+              <h3 class="text-[16px] font-bold text-slate-800 w-full text-left mb-6">实时预览画布</h3>
               
               <div 
-                class="bg-white rounded-[8px] shadow-sm overflow-hidden border border-slate-200 flex items-center justify-center relative flex-1 w-full max-w-[80%] mx-auto"
+                class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 flex items-center justify-center relative flex-1 w-full max-w-[80%] mx-auto transition-all"
                 :class="[currentAssetType === 'character' ? 'aspect-[3/4] max-h-[75%]' : currentAssetType === 'scene' ? 'aspect-video max-h-[65%]' : 'aspect-square max-h-[75%]']"
                 style="min-height: 0;"
               >
@@ -248,28 +272,43 @@
                   class="w-full h-full object-contain"
                   fit="contain"
                 />
-                <div v-else class="flex flex-col items-center justify-center text-slate-400 h-full w-full bg-slate-100">
-                  <el-icon size="64" class="mb-4 text-slate-300"><Picture /></el-icon>
-                  <span class="text-[14px]">等待生成画面</span>
+                <div v-else class="flex flex-col items-center justify-center text-slate-400 h-full w-full bg-slate-50">
+                  <el-icon size="64" class="mb-4 text-slate-200"><Picture /></el-icon>
+                  <span class="text-[14px] font-medium">等待生成画面</span>
                 </div>
               </div>
               
-              <div class="flex gap-4 justify-center mt-6 w-full max-w-[80%] shrink-0">
-                <el-button type="primary" class="flex-1 !h-10 text-[14px] theme-primary-btn" @click="generateImage">
-                  <el-icon class="mr-2"><MagicStick /></el-icon> AI 生成画面
-                </el-button>
-                <el-button class="flex-1 !h-10 text-[14px] theme-primary-outline-btn">
-                  <el-icon class="mr-2"><Upload /></el-icon> 本地上传
-                </el-button>
+              <div class="flex gap-6 justify-center mt-8 w-full max-w-[80%] shrink-0">
+                <button 
+                  @click="generateImage"
+                  class="flex-1 h-12 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  <el-icon><MagicStick /></el-icon> AI 生成画面
+                </button>
+                <button 
+                  class="flex-1 h-12 bg-white text-slate-600 border border-slate-200 rounded-full text-[15px] font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                >
+                  <el-icon><Upload /></el-icon> 本地上传
+                </button>
               </div>
             </div>
           </el-col>
         </el-row>
       </div>
       <template #footer>
-        <div class="flex justify-end gap-4 pt-2 border-t border-slate-100">
-          <el-button @click="editModalVisible = false" class="theme-primary-outline-btn !px-6">取消</el-button>
-          <el-button type="primary" @click="saveAsset" class="theme-primary-btn !px-6">保存设置</el-button>
+        <div class="flex justify-end gap-4 pt-4 border-t border-slate-100">
+          <button 
+            @click="editModalVisible = false"
+            class="h-11 px-8 bg-white text-slate-500 rounded-full text-[15px] font-bold hover:text-slate-700 transition-all"
+          >
+            取消
+          </button>
+          <button 
+            @click="saveAsset"
+            class="h-11 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            保存设置
+          </button>
         </div>
       </template>
     </el-dialog>

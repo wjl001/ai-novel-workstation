@@ -1,45 +1,56 @@
 <template>
   <div class="h-full flex flex-col bg-slate-50 dark:bg-slate-900 p-6">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-8">
       <div>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">我的短剧作品</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">管理和创作您的AI短剧</p>
+        <h2 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">我的短剧作品</h2>
+        <p class="text-slate-400 dark:text-slate-500 mt-2 text-base font-medium">管理和创作您的 AI 爆款短剧</p>
       </div>
-      <el-button type="primary" size="large" @click="$router.push('/ai-short-drama-creator/new')">
-        <el-icon class="mr-2"><Plus /></el-icon> 新建剧本
-      </el-button>
+      <button 
+        @click="$router.push('/ai-short-drama-creator/new')"
+        class="h-12 px-8 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+      >
+        <el-icon><Plus /></el-icon>
+        新建剧本
+      </button>
     </div>
 
     <!-- Toolbar -->
-    <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm mb-6 flex justify-between items-center gap-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 mb-8 flex justify-between items-center gap-6">
       <div class="flex items-center gap-4 flex-1">
         <el-input 
           v-model="searchQuery" 
           placeholder="搜索作品标题..." 
           prefix-icon="Search"
-          class="w-64"
+          class="w-80 custom-search-input"
           clearable
         />
-        <el-select v-model="statusFilter" placeholder="状态筛选" class="w-32" clearable>
+        <div class="h-8 w-px bg-slate-100 dark:bg-slate-700 mx-2"></div>
+        <el-select v-model="statusFilter" placeholder="作品状态" class="w-36 custom-select-round" clearable>
           <el-option label="草稿" value="draft" />
           <el-option label="创作中" value="in_progress" />
           <el-option label="已完成" value="completed" />
         </el-select>
-        <el-select v-model="sortBy" placeholder="排序方式" class="w-40">
-          <el-option label="最新修改优先" value="updated_desc" />
-          <el-option label="最新创建优先" value="created_desc" />
-          <el-option label="名称 A-Z" value="name_asc" />
+        <el-select v-model="sortBy" placeholder="排序方式" class="w-44 custom-select-round">
+          <el-option label="最近修改" value="updated_desc" />
+          <el-option label="最近创建" value="created_desc" />
+          <el-option label="名称排序" value="name_asc" />
         </el-select>
       </div>
-      <div>
-        <el-button-group>
-          <el-button :type="viewMode === 'grid' ? 'primary' : 'default'" @click="viewMode = 'grid'">
-            <el-icon><Grid /></el-icon>
-          </el-button>
-          <el-button :type="viewMode === 'list' ? 'primary' : 'default'" @click="viewMode = 'list'">
-            <el-icon><List /></el-icon>
-          </el-button>
-        </el-button-group>
+      <div class="flex items-center bg-slate-50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-100 dark:border-slate-700">
+        <button 
+          @click="viewMode = 'grid'"
+          class="w-10 h-10 rounded-lg flex items-center justify-center transition-all"
+          :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
+        >
+          <el-icon><Grid /></el-icon>
+        </button>
+        <button 
+          @click="viewMode = 'list'"
+          class="w-10 h-10 rounded-lg flex items-center justify-center transition-all"
+          :class="viewMode === 'list' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
+        >
+          <el-icon><List /></el-icon>
+        </button>
       </div>
     </div>
 
@@ -56,13 +67,16 @@
               <el-icon><VideoCamera /></el-icon>
             </div>
             <el-dropdown trigger="click" @command="(cmd) => handleCommand(cmd, work)">
-              <el-button text circle @click.stop>
+              <button 
+                class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-100 transition-all"
+                @click.stop
+              >
                 <el-icon><MoreFilled /></el-icon>
-              </el-button>
+              </button>
               <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                  <el-dropdown-item command="delete" class="!text-red-500">删除</el-dropdown-item>
+                <el-dropdown-menu class="!rounded-xl !p-1.5 shadow-xl border-slate-100">
+                  <el-dropdown-item command="edit" class="!rounded-lg !py-2">编辑</el-dropdown-item>
+                  <el-dropdown-item command="delete" class="!rounded-lg !py-2 !text-red-500">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -98,17 +112,35 @@
           <el-table-column prop="updatedAt" label="最后修改" width="160" sortable />
           <el-table-column label="操作" width="120" align="right">
             <template #default="{ row }">
-              <el-button type="primary" link @click.stop="openWork(row)">编辑</el-button>
-              <el-button type="danger" link @click.stop="deleteWork(row)">删除</el-button>
+              <div class="flex items-center justify-end gap-2">
+                <button 
+                  @click.stop="openWork(row)"
+                  class="px-3 py-1 text-indigo-600 font-bold hover:bg-indigo-50 rounded-lg transition-all"
+                >
+                  编辑
+                </button>
+                <button 
+                  @click.stop="deleteWork(row)"
+                  class="px-3 py-1 text-red-500 font-bold hover:bg-red-50 rounded-lg transition-all"
+                >
+                  删除
+                </button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
       </div>
 
       <!-- Empty State -->
-      <div v-if="filteredWorks.length === 0" class="flex flex-col items-center justify-center py-20 text-slate-400">
+      <div v-if="filteredWorks.length === 0" class="flex flex-col items-center justify-center py-24 text-slate-400">
         <el-empty description="暂无短剧作品" />
-        <el-button type="primary" class="mt-4" @click="$router.push('/ai-short-drama-creator/new')">立即创建</el-button>
+        <button 
+          @click="$router.push('/ai-short-drama-creator/new')"
+          class="h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 mt-4"
+        >
+          <el-icon><Plus /></el-icon>
+          立即创建
+        </button>
       </div>
     </div>
 

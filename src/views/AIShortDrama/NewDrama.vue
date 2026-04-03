@@ -49,16 +49,14 @@
               </div>
               
               <div class="flex flex-col items-center gap-4 mt-8">
-                <el-button 
-                  type="primary" 
-                  size="large" 
-                  class="!px-16 !h-14 !rounded-full !text-lg !font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
-                  :disabled="!aiPrompt.trim() && !isGenerating"
-                  :loading="isGenerating"
+                <button 
+                  class="h-14 px-16 bg-indigo-600 text-white rounded-full text-lg font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center justify-center gap-2"
+                  :disabled="(!aiPrompt.trim() && !isGenerating) || isGenerating"
                   @click="startCreation"
                 >
-                  立即开始创作
-                </el-button>
+                  <el-icon v-if="isGenerating" class="is-loading"><Loading /></el-icon>
+                  <span>立即开始创作</span>
+                </button>
                 <p class="text-xs text-slate-400">目前支持：微短剧、电影大纲、长篇剧集等多种体裁</p>
               </div>
             </div>
@@ -91,9 +89,12 @@
             <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
               我的项目 <span class="text-slate-400 font-normal text-sm">(最近制作)</span>
             </h2>
-            <el-button text @click="router.push('/ai-short-drama-creator/works')" class="!bg-slate-100 hover:!bg-slate-200 !px-4 !rounded-lg text-slate-600 font-medium">
-              管理 <el-icon class="ml-1"><ArrowRight /></el-icon>
-            </el-button>
+            <button 
+              @click="router.push('/ai-short-drama-creator/works')" 
+              class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-bold transition-all flex items-center gap-1.5"
+            >
+              管理 <el-icon><ArrowRight /></el-icon>
+            </button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

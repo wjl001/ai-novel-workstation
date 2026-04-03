@@ -1,14 +1,20 @@
 <template>
   <div class="h-screen flex flex-col bg-[#f0f2f5] overflow-hidden">
     <!-- Header -->
-    <header class="h-14 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0 z-10 relative shadow-sm">
+    <header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0 z-20 relative shadow-sm">
       <div class="flex items-center gap-4">
-        <el-button link :icon="ArrowLeft" @click="router.back()" class="!text-slate-600 hover:!text-slate-900 font-medium">返回</el-button>
-        <el-divider direction="vertical" class="!h-4" />
+        <button 
+          @click="router.back()" 
+          class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-full transition-all font-medium"
+        >
+          <el-icon><ArrowLeft /></el-icon>
+          <span>返回</span>
+        </button>
+        <el-divider direction="vertical" class="!h-6 !mx-2" />
         
         <el-dropdown trigger="click" @command="handleEpisodeSwitch">
-          <div class="flex items-center gap-2 cursor-pointer group">
-            <h1 class="text-[15px] font-bold text-slate-800 truncate max-w-[400px] group-hover:text-indigo-600 transition-colors">
+          <div class="flex items-center gap-2 cursor-pointer group px-4 py-2 hover:bg-slate-50 rounded-full transition-all">
+            <h1 class="text-[16px] font-extrabold text-slate-800 truncate max-w-[400px] group-hover:text-indigo-600 transition-colors">
               <template v-if="episodeNotFound">
                 视频不存在
               </template>
@@ -16,16 +22,17 @@
                 {{ episode?.title || '分镜详情编辑' }}
               </template>
             </h1>
-            <el-icon class="text-slate-400 group-hover:text-indigo-600"><ArrowDown /></el-icon>
+            <el-icon class="text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:rotate-180 duration-300"><ArrowDown /></el-icon>
           </div>
           <template #dropdown>
-            <el-dropdown-menu class="max-h-[400px] overflow-y-auto custom-scrollbar">
+            <el-dropdown-menu class="!rounded-2xl !p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
               <el-dropdown-item 
                 v-for="ep in episodeStore.episodes" 
                 :key="ep.id" 
                 :command="ep.id"
                 :disabled="ep.id === episodeId"
-                :class="{ '!text-indigo-600 !font-bold': ep.id === episodeId }"
+                class="!rounded-xl !py-3 !px-4"
+                :class="{ '!text-indigo-600 !bg-indigo-50 !font-bold': ep.id === episodeId }"
               >
                 {{ ep.title }}
               </el-dropdown-item>
@@ -34,38 +41,39 @@
         </el-dropdown>
       </div>
       
-      <div class="flex items-center gap-3">
-        <el-select v-model="synthesisModel" size="small" class="w-40 !border-none">
-          <template #prefix>
-            <el-icon><Menu /></el-icon>
-          </template>
-          <el-option label="Seedance 2.0 • Fast" value="seedance-fast" />
-          <el-option label="Seedance 2.0 • Quality" value="seedance-quality" />
-        </el-select>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+          <el-icon class="text-indigo-500"><Menu /></el-icon>
+          <el-select v-model="synthesisModel" size="small" class="w-40 !border-none custom-select-transparent">
+            <el-option label="Seedance 2.0 • Fast" value="seedance-fast" />
+            <el-option label="Seedance 2.0 • Quality" value="seedance-quality" />
+          </el-select>
+        </div>
         
-        <el-button 
+        <button 
           @click="handleExport"
-          class="!rounded-lg border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 shadow-sm font-medium"
+          class="h-10 px-5 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
           :disabled="!timelineScenes[currentSceneIdx]?.video"
         >
-          <el-icon class="mr-1.5"><RefreshRight /></el-icon> 导出
-        </el-button>
-        <el-button 
+          <el-icon><RefreshRight /></el-icon> 导出
+        </button>
+
+        <button 
           v-if="episodeStore.episodes.find(e => e.id === episodeId)?.synthesisStatus === 'success'"
           @click="handlePreviewFull"
-          class="!rounded-lg border-indigo-100 text-indigo-600 hover:bg-indigo-50 shadow-sm font-medium"
+          class="h-10 px-5 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold hover:bg-indigo-100 transition-all flex items-center gap-2 shadow-sm"
         >
-          <el-icon class="mr-1.5"><VideoPlay /></el-icon> 预览全集
-        </el-button>
-        <el-button 
-          type="primary" 
-          class="!rounded-lg shadow-sm font-medium"
-          :class="{'opacity-50 cursor-not-allowed': !canSynthesizeAll}"
-          :disabled="!canSynthesizeAll"
+          <el-icon><VideoPlay /></el-icon> 预览全集
+        </button>
+
+        <button 
           @click="handleSynthesis"
+          :disabled="!canSynthesizeAll"
+          class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
         >
+          <el-icon><MagicStick /></el-icon>
           合成全集
-        </el-button>
+        </button>
       </div>
     </header>
 
@@ -100,11 +108,11 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(char)">
+            <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(char)">
                   <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md flex items-center justify-center p-1">
                     <!-- Delete Button -->
                     <button 
-                      class="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                       @click.stop="handleDeleteSubject(char)"
                     >
                       <el-icon><Delete /></el-icon>
@@ -116,16 +124,16 @@
                     </div>
                     
                     <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
+                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
                       <button 
-                        class="w-7 h-7 rounded-full bg-white text-slate-400 hover:text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95"
+                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
                         @click.stop="handleEditSubject(char)"
                       >
-                        <el-icon size="14"><Edit /></el-icon>
+                        <el-icon size="16"><Edit /></el-icon>
                       </button>
                     </div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-medium truncate w-full px-1 text-center">{{ char.name }}</span>
+                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name }}</span>
                 </div>
               </div>
             </div>
@@ -142,11 +150,11 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(scene)">
+            <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(scene)">
                   <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md">
                     <!-- Delete Button -->
                     <button 
-                      class="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                       @click.stop="handleDeleteSubject(scene)"
                     >
                       <el-icon><Delete /></el-icon>
@@ -157,16 +165,16 @@
                     </div>
                     
                     <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
+                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
                       <button 
-                        class="w-7 h-7 rounded-full bg-white text-slate-400 hover:text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95"
+                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
                         @click.stop="handleEditSubject(scene)"
                       >
-                        <el-icon size="14"><Edit /></el-icon>
+                        <el-icon size="16"><Edit /></el-icon>
                       </button>
                     </div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-medium truncate w-full px-1 text-center">{{ scene.name }}</span>
+                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ scene.name }}</span>
                 </div>
               </div>
             </div>
@@ -183,11 +191,11 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(prop)">
+            <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(prop)">
                   <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md">
                     <!-- Delete Button -->
                     <button 
-                      class="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                       @click.stop="handleDeleteSubject(prop)"
                     >
                       <el-icon><Delete /></el-icon>
@@ -198,16 +206,16 @@
                     </div>
                     
                     <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
+                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
                       <button 
-                        class="w-7 h-7 rounded-full bg-white text-slate-400 hover:text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95"
+                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
                         @click.stop="handleEditSubject(prop)"
                       >
-                        <el-icon size="14"><Edit /></el-icon>
+                        <el-icon size="16"><Edit /></el-icon>
                       </button>
                     </div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-medium truncate w-full px-1 text-center">{{ prop.name }}</span>
+                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ prop.name }}</span>
                 </div>
               </div>
             </div>
@@ -286,7 +294,12 @@
                             placeholder="自定义秒数..." 
                             @keyup.enter="handleCustomDuration"
                           />
-                          <el-button type="primary" size="small" @click="handleCustomDuration">确定</el-button>
+                          <button 
+                            @click="handleCustomDuration"
+                            class="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-[13px] font-bold hover:bg-indigo-700 transition-all shadow-md"
+                          >
+                            确定
+                          </button>
                         </div>
                       </div>
 
@@ -318,38 +331,56 @@
 
                 <!-- Edit Action Buttons -->
                 <div class="absolute bottom-6 right-6 flex justify-end gap-4 shrink-0">
-                  <el-button class="!rounded-full !px-8 bg-white hover:bg-slate-50 border-slate-200 shadow-sm" @click="handleCancelEdit">取消</el-button>
-                  <el-button 
-                    type="primary" 
-                    class="!rounded-full !px-10 shadow-md font-bold" 
-                    style="background: #6366f1; border-color: #6366f1;"
+                  <button 
+                    @click="handleCancelEdit"
+                    class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 shadow-sm"
+                  >
+                    取消
+                  </button>
+                  <button 
                     @click="handleSaveScriptInline"
+                    class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
                   >
                     保存
-                  </el-button>
+                  </button>
                 </div>
               </div>
               
               <!-- Floating Edit Button (Read-only mode) -->
               <div v-if="!isEditingScript" class="absolute bottom-4 right-4 z-10 flex gap-3">
-                <el-button 
-                  class="!rounded-full shadow-md bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 !px-6 transition-all" 
+                <button 
                   @click="handleEditScript"
+                  class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
                 >
-                  <el-icon class="mr-1"><Edit /></el-icon>编辑脚本
-                </el-button>
-                <el-button 
-                  class="!rounded-full shadow-md bg-slate-200 !text-slate-500 border-none !px-6 opacity-80" 
+                  <el-icon><Edit /></el-icon>
+                  <span>编辑脚本</span>
+                </button>
+                <button 
                   @click="handleBatchGenerate"
+                  class="h-10 px-6 bg-slate-100 text-slate-500 border border-slate-200 rounded-full text-[14px] font-bold hover:bg-slate-200 transition-all shadow-md flex items-center gap-2 opacity-80"
                 >
-                  <el-icon class="mr-1"><MagicStick /></el-icon>再次生成
-                </el-button>
+                  <el-icon><MagicStick /></el-icon>
+                  <span>再次生成</span>
+                </button>
               </div>
             </div>
 
             <!-- Right: Preview/Status Placeholder -->
-            <div class="flex-1 rounded-xl bg-[#f8fafc] flex flex-col items-center justify-center min-h-[400px] border border-transparent">
-              <div v-if="currentPreview" class="w-full h-full relative rounded-xl overflow-hidden group bg-black">
+            <div class="flex-1 rounded-xl bg-[#f8fafc] flex flex-col items-center justify-center min-h-[400px] border border-transparent overflow-hidden relative">
+              <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
+                <!-- Blurred Background -->
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 backdrop-blur-xl transition-all duration-500"></div>
+                <!-- Content -->
+                <div class="relative flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
+                  <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-lg"></div>
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="text-[18px] font-bold tracking-widest drop-shadow-md">生成中...</span>
+                    <span class="text-[13px] text-white/80 font-medium bg-black/10 px-4 py-1 rounded-full backdrop-blur-sm">大约还需 3 分钟</span>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else-if="currentPreview" class="w-full h-full relative rounded-xl overflow-hidden group bg-black">
                 <video 
                   :src="currentPreview" 
                   class="w-full h-full object-contain"
@@ -359,12 +390,16 @@
                   muted
                 ></video>
                 <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <el-button circle size="small" class="!bg-black/50 !border-0 !text-white hover:!bg-black/70 backdrop-blur-md">
+                  <button 
+                    class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
+                  >
                     <el-icon><RefreshRight /></el-icon>
-                  </el-button>
-                  <el-button circle size="small" class="!bg-black/50 !border-0 !text-white hover:!bg-black/70 backdrop-blur-md">
+                  </button>
+                  <button 
+                    class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
+                  >
                     <el-icon><FullScreen /></el-icon>
-                  </el-button>
+                  </button>
                 </div>
               </div>
               <div v-else class="flex flex-col items-center gap-4 text-slate-400 opacity-60">
@@ -414,39 +449,40 @@
           </div>
 
           <!-- Timeline Items -->
-          <div class="flex-1 flex gap-3 overflow-x-auto custom-scrollbar items-center pb-2 pl-1">
+          <div class="flex-1 flex gap-4 overflow-x-auto custom-scrollbar items-center pb-2 pl-1">
             <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[180px] h-[100px] rounded-xl bg-slate-50 border shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:border-indigo-300 overflow-hidden group"
+              class="flex-shrink-0 w-[180px] h-[110px] rounded-2xl bg-slate-50 border shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:border-indigo-400 overflow-hidden group"
               :class="[
                 (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
-                  ? 'border-indigo-500 ring-1 ring-indigo-500/20' 
-                  : 'border-slate-200'
+                  ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
+                  : 'border-slate-100'
               ]"
               @click="toggleSceneSelection(idx)"
             >
               <!-- Background Image if generated -->
-              <div v-if="scene.status === 'success' && scene.image" class="absolute inset-0 w-full h-full opacity-40">
-                <img :src="scene.image" class="w-full h-full object-cover" />
+              <div v-if="scene.status === 'success' && scene.image" class="absolute inset-0 w-full h-full">
+                <img :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors"></div>
               </div>
 
               <!-- Index Badge & Checkbox -->
               <div class="absolute top-2 left-2 flex items-center gap-1.5 z-10">
                 <div 
                   v-if="!isMultiSelectMode" 
-                  class="w-5 h-5 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center text-[11px] font-bold shadow-sm"
-                  :class="currentSceneIdx === idx ? '!bg-indigo-500' : ''"
+                  class="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold shadow-md transition-all"
+                  :class="currentSceneIdx === idx ? 'bg-indigo-600 text-white scale-110' : 'bg-white/90 backdrop-blur-sm text-slate-600'"
                 >
                   {{ idx + 1 }}
                 </div>
                 
-                <div v-if="isMultiSelectMode" class="w-5 h-5 flex items-center justify-center pointer-events-none">
-                  <el-checkbox :model-value="selectedScenes.includes(idx)" class="!mr-0"></el-checkbox>
+                <div v-if="isMultiSelectMode" class="w-6 h-6 flex items-center justify-center pointer-events-none">
+                  <el-checkbox :model-value="selectedScenes.includes(idx)" class="!mr-0 custom-timeline-checkbox"></el-checkbox>
                 </div>
               </div>
 
               <!-- Delete Button -->
               <button 
-                class="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-md opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                 @click.stop="deleteScene(idx)"
               >
                 <el-icon><Delete /></el-icon>
@@ -455,82 +491,164 @@
               <!-- Center Content -->
               <div class="flex items-center justify-center w-full h-full relative z-10">
                 <!-- Generating Progress -->
-                <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-1 w-full px-3">
-                  <span class="text-[12px] font-bold text-indigo-600">{{ scene.progress }}%</span>
-                  <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-500 transition-all duration-300" :style="{ width: `${scene.progress}%` }"></div>
-                  </div>
+                <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-2 w-full h-full justify-center bg-indigo-600/20 backdrop-blur-sm">
+                  <div class="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                  <span class="text-[11px] font-bold text-white tracking-widest">生成中</span>
                 </div>
                 
                 <!-- Success State -->
-                <div v-else-if="scene.status === 'success'" class="flex items-center gap-1.5 text-indigo-600 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                  <el-icon><VideoPlay /></el-icon>
-                  <span class="text-[12px] font-bold">播放</span>
+                <div v-else-if="scene.status === 'success'" class="flex items-center gap-2 text-white bg-indigo-600/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 scale-90 group-hover:scale-100">
+                  <el-icon size="16"><VideoPlay /></el-icon>
+                  <span class="text-[13px] font-bold">预览</span>
                 </div>
 
                 <!-- Default/Pending State -->
                 <button 
                   v-else 
-                  class="flex items-center gap-1.5 text-slate-600 bg-white hover:bg-indigo-50 hover:text-indigo-600 px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 transition-all"
+                  class="flex items-center gap-2 text-indigo-600 bg-white hover:bg-indigo-600 hover:text-white px-5 py-2 rounded-full shadow-md border border-indigo-100 transition-all font-bold"
                   @click.stop="handleGenerateSingleScene(idx)"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                    <line x1="7" y1="2" x2="7" y2="22"></line>
-                    <line x1="17" y1="2" x2="17" y2="22"></line>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <line x1="2" y1="7" x2="7" y2="7"></line>
-                    <line x1="2" y1="17" x2="7" y2="17"></line>
-                    <line x1="17" y1="17" x2="22" y2="17"></line>
-                    <line x1="17" y1="7" x2="22" y2="7"></line>
-                  </svg>
-                  <span class="text-[12px] font-medium">生成</span>
+                  <el-icon><MagicStick /></el-icon>
+                  <span class="text-[13px]">生成</span>
                 </button>
               </div>
             </div>
             
             <!-- Add New Scene Button -->
-            <div class="flex-shrink-0 w-[64px] h-[64px] rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-300 cursor-pointer hover:text-indigo-500 hover:border-indigo-300 transition-all hover:bg-white" @click="addTimelineScene">
-              <el-icon size="24"><Plus /></el-icon>
-            </div>
+            <button 
+              class="flex-shrink-0 w-16 h-16 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all hover:bg-indigo-50/30 group"
+              @click="addTimelineScene"
+            >
+              <el-icon size="24" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
+            </button>
           </div>
         </div>
       </div>
     </main>
 
-      <!-- Synthesis Config Modal -->
-      <el-dialog v-model="showSynthesisConfig" title="视频合成设置" width="450px" center class="synthesis-dialog">
-        <div class="p-4">
-          <el-form label-position="top">
-            <el-form-item label="背景音乐">
-              <el-select v-model="synthesisConfig.bgm" placeholder="选择背景音乐" class="w-full">
-                <el-option label="热血战斗" value="battle" />
-                <el-option label="凄美忧伤" value="sad" />
-                <el-option label="宁静乡村" value="rural" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="画面特效">
-              <el-checkbox-group v-model="synthesisConfig.effects">
-                <el-checkbox label="电影胶片感" value="film" />
-                <el-checkbox label="动态运镜" value="motion" />
-                <el-checkbox label="智能转场" value="transition" />
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item label="字幕样式">
-              <el-radio-group v-model="synthesisConfig.subtitleStyle">
-                <el-radio label="classic">经典白</el-radio>
-                <el-radio label="modern">现代黑</el-radio>
-                <el-radio label="neon">霓虹金</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <template #footer>
-          <div class="flex justify-center gap-4">
-            <el-button @click="showSynthesisConfig = false">取消</el-button>
-            <el-button type="primary" class="theme-primary-btn !px-8" @click="startSynthesis">确认合成</el-button>
+      <!-- Synthesis Progress Modal -->
+      <el-dialog 
+        v-model="showSynthesisConfig" 
+        width="1000px" 
+        center 
+        class="synthesis-progress-dialog"
+        :show-close="!isSynthesizing"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        <template #header>
+          <div class="flex items-center justify-between px-2">
+            <span class="text-[18px] font-bold text-slate-800">合成全集</span>
           </div>
         </template>
+        
+        <div class="p-0 min-h-[600px] flex flex-col items-center justify-center relative bg-[#111] rounded-xl overflow-hidden group">
+          <!-- State 1: Synthesizing (Progress) -->
+          <div v-if="isSynthesizing" class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white">
+            <!-- Background Preview (First scene blurred) -->
+            <img :src="timelineScenes[0]?.image" class="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm" />
+            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+            
+            <div class="relative flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
+              <div v-if="synthesisProgress < 10" class="flex flex-col items-center gap-4">
+                <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-lg"></div>
+                <span class="text-[18px] font-bold tracking-widest drop-shadow-md">正在提交合成任务...</span>
+              </div>
+              <div v-else class="flex flex-col items-center gap-2">
+                <span class="text-[64px] font-black tracking-tighter drop-shadow-2xl">{{ synthesisProgress }}%</span>
+                <span class="text-[16px] font-bold tracking-widest text-white/80 drop-shadow-md">合成中...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- State 2: Synthesis Success (Preview & Export) -->
+          <div v-else-if="isSynthesisCompleted" class="absolute inset-0 w-full h-full flex flex-col bg-[#111] animate-in fade-in duration-500 z-20">
+            <!-- Video Player -->
+            <div class="flex-1 relative group/player flex items-center justify-center min-h-[400px] bg-black">
+              <video 
+                ref="fullVideoRef"
+                :src="fullSynthesisVideoUrl" 
+                class="w-full h-full object-contain"
+                autoplay
+                loop
+                playsinline
+                muted
+                @timeupdate="onVideoTimeUpdate"
+                @loadedmetadata="onVideoLoaded"
+                @error="handleSynthesisVideoError"
+                @play="isPlaying = true"
+                @pause="isPlaying = false"
+              ></video>
+              
+              <!-- Video Controls Overlay -->
+              <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent flex flex-col gap-3 opacity-0 group-hover/player:opacity-100 transition-opacity z-20">
+                <div class="flex items-center gap-4">
+                  <button @click="togglePlay" class="text-white hover:text-indigo-400 transition-colors">
+                    <el-icon size="28"><VideoPause v-if="isPlaying"/><VideoPlay v-else/></el-icon>
+                  </button>
+                  <span class="text-[14px] text-white font-mono">{{ formatTime(currentTime) }} | {{ formatTime(duration) }}</span>
+                  <div class="flex-1 h-1.5 bg-white/20 rounded-full relative cursor-pointer" @click="seekVideo">
+                    <div class="absolute top-0 left-0 h-full bg-indigo-500 rounded-full" :style="{ width: `${(currentTime/duration)*100}%` }"></div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <el-icon class="text-white cursor-pointer hover:text-indigo-400" size="20"><Microphone /></el-icon>
+                    <el-icon class="text-white cursor-pointer hover:text-indigo-400" size="24" @click="toggleFullScreen"><FullScreen /></el-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Options Panel (Redesigned for C-end users) -->
+            <div class="bg-white px-10 py-8 flex items-center justify-between border-t border-slate-50 shrink-0 z-40 h-[140px]">
+              <div class="flex items-center gap-16">
+                <!-- Watermark Selector -->
+                <div class="flex flex-col gap-3">
+                  <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">水印设置</span>
+                  <div class="flex bg-slate-100 p-1 rounded-full w-fit">
+                    <button 
+                      v-for="opt in [{l:'带品牌水印',v:'brand'},{l:'无水印',v:'none'}]" 
+                      :key="opt.v"
+                      @click="exportConfig.watermark = opt.v"
+                      class="px-5 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300"
+                      :class="exportConfig.watermark === opt.v ? 'bg-white text-[#1890ff] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                    >
+                      {{ opt.l }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Resolution Selector -->
+                <div class="flex flex-col gap-3">
+                  <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">导出分辨率</span>
+                  <div class="flex bg-slate-100 p-1 rounded-full w-fit">
+                    <button 
+                      v-for="opt in [{l:'1080P',v:'1080p'},{l:'720P',v:'720p'},{l:'4K',v:'4k'}]" 
+                      :key="opt.v"
+                      @click="exportConfig.resolution = opt.v"
+                      class="px-6 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300"
+                      :class="exportConfig.resolution === opt.v ? 'bg-white text-[#1890ff] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                    >
+                      {{ opt.l }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Primary Export Button -->
+              <el-button 
+                type="primary" 
+                class="!h-[56px] !px-14 !rounded-2xl !text-[18px] font-bold shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all theme-primary-btn"
+                @click="downloadVideo"
+              >
+                <el-icon class="mr-2" size="20"><Download /></el-icon>
+                导出到本地
+              </el-button>
+            </div>
+          </div>
+          <div v-else class="absolute inset-0 flex items-center justify-center text-white/70 text-[14px]">
+            等待开始合成
+          </div>
+        </div>
       </el-dialog>
 
       <!-- Preview Full Video Modal -->
@@ -570,22 +688,6 @@
           :subjects="subjects"
           @confirm="handleLibraryConfirm"
         />
-
-    <!-- Global Loading Overlay for Synthesis -->
-    <el-overlay v-if="isSynthesizing" class="!z-[2000] backdrop-blur-sm bg-black/40">
-      <div class="h-full w-full flex flex-col items-center justify-center gap-6">
-        <div class="relative">
-          <el-progress type="circle" :percentage="synthesisProgress" :stroke-width="10" color="#1890ff" :width="180" />
-          <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span class="text-[32px] font-bold text-white">{{ synthesisProgress }}%</span>
-          </div>
-        </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 rounded-3xl shadow-2xl flex flex-col items-center gap-2">
-          <span class="text-[18px] font-bold text-white">正在合成全集视频</span>
-          <span class="text-[13px] text-white/70">正在处理分镜 {{ Math.floor(synthesisProgress / 10) + 1 }} / 10，请保持页面开启</span>
-        </div>
-      </div>
-    </el-overlay>
   </div>
 </template>
 
@@ -667,13 +769,13 @@ const PillImage = Node.create({
 import { 
   ArrowLeft, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
-  Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset
+  Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
+  Download, VideoPause, Microphone
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
-import video_c2e5d372661c95731e129f2eb4d56054 from '@/assets/video_c2e5d372661c95731e129f2eb4d56054.mp4';
 
 const route = useRoute();
 const router = useRouter();
@@ -978,7 +1080,7 @@ const timelineScenes = ref([
   { 
     id: 'scene-1',
     status: 'success', 
-    video: video_c2e5d372661c95731e129f2eb4d56054, 
+    video: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4', 
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     duration: 6.0,
     progress: 0,
@@ -1083,6 +1185,94 @@ const isIndeterminate = computed(() => {
   return selectedScenes.value.length > 0 && selectedScenes.value.length < timelineScenes.value.length;
 });
 
+// Video Preview & Export States
+const fullVideoRef = ref<HTMLVideoElement | null>(null);
+const isPlaying = ref(false);
+const currentTime = ref(0);
+const duration = ref(0);
+const isSynthesisCompleted = ref(false);
+const fullSynthesisVideoUrl = ref('');
+const synthesisVideoCandidates = [
+  '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4',
+  '/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4',
+  'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+];
+const synthesisVideoCandidateIndex = ref(0);
+const exportConfig = reactive({
+  watermark: 'brand',
+  resolution: '1080p'
+});
+
+const togglePlay = () => {
+  if (!fullVideoRef.value) return;
+  if (isPlaying.value) {
+    fullVideoRef.value.pause();
+  } else {
+    fullVideoRef.value.play();
+  }
+  isPlaying.value = !isPlaying.value;
+};
+
+const onVideoTimeUpdate = () => {
+  if (fullVideoRef.value) {
+    currentTime.value = fullVideoRef.value.currentTime;
+  }
+};
+
+const onVideoLoaded = () => {
+  if (fullVideoRef.value) {
+    duration.value = fullVideoRef.value.duration;
+  }
+};
+
+const handleSynthesisVideoError = () => {
+  if (synthesisVideoCandidateIndex.value >= synthesisVideoCandidates.length - 1) {
+    ElMessage.error('合成视频加载失败，请检查视频文件路径');
+    return;
+  }
+  synthesisVideoCandidateIndex.value += 1;
+  fullSynthesisVideoUrl.value = synthesisVideoCandidates[synthesisVideoCandidateIndex.value];
+  nextTick(() => {
+    if (fullVideoRef.value) {
+      fullVideoRef.value.load();
+      fullVideoRef.value.play().catch(() => {});
+    }
+  });
+};
+
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
+
+const seekVideo = (e: MouseEvent) => {
+  if (!fullVideoRef.value) return;
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  const pos = (e.clientX - rect.left) / rect.width;
+  fullVideoRef.value.currentTime = pos * duration.value;
+};
+
+const toggleFullScreen = () => {
+  if (!fullVideoRef.value) return;
+  if (fullVideoRef.value.requestFullscreen) {
+    fullVideoRef.value.requestFullscreen();
+  }
+};
+
+const downloadVideo = () => {
+  const videoUrl = fullSynthesisVideoUrl.value || episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo;
+  if (!videoUrl) return;
+  
+  const link = document.createElement('a');
+  link.href = videoUrl;
+  link.download = `full_episode_${exportConfig.resolution}${exportConfig.watermark === 'brand' ? '_wm' : ''}.mp4`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  ElMessage.success(`正在以 ${exportConfig.resolution.toUpperCase()} 格式导出全集视频...`);
+};
+
 const canSynthesizeAll = computed(() => {
   return timelineScenes.value.length > 0 && timelineScenes.value.every(s => s.status === 'success' && s.video);
 });
@@ -1141,7 +1331,12 @@ const handleExport = () => {
 };
 
 const handleSynthesis = () => {
+  if (!canSynthesizeAll.value) return;
+  isSynthesisCompleted.value = false;
+  synthesisVideoCandidateIndex.value = 0;
+  fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
   showSynthesisConfig.value = true;
+  startSynthesis();
 };
 
 const handlePreviewFull = () => {
@@ -1154,28 +1349,42 @@ const handlePreviewFull = () => {
 };
 
 const startSynthesis = () => {
-  showSynthesisConfig.value = false;
   isSynthesizing.value = true;
   synthesisProgress.value = 0;
   
-  const timer = setInterval(() => {
-    synthesisProgress.value += 1;
-    if (synthesisProgress.value >= 100) {
-      clearInterval(timer);
-      isSynthesizing.value = false;
-      // 更新 store 中的状态，记录全集合成已完成
-      episodeStore.updateEpisode(episodeId, { 
-        synthesisStatus: 'success',
-        synthesisVideo: 'https://www.w3schools.com/html/mov_bbb.mp4' // 模拟合成后的全集视频 URL
-      });
-      ElMessage({
-        message: '全集合成完成！已保存至“我的作品”',
-        type: 'success',
-        duration: 5000,
-        showClose: true
-      });
-    }
-  }, 100);
+  // 模拟提交任务
+  setTimeout(() => {
+    const timer = setInterval(() => {
+      // 在 10-99% 之间随机递增
+      if (synthesisProgress.value < 99) {
+        synthesisProgress.value += Math.floor(Math.random() * 5) + 2;
+        if (synthesisProgress.value > 99) synthesisProgress.value = 99;
+      } else {
+        // 完成合成
+        clearInterval(timer);
+        synthesisProgress.value = 100;
+        setTimeout(() => {
+          isSynthesizing.value = false;
+          synthesisVideoCandidateIndex.value = 0;
+          fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
+          isSynthesisCompleted.value = true;
+          episodeStore.updateEpisode(episodeId, { 
+            synthesisStatus: 'success',
+            synthesisVideo: fullSynthesisVideoUrl.value
+          });
+          
+          nextTick(() => {
+            if (fullVideoRef.value) {
+              fullVideoRef.value.load();
+              fullVideoRef.value.play().catch(e => console.error("Auto-play prevented", e));
+            }
+          });
+          
+          ElMessage.success('全集合成完成！');
+        }, 500);
+      }
+    }, 400);
+  }, 1500); // 1.5秒提交状态
 };
 
 const addTimelineScene = () => {
@@ -1401,7 +1610,48 @@ defineExpose({
   background: #cbd5e1;
 }
 
+.synthesis-progress-dialog :deep(.el-dialog__header) {
+  padding: 20px 24px;
+  margin-right: 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.synthesis-progress-dialog :deep(.el-dialog__body) {
+  padding: 0;
+}
+
+.synthesis-progress-dialog :deep(.el-dialog) {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
 /* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.zoom-in {
+  animation-name: zoom-in;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease;
 }

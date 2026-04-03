@@ -123,6 +123,95 @@ onErrorCaptured((error) => {
 </script>
 
 <style>
+/* Global C-end UI Styles */
+.custom-steps :deep(.el-step__title) {
+  font-size: 13px;
+  font-weight: 800;
+  color: #94a3b8 !important;
+}
+.custom-steps :deep(.el-step__title.is-success) {
+  color: #6366f1 !important;
+}
+.custom-steps :deep(.el-step__title.is-process) {
+  color: #1e293b !important;
+}
+.custom-steps :deep(.el-step__head.is-success) {
+  color: #6366f1 !important;
+  border-color: #6366f1 !important;
+}
+.custom-steps :deep(.el-step__head.is-process) {
+  color: #fff !important;
+  border-color: #6366f1 !important;
+}
+.custom-steps :deep(.el-step__head.is-process .el-step__icon.is-text) {
+  background-color: #6366f1 !important;
+  border-radius: 50%;
+}
+
+.custom-textarea-round :deep(.el-textarea__inner) {
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  border: 1px solid #f1f5f9 !important;
+  background-color: #fff !important;
+  transition: all 0.3s ease !important;
+}
+.custom-textarea-round :deep(.el-textarea__inner:focus) {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+.custom-select-round :deep(.el-input__wrapper) {
+  border-radius: 9999px !important;
+  padding-left: 16px !important;
+  padding-right: 12px !important;
+  box-shadow: 0 0 0 1px #f1f5f9 inset !important;
+  background-color: #f8fafc !important;
+}
+.custom-select-round :deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #6366f1 inset !important;
+}
+
+.custom-search-input :deep(.el-input__wrapper) {
+  border-radius: 9999px !important;
+  padding-left: 20px !important;
+  background-color: #f8fafc !important;
+  box-shadow: 0 0 0 1px #f1f5f9 inset !important;
+}
+.custom-search-input :deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #6366f1 inset !important;
+}
+
+.custom-input-large :deep(.el-input__wrapper) {
+  border-radius: 12px 0 0 12px !important;
+  height: 48px !important;
+  font-size: 15px !important;
+}
+.custom-input-large :deep(.el-input-group__append) {
+  border-radius: 0 12px 12px 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+.custom-select-transparent :deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.custom-select-transparent :deep(.el-input__inner) {
+  font-weight: 700 !important;
+  color: #1e293b !important;
+}
+
+/* Animations */
+@keyframes pulse-indigo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-pulse-indigo {
+  animation: pulse-indigo 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
