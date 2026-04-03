@@ -59,7 +59,7 @@
         </button>
 
         <button 
-          v-if="episodeStore.episodes.find(e => e.id === episodeId)?.synthesisStatus === 'success'"
+          v-if="isSynthesisCompleted || episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo"
           @click="handlePreviewFull"
           class="h-10 px-5 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold hover:bg-indigo-100 transition-all flex items-center gap-2 shadow-sm"
         >
@@ -538,7 +538,7 @@
       >
         <template #header>
           <div class="flex items-center justify-between px-2">
-            <span class="text-[18px] font-bold text-slate-800">合成全集</span>
+            <span class="text-[18px] font-bold text-slate-800">{{ isSynthesizing ? '合成全集' : '预览全集' }}</span>
           </div>
         </template>
         
@@ -647,29 +647,6 @@
           </div>
           <div v-else class="absolute inset-0 flex items-center justify-center text-white/70 text-[14px]">
             等待开始合成
-          </div>
-        </div>
-      </el-dialog>
-
-      <!-- Preview Full Video Modal -->
-      <el-dialog 
-        v-model="showFullPreview" 
-        :title="`预览全集: ${episode?.title}`" 
-        width="800px" 
-        center 
-        destroy-on-close
-        class="preview-dialog"
-      >
-        <div class="aspect-video bg-black rounded-lg overflow-hidden">
-          <video 
-            v-if="episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo"
-            :src="episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo" 
-            class="w-full h-full"
-            controls
-            autoplay
-          ></video>
-          <div v-else class="w-full h-full flex items-center justify-center text-white">
-            视频加载失败
           </div>
         </div>
       </el-dialog>
@@ -791,7 +768,6 @@ const showGuide = ref(true);
 const currentSceneIdx = ref(0);
 const showLibraryModal = ref(false);
 const isEditingScript = ref(false);
-const showFullPreview = ref(false);
 const activeLeftTab = ref('basic-settings');
 
 const dramaSettings = reactive({
@@ -1344,10 +1320,21 @@ const handleSynthesis = () => {
 
 const handlePreviewFull = () => {
   const currentEp = episodeStore.episodes.find(e => e.id === episodeId);
-  if (currentEp?.synthesisVideo) {
-    showFullPreview.value = true;
-  } else {
-    ElMessage.warning('全集视频尚未合成，无法预览');
+  if (isSynthesisCompleted.value || currentEp?.synthesisVideo) {
+    if (currentEp?.synthesisVideo) {
+      fullSynthesisVideoUrl.value = currentEp.synthesisVideo;
+    }
+    isSynthesizing.value = false;
+    isSynthesisCompleted.value = true;
+    showSynthesisConfig.value = true;
+    
+    // 确保视频可以正常加载和播放
+    nextTick(() => {
+      if (fullVideoRef.value) {
+        fullVideoRef.value.load();
+        fullVideoRef.value.play().catch(e => console.error("Preview play prevented", e));
+      }
+    });
   }
 };
 
@@ -1486,8 +1473,7 @@ defineExpose({
   synthesisProgress,
   currentSceneIdx,
   handleEpisodeSwitch,
-  handlePreviewFull,
-  showFullPreview
+  handlePreviewFull
 });
 </script>
 
