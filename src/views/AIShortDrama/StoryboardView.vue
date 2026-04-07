@@ -58,6 +58,25 @@
           <el-icon><RefreshRight /></el-icon> 导出
         </button>
 
+        <!-- Background Music Button -->
+        <el-tooltip 
+          :content="!isAllScenesGenerated ? '请先生成所有分镜视频' : (bgmConfig.confirmed ? '已确认配置' : '配置背景音乐')" 
+          placement="top"
+        >
+          <div class="inline-block">
+            <button 
+              @click="showBgmConfig = true"
+              :disabled="!isAllScenesGenerated"
+              class="h-10 px-6 rounded-full text-[14px] font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/10 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+              :class="bgmConfig.confirmed ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-indigo-600 text-white shadow-indigo-500/20 theme-primary-btn'"
+            >
+              <el-icon><Headset /></el-icon> 
+              <span>背景音乐</span>
+              <span v-if="bgmConfig.status === 'ready'" class="w-2 h-2 rounded-full bg-white animate-pulse ml-1 shadow-sm"></span>
+            </button>
+          </div>
+        </el-tooltip>
+
         <button 
           v-if="isSynthesisCompleted || episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo"
           @click="handlePreviewFull"
@@ -66,14 +85,23 @@
           <el-icon><VideoPlay /></el-icon> 预览全集
         </button>
 
-        <button 
-          @click="handleSynthesis"
-          :disabled="!canSynthesizeAll"
-          class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
+        <!-- Synthesize All Button -->
+        <el-tooltip 
+          :content="synthesisTooltip" 
+          placement="top" 
+          :disabled="canSynthesizeAll"
         >
-          <el-icon><MagicStick /></el-icon>
-          合成全集
-        </button>
+          <div class="inline-block">
+            <button 
+              @click="handleSynthesis"
+              :disabled="!canSynthesizeAll"
+              class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
+            >
+              <el-icon><MagicStick /></el-icon>
+              合成全集
+            </button>
+          </div>
+        </el-tooltip>
       </div>
     </header>
 
@@ -431,19 +459,40 @@
             </div>
             
             <!-- Multi-select Controls -->
-            <div v-if="isMultiSelectMode" class="flex items-center gap-4 text-[13px]">
-              <el-checkbox v-model="isAllSelected" :indeterminate="isIndeterminate" class="!mr-0">
-                <span class="text-slate-600">全选</span>
-              </el-checkbox>
-              <button class="text-indigo-600 font-medium hover:text-indigo-700 transition-colors" @click="handleBatchGenerate">
-                批量生成
+            <div v-if="isMultiSelectMode" class="flex items-center gap-3">
+              <button 
+                @click="isAllSelected = !isAllSelected"
+                class="h-8 px-4 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm flex items-center gap-1.5"
+              >
+                <el-checkbox 
+                  :model-value="isAllSelected" 
+                  :indeterminate="isIndeterminate" 
+                  class="custom-button-checkbox !mr-0 pointer-events-none"
+                />
+                {{ isAllSelected ? '取消全选' : '全选' }}
               </button>
-              <button class="text-slate-400 hover:text-slate-600 transition-colors" @click="toggleMultiSelect">
-                取消选择
+              <button 
+                @click="toggleMultiSelect"
+                class="h-8 px-4 bg-white text-slate-500 rounded-full text-[12px] font-bold hover:text-slate-700 transition-all"
+              >
+                取消
+              </button>
+              <button 
+                :disabled="selectedScenes.length === 0" 
+                @click="handleBatchGenerate"
+                class="h-8 px-5 bg-indigo-600 text-white rounded-full text-[12px] font-bold shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-1.5"
+              >
+                <el-icon><MagicStick /></el-icon>
+                批量生成
               </button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" class="!text-slate-500 hover:!text-indigo-600" @click="toggleMultiSelect">多选</el-button>
+              <button 
+                @click="toggleMultiSelect" 
+                class="h-8 px-4 bg-white text-slate-600 border border-slate-200 rounded-full text-[12px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-sm"
+              >
+                多选
+              </button>
             </div>
           </div>
 
@@ -650,6 +699,154 @@
         </div>
       </el-dialog>
 
+      <!-- BGM Configuration Dialog -->
+      <el-dialog
+        v-model="showBgmConfig"
+        title="配置背景音乐"
+        width="540px"
+        class="bgm-config-dialog"
+        destroy-on-close
+      >
+        <div class="space-y-6 py-2">
+          <!-- 1. AI 智能生成 (主要功能) -->
+          <div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100/50">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                  <el-icon size="18"><MagicStick /></el-icon>
+                </div>
+                <span class="text-[15px] font-bold text-slate-800">AI 智能配乐</span>
+              </div>
+              <span class="text-[11px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full uppercase tracking-wider">Recommended</span>
+            </div>
+
+            <div v-if="isAiGeneratingBgm" class="py-8 flex flex-col items-center justify-center gap-4">
+              <div class="w-16 h-16 relative">
+                <svg class="w-full h-full transform -rotate-90">
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="4" fill="transparent" class="text-indigo-100" />
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="4" fill="transparent" 
+                    class="text-indigo-600 transition-all duration-300"
+                    stroke-dasharray="188.5"
+                    :stroke-dashoffset="188.5 - (188.5 * aiBgmProgress / 100)"
+                  />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-indigo-600">
+                  {{ aiBgmProgress }}%
+                </div>
+              </div>
+              <p class="text-sm font-medium text-slate-600 animate-pulse">正在根据脚本意境生成专属配乐...</p>
+            </div>
+
+            <div v-else class="space-y-5">
+              <!-- Style Grid (Expanded to 16 styles) -->
+              <div class="grid grid-cols-4 gap-2.5 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                <button 
+                  v-for="item in bgmStyles" 
+                  :key="item.label"
+                  @click="handleAiBgmGenerate(item.label)"
+                  class="flex flex-col items-center justify-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-100 hover:border-indigo-400 hover:shadow-sm transition-all group relative overflow-hidden"
+                >
+                  <div class="absolute inset-0 bg-indigo-50/0 group-hover:bg-indigo-50/50 transition-colors"></div>
+                  <span class="text-xl group-hover:scale-110 transition-transform relative z-10">{{ item.icon }}</span>
+                  <span class="text-[11px] font-bold text-slate-600 truncate w-full text-center relative z-10">{{ item.label }}</span>
+                  <div class="hidden group-hover:block absolute bottom-0 left-0 right-0 bg-indigo-600 h-0.5 animate-in slide-in-from-left"></div>
+                </button>
+              </div>
+
+              <!-- Manual Prompt Generation -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-[12px] font-bold text-slate-500">自定义提示词</span>
+                  <button 
+                    @click="handleAiBgmGenerate(bgmStyles[Math.floor(Math.random() * bgmStyles.length)].label)"
+                    class="text-[11px] text-indigo-600 font-bold hover:underline"
+                  >
+                    🎲 随机风格
+                  </button>
+                </div>
+                <div class="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-100 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                  <input 
+                    v-model="bgmPrompt" 
+                    placeholder="输入提示词（如：钢琴, 忧郁, 慢速）" 
+                    class="flex-1 bg-transparent border-none text-[13px] focus:ring-0 placeholder:text-slate-300"
+                    @keyup.enter="bgmPrompt && handleAiBgmGenerate('', bgmPrompt)"
+                  />
+                  <button 
+                    @click="handleAiBgmGenerate('', bgmPrompt)"
+                    :disabled="!bgmPrompt"
+                    class="h-9 px-5 bg-indigo-600 text-white rounded-lg text-xs font-bold disabled:opacity-40 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2"
+                  >
+                    <el-icon><MagicStick /></el-icon>
+                    生成
+                  </button>
+                </div>
+                
+                <!-- Hot Tags -->
+                <div class="flex flex-wrap gap-1.5 px-1">
+                  <button 
+                    v-for="tag in hotPromptTags" 
+                    :key="tag"
+                    @click="addHotTag(tag)"
+                    class="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-medium"
+                  >
+                    # {{ tag }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 当前选中的 BGM -->
+          <div v-if="bgmConfig.status === 'ready'" class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white">
+                <el-icon size="20"><Headset /></el-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-800 truncate">{{ bgmConfig.name }}</p>
+                <p class="text-xs text-emerald-600 font-medium">
+                  {{ bgmConfig.style ? `风格: ${bgmConfig.style} | ` : '' }}
+                  时长: {{ Math.floor(bgmConfig.duration / 60) }}:{{ (bgmConfig.duration % 60).toString().padStart(2, '0') }}
+                </p>
+              </div>
+            </div>
+            <el-button link type="danger" @click="resetBgm" class="!font-bold">移除</el-button>
+          </div>
+
+          <!-- 3. 本地上传 (次要功能) -->
+          <div class="flex items-center gap-4 px-1">
+            <div class="flex-1 h-px bg-slate-100"></div>
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-widest">或</span>
+            <div class="flex-1 h-px bg-slate-100"></div>
+          </div>
+
+          <div 
+@click="(e: Event) => { const input = (e.target as HTMLElement).closest('div')?.nextElementSibling as HTMLInputElement; input?.click(); }"
+            class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all group"
+          >
+            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+              <el-icon size="20"><Upload /></el-icon>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-bold text-slate-700">上传本地音乐</p>
+              <p class="text-xs text-slate-400">支持 mp3, wav, m4a 格式</p>
+            </div>
+            <input type="file" ref="bgmFileInput" class="hidden" accept="audio/*" @change="handleBgmUpload" />
+          </div>
+        </div>
+        <template #footer>
+          <div class="flex justify-end gap-3 border-t border-slate-50 pt-4">
+            <el-button @click="showBgmConfig = false" class="!rounded-xl">取消</el-button>
+            <el-button 
+              type="primary" 
+              @click="handleBgmConfirm" 
+              class="theme-primary-btn !rounded-xl !px-8"
+              :disabled="bgmConfig.status !== 'ready'"
+            >确定</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
       <!-- Subject Edit Modal -->
       <SubjectEditDialog
           v-model="showSubjectEdit"
@@ -746,7 +943,7 @@ import {
   ArrowLeft, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
-  Download, VideoPause, Microphone
+  Download, VideoPause, Microphone, Mic, Upload
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -1113,14 +1310,122 @@ const currentPreview = computed(() => timelineScenes.value[currentSceneIdx.value
 
 // Synthesis
 const showSynthesisConfig = ref(false);
+const showBgmConfig = ref(false); // 控制 BGM 配置弹窗
 const isMultiSelectMode = ref(false);
 const selectedScenes = ref<number[]>([]);
+
+const bgmConfig = reactive({
+  name: '',
+  duration: 0,
+  file: null as File | null,
+  status: 'none' as 'none' | 'ready' | 'generating',
+  style: '',
+  confirmed: false
+});
+
+const isAiGeneratingBgm = ref(false);
+const aiBgmProgress = ref(0);
+const bgmPrompt = ref('');
+
+const bgmStyles = [
+  { label: '悬疑反转', icon: '🔍', desc: '神秘紧张' },
+  { label: '都市情感', icon: '🏙️', desc: '现代柔和' },
+  { label: '热血逆袭', icon: '🔥', desc: '激昂励志' },
+  { label: '古风仙侠', icon: '⚔️', desc: '悠扬唯美' },
+  { label: '惊悚恐怖', icon: '👻', desc: '阴森压抑' },
+  { label: '欢快喜剧', icon: '🤡', desc: '活泼幽默' },
+  { label: '励志感人', icon: '🌅', desc: '温情正向' },
+  { label: '唯美浪漫', icon: '💕', desc: '浪漫甜美' },
+  { label: '史诗战争', icon: '🛡️', desc: '宏大震撼' },
+  { label: '赛博朋克', icon: '🤖', desc: '科幻电子' },
+  { label: '田园清新', icon: '🌿', desc: '自然宁静' },
+  { label: '动感电子', icon: '⚡', desc: '潮流快频' },
+  { label: '紧张对峙', icon: '⏳', desc: '扣人心弦' },
+  { label: '忧郁伤感', icon: '💧', desc: '深沉孤独' },
+  { label: '职场竞争', icon: '💼', desc: '快节奏感' },
+  { label: '玄幻魔幻', icon: '🧙', desc: '奇异宏大' }
+];
+
+const hotPromptTags = ['钢琴', '大提琴', '快节奏', '忧郁', '舒缓', '震撼', '电音', '民乐', '鼓点', '唯美'];
+
+const addHotTag = (tag: string) => {
+  if (bgmPrompt.value) {
+    if (!bgmPrompt.value.endsWith(', ') && !bgmPrompt.value.endsWith(',')) {
+      bgmPrompt.value += ', ';
+    }
+    bgmPrompt.value += tag;
+  } else {
+    bgmPrompt.value = tag;
+  }
+};
+
+const handleAiBgmGenerate = (style: string, customPrompt?: string) => {
+  bgmConfig.style = customPrompt ? '自定义' : style;
+  bgmConfig.status = 'generating';
+  isAiGeneratingBgm.value = true;
+  aiBgmProgress.value = 0;
+  
+  const timer = setInterval(() => {
+    aiBgmProgress.value += 2;
+    if (aiBgmProgress.value >= 100) {
+      clearInterval(timer);
+      setTimeout(() => {
+        bgmConfig.name = customPrompt ? `AI 生成 - ${customPrompt.slice(0, 10)}...` : `AI 生成 - ${style}风格配乐`;
+        bgmConfig.duration = 120 + Math.floor(Math.random() * 60);
+        bgmConfig.status = 'ready';
+        isAiGeneratingBgm.value = false;
+        synthesisConfig.bgm = bgmConfig.name;
+        bgmPrompt.value = ''; // Reset prompt after generation
+        ElMessage.success('AI 背景音乐生成成功');
+      }, 500);
+    }
+  }, 50);
+};
 
 const synthesisConfig = reactive({
   bgm: 'battle',
   effects: ['film', 'motion'],
   subtitleStyle: 'modern'
 });
+
+const handleBgmUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target.files?.[0]) {
+    bgmConfig.file = target.files[0];
+    bgmConfig.name = bgmConfig.file.name;
+    bgmConfig.duration = 60 + Math.floor(Math.random() * 60); // 模拟获取时长
+    bgmConfig.status = 'ready';
+    synthesisConfig.bgm = bgmConfig.name;
+    ElMessage.success('BGM 已上传');
+  }
+};
+
+const handleOnlineBgmSelect = (name: string, duration: number) => {
+  bgmConfig.name = name;
+  bgmConfig.duration = duration;
+  bgmConfig.status = 'ready';
+  bgmConfig.confirmed = true;
+  synthesisConfig.bgm = bgmConfig.name;
+  showBgmConfig.value = false;
+  ElMessage.success(`已选择 BGM: ${name}`);
+};
+
+const handleBgmConfirm = () => {
+  if (bgmConfig.status === 'ready') {
+    bgmConfig.confirmed = true;
+    showBgmConfig.value = false;
+    ElMessage.success('背景音乐配置已确认');
+  }
+};
+
+const resetBgm = () => {
+  bgmConfig.name = '';
+  bgmConfig.duration = 0;
+  bgmConfig.file = null;
+  bgmConfig.status = 'none';
+  bgmConfig.confirmed = false;
+  synthesisConfig.bgm = 'battle';
+};
 
 const toggleMultiSelect = () => {
   isMultiSelectMode.value = !isMultiSelectMode.value;
@@ -1251,8 +1556,18 @@ const downloadVideo = () => {
   ElMessage.success(`正在以 ${exportConfig.resolution.toUpperCase()} 格式导出全集视频...`);
 };
 
-const canSynthesizeAll = computed(() => {
+const isAllScenesGenerated = computed(() => {
   return timelineScenes.value.length > 0 && timelineScenes.value.every(s => s.status === 'success' && s.video);
+});
+
+const canSynthesizeAll = computed(() => {
+  return isAllScenesGenerated.value && bgmConfig.confirmed;
+});
+
+const synthesisTooltip = computed(() => {
+  if (!bgmConfig.confirmed) return '请先生成背景音乐';
+  if (!isAllScenesGenerated.value) return '请先生成所有分镜视频';
+  return '';
 });
 
 const handleGenerateSingleScene = (idx: number) => {
@@ -1626,6 +1941,47 @@ defineExpose({
   to { transform: scale(1); }
 }
 
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.custom-button-checkbox {
+  height: auto !important;
+}
+
+.custom-button-checkbox :deep(.el-checkbox__inner) {
+  border-radius: 4px;
+  width: 14px;
+  height: 14px;
+  border-color: #e2e8f0;
+}
+
+.custom-button-checkbox.is-checked :deep(.el-checkbox__inner) {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.custom-button-checkbox :deep(.el-checkbox__input.is-indeterminate .el-checkbox__inner) {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.custom-timeline-checkbox :deep(.el-checkbox__inner) {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid #fff;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-timeline-checkbox.is-checked :deep(.el-checkbox__inner) {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
 .animate-in {
   animation-fill-mode: both;
 }
@@ -1636,6 +1992,11 @@ defineExpose({
 
 .zoom-in {
   animation-name: zoom-in;
+}
+
+.slide-in-from-left {
+  animation-name: slide-in-from-left;
+  animation-duration: 300ms;
 }
 
 .duration-500 {

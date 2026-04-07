@@ -16,6 +16,12 @@
         </button>
         <template v-else>
           <button 
+            @click="handleToggleSelectAll"
+            class="h-10 px-6 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[14px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
+          >
+            {{ isAllSelected ? '取消全选' : '全选' }}
+          </button>
+          <button 
             @click="cancelMultiSelect"
             class="h-10 px-6 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all"
           >
@@ -208,6 +214,7 @@ const previewEpisode = ref<any>(null);
 
 const episodes = computed(() => episodeStore.episodes);
 const hasGeneratedAny = computed(() => episodes.value.some(ep => ep.status === 'success'));
+const isAllSelected = computed(() => episodes.value.length > 0 && selectedIds.value.length === episodes.value.length);
 
 // Initialize mock data if empty
 onMounted(() => {
@@ -260,6 +267,14 @@ const toggleSelect = (id: string) => {
 const cancelMultiSelect = () => {
   isMultiSelect.value = false;
   selectedIds.value = [];
+};
+
+const handleToggleSelectAll = () => {
+  if (isAllSelected.value) {
+    selectedIds.value = [];
+  } else {
+    selectedIds.value = episodes.value.map(ep => ep.id);
+  }
 };
 
 const handleCardClick = (ep: any) => {
