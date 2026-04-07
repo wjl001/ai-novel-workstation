@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    width="900px"
+    width="800px"
     :show-close="false"
     class="custom-subject-dialog"
     destroy-on-close
@@ -9,159 +9,218 @@
   >
     <!-- Custom Header -->
     <div class="flex justify-between items-center mb-6 px-2">
-      <h2 class="text-[20px] font-bold text-slate-900">{{ title }}</h2>
+      <h2 class="text-[20px] font-black text-slate-800">{{ title }}</h2>
       <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
         <el-icon size="16"><Close /></el-icon>
       </button>
     </div>
 
     <!-- Main Content -->
-    <div class="flex gap-8 px-2">
-      <!-- Left: Form Fields -->
-      <div class="flex-1 flex flex-col gap-6">
-        <!-- Subject Name -->
-        <div class="flex flex-col gap-2">
-          <label class="text-[14px] text-slate-700 font-medium">
-            {{ type === 'character' ? '形象名称' : '名称' }} <span class="text-red-500">*</span>
-          </label>
-          <div class="relative">
-            <input 
-              v-model="localSubject.name" 
-              type="text" 
-              placeholder="请输入名称"
-              class="w-full px-4 py-3 bg-[#f8fafc] border border-slate-100 rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all pr-16"
-              maxlength="20"
-            />
-            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-slate-300 font-mono">
-              {{ localSubject.name?.length || 0 }}/20
-            </span>
+    <div class="px-2 overflow-hidden">
+      <div class="flex gap-6 pb-2">
+        <!-- Left: Form Fields -->
+        <div class="flex-1 flex flex-col gap-4">
+          <!-- Subject Name -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">
+              {{ type === 'character' ? '形象名称' : '名称' }} <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <input 
+                v-model="localSubject.name" 
+                type="text" 
+                placeholder="请输入名称"
+                class="w-full px-4 py-2.5 bg-[#f8fafc] border border-slate-100 rounded-2xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all pr-16"
+                maxlength="20"
+              />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-slate-300 font-mono">
+                {{ localSubject.name?.length || 0 }}/20
+              </span>
+            </div>
+          </div>
+
+          <!-- Subject Description -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center px-1">
+              <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider">
+                {{ type === 'character' ? '形象描述' : '详细描述' }}
+              </label>
+              <button 
+                @click="polishText" 
+                class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[11px] font-black transition-all disabled:opacity-50"
+                :disabled="isPolishingText || !localSubject.description"
+              >
+                <el-icon :class="{'animate-spin': isPolishingText}"><Refresh /></el-icon>
+                <span>AI 润色优化</span>
+              </button>
+            </div>
+            <div class="relative bg-[#f8fafc] border border-slate-100 rounded-[20px] p-3.5 min-h-[90px] flex flex-col group transition-all focus-within:ring-4 focus-within:ring-indigo-500/5">
+              <textarea 
+                v-model="localSubject.description" 
+                placeholder="请输入详细描述..."
+                class="w-full flex-1 bg-transparent border-none resize-none text-[13px] text-slate-600 leading-relaxed font-bold focus:outline-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Appeared Episodes (Scene & Prop Only) -->
+          <div v-if="type !== 'character'" class="flex flex-col gap-1.5">
+            <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">出现集数</label>
+            <el-select
+              v-model="localSubject.appeared_episodes"
+              multiple
+              placeholder="请选择集数"
+              class="custom-select-v3"
+            >
+              <el-option
+                v-for="item in [1, 2, 3]"
+                :key="item"
+                :label="'第 ' + item + ' 集'"
+                :value="item"
+              />
+            </el-select>
+          </div>
+
+          <!-- Voice Description (Character Only - Tab Layout) -->
+          <div v-if="type === 'character'" class="flex flex-col gap-2">
+            <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">角色声音设定</label>
+            <div class="bg-[#f8fafc] rounded-[20px] border border-slate-100 p-1 flex flex-col min-h-[160px]">
+              <!-- Tabs Header -->
+              <div class="flex gap-1 mb-1.5">
+                <div 
+                  @click="voiceMethod = 'text'"
+                  class="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-[16px] text-[11px] font-black cursor-pointer transition-all"
+                  :class="voiceMethod === 'text' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
+                >
+                  <el-icon><ChatDotRound /></el-icon> 文字描述
+                </div>
+                <div 
+                  @click="voiceMethod = 'audio'"
+                  class="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-[16px] text-[11px] font-black cursor-pointer transition-all"
+                  :class="voiceMethod === 'audio' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
+                >
+                  <el-icon><Microphone /></el-icon> 上传音频
+                </div>
+              </div>
+
+              <!-- Tab Content -->
+              <div class="flex-1 flex flex-col p-1.5 min-h-0">
+                <transition name="fade" mode="out-in">
+                  <!-- Text Mode -->
+                  <div v-if="voiceMethod === 'text'" key="text" class="h-full flex flex-col">
+                    <textarea 
+                      v-model="localSubject.voice_description" 
+                      placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
+                      class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 leading-relaxed font-bold focus:outline-none px-2"
+                      @input="handleVoiceDescriptionInput"
+                    ></textarea>
+                  </div>
+
+                  <!-- Audio Mode (Centered) -->
+                  <div v-else key="audio" class="h-full flex flex-col items-center justify-center">
+                    <el-upload
+                      action="#"
+                      :auto-upload="false"
+                      :show-file-list="false"
+                      accept="audio/*"
+                      @change="handleAudioUpload"
+                      class="w-full flex justify-center"
+                    >
+                      <div class="flex flex-col items-center justify-center gap-2 py-2 group cursor-pointer text-center">
+                        <div 
+                          class="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
+                          :class="localSubject.voice_audio ? 'bg-emerald-50 text-emerald-500 shadow-emerald-100 shadow-lg border border-emerald-100' : 'bg-white text-slate-400 shadow-sm border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 group-hover:shadow-indigo-100 group-hover:shadow-xl'"
+                        >
+                          <el-icon size="24"><component :is="localSubject.voice_audio ? Headset : Upload" /></el-icon>
+                        </div>
+                        <div class="flex flex-col items-center gap-0.5">
+                          <span class="text-[12px] font-black transition-colors" :class="localSubject.voice_audio ? 'text-emerald-600' : 'text-slate-400 group-hover:text-indigo-600'">
+                            {{ localSubject.voice_audio ? '参考音频已就绪' : '点击上传参考音频' }}
+                          </span>
+                          <span v-if="!localSubject.voice_audio" class="text-[9px] text-slate-300 font-bold uppercase tracking-widest">支持 MP3 / WAV</span>
+                          <button 
+                            v-if="localSubject.voice_audio" 
+                            @click.stop="localSubject.voice_audio = ''" 
+                            class="mt-1 px-3 py-1 rounded-full bg-red-50 text-red-400 text-[10px] font-black hover:bg-red-500 hover:text-white transition-all flex items-center gap-1"
+                          >
+                            <el-icon><Delete /></el-icon> 移除音频
+                          </button>
+                        </div>
+                      </div>
+                    </el-upload>
+                  </div>
+                </transition>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Subject Description -->
-        <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center">
-            <label class="text-[14px] text-slate-700 font-medium">
-              {{ type === 'character' ? '形象描述' : '详细描述' }}
-            </label>
+        <!-- Right: Preview -->
+        <div class="w-[260px] flex flex-col gap-3 shrink-0 overflow-hidden">
+          <div class="aspect-[3/4] rounded-[24px] bg-slate-50 border border-slate-100 overflow-hidden relative shadow-sm group">
+            <div v-if="isGeneratingImage" class="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+              <el-icon class="animate-spin text-indigo-600" size="28"><Loading /></el-icon>
+              <span class="text-[12px] text-slate-500 font-black">AI 绘图中...</span>
+            </div>
+
+            <img 
+              v-if="localSubject.image" 
+              :src="localSubject.image" 
+              class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+            />
+            <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-2">
+              <el-icon size="40"><Picture /></el-icon>
+              <span class="text-[12px] font-black uppercase tracking-widest">暂无预览</span>
+            </div>
+            
+            <!-- Hover Action -->
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
+              <el-upload
+                action="#"
+                :auto-upload="false"
+                :show-file-list="false"
+                @change="handleImageUpload"
+              >
+                <button class="flex items-center gap-2 px-4 py-2 bg-white text-slate-900 rounded-full text-[12px] font-black hover:scale-105 active:scale-95 transition-all shadow-xl">
+                  <el-icon><Upload /></el-icon>
+                  <span>本地上传</span>
+                </button>
+              </el-upload>
+            </div>
+          </div>
+
+          <!-- New Centered AI Generate Button BELOW the image -->
+          <div class="flex justify-center">
             <button 
-              @click="polishText" 
-              class="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-[12px] font-medium transition-colors disabled:opacity-50"
-              :disabled="isPolishingText || !localSubject.description"
+              @click="generateImage"
+              class="w-full h-[40px] flex items-center justify-center gap-2 bg-[#1f2329] text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 group/ai"
+              :disabled="isGeneratingImage"
             >
-              <el-icon :class="{'animate-spin': isPolishingText}"><Refresh /></el-icon>
-              <span>{{ isPolishingText ? '正在优化...' : '润色优化' }}</span>
+              <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{'animate-spin': isGeneratingImage}"><MagicStick /></el-icon>
+              <span>AI 一键生成形象</span>
             </button>
           </div>
-          <div class="relative bg-[#f8fafc] border border-slate-100 rounded-2xl p-4 min-h-[160px] flex flex-col group transition-all focus-within:ring-2 focus-within:ring-indigo-500/20">
-            <textarea 
-              v-model="localSubject.description" 
-              placeholder="请输入详细描述..."
-              class="w-full flex-1 bg-transparent border-none resize-none text-[14px] text-slate-600 leading-relaxed focus:outline-none"
-            ></textarea>
-          </div>
+
+          <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest">推荐 3:4 · 支持 JPG/PNG</p>
         </div>
-
-        <!-- Appeared Episodes (Scene & Prop Only) -->
-        <div v-if="type !== 'character'" class="flex flex-col gap-2">
-          <label class="text-[14px] text-slate-700 font-medium">出现集数</label>
-          <el-select
-            v-model="localSubject.appeared_episodes"
-            multiple
-            placeholder="请选择集数"
-            class="custom-select"
-          >
-            <el-option
-              v-for="item in [1, 2, 3]"
-              :key="item"
-              :label="'第 ' + item + ' 集'"
-              :value="item"
-            />
-          </el-select>
-        </div>
-
-        <!-- Voice Description (Character Only) -->
-        <div v-if="type === 'character'" class="flex flex-col gap-2">
-          <label class="text-[14px] text-slate-700 font-medium">音色描述</label>
-          <div class="bg-[#f8fafc] border border-slate-100 rounded-2xl p-4 min-h-[100px] flex flex-col transition-all focus-within:ring-2 focus-within:ring-indigo-500/20">
-            <textarea 
-              v-model="localSubject.voice_description" 
-              placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
-              class="w-full flex-1 bg-transparent border-none resize-none text-[14px] text-slate-600 leading-relaxed focus:outline-none"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Preview -->
-      <div class="w-[400px] flex flex-col gap-4">
-        <div class="aspect-[3/4] rounded-[24px] bg-slate-50 border border-slate-100 overflow-hidden relative shadow-sm group">
-          <div v-if="isGeneratingImage" class="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
-            <el-icon class="animate-spin text-indigo-600" size="32"><Loading /></el-icon>
-            <span class="text-[13px] text-slate-500 font-medium">AI 正在构思画面...</span>
-          </div>
-
-          <img 
-            v-if="localSubject.image" 
-            :src="localSubject.image" 
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-3">
-            <el-icon size="48"><Picture /></el-icon>
-            <span class="text-[13px]">暂无预览图</span>
-          </div>
-          
-          <!-- Realistic Overlay Info -->
-          <div v-if="localSubject.image" class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
-
-          <!-- Hover Upload Overlay -->
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-            <el-upload
-              action="#"
-              :auto-upload="false"
-              :show-file-list="false"
-              @change="handleImageUpload"
-            >
-              <button class="flex items-center gap-2 px-6 py-2.5 bg-white text-slate-900 rounded-xl text-[14px] font-medium hover:bg-slate-50 transition-colors shadow-lg">
-                <el-icon><Upload /></el-icon>
-                <span>更换图片</span>
-              </button>
-            </el-upload>
-          </div>
-        </div>
-
-        <!-- New Centered AI Generate Button BELOW the image -->
-        <div class="mt-4 flex justify-center">
-          <button 
-            @click="generateImage"
-            class="w-[40%] min-w-[140px] h-[44px] flex items-center justify-center gap-2 bg-slate-900 text-white rounded-full text-[14px] font-bold hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-lg"
-            :disabled="isGeneratingImage"
-          >
-            <el-icon :class="{'animate-spin': isGeneratingImage}"><MagicStick /></el-icon>
-            <span>{{ isGeneratingImage ? '生成中...' : 'AI 生成' }}</span>
-            <span class="font-mono text-[10px] opacity-70" v-if="!isGeneratingImage">3</span>
-          </button>
-        </div>
-
-        <p class="text-[12px] text-slate-400 text-center">建议尺寸 3:4，支持 JPG、PNG 格式</p>
       </div>
     </div>
 
     <!-- Footer -->
     <template #footer>
-      <div class="flex justify-end gap-3 px-2 pt-4 border-t border-slate-50">
+      <div class="flex justify-end gap-3 px-2 pt-4 border-t border-slate-100 bg-white">
         <button 
           @click="visible = false" 
-          class="px-8 py-2.5 rounded-xl bg-[#f1f3f5] text-slate-600 text-[14px] font-medium hover:bg-slate-200 transition-colors"
+          class="px-8 py-2.5 rounded-full bg-slate-50 text-slate-400 text-[14px] font-black hover:bg-slate-100 hover:text-slate-600 transition-all"
         >
           取消
         </button>
         <button 
           @click="handleSave" 
-          class="px-8 py-2.5 rounded-xl bg-slate-900 text-white text-[14px] font-medium hover:bg-black transition-all shadow-md active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+          class="px-10 py-2.5 rounded-full bg-indigo-600 text-white text-[14px] font-black shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none"
           :disabled="!localSubject.name || isGeneratingImage || isPolishingText"
         >
-          保存
+          确认保存
         </button>
       </div>
     </template>
@@ -170,7 +229,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { Close, MagicStick, Picture, Refresh, Upload, Loading } from '@element-plus/icons-vue';
+import { Close, MagicStick, Picture, Refresh, Upload, Loading, Microphone, Headset, ChatDotRound, Delete } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const props = defineProps<{
@@ -191,6 +250,7 @@ const localSubject = ref<any>({
   name: '',
   description: '',
   voice_description: '',
+  voice_audio: '',
   type: 'character',
   image: '',
   appeared_episodes: []
@@ -198,6 +258,7 @@ const localSubject = ref<any>({
 
 const isGeneratingImage = ref(false);
 const isPolishingText = ref(false);
+const voiceMethod = ref<'audio' | 'text'>('audio');
 
 const type = computed(() => localSubject.value.type);
 const title = computed(() => {
@@ -213,10 +274,17 @@ watch(() => props.subject, (newVal) => {
       name: newVal.name || '',
       description: newVal.description || '',
       type: newVal.type || 'character',
-      voice_description: newVal.voice_description || '',
+      voice_description: newVal.voice_description || (newVal.type === 'character' ? '沉稳大气，富有磁性' : ''),
+      voice_audio: newVal.voice_audio || '',
       image: newVal.image || '',
-      appeared_episodes: newVal.appeared_episodes || []
+      appeared_episodes: newVal.appeared_episodes && newVal.appeared_episodes.length > 0 ? newVal.appeared_episodes : [1]
     };
+    // Initialize voiceMethod based on content
+    if (localSubject.value.voice_audio) {
+      voiceMethod.value = 'audio';
+    } else {
+      voiceMethod.value = 'text';
+    }
   }
 }, { immediate: true, deep: true });
 
@@ -267,12 +335,28 @@ const polishText = async () => {
 };
 
 const handleImageUpload = (file: any) => {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    localSubject.value.image = e.target?.result as string;
-    ElMessage.success('图片上传成功');
-  };
-  reader.readAsDataURL(file.raw);
+  localSubject.value.image = URL.createObjectURL(file.raw);
+  ElMessage.success('预览图更新成功');
+};
+
+const handleAudioUpload = (file: any) => {
+  const isAudio = file.raw.type.startsWith('audio/');
+  if (!isAudio) {
+    ElMessage.error('请上传音频文件');
+    return false;
+  }
+  
+  // Mock upload - convert to blob URL
+  localSubject.value.voice_audio = URL.createObjectURL(file.raw);
+  // Clear text description as they are mutually exclusive
+  localSubject.value.voice_description = '';
+  ElMessage.success('参考音频已上传，文字描述已清空');
+};
+
+const handleVoiceDescriptionInput = () => {
+  if (localSubject.value.voice_description) {
+    localSubject.value.voice_audio = '';
+  }
 };
 
 const handleSave = () => {
@@ -308,24 +392,33 @@ const handleSave = () => {
   box-shadow: none !important;
 }
 
+/* Custom Select */
+.custom-select-v3 .el-select__wrapper {
+  background-color: #f8fafc !important;
+  border-radius: 16px !important;
+  padding: 8px 16px !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: none !important;
+  min-height: 44px !important;
+}
+
 /* Animations */
-.custom-subject-dialog.el-overlay-dialog {
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
 
-.custom-subject-dialog .el-dialog {
-  transform-origin: center;
-  animation: dialog-zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes dialog-zoom-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

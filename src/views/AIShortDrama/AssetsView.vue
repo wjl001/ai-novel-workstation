@@ -17,8 +17,8 @@
               新增角色
             </button>
           </div>
-          <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 pb-6">
+          <div class="flex-1 pr-2">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 pb-6">
               <div 
                 v-for="char in characters" 
                 :key="char.id" 

@@ -37,23 +37,3 @@ body {
 .ai-drama-container .text-slate-500 {
   color: #334155; /* slate-700 */
 }
-
-.ai-drama-container .text-\[10px\] {
-  font-size: 13px; /* Minimum 13px */
-}
-
-.ai-drama-container .text-\[11px\] {
-  font-size: 13px;
-}
-
-.ai-drama-container .text-\[12px\] {
-  font-size: 14px;
-}
-
-.ai-drama-container .text-\[13px\] {
-  font-size: 15px;
-}
-
-.ai-drama-container .text-\[14px\] {
-  font-size: 16px;
-}

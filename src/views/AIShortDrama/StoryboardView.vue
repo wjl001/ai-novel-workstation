@@ -258,190 +258,197 @@
           <!-- Top Toolbar / Header -->
           <div class="px-6 py-4 bg-white flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
-              <h1 class="text-[15px] font-bold text-slate-800">片段 {{ currentSceneIdx + 1 }}</h1>
-              <span class="text-[12px] text-slate-400">片段时长请限制在4-15s，输入“@”可快速调整镜头时长、引用角色、场景、素材</span>
+              <h1 class="text-[15px] font-bold text-slate-800">分镜 {{ currentSceneIdx + 1 }}</h1>
+              <span class="text-[12px] text-slate-400">分镜时长请限制在4-15s，输入“@”可快速调整镜头时长、引用角色、场景、道具</span>
             </div>
             <span class="text-[12px] text-slate-400"></span>
           </div>
 
-          <!-- Content Split Area -->
-          <div class="flex-1 flex gap-4 px-6 pb-6 overflow-y-auto custom-scrollbar">
-            <!-- Left: Script Content Box -->
-            <div 
-              class="flex-[2] rounded-xl transition-all relative flex flex-col"
-              :class="isEditingScript ? 'bg-white border border-indigo-200 shadow-lg' : 'bg-[#f8fafc] border border-transparent'"
-            >
-              <!-- Read-only View -->
+          <!-- Content Wrapper for Scroll control and Action buttons -->
+          <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+            <!-- Content Split Area -->
+            <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden">
+              <!-- Left: Script Content Box -->
               <div 
-                v-if="!isEditingScript"
-                class="p-6 text-[14px] text-slate-700 leading-[1.8] outline-none flex-1 min-h-[400px] cursor-text"
-                v-html="currentScript"
+                class="flex-[3] rounded-xl transition-all relative flex flex-col overflow-hidden"
+                :class="isEditingScript ? 'bg-white border border-indigo-200 shadow-lg' : 'bg-[#f8fafc] border border-transparent'"
               >
-              </div>
+                <!-- Read-only View -->
+                <div 
+                  v-if="!isEditingScript"
+                  class="p-6 text-[14px] text-slate-700 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text"
+                  v-html="currentScript"
+                >
+                </div>
 
-              <!-- Edit Mode (TipTap) -->
-              <div v-else class="flex-1 flex flex-col relative min-h-[400px] p-6 pb-20">
-                <editor-content :editor="editor" class="flex-1 script-editor-content w-full h-full" />
-                
-                <!-- @ Mention Popup -->
-                <transition name="el-zoom-in-top">
-                  <div 
-                    v-if="showMentionMenu" 
-                    ref="mentionMenuRef"
-                    class="absolute z-[100] bg-white rounded-xl shadow-2xl border border-slate-100 p-2 min-w-[280px] max-w-[340px]"
-                    :style="mentionMenuStyle"
-                  >
-                    <!-- Search Bar (Optional visual indicator, synced with editor typing) -->
-                    <div class="mb-2 px-3 py-1.5 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
-                      <el-icon class="text-slate-400" size="14"><Search /></el-icon>
-                      <span class="text-[12px] text-slate-500 font-medium">搜索: </span>
-                      <span v-if="mentionSearch" class="text-[12px] text-indigo-600 font-bold">{{ mentionSearch }}</span>
-                      <span v-else class="text-[12px] text-slate-300">输入关键词...</span>
-                    </div>
-
-                    <div class="flex gap-1 p-1 mb-2 bg-slate-50/50 rounded-lg shrink-0 overflow-x-auto custom-scrollbar">
-                      <button 
-                        v-for="tab in ['all', 'duration', 'character', 'scene', 'asset']" 
-                        :key="tab"
-                        @click="mentionActiveTab = tab"
-                        class="px-2 py-1 text-[10px] rounded-md transition-all whitespace-nowrap"
-                        :class="mentionActiveTab === tab ? 'bg-white text-indigo-600 shadow-sm font-bold' : 'text-slate-400 hover:text-slate-600'"
-                      >
-                        {{ tab === 'all' ? '全部' : tab === 'duration' ? '时长' : tab === 'character' ? '角色' : tab === 'scene' ? '场景' : '素材' }}
-                      </button>
-                    </div>
-
-                    <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
-                      <!-- Custom Duration Input -->
-                      <div v-if="mentionActiveTab === 'duration' || mentionActiveTab === 'all'" class="px-3 py-2 mb-1">
-                        <div class="flex gap-2">
-                          <el-input 
-                            v-model="customDuration" 
-                            size="small" 
-                            placeholder="自定义秒数..." 
-                            @keyup.enter="handleCustomDuration"
-                          />
-                          <button 
-                            @click="handleCustomDuration"
-                            class="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-[13px] font-bold hover:bg-indigo-700 transition-all shadow-md"
-                          >
-                            确定
-                          </button>
-                        </div>
-                      </div>
-
+                <!-- Edit Mode (TipTap) -->
+                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-6 pb-20">
+                  <div class="flex-1 overflow-y-auto custom-scrollbar">
+                    <editor-content :editor="editor" class="script-editor-content w-full h-full" />
+                  </div>
+                  
+                  <!-- @ Mention Popup (Teleported to body for top-level visibility) -->
+                  <teleport to="body">
+                    <transition name="el-zoom-in-top">
                       <div 
-                        v-for="(item, idx) in mentionItems" 
-                        :key="idx"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors group"
-                        :class="idx === selectedMentionIndex ? 'bg-indigo-50' : 'hover:bg-indigo-50/50'"
-                        @click="insertMention(item)"
+                        v-if="showMentionMenu" 
+                        ref="mentionMenuRef"
+                        class="fixed z-[9999] bg-white rounded-xl shadow-2xl border border-slate-100 p-2 min-w-[280px] max-w-[340px]"
+                        :style="mentionMenuStyle"
                       >
-                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50">
-                          <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover" />
-                          <el-icon v-else class="text-slate-400" size="18"><component :is="item.icon" /></el-icon>
+                        <!-- Search Bar (Optional visual indicator, synced with editor typing) -->
+                        <div class="mb-2 px-3 py-1.5 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
+                          <el-icon class="text-slate-400" size="14"><Search /></el-icon>
+                          <span class="text-[12px] text-slate-500 font-medium">搜索: </span>
+                          <span v-if="mentionSearch" class="text-[12px] text-indigo-600 font-bold">{{ mentionSearch }}</span>
+                          <span v-else class="text-[12px] text-slate-300">输入关键词...</span>
                         </div>
-                        <div class="flex flex-col min-w-0">
-                          <span class="text-[13px] font-bold text-slate-700 truncate">{{ item.name }}</span>
-                          <span class="text-[11px] text-slate-400 truncate leading-tight">{{ item.desc }}</span>
+
+                        <div class="flex gap-1 p-1 mb-2 bg-slate-50/50 rounded-lg shrink-0 overflow-x-auto custom-scrollbar">
+                          <button 
+                          v-for="tab in ['all', 'duration', 'character', 'scene', 'asset']" 
+                          :key="tab"
+                          @click="mentionActiveTab = tab"
+                          class="px-2 py-1 text-[10px] rounded-md transition-all whitespace-nowrap"
+                          :class="mentionActiveTab === tab ? 'bg-white text-indigo-600 shadow-sm font-bold' : 'text-slate-400 hover:text-slate-600'"
+                        >
+                          {{ tab === 'all' ? '全部' : tab === 'duration' ? '时长' : tab === 'character' ? '角色' : tab === 'scene' ? '场景' : '道具' }}
+                        </button>
                         </div>
-                        <div class="ml-auto text-indigo-400 transition-opacity" :class="idx === selectedMentionIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'">
-                          <el-icon><Select /></el-icon>
+
+                        <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
+                          <!-- Custom Duration Input -->
+                          <div v-if="mentionActiveTab === 'duration' || mentionActiveTab === 'all'" class="px-3 py-2 mb-1">
+                            <div class="flex gap-2">
+                              <el-input 
+                                v-model="customDuration" 
+                                size="small" 
+                                placeholder="自定义秒数..." 
+                                @keyup.enter="handleCustomDuration"
+                              />
+                              <button 
+                                @click="handleCustomDuration"
+                                class="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-[13px] font-bold hover:bg-indigo-700 transition-all shadow-md"
+                              >
+                                确定
+                              </button>
+                            </div>
+                          </div>
+
+                          <div 
+                            v-for="(item, idx) in mentionItems" 
+                            :key="idx"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors group"
+                            :class="idx === selectedMentionIndex ? 'bg-indigo-50' : 'hover:bg-indigo-50/50'"
+                            @click="insertMention(item)"
+                          >
+                            <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50">
+                              <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover" />
+                              <el-icon v-else class="text-slate-400" size="18"><component :is="item.icon" /></el-icon>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                              <span class="text-[13px] font-bold text-slate-700 truncate">{{ item.name }}</span>
+                              <span class="text-[11px] text-slate-400 truncate leading-tight">{{ item.desc }}</span>
+                            </div>
+                            <div class="ml-auto text-indigo-400 transition-opacity" :class="idx === selectedMentionIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'">
+                              <el-icon><Select /></el-icon>
+                            </div>
+                          </div>
+                          <div v-if="mentionItems.length === 0" class="py-8 text-center text-slate-400 text-[12px]">
+                            未找到相关项
+                          </div>
                         </div>
                       </div>
-                      <div v-if="mentionItems.length === 0" class="py-8 text-center text-slate-400 text-[12px]">
-                        未找到相关项
-                      </div>
+                    </transition>
+                  </teleport>
+
+                  <!-- Edit Action Buttons -->
+                  <div class="absolute bottom-6 right-6 flex justify-end gap-4 shrink-0">
+                    <button 
+                      @click="handleCancelEdit"
+                      class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 shadow-sm"
+                    >
+                      取消
+                    </button>
+                    <button 
+                      @click="handleSaveScriptInline"
+                      class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                    >
+                      保存
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Action Buttons Area (When not editing, displayed at the bottom of the script box) -->
+                <div v-if="!isEditingScript" class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-50 bg-white/50">
+                  <button 
+                    @click="handleEditScript"
+                    class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
+                  >
+                    <el-icon><Edit /></el-icon>
+                    <span>编辑脚本</span>
+                  </button>
+                  <button 
+                    @click="handleBatchGenerate"
+                    class="h-10 px-6 bg-slate-100 text-slate-500 border border-slate-200 rounded-full text-[14px] font-bold hover:bg-slate-200 transition-all shadow-md flex items-center gap-2 opacity-80"
+                  >
+                    <el-icon><MagicStick /></el-icon>
+                    <span>再次生成</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Preview/Status Placeholder -->
+              <div class="flex-1 rounded-xl bg-[#f8fafc] flex flex-col items-center justify-center border border-transparent overflow-hidden relative">
+                <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
+                  <!-- Blurred Background -->
+                  <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 backdrop-blur-xl transition-all duration-500"></div>
+                  <!-- Content -->
+                  <div class="relative flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
+                    <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-lg"></div>
+                    <div class="flex flex-col items-center gap-2">
+                      <span class="text-[18px] font-bold tracking-widest drop-shadow-md">生成中...</span>
+                      <span class="text-[13px] text-white/80 font-medium bg-black/10 px-4 py-1 rounded-full backdrop-blur-sm">大约还需 3 分钟</span>
                     </div>
                   </div>
-                </transition>
-
-                <!-- Edit Action Buttons -->
-                <div class="absolute bottom-6 right-6 flex justify-end gap-4 shrink-0">
-                  <button 
-                    @click="handleCancelEdit"
-                    class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 shadow-sm"
-                  >
-                    取消
-                  </button>
-                  <button 
-                    @click="handleSaveScriptInline"
-                    class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
-                  >
-                    保存
-                  </button>
                 </div>
-              </div>
-              
-              <!-- Floating Edit Button (Read-only mode) -->
-              <div v-if="!isEditingScript" class="absolute bottom-4 right-4 z-10 flex gap-3">
-                <button 
-                  @click="handleEditScript"
-                  class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
-                >
-                  <el-icon><Edit /></el-icon>
-                  <span>编辑脚本</span>
-                </button>
-                <button 
-                  @click="handleBatchGenerate"
-                  class="h-10 px-6 bg-slate-100 text-slate-500 border border-slate-200 rounded-full text-[14px] font-bold hover:bg-slate-200 transition-all shadow-md flex items-center gap-2 opacity-80"
-                >
-                  <el-icon><MagicStick /></el-icon>
-                  <span>再次生成</span>
-                </button>
-              </div>
-            </div>
 
-            <!-- Right: Preview/Status Placeholder -->
-            <div class="flex-1 rounded-xl bg-[#f8fafc] flex flex-col items-center justify-center min-h-[400px] border border-transparent overflow-hidden relative">
-              <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
-                <!-- Blurred Background -->
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 backdrop-blur-xl transition-all duration-500"></div>
-                <!-- Content -->
-                <div class="relative flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
-                  <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-lg"></div>
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="text-[18px] font-bold tracking-widest drop-shadow-md">生成中...</span>
-                    <span class="text-[13px] text-white/80 font-medium bg-black/10 px-4 py-1 rounded-full backdrop-blur-sm">大约还需 3 分钟</span>
+                <div v-else-if="currentPreview" class="w-full h-full relative rounded-xl overflow-hidden group bg-black">
+                  <video 
+                    :src="currentPreview" 
+                    class="w-full h-full object-contain"
+                    controls
+                    autoplay
+                    loop
+                    muted
+                  ></video>
+                  <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
+                    >
+                      <el-icon><RefreshRight /></el-icon>
+                    </button>
+                    <button 
+                      class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
+                    >
+                      <el-icon><FullScreen /></el-icon>
+                    </button>
                   </div>
                 </div>
-              </div>
-
-              <div v-else-if="currentPreview" class="w-full h-full relative rounded-xl overflow-hidden group bg-black">
-                <video 
-                  :src="currentPreview" 
-                  class="w-full h-full object-contain"
-                  controls
-                  autoplay
-                  loop
-                  muted
-                ></video>
-                <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
-                  >
-                    <el-icon><RefreshRight /></el-icon>
-                  </button>
-                  <button 
-                    class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
-                  >
-                    <el-icon><FullScreen /></el-icon>
-                  </button>
+                <div v-else class="flex flex-col items-center gap-4 text-slate-400 opacity-60">
+                  <!-- Film Icon SVG -->
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                    <line x="7" y1="2" x2="7" y2="22"></line>
+                    <line x1="17" y1="2" x2="17" y2="22"></line>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <line x1="2" y1="7" x2="7" y2="7"></line>
+                    <line x1="2" y1="17" x2="7" y2="17"></line>
+                    <line x1="17" y1="17" x2="22" y2="17"></line>
+                    <line x1="17" y1="7" x2="22" y2="7"></line>
+                  </svg>
+                  <span class="text-[14px] font-medium tracking-wide">未生成内容</span>
                 </div>
-              </div>
-              <div v-else class="flex flex-col items-center gap-4 text-slate-400 opacity-60">
-                <!-- Film Icon SVG -->
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                  <line x="7" y1="2" x2="7" y2="22"></line>
-                  <line x1="17" y1="2" x2="17" y2="22"></line>
-                  <line x1="2" y1="12" x2="22" y2="12"></line>
-                  <line x1="2" y1="7" x2="7" y2="7"></line>
-                  <line x1="2" y1="17" x2="7" y2="17"></line>
-                  <line x1="17" y1="17" x2="22" y2="17"></line>
-                  <line x1="17" y1="7" x2="22" y2="7"></line>
-                </svg>
-                <span class="text-[14px] font-medium tracking-wide">未生成内容</span>
               </div>
             </div>
           </div>
@@ -995,8 +1002,8 @@ const mentionItems = computed(() => {
       type: s.type,
       category: s.type === 'character' ? 'character' : s.type === 'scene' ? 'scene' : 'asset'
     })),
-    { name: '古风背景音', desc: '音频素材', icon: Headset, type: 'asset', category: 'asset' },
-    { name: '雨天特效', desc: '视频素材', icon: Film, type: 'asset', category: 'asset' },
+    { name: '古风背景音', desc: '音频道具', icon: Headset, type: 'asset', category: 'asset' },
+    { name: '雨天特效', desc: '视频道具', icon: Film, type: 'asset', category: 'asset' },
   ];
 
   let filtered = baseItems;
@@ -1043,22 +1050,30 @@ const editor = useEditor({
     const match = /@([^@\s]*)$/.exec(textBefore);
 
     if (match) {
-      showMentionMenu.value = true;
-      mentionSearch.value = match[1];
-      selectedMentionIndex.value = 0;
-      
-      // 更新位置
-      const view = editor.view;
-      const coords = view.coordsAtPos(from);
-      const container = view.dom.closest('.relative');
-      if (container) {
-        const rect = container.getBoundingClientRect();
-        mentionMenuStyle.value = {
-          top: `${coords.bottom - rect.top + 5}px`,
-          left: `${coords.left - rect.left}px`
-        };
-      }
-    } else {
+        showMentionMenu.value = true;
+        mentionSearch.value = match[1];
+        selectedMentionIndex.value = 0;
+        
+        // 更新位置 (Teleported to body, use fixed coordinates)
+        const view = editor.view;
+        // 计算 @ 符号起始位置的坐标，而不是当前光标位置
+        const anchorPos = from - match[0].length;
+        const coords = view.coordsAtPos(anchorPos);
+        
+        if (coords) {
+          // 考虑菜单宽度，防止右侧溢出视口
+          const menuWidth = 340; // 对应 max-w-[340px]
+          let left = coords.left;
+          if (left + menuWidth > window.innerWidth) {
+            left = window.innerWidth - menuWidth - 20; // 预留 20px 间距
+          }
+
+          mentionMenuStyle.value = {
+            top: `${coords.bottom + 10}px`, // 增加 10px 间距，看起来更舒服
+            left: `${Math.max(20, left)}px` // 确保左侧也不会溢出
+          };
+        }
+      } else {
       showMentionMenu.value = false;
     }
   },
@@ -1106,6 +1121,8 @@ const insertMention = (item: any) => {
     html = `<span class="mention-pill role"><img src="${item.image}" />${item.name}</span>&nbsp;`;
   } else if (item.type === 'scene') {
     html = `<span class="mention-pill location"><i class="location-icon"></i>${item.name}</span>&nbsp;`;
+  } else if (item.type === 'prop') {
+    html = `<span class="mention-pill prop"><i class="prop-icon"></i>${item.name}</span>&nbsp;`;
   } else {
     html = ` @${item.name} `;
   }
@@ -1257,12 +1274,12 @@ const timelineScenes = ref([
     duration: 6.0,
     progress: 0,
     script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
-生成一个由以下 3 个分镜组成的视频:<br>
+生成一个由以下 3 个镜头组成的视频:<br>
 场景: <br>
-分镜过渡: 镜头平滑切换, 从司仪转向主角, 焦点始终在舞台中央, 氛围喜庆。<br><br>
-分镜1 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 中景镜头, 从舞台正下方略仰视角度拍摄, 舞台中央位置, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 手持话筒, 面带职业微笑, 他的面部朝向台下的宾客, 视线扫过全场, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 说: 「今天, 是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。」 音色: 男声, 青年音色, 音调中等, 音色明亮圆润, 声音厚度适中, 发音标准, 气息沉稳, 吐字清晰, 字正腔圆, 富有亲和力与舞台感染力。 背景是鲜花簇拥的舞台和璀璨的水晶灯。 镜头静止。<br><br>
-分镜2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 右侧方与角色视线平齐高度拍摄。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 身着纯白礼服, 挽着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的手臂, 她仰起头, 侧脸对着镜头, 面部朝向身旁的 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span>, 视线充满爱意地聚焦于他的脸庞, 脸上洋溢着幸福的笑容, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 说: 「承泽, 我好像在做梦。」 音色: 女声, 青年音色, 音调中等偏高, 音色质感明亮、清脆, 声音清亮柔和, 发音方式干净, 气息充沛平稳, 吐字清晰, 带有一种与生俱来的温婉与真诚感。 聚光灯照在他们身上。<br><br>
-分镜3 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 过肩近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 的背后拍摄, 焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的脸上。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 低下头, 温柔地凝视着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 他的面部朝向 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 眼神专注而深情, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 说: 「念安, 这不是梦。从今天起, 你就是我唯一的未婚妻。」 音色: 男声, 青年音色, 音调中等, 音色质感干净但偏扁平, 声音不够厚重, 发音方式清晰, 但语速偏快且气息不稳, 尤其在紧张时会带有轻微的颤抖, 吐字清晰却缺乏力量感, 常在句末音量减弱, 给人一种底气不足的感觉。 镜头缓慢向前推进, 加强情感氛围。`
+镜头过渡: 镜头平滑切换, 从司仪转向主角, 焦点始终在舞台中央, 氛围喜庆。<br><br>
+镜头1 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 中景镜头, 从舞台正下方略仰视角度拍摄, 舞台中央位置, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 手持话筒, 面带职业微笑, 他的面部朝向台下的宾客, 视线扫过全场, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 说: 「今天, 是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。」 音色: 男声, 青年音色, 音调中等, 音色明亮圆润, 声音厚度适中, 发音标准, 气息沉稳, 吐字清晰, 字正腔圆, 富有亲和力与舞台感染力。 背景是鲜花簇拥的舞台和璀璨的水晶灯。 镜头静止。<br><br>
+镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 右侧方与角色视线平齐高度拍摄。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 身着纯白礼服, 挽着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的手臂, 她仰起头, 侧脸对着镜头, 面部朝向身旁的 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span>, 视线充满爱意地聚焦于他的脸庞, 脸上洋溢着幸福的笑容, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 说: 「承泽, 我好像在做梦。」 音色: 女声, 青年音色, 音调中等偏高, 音色质感明亮、清脆, 声音清亮柔和, 发音方式干净, 气息充沛平稳, 吐字清晰, 带有一种与生俱来的温婉与真诚感。 聚光灯照在他们身上。<br><br>
+镜头3 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 过肩近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 的背后拍摄, 焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的脸上。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 低下头, 温柔地凝视着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 他的面部朝向 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 眼神专注而深情, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 说: 「念安, 这不是梦。从今天起, 你就是我唯一的未婚妻。」 音色: 男声, 青年音色, 音调中等, 音色质感干净但偏扁平, 声音不够厚重, 发音方式清晰, 但语速偏快且气息不稳, 尤其在紧张时会带有轻微的颤抖, 吐字清晰却缺乏力量感, 常在句末音量减弱, 给人一种底气不足的感觉。 镜头缓慢向前推进, 加强情感氛围。`
   },
   { 
     id: 'scene-2',
@@ -1271,7 +1288,7 @@ const timelineScenes = ref([
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     duration: 4.0,
     progress: 0,
-    script: `分镜2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
+    script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
   },
 ]);
 
@@ -1509,24 +1526,13 @@ const onVideoLoaded = () => {
 };
 
 const handleSynthesisVideoError = () => {
-  if (synthesisVideoCandidateIndex.value >= synthesisVideoCandidates.length - 1) {
-    ElMessage.error('合成视频加载失败，请检查视频文件路径');
-    return;
+  console.error('Synthesis video load error, trying next candidate...');
+  synthesisVideoCandidateIndex.value++;
+  if (synthesisVideoCandidateIndex.value < synthesisVideoCandidates.length) {
+    fullSynthesisVideoUrl.value = synthesisVideoCandidates[synthesisVideoCandidateIndex.value];
+  } else {
+    ElMessage.error('无法加载合成视频，请检查网络或资源文件');
   }
-  synthesisVideoCandidateIndex.value += 1;
-  fullSynthesisVideoUrl.value = synthesisVideoCandidates[synthesisVideoCandidateIndex.value];
-  nextTick(() => {
-    if (fullVideoRef.value) {
-      fullVideoRef.value.load();
-      fullVideoRef.value.play().catch(() => {});
-    }
-  });
-};
-
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
 const seekVideo = (e: MouseEvent) => {
@@ -1536,28 +1542,78 @@ const seekVideo = (e: MouseEvent) => {
   fullVideoRef.value.currentTime = pos * duration.value;
 };
 
+const formatTime = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
+
 const toggleFullScreen = () => {
-  if (!fullVideoRef.value) return;
-  if (fullVideoRef.value.requestFullscreen) {
-    fullVideoRef.value.requestFullscreen();
+  if (fullVideoRef.value) {
+    if (fullVideoRef.value.requestFullscreen) {
+      fullVideoRef.value.requestFullscreen();
+    }
   }
 };
 
 const downloadVideo = () => {
-  const videoUrl = fullSynthesisVideoUrl.value || episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo;
-  if (!videoUrl) return;
+  ElMessage.success(`视频正在以 ${exportConfig.resolution} 分辨率导出...`);
+  setTimeout(() => {
+    ElMessage.success('导出成功，请在下载目录查看');
+  }, 1500);
+};
+
+// --- Single Scene Generation Mock ---
+const handleGenerateSingleScene = (idx: number) => {
+  if (timelineScenes.value[idx]) {
+    timelineScenes.value[idx].status = 'generating';
+    timelineScenes.value[idx].progress = 0;
+    
+    const interval = setInterval(() => {
+      timelineScenes.value[idx].progress += 5;
+      if (timelineScenes.value[idx].progress >= 100) {
+        clearInterval(interval);
+        timelineScenes.value[idx].status = 'success';
+        timelineScenes.value[idx].video = '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4';
+        ElMessage.success(`分镜 ${idx + 1} 生成成功`);
+      }
+    }, 100);
+  }
+};
+
+const handleBatchGenerate = () => {
+  const targets = isMultiSelectMode.value ? selectedScenes.value : [currentSceneIdx.value];
+  if (targets.length === 0) return ElMessage.warning('请先选择要生成的分镜');
   
-  const link = document.createElement('a');
-  link.href = videoUrl;
-  link.download = `full_episode_${exportConfig.resolution}${exportConfig.watermark === 'brand' ? '_wm' : ''}.mp4`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  ElMessage.success(`正在以 ${exportConfig.resolution.toUpperCase()} 格式导出全集视频...`);
+  ElMessage.success(`开始批量生成 ${targets.length} 个分镜...`);
+  targets.forEach(idx => handleGenerateSingleScene(idx));
+};
+
+const handleSynthesis = () => {
+  isSynthesizing.value = true;
+  synthesisProgress.value = 0;
+  showSynthesisConfig.value = true;
+  
+  const timer = setInterval(() => {
+    synthesisProgress.value += 1;
+    if (synthesisProgress.value >= 100) {
+      clearInterval(timer);
+      isSynthesizing.value = false;
+      isSynthesisCompleted.value = true;
+      fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
+      ElMessage.success('全集视频合成成功');
+    }
+  }, 50);
+};
+
+const handlePreviewFull = () => {
+  isSynthesisCompleted.value = true;
+  fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
+  showSynthesisConfig.value = true;
 };
 
 const isAllScenesGenerated = computed(() => {
-  return timelineScenes.value.length > 0 && timelineScenes.value.every(s => s.status === 'success' && s.video);
+  return timelineScenes.value.every(s => s.status === 'success');
 });
 
 const canSynthesizeAll = computed(() => {
@@ -1565,448 +1621,167 @@ const canSynthesizeAll = computed(() => {
 });
 
 const synthesisTooltip = computed(() => {
-  if (!bgmConfig.confirmed) return '请先生成背景音乐';
   if (!isAllScenesGenerated.value) return '请先生成所有分镜视频';
+  if (!bgmConfig.confirmed) return '请先配置背景音乐';
   return '';
 });
 
-const handleGenerateSingleScene = (idx: number) => {
-  const scene = timelineScenes.value[idx];
-  if (scene.status === 'generating') return;
-  
-  scene.status = 'generating';
-  scene.progress = 0;
-  
-  const interval = setInterval(() => {
-    scene.progress += Math.floor(Math.random() * 10) + 5;
-    if (scene.progress >= 100) {
-      scene.progress = 100;
-      clearInterval(interval);
-      setTimeout(() => {
-        scene.status = 'success';
-        scene.video = idx === 1 
-          ? '/src/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4' 
-          : 'https://www.w3schools.com/html/mov_bbb.mp4';
-        ElMessage.success(`分镜 ${idx + 1} 视频生成成功！`);
-      }, 500);
-    }
-  }, 500);
-};
-
-const handleBatchGenerate = () => {
-  // 如果没有在多选模式，或者在多选模式但没有选中任何分镜，则生成当前分镜
-  if (!isMultiSelectMode.value || selectedScenes.value.length === 0) {
-    handleGenerateSingleScene(currentSceneIdx.value);
-  } else {
-    // 多选模式且有选中的分镜
-    ElMessage.success(`开始批量生成 ${selectedScenes.value.length} 个分镜`);
-    selectedScenes.value.forEach(idx => {
-      handleGenerateSingleScene(idx);
-    });
-  }
-  
-  // 重置模式
-  isMultiSelectMode.value = false;
-  selectedScenes.value = [];
-};
-
 const handleExport = () => {
-  const currentVideo = timelineScenes.value[currentSceneIdx.value]?.video;
-  if (currentVideo) {
-    const link = document.createElement('a');
-    link.href = currentVideo;
-    link.download = `storyboard-${currentSceneIdx.value + 1}.mp4`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    ElMessage.success('正在导出当前分镜视频...');
-  } else {
-    ElMessage.warning('当前分镜尚未生成视频');
-  }
+  ElMessage.success('正在准备导出数据...');
 };
 
-const handleSynthesis = () => {
-  if (!canSynthesizeAll.value) return;
-  isSynthesisCompleted.value = false;
-  synthesisVideoCandidateIndex.value = 0;
-  fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
-  showSynthesisConfig.value = true;
-  startSynthesis();
+const handleEpisodeSwitch = (id: string) => {
+  router.push({ query: { ...route.query, id } });
+  ElMessage.info(`已切换至 ${episodeStore.episodes.find(e => e.id === id)?.title}`);
 };
 
-const handlePreviewFull = () => {
-  const currentEp = episodeStore.episodes.find(e => e.id === episodeId);
-  if (isSynthesisCompleted.value || currentEp?.synthesisVideo) {
-    if (currentEp?.synthesisVideo) {
-      fullSynthesisVideoUrl.value = currentEp.synthesisVideo;
-    }
-    isSynthesizing.value = false;
-    isSynthesisCompleted.value = true;
-    showSynthesisConfig.value = true;
-    
-    // 确保视频可以正常加载和播放
-    nextTick(() => {
-      if (fullVideoRef.value) {
-        fullVideoRef.value.load();
-        fullVideoRef.value.play().catch(e => console.error("Preview play prevented", e));
-      }
-    });
-  }
-};
-
-const startSynthesis = () => {
-  isSynthesizing.value = true;
-  synthesisProgress.value = 0;
-  
-  // 模拟提交任务
-  setTimeout(() => {
-    const timer = setInterval(() => {
-      // 在 10-99% 之间随机递增
-      if (synthesisProgress.value < 99) {
-        synthesisProgress.value += Math.floor(Math.random() * 5) + 2;
-        if (synthesisProgress.value > 99) synthesisProgress.value = 99;
-      } else {
-        // 完成合成
-        clearInterval(timer);
-        synthesisProgress.value = 100;
-        setTimeout(() => {
-          isSynthesizing.value = false;
-          synthesisVideoCandidateIndex.value = 0;
-          fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
-          isSynthesisCompleted.value = true;
-          episodeStore.updateEpisode(episodeId, { 
-            synthesisStatus: 'success',
-            synthesisVideo: fullSynthesisVideoUrl.value
-          });
-          
-          nextTick(() => {
-            if (fullVideoRef.value) {
-              fullVideoRef.value.load();
-              fullVideoRef.value.play().catch(e => console.error("Auto-play prevented", e));
-            }
-          });
-          
-          ElMessage.success('全集合成完成！');
-        }, 500);
-      }
-    }, 400);
-  }, 1500); // 1.5秒提交状态
-};
+const episodeId = computed(() => route.query.id as string);
+const episode = computed(() => episodeStore.episodes.find(e => e.id === episodeId.value));
+const episodeNotFound = computed(() => episodeId.value && !episode.value);
 
 const addTimelineScene = () => {
-  timelineScenes.value.push({ 
-    id: `scene-${Date.now()}`,
-    status: 'pending', 
+  const newId = `scene-${timelineScenes.value.length + 1}`;
+  timelineScenes.value.push({
+    id: newId,
+    status: 'pending',
     video: null,
-    image: '',
-    duration: 0,
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
+    duration: 5.0,
     progress: 0,
     script: ''
   });
-  currentSceneIdx.value = timelineScenes.value.length - 1;
-};
-
-const deleteCurrentScene = () => {
-  if (timelineScenes.value.length <= 1) return ElMessage.warning('至少保留一个分镜');
-  timelineScenes.value.splice(currentSceneIdx.value, 1);
-  if (currentSceneIdx.value >= timelineScenes.value.length) currentSceneIdx.value = timelineScenes.value.length - 1;
 };
 
 const deleteScene = (idx: number) => {
-  if (timelineScenes.value.length <= 1) return ElMessage.warning('至少保留一个分镜');
-  ElMessageBox.confirm('项目被删除后，将不可恢复，请确认要删除吗?', '删除当前片段?', {
+  ElMessageBox.confirm('确定要删除这个分镜吗？', '删除分镜', {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
-    type: 'warning',
-    customClass: 'delete-confirm-dialog', // Add a custom class for styling
-  })
-    .then(() => {
-      console.log('Before delete - timelineScenes:', timelineScenes.value.length, timelineScenes.value);
-      console.log('Before delete - currentSceneIdx:', currentSceneIdx.value);
-      
-      timelineScenes.value.splice(idx, 1);
-      
-      // Adjust currentSceneIdx if the deleted scene was before or is the current scene
-      if (idx < currentSceneIdx.value) {
-        currentSceneIdx.value--;
-      } else if (idx === currentSceneIdx.value && currentSceneIdx.value === timelineScenes.value.length) {
-        // If the last scene was deleted and it was the current one, move to the new last scene
-        currentSceneIdx.value--;
-      }
-      
-      console.log('After delete - timelineScenes:', timelineScenes.value.length, timelineScenes.value);
-      console.log('After delete - currentSceneIdx:', currentSceneIdx.value);
-      
-      ElMessage.success('删除成功');
-    })
-    .catch(() => {});
+    type: 'warning'
+  }).then(() => {
+    timelineScenes.value.splice(idx, 1);
+    if (currentSceneIdx.value >= timelineScenes.value.length) {
+      currentSceneIdx.value = Math.max(0, timelineScenes.value.length - 1);
+    }
+  });
 };
-
-// Setup
-const episodeId = route.params.id as string;
-const episode = ref<any>(null);
-const episodeNotFound = ref(false);
 
 onMounted(() => {
-  const found = episodeStore.episodes.find(e => e.id === episodeId);
-  if (found) {
-    episode.value = found;
-  } else {
-    episodeNotFound.value = true;
+  if (currentScript.value) {
+    editor.value?.commands.setContent(currentScript.value);
   }
-  
-  setTimeout(() => showGuide.value = true, 1000);
-});
-
-const goBack = () => router.back();
-
-const handleEpisodeSwitch = (id: string) => {
-  if (id === episodeId) return;
-  router.push({
-    path: `/storyboard/${id}`,
-    query: { subjectId: episodeStore.subjectId }
-  });
-  // 因为是同一个组件，需要手动刷新数据
-  const found = episodeStore.episodes.find(e => e.id === id);
-  if (found) {
-    episode.value = found;
-    episodeNotFound.value = false;
-  }
-};
-
-// Expose internal state for testing
-defineExpose({
-  searchQuery,
-  filteredCharacters,
-  filteredScenes,
-  filteredProps,
-  handleGenerateSingleScene,
-  timelineScenes,
-  addTimelineScene,
-  deleteCurrentScene,
-  startSynthesis,
-  isSynthesizing,
-  synthesisProgress,
-  currentSceneIdx,
-  handleEpisodeSwitch,
-  handlePreviewFull
 });
 </script>
 
-<style>
-.mention-pill {
+<style scoped>
+/* TipTap Styling */
+:deep(.script-editor-content) {
+  height: 100%;
+}
+:deep(.ProseMirror) {
+  min-height: 100%;
+}
+:deep(.ProseMirror p) {
+  margin: 0;
+}
+
+/* Mention Pill Styles */
+:deep(.mention-pill) {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: 6px;
+  font-weight: 700;
   font-size: 13px;
-  font-weight: 500;
-  margin: 0 4px;
-  border: 1px solid #e2e8f0;
-  line-height: 1.4;
+  margin: 0 2px;
   vertical-align: middle;
-  background-color: #f1f5f9;
-  color: #475569;
-  transition: all 0.2s ease;
-  cursor: default;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.mention-pill:hover {
-  border-color: #cbd5e1;
-  background-color: #e2e8f0;
+:deep(.mention-pill.duration) {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #dcfce7;
 }
 
-.mention-pill i {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-right: 4px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.7;
+:deep(.mention-pill.role) {
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fce7f3;
 }
 
-.mention-pill.location i.location-icon {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E");
+:deep(.mention-pill.location) {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
 }
 
-.mention-pill.duration i.timer-icon {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+:deep(.mention-pill.prop) {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #ffedd5;
 }
 
-.mention-pill.role {
-  padding-left: 2px;
-  background-color: #f1f5f9;
-  color: #334155;
-  border-color: #e2e8f0;
-}
-
-.mention-pill.role img {
-  width: 20px;
-  height: 20px;
+:deep(.mention-pill img) {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  margin-right: 6px;
-  object-fit: cover;
-  border: 1px solid #fff;
+  object-cover: cover;
 }
 
-.mention-pill.location {
-  color: #64748b;
-  background-color: #f8fafc;
-}
+:deep(.timer-icon::before) { content: "⏱️"; }
+:deep(.location-icon::before) { content: "📍"; }
+:deep(.prop-icon::before) { content: "📦"; }
 
-.mention-pill.duration {
-  color: #64748b;
-  background-color: #f8fafc;
-}
-
-/* TipTap Editor Styles */
-.script-editor-content .ProseMirror {
-  min-height: 400px;
-  outline: none;
-  padding: 0;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1.8;
-  color: #334155;
-}
-
-.script-editor-content .ProseMirror p {
-  margin-bottom: 0.8em;
-}
-
-/* Ensure pills look correct inside editor */
-.script-editor-content .ProseMirror .mention-pill {
-  cursor: text;
-}
-
-.search-input .el-input__wrapper {
-  border-radius: 8px;
-  background-color: #f8fafc;
-}
-
-.theme-primary-btn {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  border: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-primary-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-  opacity: 0.9;
-}
-
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: rgba(148, 163, 184, 0.2);
   border-radius: 10px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: rgba(99, 102, 241, 0.4);
 }
 
-.synthesis-progress-dialog :deep(.el-dialog__header) {
-  padding: 20px 24px;
-  margin-right: 0;
-  border-bottom: 1px solid #f1f5f9;
+.custom-select-transparent :deep(.el-select__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  font-weight: bold;
+  color: #475569;
 }
 
-.synthesis-progress-dialog :deep(.el-dialog__body) {
-  padding: 0;
+/* Checkbox Styles */
+:deep(.custom-button-checkbox) {
+  height: auto;
 }
-
-.synthesis-progress-dialog :deep(.el-dialog) {
-  border-radius: 20px;
-  overflow: hidden;
+:deep(.custom-timeline-checkbox .el-checkbox__inner) {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
 }
 
 /* Animations */
-@keyframes fade-in {
+.theme-primary-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+}
+.theme-primary-btn:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-@keyframes zoom-in {
-  from { transform: scale(0.95); }
-  to { transform: scale(1); }
-}
-
-@keyframes slide-in-from-left {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-.custom-button-checkbox {
-  height: auto !important;
-}
-
-.custom-button-checkbox :deep(.el-checkbox__inner) {
-  border-radius: 4px;
-  width: 14px;
-  height: 14px;
-  border-color: #e2e8f0;
-}
-
-.custom-button-checkbox.is-checked :deep(.el-checkbox__inner) {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
-}
-
-.custom-button-checkbox :deep(.el-checkbox__input.is-indeterminate .el-checkbox__inner) {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
-}
-
-.custom-timeline-checkbox :deep(.el-checkbox__inner) {
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  border: 2px solid #fff;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-timeline-checkbox.is-checked :deep(.el-checkbox__inner) {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
-}
-
 .animate-in {
-  animation-fill-mode: both;
-}
-
-.fade-in {
-  animation-name: fade-in;
-}
-
-.zoom-in {
-  animation-name: zoom-in;
-}
-
-.slide-in-from-left {
-  animation-name: slide-in-from-left;
-  animation-duration: 300ms;
-}
-
-.duration-500 {
-  animation-duration: 500ms;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+  animation: fadeIn 0.3s ease-out;
 }
 </style>

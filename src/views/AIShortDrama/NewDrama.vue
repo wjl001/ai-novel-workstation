@@ -47,7 +47,7 @@
                   <textarea 
                     v-model="aiPrompt"
                     class="relative w-full h-40 md:h-44 resize-none bg-slate-50/50 dark:bg-slate-900/50 border-2 border-slate-100/50 dark:border-slate-700/50 focus:border-indigo-500/20 rounded-[28px] outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 text-[18px] p-7 transition-all font-bold leading-relaxed shadow-inner"
-                    placeholder="在此输入你构想的故事内容。例如：一个穷小子意外获得超能力，重返校园改写人生..."
+                    placeholder="在此输入你构想的故事内容。可以尝试输入这些要素:故事设定、主角特征、剧情脉络、最终结局等等"
                   ></textarea>
                   <button 
                     class="absolute bottom-5 right-5 flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-[13px] font-black text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all shadow-md hover:shadow-lg active:scale-95"
@@ -324,8 +324,16 @@ const getFeatureColorClass = (key: string) => {
 const applyAssistant = (key: string) => {
   showAssistant.value = false;
   isGenerating.value = true;
+
+  const mockPrompts: Record<string, string> = {
+    generate: `【剧本大纲生成】\n剧名：《逆袭：从赘婿到世界首富》\n故事设定：现代都市，隐藏身份的顶级豪门继承人沈浩。\n主角特征：沈浩（隐忍、睿智），苏晴（坚韧、美丽）。\n剧情脉络：\n1. 沈浩入赘苏家三年，受尽羞辱，只为守护报恩。\n2. 苏家面临破产危机，竞争对手赵公子步步紧逼。\n3. 沈浩在关键时刻动用百亿财团资源，反杀赵家，震惊全城。\n最终结局：沈浩身份揭晓，两人携手登顶商界巅峰，让所有看不起他的人悔恨终生。`,
+    polish: `【文本润色】\n沈浩冷冷地看着赵公子：“你说苏家不配，那我配吗？”他随手丢出一张通体漆黑的至尊龙卡。赵公子的脸色瞬间从张狂变得煞白，冷汗顺着额头流下。这张卡，全球仅此一张，代表着那个富可敌国的沈氏家族！`,
+    expand: `【情节扩写】\n昏暗的走廊里，苏晴紧紧攥着那份破产协议，指尖因为用力而泛白。沈浩走到她身后，轻轻拍了拍她的肩膀，声音低沉而有力：“别怕，有我在。”苏晴猛地转过头，在沈浩那双平日里平淡无奇的眸子里，她第一次看到了足以吞噬一切的深邃与霸气。`,
+    rewrite: `【创意改写】\n如果沈浩不是为了报恩入赘，而是为了寻找失踪的亲生父亲而潜伏呢？他每在苏家受一次委屈，就离真相更近一步。当他最终发现苏家老爷子正是当年陷害父亲的真凶之一，他该如何在爱人与仇恨之间做出最终的抉择？`
+  };
+
   setTimeout(() => {
-    aiPrompt.value = '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
+    aiPrompt.value = mockPrompts[key] || '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
     isGenerating.value = false;
   }, 1000);
 };
