@@ -193,7 +193,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
-import s from './EpisodesView.module.scss';
+import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
 
 // Components
 import EpisodesEditDrawer from '@/components/episode/EpisodesEditDrawer.vue';
