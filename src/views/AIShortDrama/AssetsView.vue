@@ -7,7 +7,7 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 角色 <span class="text-slate-400 font-normal ml-1">({{ characters.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
             <button 
               @click="addAsset('character')"
@@ -32,9 +32,9 @@
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                  <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-400">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
-                    <span class="text-[13px]">暂无画面</span>
+                    <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- Overlay Action -->
                   <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
@@ -44,8 +44,8 @@
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
-                  <div class="font-bold text-[15px] text-slate-800 truncate">{{ char.name }}</div>
-                  <div class="text-[12px] text-slate-500 line-clamp-2 leading-relaxed" :title="char.description">{{ char.description || '暂无描述' }}</div>
+                  <div class="font-bold text-[16px] text-slate-800 truncate">{{ char.name }}</div>
+                  <div class="text-[13px] text-slate-600 line-clamp-2 leading-relaxed" :title="char.description">{{ char.description || '暂无描述' }}</div>
                 </div>
               </div>
             </div>

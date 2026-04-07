@@ -76,7 +76,7 @@
           <div v-else class="space-y-5 animate-fade-in">
             <div class="grid grid-cols-1 gap-5">
               <div class="space-y-1.5">
-                <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                   剧本类型 <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
                 </label>
                 <el-select v-model="form.scriptType" class="modern-select w-full" placeholder="请选择剧本类型">
@@ -87,7 +87,7 @@
               </div>
 
               <div class="space-y-1.5">
-                <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                   题材 <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
                 </label>
                 <el-select v-model="form.genre" class="modern-select w-full" placeholder="请选择题材">
@@ -96,14 +96,14 @@
               </div>
 
               <div class="space-y-1.5">
-                <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                   时代背景 <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
                 </label>
                 <el-input v-model="form.eraBackground" placeholder="例如：现代都市" class="modern-input" />
               </div>
 
               <div class="space-y-1.5">
-                <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                   目标受众 <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
                 </label>
                 <el-input v-model="form.targetAudience" placeholder="例如：18-35岁女性" class="modern-input" />
@@ -111,11 +111,11 @@
 
               <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
-                  <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest">集数</label>
+                  <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest">集数</label>
                   <el-input-number v-model="form.episodesCount" :min="1" :max="1000" class="modern-number-input !w-full" controls-position="right" />
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest">时长 (秒)</label>
+                  <label class="text-[13px] font-black text-slate-500 uppercase tracking-widest">时长 (秒)</label>
                   <el-input-number v-model="form.expectedDuration" :min="1" :max="10000" class="modern-number-input !w-full" controls-position="right" />
                 </div>
               </div>
@@ -140,12 +140,12 @@
                     </button>
                   </template>
                   <div class="p-1 space-y-3">
-                    <p class="text-[12px] font-black text-slate-400 uppercase">AI 生成指令</p>
+                    <p class="text-[13px] font-black text-slate-500 uppercase">AI 生成指令</p>
                     <el-input v-model="aiPromptInput" type="textarea" :rows="3" placeholder="描述你想要的背景细节..." class="modern-textarea-small" />
                     <div class="flex justify-end gap-2">
-                      <button @click="handleAIGenerateAction('background', 'cancel')" class="px-3 py-1.5 rounded-xl text-[11px] font-black bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all">取消</button>
-                      <button @click="handleAIGenerateAction('background', 'append')" class="px-3 py-1.5 rounded-xl text-[11px] font-black bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all">追加</button>
-                      <button @click="handleAIGenerateAction('background', 'replace')" class="px-4 py-1.5 rounded-xl text-[11px] font-black bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">替换</button>
+                      <button @click="handleAIGenerateAction('background', 'cancel')" class="px-3 py-1.5 rounded-xl text-[12px] font-black bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all">取消</button>
+                      <button @click="handleAIGenerateAction('background', 'append')" class="px-3 py-1.5 rounded-xl text-[12px] font-black bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all">追加</button>
+                      <button @click="handleAIGenerateAction('background', 'replace')" class="px-4 py-1.5 rounded-xl text-[12px] font-black bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">替换</button>
                     </div>
                   </div>
                 </el-popover>
@@ -207,12 +207,12 @@
         <div v-show="activeLeftTab === 'episode-outline'" class="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-5 min-h-0 animate-fade-in">
           <div class="flex items-center justify-between mb-2">
             <div class="flex flex-col">
-              <span class="text-[16px] font-black text-slate-800 dark:text-white">分集列表</span>
-              <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">Total {{ form.episodesData.length }} Episodes</span>
+              <span class="text-[17px] font-black text-slate-800 dark:text-white">分集列表</span>
+              <span class="text-[12px] text-slate-500 font-black uppercase tracking-widest">Total {{ form.episodesData.length }} Episodes</span>
             </div>
             <button 
               @click="addEpisode"
-              class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+              class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[13px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
             >
               <el-icon><Plus /></el-icon> 新增分集
             </button>
@@ -252,16 +252,16 @@
 
                 <div class="space-y-4 pl-2">
                   <div class="space-y-1">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">剧情梗概</label>
+                    <label class="text-[13px] font-black text-slate-600 uppercase tracking-tight">剧情梗概</label>
                     <el-input v-model="ep.summary" type="textarea" :rows="2" placeholder="这一集讲了什么？" class="modern-textarea-v2" />
                   </div>
                   <div class="grid grid-cols-1 gap-3">
                     <div class="space-y-1">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">核心场景</label>
+                      <label class="text-[13px] font-black text-slate-600 uppercase tracking-tight">核心场景</label>
                       <el-input v-model="ep.scenes" placeholder="地点、时间..." class="modern-input-v2" prefix-icon="Location" />
                     </div>
                     <div class="space-y-1">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">登场角色</label>
+                      <label class="text-[13px] font-black text-slate-600 uppercase tracking-tight">登场角色</label>
                       <el-input v-model="ep.characters" placeholder="谁在这一集出现？" class="modern-input-v2" prefix-icon="User" />
                     </div>
                   </div>
@@ -292,10 +292,10 @@
               <el-icon :size="20"><Edit /></el-icon>
             </div>
             <div>
-              <h3 class="text-[17px] font-black text-slate-800 dark:text-white flex items-center gap-2">
+              <h3 class="text-[18px] font-black text-slate-800 dark:text-white flex items-center gap-2">
                 剧本正文
               </h3>
-              <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Script Content Editing</p>
+              <p class="text-[12px] text-slate-500 font-black uppercase tracking-widest mt-0.5">Script Content Editing</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -395,7 +395,7 @@
         </div>
 
         <!-- Tiptap Footer Stats -->
-        <div class="h-14 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 text-[11px] font-black text-slate-400 bg-white dark:bg-slate-800 shrink-0">
+        <div class="h-14 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 text-[13px] font-black text-slate-500 bg-white dark:bg-slate-800 shrink-0">
           <div class="flex items-center gap-6 uppercase tracking-widest">
             <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 字数: {{ tiptapEditor?.storage.characterCount.characters() || 0 }}</span>
             <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> 预计阅读: {{ Math.ceil((tiptapEditor?.storage.characterCount.words() || 0) / 250) }} 分钟</span>
@@ -959,11 +959,12 @@ const scriptBodyRef = ref<HTMLElement | null>(null);
   border-radius: 20px !important;
   border: 1.5px solid #F1F5F9 !important;
   padding: 12px 16px !important;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   resize: none;
   transition: all 0.3s ease;
   box-shadow: none !important;
+  color: #1e293b;
 }
 .dark :deep(.modern-textarea .el-textarea__inner) {
   background-color: rgba(15, 23, 42, 0.5) !important;
@@ -975,18 +976,20 @@ const scriptBodyRef = ref<HTMLElement | null>(null);
   background-color: #F8FAFC !important;
   border-radius: 12px !important;
   border: 1px solid #F1F5F9 !important;
-  font-size: 12px;
-  padding: 8px 12px !important;
+  font-size: 15px;
+  padding: 10px 14px !important;
   resize: none;
   box-shadow: none !important;
+  color: #1e293b;
 }
 
 :deep(.modern-input-v2 .el-input__wrapper) {
   background-color: #F8FAFC !important;
   border-radius: 12px !important;
   border: 1px solid #F1F5F9 !important;
-  font-size: 12px;
+  font-size: 15px;
   box-shadow: none !important;
+  color: #1e293b;
 }
 
 :deep(.modern-chat-input .el-input__wrapper) {
@@ -1006,9 +1009,9 @@ const scriptBodyRef = ref<HTMLElement | null>(null);
 /* Prose Modern Styling */
 .prose-modern {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #334155;
+  color: #1e293b;
   line-height: 1.8;
-  font-size: 16px;
+  font-size: 18px;
 }
 .dark .prose-modern {
   color: #CBD5E1;

@@ -112,11 +112,11 @@
         <!-- Subject Library Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
           <div class="p-5 border-b border-slate-50 flex justify-between items-center shrink-0">
-            <span class="font-bold text-[14px] text-slate-800 tracking-wide">主体库</span>
+            <span class="font-bold text-[16px] text-slate-800 tracking-wide">主体库</span>
             <el-tooltip content="打开主体库弹窗" placement="top">
               <button 
                 @click="showLibraryModal = true"
-                class="text-slate-400 hover:text-indigo-600 transition-colors"
+                class="text-slate-500 hover:text-indigo-600 transition-colors"
               >
                 <el-icon size="20"><Plus /></el-icon>
               </button>
@@ -126,12 +126,12 @@
           <div class="flex-1 overflow-y-auto custom-scrollbar p-5 pb-10">
             <!-- Character Category -->
             <div class="mb-8">
-              <div class="flex items-center justify-between mb-4 text-slate-400">
+              <div class="flex items-center justify-between mb-4 text-slate-500">
                 <div class="flex items-center gap-2">
-                  <el-icon size="14"><User /></el-icon>
-                  <span class="text-[13px] font-medium tracking-wider">角色 ({{ filteredCharacters.length }})</span>
+                  <el-icon size="16"><User /></el-icon>
+                  <span class="text-[14px] font-black tracking-wider">角色 ({{ filteredCharacters.length }})</span>
                 </div>
-                <button class="text-indigo-400 hover:text-indigo-600 transition-colors" @click="handleAddSubject('character')">
+                <button class="text-indigo-500 hover:text-indigo-600 transition-colors" @click="handleAddSubject('character')">
                   <el-icon><Plus /></el-icon>
                 </button>
               </div>
@@ -140,7 +140,7 @@
                   <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md flex items-center justify-center p-1">
                     <!-- Delete Button -->
                     <button 
-                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
+                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-500 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                       @click.stop="handleDeleteSubject(char)"
                     >
                       <el-icon><Delete /></el-icon>
@@ -148,7 +148,7 @@
                     <!-- White Circle for Avatar -->
                     <div class="w-20 h-20 rounded-full bg-slate-50 overflow-hidden flex items-center justify-center relative">
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover" loading="lazy" />
-                      <el-icon v-else size="32" class="text-slate-200"><User /></el-icon>
+                      <el-icon v-else size="32" class="text-slate-300"><User /></el-icon>
                     </div>
                     
                     <!-- Hover Overlay with Edit Icon -->
@@ -161,19 +161,19 @@
                       </button>
                     </div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name }}</span>
+                  <span class="text-[13px] text-slate-800 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Scene Category -->
             <div class="mb-8">
-              <div class="flex items-center justify-between mb-4 text-slate-400">
+              <div class="flex items-center justify-between mb-4 text-slate-500">
                 <div class="flex items-center gap-2">
-                  <el-icon size="14"><Location /></el-icon>
-                  <span class="text-[13px] font-medium tracking-wider">场景 ({{ filteredScenes.length }})</span>
+                  <el-icon size="16"><Location /></el-icon>
+                  <span class="text-[14px] font-black tracking-wider">场景 ({{ filteredScenes.length }})</span>
                 </div>
-                <button class="text-indigo-400 hover:text-indigo-600 transition-colors" @click="handleAddSubject('scene')">
+                <button class="text-indigo-500 hover:text-indigo-600 transition-colors" @click="handleAddSubject('scene')">
                   <el-icon><Plus /></el-icon>
                 </button>
               </div>
@@ -182,13 +182,13 @@
                   <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md">
                     <!-- Delete Button -->
                     <button 
-                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
+                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-500 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
                       @click.stop="handleDeleteSubject(scene)"
                     >
                       <el-icon><Delete /></el-icon>
                     </button>
                     <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover" loading="lazy" />
-                    <div v-else class="flex flex-col items-center justify-center w-full h-full text-slate-300 bg-slate-50">
+                    <div v-else class="flex flex-col items-center justify-center w-full h-full text-slate-400 bg-slate-50">
                       <el-icon size="28"><Location /></el-icon>
                     </div>
                     

@@ -21,8 +21,8 @@
 }
 
 .subtitle {
-  font-size: 13px;
-  color: #64748b;
+  font-size: 15px;
+  color: #334155; // slate-700
   margin: 0;
 }
 
@@ -143,9 +143,9 @@
 }
 
 .epTitle {
-  font-size: 16px;
-  font-weight: bold;
-  color: #1e293b;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -153,8 +153,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  color: #64748b;
-  font-size: 13px;
+  color: #475569; // slate-600
+  font-size: 15px;
+  font-weight: 500;
   
   span {
     display: flex;
@@ -169,19 +170,19 @@
   margin-top: 12px;
   
   :deep(.el-button) {
-    padding: 6px 12px;
-    height: 32px;
+    padding: 8px 16px;
+    height: 36px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
 .statusText {
   margin-top: 4px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
-.pending { color: #94a3b8; }
+.pending { color: #64748b; }
 .generating { color: #1890ff; }
 .success { 
   color: #10b981; 

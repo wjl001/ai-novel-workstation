@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative">
+  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative ai-drama-container">
     <!-- Header Steps -->
     <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center z-20">
       <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl px-8 py-2 flex items-center min-w-[720px] justify-between border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
@@ -17,10 +17,10 @@
           </div>
           <div class="flex flex-col">
             <span 
-              class="text-[14px] transition-all duration-300"
-              :class="activeStep >= 0 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
+              class="text-[15px] transition-all duration-300"
+              :class="activeStep >= 0 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
             >剧本创作</span>
-            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest -mt-0.5">Step One</span>
+            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step One</span>
           </div>
           
           <!-- Connector -->
@@ -43,10 +43,10 @@
           </div>
           <div class="flex flex-col">
             <span 
-              class="text-[14px] transition-all duration-300"
-              :class="activeStep >= 1 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
+              class="text-[15px] transition-all duration-300"
+              :class="activeStep >= 1 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
             >主体设置</span>
-            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest -mt-0.5">Step Two</span>
+            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step Two</span>
           </div>
 
           <!-- Connector -->
@@ -68,10 +68,10 @@
           </div>
           <div class="flex flex-col">
             <span 
-              class="text-[14px] transition-all duration-300"
-              :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
+              class="text-[15px] transition-all duration-300"
+              :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
             >分集视频</span>
-            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest -mt-0.5">Step Three</span>
+            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step Three</span>
           </div>
         </div>
       </div>
