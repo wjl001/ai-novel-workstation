@@ -515,7 +515,7 @@
                   <div class="w-5 h-5 rounded-md bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     <el-icon :size="12"><MagicStick /></el-icon>
                   </div>
-                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assistant</span>
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI 助手</span>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none shadow-sm text-[13px] leading-relaxed text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700/50 max-w-[90%]">
                   你好！我是你的专属 AI 创作助手。我已经准备好帮你打磨剧本、丰富情节或者提供灵感了。
@@ -590,7 +590,7 @@
                     <div class="w-5 h-5 rounded-md flex items-center justify-center" :class="msg.role === 'ai' ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'">
                       <el-icon :size="12"><component :is="msg.role === 'ai' ? MagicStick : User" /></el-icon>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ msg.role === 'ai' ? 'Assistant' : 'You' }}</span>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ msg.role === 'ai' ? 'AI 助手' : '你' }}</span>
                   </div>
                   <div 
                     class="p-4 rounded-2xl text-[13px] leading-relaxed max-w-[90%] break-words shadow-sm border transition-all"
