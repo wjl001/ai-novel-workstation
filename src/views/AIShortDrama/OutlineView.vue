@@ -35,7 +35,17 @@
       class="left-panel flex flex-col shrink-0 min-h-0 h-full transition-all duration-500 relative z-20" 
       :style="{ width: isLeftCollapsed ? '0px' : leftPanelWidth + 'px', marginRight: isLeftCollapsed ? '0px' : '0px' }"
     >
-      <div v-show="!isLeftCollapsed" class="flex flex-col h-full overflow-hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[28px] border border-white dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-none transition-opacity duration-500" :style="{ opacity: isLeftCollapsed ? 0 : 1 }">
+      <div v-show="!isLeftCollapsed" class="flex flex-col h-full overflow-hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[28px] border border-white dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-none transition-opacity duration-500 relative" :style="{ opacity: isLeftCollapsed ? 0 : 1 }">
+        
+        <!-- Product Design Info Button -->
+        <button 
+          @click="showDesignDialog = true"
+          class="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-400 hover:text-indigo-600 rounded-full shadow-sm border border-slate-200/50 dark:border-slate-700/50 transition-all duration-300"
+          title="查看产品设计说明"
+        >
+          <el-icon :size="16"><InfoFilled /></el-icon>
+        </button>
+
         <!-- Expanded State Content -->
         <div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
           <!-- Tabs -->
@@ -681,6 +691,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Product Design Dialog -->
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 大纲与故事结构设计台" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 剧本创作引擎</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。</p>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>左侧 (设定与大纲)：</strong>基础设定（背景、梗概）与剧集分集大纲（拖拽排序、剧情摘要）。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>中栏 (剧本编辑器)：</strong>采用好莱坞标准剧本格式排版的富文本编辑器。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>右侧 (AI 助手)：</strong>悬浮侧边栏，支持对话微调、扩写、改写剧本段落。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>划线操作/右键菜单：</strong>选中编辑器内某段文本，点击“引用至 AI 助手”，AI 根据情绪重写台词。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>卡片拖拽：</strong>左侧分集大纲支持拖拽重新排序，增删单集。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -963,6 +1031,9 @@ const aiProposal = reactive({
   selection: { from: 0, to: 0 },
   isGenerating: false
 });
+
+// Design Dialog State
+const showDesignDialog = ref(false);
 
 // Context Menu State
 const contextMenuVisible = ref(false);

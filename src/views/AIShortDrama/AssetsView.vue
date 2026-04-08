@@ -1,6 +1,18 @@
 <template>
-  <div class="h-full flex flex-col overflow-hidden">
-    <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs">
+  <div class="h-full flex flex-col overflow-hidden relative">
+    <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative">
+      <!-- Custom Header Content for Tabs -->
+      <div class="absolute right-6 top-3 z-50">
+        <!-- Product Design Info Button -->
+        <button 
+          @click="showDesignDialog = true"
+          class="h-8 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] shadow-sm border border-slate-200 transition-all duration-300"
+        >
+          <el-icon :size="14"><InfoFilled /></el-icon>
+          <span>产品设计说明</span>
+        </button>
+      </div>
+
       <!-- 角色管理 -->
       <el-tab-pane label="角色管理" name="characters">
         <div class="flex flex-col h-full p-6">
@@ -210,18 +222,73 @@
       :is-edit="isEditAsset"
       @save="saveAsset"
     />
+
+    <!-- Product Design Dialog -->
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 视觉与听觉资产中心" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 资产中心</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">AI 创作最大的痛点是“人脸一致性”，这是解决此问题的核心页面。管理剧本中所有的角色、场景、道具，并固定其形象特征。</p>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>Tabs 导航：</strong>分类管理【角色库】、【场景库】、【道具库】。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>卡片网格：</strong>每个主体（角色/场景）以卡片形式展示，包含基准图（Reference Image）、名字、特征描述。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>AI 捏脸/生成：</strong>点击卡片进入编辑模式，可修改 Prompt，重新生成多张备选图，并挑选一张作为全局“锁定形象 (Seed/LoRA)”。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>强制前置校验：</strong>必须至少完成一个角色和一个场景的设定，才能点击“下一步：分集生成”。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 
 const router = useRouter();
 const activeTab = ref('characters');
+const showDesignDialog = ref(false);
 
 // Navigation Logic
 const confirmVisible = ref(false);

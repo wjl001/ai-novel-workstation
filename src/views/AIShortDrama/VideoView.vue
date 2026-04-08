@@ -205,17 +205,72 @@
         </div>
       </div>
     </el-drawer>
+
+    <!-- Product Design Dialog -->
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 成片预览与一键发布" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 成片导出页</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">最终成品确认、导出设置和多平台分发。类似于短视频平台（如抖音/TikTok）的创作者中心预览页。</p>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>中央 (Player)：</strong>模拟手机屏幕的竖屏播放器，带有点赞/评论UI层覆盖（可切换真实预览模式）。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>右侧面板 (Export Settings)：</strong>包含基本信息（标题、简介、Hashtags）、封面选择、导出格式（分辨率、帧率）以及分发渠道。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>实时预览：</strong>播放器支持带字幕和音效的实时渲染回放，确保最终效果无误。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>一键分发：</strong>点击“发布”，通过 API 自动推流到已授权的社交账号（抖音、快手等）。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, VideoPlay, VideoCamera, Headset, Plus, ArrowDown, MagicStick, InfoFilled } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, VideoPlay, VideoCamera, Headset, Plus, ArrowDown, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const activeStoryboard = ref(0)
 const showPrototypeHelp = ref(false)
+const showDesignDialog = ref(false)
 const prompt = ref('一个唯美的极简剖面，展现故事的发生场景和主要人物。画面构图提取，色彩鲜明，具有强烈的视觉冲击力')
 
 const storyboards = ref([

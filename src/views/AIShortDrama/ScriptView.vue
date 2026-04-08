@@ -310,17 +310,72 @@
         </div>
       </div>
     </el-drawer>
+
+    <!-- Product Design Dialog -->
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 剧本生成" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 剧本编辑台</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">这是整个产品中最为核心和复杂的文本工作台。将大纲或小说源文本转化为结构化、可直接拍摄或生成的“场景、动作、对白”。</p>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>左侧参数区：</strong>设定剧本的题材、风格倾向、核心受众、集数及时长。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>右侧编辑区：</strong>采用表单块的形式编辑世界观、核心金手指、简介、角色档案和剧情要求。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>局部 AI 生成：</strong>每个文本块都可以单独呼叫 AI 根据左侧设定的条件进行内容生成。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>智能补全：</strong>提供“基于设定补全”功能，智能分析已有内容并填充空白项，实现人机共创。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, QuestionFilled, RefreshRight, MagicStick, EditPen, InfoFilled } from '@element-plus/icons-vue'
+import { ArrowLeft, QuestionFilled, RefreshRight, MagicStick, EditPen, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const activeStep = ref(0)
 const showPrototypeHelp = ref(false)
+const showDesignDialog = ref(false)
 
 const form = reactive({
   theme: '逆袭神豪',

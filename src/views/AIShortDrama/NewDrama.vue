@@ -8,7 +8,16 @@
     <div class="flex-1 overflow-hidden p-4 lg:p-6 relative z-10 flex flex-col min-h-0">
       <div class="max-w-7xl mx-auto flex flex-col items-center w-full h-full">
         <!-- Header: More compact -->
-        <div class="text-center mb-6 max-w-3xl shrink-0">
+        <div class="text-center mb-6 max-w-3xl shrink-0 relative">
+          <!-- Product Design Info Button -->
+          <button 
+            @click="showDesignDialog = true"
+            class="absolute top-0 right-[-100px] h-10 px-4 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-300 rounded-full font-bold text-xs shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+          >
+            <el-icon :size="14"><InfoFilled /></el-icon>
+            <span>产品设计说明</span>
+          </button>
+          
           <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight leading-tight">
             <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
               智能极速创作，打造爆款短剧
@@ -228,6 +237,56 @@
         </p>
       </div>
     </el-dialog>
+
+    <!-- Product Design Dialog -->
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 新建短剧" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 新建短剧</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">项目初始化页面，决定内容生成的输入源（灵感/现有剧本）。</p>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>模式 A：一句话灵感生成</strong>（输入文本框：“霸道总裁爱上我，但我是来复仇的”）。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>模式 B：导入小说/剧本</strong>（支持上传 txt/docx/pdf 文件）。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300">用户选择模式 A 或 B 并输入内容后，点击“生成大纲”按钮。按钮呈现 Loading 状态，页面平滑过渡到 OutlineView。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -246,12 +305,18 @@ import {
   Clock,
   ArrowRight,
   VideoCamera,
-  InfoFilled
+  InfoFilled,
+  Close,
+  Document,
+  Location,
+  Monitor,
+  Pointer
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const isLight = inject('isLight', ref(true));
+const showDesignDialog = ref(false);
 
 // --- State Management ---
 const activeTab = ref('ai'); 
