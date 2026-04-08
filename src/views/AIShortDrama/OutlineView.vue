@@ -307,16 +307,16 @@
       <div class="flex-1 flex flex-col h-full min-h-0 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-[28px] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative group">
         
         <!-- Canvas Toolbar -->
-        <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700/50 shrink-0 bg-white/50 dark:bg-slate-800/50">
+        <div class="flex items-center justify-between p-3 border-b border-slate-100 dark:border-slate-700/50 shrink-0 bg-white/50 dark:bg-slate-800/50">
           <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-              <el-icon :size="20"><Edit /></el-icon>
+            <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <el-icon :size="16"><Edit /></el-icon>
             </div>
             <div>
-              <h3 class="text-[18px] font-black text-slate-800 dark:text-white flex items-center gap-2">
+              <h3 class="text-[16px] font-black text-slate-800 dark:text-white flex items-center gap-2">
                 剧本正文
               </h3>
-              <p class="text-[12px] text-slate-500 font-black uppercase tracking-widest mt-0.5">剧本正文编辑</p>
+              <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">剧本正文编辑</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -324,7 +324,7 @@
                 <button 
                   v-if="editorTextContent"
                   @click="saveScriptContent"
-                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[13px] font-black transition-all duration-300 border shadow-sm"
+                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300 border shadow-sm"
                   :class="!isEditingLocked ? 'bg-emerald-600 text-white border-emerald-500 hover:bg-emerald-700' : 'bg-white dark:bg-slate-700 text-slate-500 border-slate-100 dark:border-slate-600 hover:text-indigo-600'"
                 >
                   <template v-if="!isSavingScript">
@@ -343,7 +343,7 @@
               <div 
                 v-for="mode in ['full', 'episode']" 
                 :key="mode"
-                class="px-4 py-1.5 rounded-lg text-[13px] font-black cursor-pointer transition-all duration-300"
+                class="px-3 py-1 rounded-lg text-[12px] font-black cursor-pointer transition-all duration-300"
                 :class="editMode === mode ? 'bg-white dark:bg-slate-600 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
                 @click="editMode = mode as 'full' | 'episode'"
               >
@@ -354,7 +354,7 @@
             <el-select 
               v-if="editMode === 'episode'" 
               v-model="currentEpisodeIndex" 
-              class="modern-select-v2 !w-32 mr-2" 
+              class="modern-select-v2 !w-28 mr-2" 
               placeholder="选择分集"
             >
               <el-option 
@@ -371,15 +371,15 @@
         <div class="flex-1 min-h-0 relative bg-[#FDFDFD] dark:bg-slate-900/30 flex flex-col">
           <!-- Tiptap Editor Wrapper -->
           <div 
-            class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10"
+            class="flex-1 overflow-y-auto custom-scrollbar p-2 lg:p-3"
             @contextmenu.prevent="openContextMenu"
             ref="scriptBodyRef"
           >
-            <div class="min-h-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-[32px] shadow-sm relative overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/5">
+            <div class="min-h-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-[20px] shadow-sm relative overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/5">
               <!-- Selection Bubble Menu -->
               <bubble-menu 
                 v-if="tiptapEditor" 
-:editor="tiptapEditor as any"
+                :editor="tiptapEditor as any"
                 :tippy-options="{ duration: 100, zIndex: 9999 }"
                 class="flex items-center gap-1 p-1 bg-white dark:bg-slate-800 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-slate-100 dark:border-slate-700 overflow-hidden"
               >
@@ -393,31 +393,31 @@
               </bubble-menu>
 
               <!-- Editor Content -->
-              <editor-content v-if="tiptapEditor" :editor="tiptapEditor as any" class="p-10 lg:p-14 outline-none min-h-[500px] prose-modern" />
+              <editor-content v-if="tiptapEditor" :editor="tiptapEditor as any" class="p-4 lg:p-6 outline-none min-h-[400px] prose-modern" />
 
               <!-- Empty State -->
               <transition name="fade">
-                <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md z-10 p-10 text-center">
-                  <div class="w-24 h-24 rounded-[40px] bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-900 dark:to-slate-900 flex items-center justify-center text-indigo-200 dark:text-indigo-900/30 mb-8 border border-white dark:border-slate-700 shadow-inner animate-float">
-                    <el-icon size="48"><Document /></el-icon>
+                <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-slate-900 z-10 p-4 text-center">
+                  <div class="w-20 h-20 rounded-[32px] bg-[#F5F7FF] dark:bg-slate-800/50 flex items-center justify-center text-[#6366F1]/30 dark:text-indigo-500/20 mb-4 border border-white dark:border-slate-700 shadow-inner">
+                    <el-icon size="40"><Document /></el-icon>
                   </div>
-                  <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-3">剧本还是一片空白</h4>
-                  <p class="mb-10 text-slate-400 font-medium max-w-sm">
+                  <h4 class="text-[20px] font-black text-[#1E293B] dark:text-white mb-1">剧本还是一片空白</h4>
+                  <p class="mb-6 text-[#64748B] text-[13px] font-medium max-w-md leading-relaxed">
                     万事开头难，不如让 AI 助手根据你的大纲，为你创作一个精彩的开场？
                   </p>
-                  <div class="flex items-center gap-6">
+                  <div class="flex items-center gap-4">
                     <button 
                       @click="generateScriptBody"
-                      class="h-14 px-10 bg-indigo-600 text-white rounded-[20px] text-[15px] font-black shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+                      class="h-[44px] px-6 bg-[#6366F1] text-white rounded-[16px] text-[14px] font-black shadow-[0_10px_20px_rgba(99,102,241,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                     >
-                      <el-icon><MagicStick /></el-icon> 
-                      {{ editMode === 'full' ? '一键全集智能生成' : `第 ${currentEpisodeIndex + 1} 集智能生成` }}
+                      <el-icon :size="16"><MagicStick /></el-icon> 
+                      {{ editMode === 'full' ? '全集智能生成' : `第 ${currentEpisodeIndex + 1} 集智能生成` }}
                     </button>
                     <button 
                       @click="showEmptyPlaceholder = false"
-                      class="h-14 px-10 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 border border-slate-100 dark:border-slate-600 rounded-[20px] text-[15px] font-black hover:bg-slate-50 dark:hover:bg-slate-600 transition-all flex items-center gap-3"
+                      class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm"
                     >
-                      <el-icon><Edit /></el-icon> 我要自己写
+                      <el-icon :size="16"><Edit /></el-icon> 我要自己写
                     </button>
                   </div>
                 </div>
@@ -427,24 +427,24 @@
         </div>
 
         <!-- Tiptap Footer Stats -->
-        <div class="h-14 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 text-[13px] font-black text-slate-500 bg-white dark:bg-slate-800 shrink-0">
+        <div class="h-8 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 text-[10px] font-black text-slate-500 bg-white dark:bg-slate-800 shrink-0">
           <div class="flex items-center gap-6 uppercase tracking-widest">
             <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 字数: {{ tiptapEditor?.storage.characterCount.characters() || 0 }}</span>
             <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> 预计阅读: {{ Math.ceil((tiptapEditor?.storage.characterCount.words() || 0) / 250) }} 分钟</span>
           </div>
           <div class="flex items-center gap-3">
-            <button @click="tiptapEditor?.commands.undo()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all">
-              <el-icon :size="16"><RefreshLeft /></el-icon>
+            <button @click="tiptapEditor?.commands.undo()" class="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all">
+              <el-icon :size="12"><RefreshLeft /></el-icon>
             </button>
-            <button @click="tiptapEditor?.commands.redo()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all">
-              <el-icon :size="16"><RefreshRight /></el-icon>
+            <button @click="tiptapEditor?.commands.redo()" class="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all">
+              <el-icon :size="12"><RefreshRight /></el-icon>
             </button>
           </div>
         </div>
 
         <!-- Action Footer -->
-        <div class="flex justify-end items-center p-6 border-t border-slate-100 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shrink-0 gap-4">
-          <div v-if="isGenerating" class="flex items-center gap-4 text-indigo-600 dark:text-indigo-400 text-[13px] mr-auto bg-indigo-50 dark:bg-indigo-900/30 px-5 py-2.5 rounded-2xl font-black animate-pulse">
+        <div class="flex justify-end items-center p-4 border-t border-slate-100 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shrink-0 gap-4">
+          <div v-if="isGenerating" class="flex items-center gap-4 text-indigo-600 dark:text-indigo-400 text-[12px] mr-auto bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 rounded-2xl font-black animate-pulse">
             <el-icon class="is-loading" v-if="!isPaused"><Loading /></el-icon> 
             <span>{{ isPaused ? '生成已暂停' : 'AI 正在全力构思中...' }}</span>
             <button 
@@ -459,7 +459,7 @@
           <button 
             v-if="!isGenerating" 
             @click="generateScriptBody"
-            class="h-12 px-8 bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl text-[14px] font-black hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all flex items-center gap-2"
+            class="h-10 px-6 bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl text-[13px] font-black hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all flex items-center gap-2"
           >
             <el-icon v-if="!editorTextContent"><MagicStick /></el-icon>
             <el-icon v-else><Refresh /></el-icon>
@@ -469,7 +469,7 @@
           <button 
             @click="goToSubjectSettings"
             :disabled="isSavingScript"
-            class="h-12 px-10 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[14px] font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
+            class="h-10 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[13px] font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
             <el-icon v-if="isSavingScript" class="is-loading"><Loading /></el-icon>
             <span>完成，去设置主体</span>
@@ -724,33 +724,65 @@ const errors = reactive<Record<string, string>>({});
 // Use a flag to avoid infinite loops when switching content
 const isSwitchingContent = ref(false);
 
+const SEPARATOR = '<p>------------------</p>';
+
 const saveCurrentContentToStore = () => {
   if (isSwitchingContent.value || !tiptapEditor.value) return;
   const content = tiptapEditor.value.getHTML();
+  
   if (editMode.value === 'full') {
     form.fullContent = content;
-  } else if (form.episodesData[currentEpisodeIndex.value]) {
-    form.episodesData[currentEpisodeIndex.value].content = content;
+    // 使用正则匹配分隔符，允许标签内包含样式属性
+    const parts = content.split(/<p[^>]*>------------------<\/p>/g);
+    form.episodesData.forEach((ep, idx) => {
+      if (parts[idx] !== undefined) {
+        // 去除多余的空行和 HTML 标签，仅保留纯内容或标准格式
+        ep.content = parts[idx].trim();
+      }
+    });
+  } else {
+    // 同步当前分集内容
+    if (form.episodesData[currentEpisodeIndex.value]) {
+      form.episodesData[currentEpisodeIndex.value].content = content;
+    }
+    // 同步全集内容：重新合并所有分集
+    form.fullContent = form.episodesData
+      .map(ep => ep.content || '<p></p>')
+      .join(SEPARATOR);
   }
-  // Sync to Pinia store for cross-route persistence
+  
+  // 同步至 Pinia
   dramaStore.setOutlineData(JSON.parse(JSON.stringify(form)));
 };
 
 const loadContentFromStore = () => {
   if (!tiptapEditor.value) return;
   isSwitchingContent.value = true;
+  
   let content = '';
   if (editMode.value === 'full') {
-    content = form.fullContent || '';
-  } else if (form.episodesData[currentEpisodeIndex.value]) {
-    content = form.episodesData[currentEpisodeIndex.value].content || '';
+    // 每次进入全集模式，都尝试根据分集数据重新生成全集内容，确保数据是最新的
+    const mergedContent = form.episodesData
+      .map(ep => ep.content || '<p></p>')
+      .join(SEPARATOR);
+    
+    // 只有当分集确实有内容时，才使用合并内容，否则使用之前存的全集内容
+    const hasAnyContent = form.episodesData.some(ep => ep.content && ep.content.replace(/<p><\/p>/g, '').trim().length > 0);
+    if (hasAnyContent) {
+      content = mergedContent;
+      form.fullContent = mergedContent;
+    } else {
+      content = form.fullContent || '';
+    }
+  } else {
+    if (form.episodesData[currentEpisodeIndex.value]) {
+      content = form.episodesData[currentEpisodeIndex.value].content || '';
+    }
   }
+  
   tiptapEditor.value.commands.setContent(content);
   editorTextContent.value = tiptapEditor.value.getText().trim();
-  // If the new content is empty, we might want to show the placeholder again
-  if (!editorTextContent.value) {
-    showEmptyPlaceholder.value = true;
-  }
+  showEmptyPlaceholder.value = !editorTextContent.value;
   isSwitchingContent.value = false;
 };
 
@@ -1133,7 +1165,7 @@ const generateScriptBody = () => {
   if (editMode.value === 'full') {
     mockText = ``;
     form.episodesData.forEach((_, idx) => {
-      mockText += (EPISODE_SCRIPTS[idx] || `第 ${idx + 1} 集内容生成中...`) + '\n\n' + '------------------' + '\n\n';
+      mockText += (EPISODE_SCRIPTS[idx] || `第 ${idx + 1} 集内容生成中...`) + '\n\n' + SEPARATOR.replace(/<p>|<\/p>/g, '') + '\n\n';
     });
   } else {
     mockText = EPISODE_SCRIPTS[currentEpisodeIndex.value] || `第 ${currentEpisodeIndex.value + 1} 集剧本正文生成中...`;
