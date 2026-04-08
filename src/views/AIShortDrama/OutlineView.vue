@@ -362,7 +362,13 @@
                 :key="ep.id" 
                 :label="`第 ${idx + 1} 集`" 
                 :value="idx" 
-              />
+                :disabled="isEpisodeLocked(idx)"
+              >
+                <div class="flex items-center justify-between w-full">
+                  <span>第 {{ idx + 1 }} 集</span>
+                  <el-icon v-if="isEpisodeLocked(idx)" class="text-slate-300"><Lock /></el-icon>
+                </div>
+              </el-option>
             </el-select>
           </div>
         </div>
@@ -408,18 +414,23 @@
                   <div class="flex items-center gap-4">
                     <button 
                       @click="generateScriptBody"
-                      class="h-[44px] px-6 bg-[#6366F1] text-white rounded-[16px] text-[14px] font-black shadow-[0_10px_20px_rgba(99,102,241,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                      :disabled="isEpisodeLocked(currentEpisodeIndex)"
+                      class="h-[44px] px-6 bg-[#6366F1] text-white rounded-[16px] text-[14px] font-black shadow-[0_10px_20px_rgba(99,102,241,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
                     >
                       <el-icon :size="16"><MagicStick /></el-icon> 
                       {{ editMode === 'full' ? '全集智能生成' : `第 ${currentEpisodeIndex + 1} 集智能生成` }}
                     </button>
                     <button 
                       @click="showEmptyPlaceholder = false"
-                      class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm"
+                      :disabled="isEpisodeLocked(currentEpisodeIndex)"
+                      class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:pointer-events-none"
                     >
                       <el-icon :size="16"><Edit /></el-icon> 我要自己写
                     </button>
                   </div>
+                  <p v-if="isEpisodeLocked(currentEpisodeIndex)" class="mt-4 text-red-400 text-[12px] font-black animate-pulse flex items-center justify-center gap-2">
+                    <el-icon><Lock /></el-icon> 请先完成上一集的剧本编写
+                  </p>
                 </div>
               </transition>
             </div>
@@ -468,7 +479,7 @@
 
           <button 
             @click="goToSubjectSettings"
-            :disabled="isSavingScript"
+            :disabled="isSavingScript || !editorTextContent"
             class="h-10 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[13px] font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
             <el-icon v-if="isSavingScript" class="is-loading"><Loading /></el-icon>
@@ -726,6 +737,16 @@ const isSwitchingContent = ref(false);
 
 const SEPARATOR = '<p>------------------</p>';
 
+const isEpisodeLocked = (index: number) => {
+  if (editMode.value === 'full') return false;
+  if (index === 0) return false;
+  const prevEpisode = form.episodesData[index - 1];
+  // 检查前一集是否有实际内容（过滤掉空标签、分隔符、空格等）
+  const content = prevEpisode?.content || '';
+  const cleanContent = content.replace(/<p><\/p>|<p>------------------<\/p>|<br>|[\s\n\t\r]/g, '').trim();
+  return cleanContent.length === 0;
+};
+
 const saveCurrentContentToStore = () => {
   if (isSwitchingContent.value || !tiptapEditor.value) return;
   const content = tiptapEditor.value.getHTML();
@@ -782,6 +803,7 @@ const loadContentFromStore = () => {
   
   tiptapEditor.value.commands.setContent(content);
   editorTextContent.value = tiptapEditor.value.getText().trim();
+  dramaStore.setScriptGenerated(!!editorTextContent.value);
   showEmptyPlaceholder.value = !editorTextContent.value;
   isSwitchingContent.value = false;
 };
@@ -810,6 +832,10 @@ const saveScriptContent = () => {
 };
 
 const goToSubjectSettings = () => {
+  if (!editorTextContent.value) {
+    ElMessage.warning('请先生成剧本内容，再进行后续设置');
+    return;
+  }
   isSavingScript.value = true;
   // Sync current content before leaving
   saveCurrentContentToStore();
@@ -1015,20 +1041,21 @@ onMounted(async () => {
     content: '',
     onUpdate: ({ editor }) => {
       editorTextContent.value = editor.getText().trim();
+      dramaStore.setScriptGenerated(!!editorTextContent.value);
       saveCurrentContentToStore();
     },
     editorProps: {
       attributes: {
         class: 'prose-modern focus:outline-none'
       },
-      editable: () => !isEditingLocked.value
+      editable: () => !isEditingLocked.value && !isEpisodeLocked(currentEpisodeIndex.value)
     }
   });
 
-  // Watch for lock status to update editor
-  watch(isEditingLocked, (locked) => {
-    tiptapEditor.value?.setEditable(!locked);
-  });
+  // 监听锁定状态、当前分集、编辑模式或分集内容变化，实时更新编辑器可编辑状态
+  watch([isEditingLocked, currentEpisodeIndex, editMode, () => form.episodesData], () => {
+    tiptapEditor.value?.setEditable(!isEditingLocked.value && !isEpisodeLocked(currentEpisodeIndex.value));
+  }, { deep: true });
 
   isInfoLoading.value = true;
   // Load from Pinia store if available (survives route changes but not refresh)

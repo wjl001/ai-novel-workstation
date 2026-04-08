@@ -6,7 +6,7 @@
         <!-- Step 1 -->
         <div 
           class="flex items-center gap-4 cursor-pointer group relative py-1.5"
-          @click="$router.push('/ai-short-drama-creator/outline')"
+          @click="goToStep(0, '/ai-short-drama-creator/outline')"
         >
           <div 
             class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
@@ -31,8 +31,9 @@
 
         <!-- Step 2 -->
         <div 
-          class="flex items-center gap-4 cursor-pointer group relative py-1.5"
-          @click="$router.push('/ai-short-drama-creator/assets')"
+          class="flex items-center gap-4 group relative py-1.5"
+          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'"
+          @click="goToStep(1, '/ai-short-drama-creator/assets')"
         >
           <div 
             class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
@@ -57,8 +58,9 @@
 
         <!-- Step 3 -->
         <div 
-          class="flex items-center gap-4 cursor-pointer group py-1.5"
-          @click="$router.push('/ai-short-drama-creator/episodes')"
+          class="flex items-center gap-4 group py-1.5"
+          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'"
+          @click="goToStep(2, '/ai-short-drama-creator/episodes')"
         >
           <div 
             class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
@@ -93,11 +95,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-
+import { useRoute, useRouter } from 'vue-router';
+import { useDramaStore } from '../../store/drama';
 import { Check } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 
 const route = useRoute();
+const router = useRouter();
+const dramaStore = useDramaStore();
 
 const activeStep = computed(() => {
   switch (route.name) {
@@ -107,6 +112,23 @@ const activeStep = computed(() => {
     default: return 0;
   }
 });
+
+const isScriptGenerated = computed(() => dramaStore.isScriptGenerated);
+
+const goToStep = (step: number, path: string) => {
+  if (step === 0) {
+    router.push(path);
+    return;
+  }
+  
+  // 如果没有生成剧本，且不是当前步骤（防止刷新状态没同步时的误判，虽然有 store 应该没问题）
+  if (!isScriptGenerated.value && step > 0) {
+    ElMessage.warning('请先生成剧本正文内容，再进行后续设置');
+    return;
+  }
+  
+  router.push(path);
+};
 </script>
 
 <style scoped>
