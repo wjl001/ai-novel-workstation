@@ -19,7 +19,7 @@
                 视频不存在
               </template>
               <template v-else>
-                {{ episode?.title || '分镜详情编辑' }}
+                {{ episode?.title || '第 1 集：命运抉择系统自毁' }}
               </template>
             </h1>
             <el-icon class="text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:rotate-180 duration-300"><ArrowDown /></el-icon>
@@ -282,7 +282,7 @@
                 </div>
 
                 <!-- Edit Mode (TipTap) -->
-                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-6 pb-20">
+                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-6">
                   <div class="flex-1 overflow-y-auto custom-scrollbar">
                     <editor-content :editor="editor" class="script-editor-content w-full h-full" />
                   </div>
@@ -342,9 +342,14 @@
                             :class="idx === selectedMentionIndex ? 'bg-indigo-50' : 'hover:bg-indigo-50/50'"
                             @click="insertMention(item)"
                           >
-                            <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50">
-                              <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover" />
-                              <el-icon v-else class="text-slate-400" size="18"><component :is="item.icon" /></el-icon>
+                            <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50 relative">
+                              <img 
+                                v-if="'image' in item && item.image" 
+                                :src="item.image" 
+                                class="w-full h-full object-cover relative z-10" 
+                                @error="(e: any) => e.target.style.opacity = 0"
+                              />
+                              <el-icon class="text-slate-400 absolute inset-0 m-auto" size="18"><component :is="item.icon" /></el-icon>
                             </div>
                             <div class="flex flex-col min-w-0">
                               <span class="text-[13px] font-bold text-slate-700 truncate">{{ item.name }}</span>
@@ -361,9 +366,29 @@
                       </div>
                     </transition>
                   </teleport>
+                </div>
 
-                  <!-- Edit Action Buttons -->
-                  <div class="absolute bottom-6 right-6 flex justify-end gap-4 shrink-0">
+                <!-- Action Buttons Area -->
+                <div class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-50 bg-white/50">
+                  <template v-if="!isEditingScript">
+                    <button 
+                      @click="handleEditScript"
+                      class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
+                    >
+                      <el-icon><Edit /></el-icon>
+                      <span>编辑脚本</span>
+                    </button>
+                    <button 
+                      @click="handleBatchGenerate"
+                      :disabled="!timelineScenes[currentSceneIdx]?.modified"
+                      class="h-10 px-6 rounded-full text-[14px] font-bold transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700' : 'bg-slate-100 text-slate-400 border border-slate-100 cursor-not-allowed opacity-50'"
+                    >
+                      <el-icon><MagicStick /></el-icon>
+                      <span>再次生成</span>
+                    </button>
+                  </template>
+                  <template v-else>
                     <button 
                       @click="handleCancelEdit"
                       class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 shadow-sm"
@@ -376,25 +401,14 @@
                     >
                       保存
                     </button>
-                  </div>
-                </div>
-
-                <!-- Action Buttons Area (When not editing, displayed at the bottom of the script box) -->
-                <div v-if="!isEditingScript" class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-50 bg-white/50">
-                  <button 
-                    @click="handleEditScript"
-                    class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
-                  >
-                    <el-icon><Edit /></el-icon>
-                    <span>编辑脚本</span>
-                  </button>
-                  <button 
-                    @click="handleBatchGenerate"
-                    class="h-10 px-6 bg-slate-100 text-slate-500 border border-slate-200 rounded-full text-[14px] font-bold hover:bg-slate-200 transition-all shadow-md flex items-center gap-2 opacity-80"
-                  >
-                    <el-icon><MagicStick /></el-icon>
-                    <span>再次生成</span>
-                  </button>
+                    <button 
+                      disabled
+                      class="h-10 px-6 bg-slate-100 text-slate-400 border border-slate-100 rounded-full text-[14px] font-bold flex items-center gap-2 opacity-50 cursor-not-allowed"
+                    >
+                      <el-icon><MagicStick /></el-icon>
+                      <span>再次生成</span>
+                    </button>
+                  </template>
                 </div>
               </div>
 
@@ -455,7 +469,7 @@
         </section>
 
         <!-- Bottom: Timeline / Audio Player Area -->
-        <div class="h-[200px] bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2 shrink-0">
+        <div class="h-[160px] bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2 shrink-0">
           <!-- Audio Controls Header -->
           <div class="flex items-center justify-between shrink-0 pl-1 pr-2">
             <div class="flex items-center gap-3">
@@ -506,7 +520,7 @@
           <!-- Timeline Items -->
           <div class="flex-1 flex gap-4 overflow-x-auto custom-scrollbar items-center pb-2 pl-1">
             <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[180px] h-[110px] rounded-2xl bg-slate-50 border shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:border-indigo-400 overflow-hidden group"
+              class="flex-shrink-0 w-[150px] h-[90px] rounded-2xl bg-slate-50 border shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:border-indigo-400 overflow-hidden group"
               :class="[
                 (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
                   ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
@@ -571,7 +585,7 @@
             
             <!-- Add New Scene Button -->
             <button 
-              class="flex-shrink-0 w-16 h-16 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all hover:bg-indigo-50/30 group"
+              class="flex-shrink-0 w-14 h-14 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all hover:bg-indigo-50/30 group"
               @click="addTimelineScene"
             >
               <el-icon size="24" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
@@ -710,91 +724,89 @@
       <el-dialog
         v-model="showBgmConfig"
         title="配置背景音乐"
-        width="540px"
+        width="480px"
         class="bgm-config-dialog"
         destroy-on-close
       >
-        <div class="space-y-6 py-2">
+        <div class="space-y-2 py-0">
           <!-- 1. AI 智能生成 (主要功能) -->
-          <div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100/50">
-            <div class="flex items-center justify-between mb-4">
+          <div class="bg-indigo-50/50 rounded-xl p-3 border border-indigo-100/50">
+            <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                  <el-icon size="18"><MagicStick /></el-icon>
+                <div class="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                  <el-icon size="14"><MagicStick /></el-icon>
                 </div>
-                <span class="text-[15px] font-bold text-slate-800">AI 智能配乐</span>
+                <span class="text-[13px] font-bold text-slate-800">AI 智能配乐</span>
               </div>
-              <span class="text-[11px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full uppercase tracking-wider">Recommended</span>
+              <span class="text-[9px] font-bold text-indigo-600 bg-indigo-100 px-1.5 py-0.5 rounded-full uppercase tracking-wider">官方推荐</span>
             </div>
 
-            <div v-if="isAiGeneratingBgm" class="py-8 flex flex-col items-center justify-center gap-4">
-              <div class="w-16 h-16 relative">
+            <div v-if="isAiGeneratingBgm" class="py-4 flex flex-col items-center justify-center gap-2">
+              <div class="w-10 h-10 relative">
                 <svg class="w-full h-full transform -rotate-90">
-                  <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="4" fill="transparent" class="text-indigo-100" />
-                  <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="4" fill="transparent" 
+                  <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" fill="transparent" class="text-indigo-100" />
+                  <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" fill="transparent" 
                     class="text-indigo-600 transition-all duration-300"
-                    stroke-dasharray="188.5"
-                    :stroke-dashoffset="188.5 - (188.5 * aiBgmProgress / 100)"
+                    stroke-dasharray="113.1"
+                    :stroke-dashoffset="113.1 - (113.1 * aiBgmProgress / 100)"
                   />
                 </svg>
-                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-indigo-600">
+                <div class="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-indigo-600">
                   {{ aiBgmProgress }}%
                 </div>
               </div>
-              <p class="text-sm font-medium text-slate-600 animate-pulse">正在根据脚本意境生成专属配乐...</p>
+              <p class="text-[11px] font-medium text-slate-600 animate-pulse">正在生成专属配乐...</p>
             </div>
 
-            <div v-else class="space-y-5">
-              <!-- Style Grid (Expanded to 16 styles) -->
-              <div class="grid grid-cols-4 gap-2.5 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+            <div v-else class="space-y-2">
+              <!-- Style Grid (Very Compact) -->
+              <div class="grid grid-cols-4 gap-1.5 max-h-[120px] overflow-y-auto custom-scrollbar pr-1">
                 <button 
                   v-for="item in bgmStyles" 
                   :key="item.label"
                   @click="handleAiBgmGenerate(item.label)"
-                  class="flex flex-col items-center justify-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-100 hover:border-indigo-400 hover:shadow-sm transition-all group relative overflow-hidden"
+                  class="flex flex-col items-center justify-center gap-0.5 p-1.5 bg-white rounded-lg border border-slate-100 hover:border-indigo-400 hover:shadow-sm transition-all group relative overflow-hidden"
                 >
                   <div class="absolute inset-0 bg-indigo-50/0 group-hover:bg-indigo-50/50 transition-colors"></div>
-                  <span class="text-xl group-hover:scale-110 transition-transform relative z-10">{{ item.icon }}</span>
-                  <span class="text-[11px] font-bold text-slate-600 truncate w-full text-center relative z-10">{{ item.label }}</span>
-                  <div class="hidden group-hover:block absolute bottom-0 left-0 right-0 bg-indigo-600 h-0.5 animate-in slide-in-from-left"></div>
+                  <span class="text-base group-hover:scale-110 transition-transform relative z-10">{{ item.icon }}</span>
+                  <span class="text-[9px] font-bold text-slate-600 truncate w-full text-center relative z-10">{{ item.label }}</span>
                 </button>
               </div>
 
-              <!-- Manual Prompt Generation -->
-              <div class="space-y-3">
+              <!-- Manual Prompt Generation (Very Compact) -->
+              <div class="space-y-1.5">
                 <div class="flex items-center justify-between px-1">
-                  <span class="text-[12px] font-bold text-slate-500">自定义提示词</span>
+                  <span class="text-[10px] font-bold text-slate-500">自定义提示词</span>
                   <button 
                     @click="handleAiBgmGenerate(bgmStyles[Math.floor(Math.random() * bgmStyles.length)].label)"
-                    class="text-[11px] text-indigo-600 font-bold hover:underline"
+                    class="text-[9px] text-indigo-600 font-bold hover:underline"
                   >
-                    🎲 随机风格
+                    🎲 随机
                   </button>
                 </div>
-                <div class="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-100 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-slate-100 focus-within:border-indigo-400 transition-all">
                   <input 
                     v-model="bgmPrompt" 
-                    placeholder="输入提示词（如：钢琴, 忧郁, 慢速）" 
-                    class="flex-1 bg-transparent border-none text-[13px] focus:ring-0 placeholder:text-slate-300"
+                    placeholder="输入提示词..." 
+                    class="flex-1 bg-transparent border-none text-[11px] focus:ring-0 placeholder:text-slate-300 h-6"
                     @keyup.enter="bgmPrompt && handleAiBgmGenerate('', bgmPrompt)"
                   />
                   <button 
                     @click="handleAiBgmGenerate('', bgmPrompt)"
                     :disabled="!bgmPrompt"
-                    class="h-9 px-5 bg-indigo-600 text-white rounded-lg text-xs font-bold disabled:opacity-40 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2"
+                    class="h-6 px-3 bg-indigo-600 text-white rounded-md text-[10px] font-bold disabled:opacity-40 hover:bg-indigo-700 active:scale-95 flex items-center gap-1"
                   >
-                    <el-icon><MagicStick /></el-icon>
                     生成
                   </button>
                 </div>
                 
-                <!-- Hot Tags -->
-                <div class="flex flex-wrap gap-1.5 px-1">
+                <!-- Hot Tags (Very Compact) -->
+                <div class="flex flex-wrap gap-1 px-1">
                   <button 
-                    v-for="tag in hotPromptTags" 
+                    v-for="tag in hotPromptTags.slice(0, 8)" 
                     :key="tag"
                     @click="addHotTag(tag)"
-                    class="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-medium"
+                    class="px-1.5 py-0.5 rounded bg-slate-100 text-[9px] text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-medium"
                   >
                     # {{ tag }}
                   </button>
@@ -803,51 +815,51 @@
             </div>
           </div>
 
-          <!-- 2. 当前选中的 BGM -->
-          <div v-if="bgmConfig.status === 'ready'" class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white">
-                <el-icon size="20"><Headset /></el-icon>
+          <!-- 2. 当前选中的 BGM (Very Compact) -->
+          <div v-if="bgmConfig.status === 'ready'" class="bg-emerald-50 border border-emerald-100 rounded-xl p-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center text-white">
+                <el-icon size="14"><Headset /></el-icon>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-800 truncate">{{ bgmConfig.name }}</p>
-                <p class="text-xs text-emerald-600 font-medium">
-                  {{ bgmConfig.style ? `风格: ${bgmConfig.style} | ` : '' }}
-                  时长: {{ Math.floor(bgmConfig.duration / 60) }}:{{ (bgmConfig.duration % 60).toString().padStart(2, '0') }}
+                <p class="text-[12px] font-bold text-slate-800 truncate">{{ bgmConfig.name }}</p>
+                <p class="text-[10px] text-emerald-600 font-medium">
+                  {{ bgmConfig.style ? `${bgmConfig.style} | ` : '' }}{{ Math.floor(bgmConfig.duration / 60) }}:{{ (bgmConfig.duration % 60).toString().padStart(2, '0') }}
                 </p>
               </div>
             </div>
-            <el-button link type="danger" @click="resetBgm" class="!font-bold">移除</el-button>
+            <el-button link type="danger" size="small" @click="resetBgm" class="!font-bold !text-[11px]">移除</el-button>
           </div>
 
-          <!-- 3. 本地上传 (次要功能) -->
-          <div class="flex items-center gap-4 px-1">
+          <!-- 3. 本地上传 (Very Compact) -->
+          <div class="flex items-center gap-3 px-1">
             <div class="flex-1 h-px bg-slate-100"></div>
-            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-widest">或</span>
+            <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">或</span>
             <div class="flex-1 h-px bg-slate-100"></div>
           </div>
 
           <div 
-@click="(e: Event) => { const input = (e.target as HTMLElement).closest('div')?.nextElementSibling as HTMLInputElement; input?.click(); }"
-            class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all group"
+            @click="(e: Event) => { const input = (e.target as HTMLElement).closest('div')?.nextElementSibling as HTMLInputElement; input?.click(); }"
+            class="flex items-center gap-2 p-2 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all group"
           >
-            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-              <el-icon size="20"><Upload /></el-icon>
+            <div class="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+              <el-icon size="14"><Upload /></el-icon>
             </div>
             <div class="flex-1">
-              <p class="text-sm font-bold text-slate-700">上传本地音乐</p>
-              <p class="text-xs text-slate-400">支持 mp3, wav, m4a 格式</p>
+              <p class="text-[12px] font-bold text-slate-700">上传本地音乐</p>
+              <p class="text-[10px] text-slate-400">支持 mp3, wav, m4a</p>
             </div>
             <input type="file" ref="bgmFileInput" class="hidden" accept="audio/*" @change="handleBgmUpload" />
           </div>
         </div>
         <template #footer>
-          <div class="flex justify-end gap-3 border-t border-slate-50 pt-4">
-            <el-button @click="showBgmConfig = false" class="!rounded-xl">取消</el-button>
+          <div class="flex justify-end gap-2 border-t border-slate-50 pt-2">
+            <el-button @click="showBgmConfig = false" class="!rounded-lg !px-4" size="small">取消</el-button>
             <el-button 
               type="primary" 
               @click="handleBgmConfirm" 
-              class="theme-primary-btn !rounded-xl !px-8"
+              class="theme-primary-btn !rounded-lg !px-6"
+              size="small"
               :disabled="bgmConfig.status !== 'ready'"
             >确定</el-button>
           </div>
@@ -991,19 +1003,19 @@ const customDuration = ref('');
 
 const mentionItems = computed(() => {
   const baseItems = [
-    { name: '4.0s', desc: '镜头时长: 极短', icon: Timer, type: 'duration', category: 'duration' },
-    { name: '7.0s', desc: '镜头时长: 标准', icon: Timer, type: 'duration', category: 'duration' },
-    { name: '15.0s', desc: '镜头时长: 极长', icon: Timer, type: 'duration', category: 'duration' },
+    { name: '4.0s', desc: '镜头时长: 极短', icon: Timer, type: 'duration', category: 'duration', image: `https://picsum.photos/40/40?random=dur1` },
+    { name: '7.0s', desc: '镜头时长: 标准', icon: Timer, type: 'duration', category: 'duration', image: `https://picsum.photos/40/40?random=dur2` },
+    { name: '15.0s', desc: '镜头时长: 极长', icon: Timer, type: 'duration', category: 'duration', image: `https://picsum.photos/40/40?random=dur3` },
     ...subjects.value.map(s => ({
       name: s.name,
       desc: s.description?.slice(0, 30) + '...',
-      image: s.image,
+      image: s.image || `https://picsum.photos/40/40?random=${s.id}`,
       icon: s.type === 'character' ? User : s.type === 'scene' ? Location : Box,
       type: s.type,
       category: s.type === 'character' ? 'character' : s.type === 'scene' ? 'scene' : 'asset'
     })),
-    { name: '古风背景音', desc: '音频道具', icon: Headset, type: 'asset', category: 'asset' },
-    { name: '雨天特效', desc: '视频道具', icon: Film, type: 'asset', category: 'asset' },
+    { name: '古风背景音', desc: '音频道具', icon: Headset, type: 'asset', category: 'asset', image: `https://picsum.photos/40/40?random=bgm` },
+    { name: '雨天特效', desc: '视频道具', icon: Film, type: 'asset', category: 'asset', image: `https://picsum.photos/40/40?random=fx` },
   ];
 
   let filtered = baseItems;
@@ -1180,8 +1192,8 @@ const subjects = ref([
     description: '手持话筒的司仪, 面带职业微笑。',
     voice_description: '男声, 青年音色, 音调中等, 音色明亮圆润, 声音厚度适中, 发音标准, 气息沉稳, 吐字清晰, 字正腔圆'
   },
-  { id: '4', name: '豪华酒店宴会厅_0', type: 'scene', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600', description: '鲜花簇拥的舞台和璀璨的水晶灯, 氛围喜庆。' },
-  { id: '5', name: '破旧木棍', type: 'prop', name_ext: '道具', image: 'https://images.unsplash.com/photo-1544111306-03732873493d?auto=format&fit=crop&q=80&w=400', description: '一根被火烧焦了一半的粗木棍。' },
+  { id: '4', name: '豪华酒店宴会厅_0', type: 'scene', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop', description: '鲜花簇拥的舞台和璀璨的水晶灯, 氛围喜庆。' },
+  { id: '5', name: '破旧木棍', type: 'prop', name_ext: '道具', image: 'https://images.unsplash.com/photo-1589987607627-616cbd5bb245?q=80&w=400&auto=format&fit=crop', description: '一根被火烧焦了一半的粗木棍。' },
 ]);
 
 const filteredCharacters = computed(() => subjects.value.filter(s => s.type === 'character' && s.name.includes(searchQuery.value)));
@@ -1196,7 +1208,11 @@ const handleAddSubject = (type: 'character' | 'scene' | 'prop') => {
     description: '',
     voice_description: '',
     type: type,
-    image: type === 'character' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400' : 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=600',
+    image: type === 'character' 
+      ? `https://picsum.photos/400/533?random=char_${Date.now()}` 
+      : type === 'scene' 
+        ? `https://picsum.photos/600/450?random=scene_${Date.now()}`
+        : `https://picsum.photos/400/400?random=prop_${Date.now()}`,
     appeared_episodes: []
   };
   showSubjectEdit.value = true;
@@ -1273,6 +1289,7 @@ const timelineScenes = ref([
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     duration: 6.0,
     progress: 0,
+    modified: false,
     script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
 生成一个由以下 3 个镜头组成的视频:<br>
 场景: <br>
@@ -1288,6 +1305,7 @@ const timelineScenes = ref([
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     duration: 4.0,
     progress: 0,
+    modified: false,
     script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
   },
 ]);
@@ -1310,6 +1328,9 @@ const handleSaveScriptInline = () => {
     // 使用 getHTML() 确保保存时保留标签结构（胶囊样式）
     const newScript = editor.value.getHTML();
     currentScript.value = newScript;
+    if (timelineScenes.value[currentSceneIdx.value]) {
+      timelineScenes.value[currentSceneIdx.value].modified = true;
+    }
     isEditingScript.value = false;
     showMentionMenu.value = false;
     ElMessage.success('脚本已保存');
@@ -1648,6 +1669,7 @@ const addTimelineScene = () => {
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     duration: 5.0,
     progress: 0,
+    modified: false,
     script: ''
   });
 };
@@ -1666,6 +1688,42 @@ const deleteScene = (idx: number) => {
 };
 
 onMounted(() => {
+  // Initialize mock data if store is empty
+  if (episodeStore.episodes.length === 0) {
+    episodeStore.setEpisodes([
+      {
+        id: '1',
+        index: 1,
+        title: '第 1 集：命运抉择系统自毁',
+        poster: 'https://picsum.photos/seed/1/200/300',
+        roleCount: 7,
+        sceneCount: 2,
+        propCount: 5,
+        storyboardCount: 16,
+        status: 'pending',
+        storyboardGenerated: false,
+        duration: '01:12',
+        gif: '',
+        synthesisStatus: 'pending'
+      },
+      {
+        id: '2',
+        index: 2,
+        title: '第 2 集：重生归来',
+        poster: 'https://picsum.photos/seed/2/200/300',
+        roleCount: 5,
+        sceneCount: 3,
+        propCount: 3,
+        storyboardCount: 12,
+        status: 'pending',
+        storyboardGenerated: false,
+        duration: '00:38',
+        gif: '',
+        synthesisStatus: 'pending'
+      }
+    ]);
+  }
+
   if (currentScript.value) {
     editor.value?.commands.setContent(currentScript.value);
   }

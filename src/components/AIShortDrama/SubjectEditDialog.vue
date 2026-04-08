@@ -197,7 +197,7 @@
               :disabled="isGeneratingImage"
             >
               <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{'animate-spin': isGeneratingImage}"><MagicStick /></el-icon>
-              <span>AI 一键生成形象</span>
+              <span>AI 一键生成{{ type === 'character' ? '形象' : type === 'scene' ? '场景' : '道具' }}</span>
             </button>
           </div>
 
@@ -300,9 +300,9 @@ const generateImage = async () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const mockImages = {
-      character: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
-      scene: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=600',
-      prop: 'https://images.unsplash.com/photo-1544111306-03732873493d?auto=format&fit=crop&q=80&w=400'
+      character: `https://picsum.photos/400/533?random=char_${Date.now()}`,
+      scene: `https://picsum.photos/600/450?random=scene_${Date.now()}`,
+      prop: `https://picsum.photos/400/533?random=prop_${Date.now()}`
     };
     
     const typeKey = (type.value || 'character') as keyof typeof mockImages;
