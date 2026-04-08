@@ -108,6 +108,16 @@
                 <transition name="fade" mode="out-in">
                   <!-- Text Mode -->
                   <div v-if="voiceMethod === 'text'" key="text" class="h-full flex flex-col">
+                    <div class="flex justify-end px-2 mb-1">
+                      <button 
+                        @click="polishVoice" 
+                        class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[10px] font-black transition-all disabled:opacity-50"
+                        :disabled="isPolishingVoice || !localSubject.voice_description"
+                      >
+                        <el-icon :class="{'animate-spin': isPolishingVoice}"><Refresh /></el-icon>
+                        <span>AI 润色优化</span>
+                      </button>
+                    </div>
                     <textarea 
                       v-model="localSubject.voice_description" 
                       placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
@@ -218,7 +228,7 @@
         <button 
           @click="handleSave" 
           class="px-10 py-2.5 rounded-full bg-indigo-600 text-white text-[14px] font-black shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none"
-          :disabled="!localSubject.name || isGeneratingImage || isPolishingText"
+          :disabled="!localSubject.name || isGeneratingImage || isPolishingText || isPolishingVoice"
         >
           确认保存
         </button>
@@ -258,6 +268,7 @@ const localSubject = ref<any>({
 
 const isGeneratingImage = ref(false);
 const isPolishingText = ref(false);
+const isPolishingVoice = ref(false);
 const voiceMethod = ref<'audio' | 'text'>('audio');
 
 const type = computed(() => localSubject.value.type);
@@ -324,13 +335,32 @@ const polishText = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const originalText = localSubject.value.description;
-    localSubject.value.description = `【已润色】${originalText}\n\n这段描写经过 AI 优化，增强了视觉张力和氛围感，使其更符合剧本创作的专业水准。`;
+    localSubject.value.description = `${originalText}（经过AI润色：增强了视觉张力和氛围感，使其更符合剧作水准。）`;
     
     ElMessage.success('文本润色完成');
   } catch (error) {
     ElMessage.error('润色失败，请稍后重试');
   } finally {
     isPolishingText.value = false;
+  }
+};
+
+const polishVoice = async () => {
+  if (!localSubject.value.voice_description) return;
+
+  isPolishingVoice.value = true;
+  try {
+    // Simulate AI Voice Description Polishing
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const originalText = localSubject.value.voice_description;
+    localSubject.value.voice_description = `${originalText}（AI优化：增加了音色质感和情感表现力的描述）`;
+    
+    ElMessage.success('音色描述润色完成');
+  } catch (error) {
+    ElMessage.error('润色失败，请稍后重试');
+  } finally {
+    isPolishingVoice.value = false;
   }
 };
 
