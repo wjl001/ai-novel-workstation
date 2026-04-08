@@ -401,7 +401,7 @@
               >
                 <button 
                   @click="quoteSelectedText"
-                  class="flex items-center gap-2 px-3 py-1.5 hover:bg-indigo-600 hover:text-white rounded-lg transition-all duration-300 group"
+                  class="flex items-center gap-2 px-3 py-1.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-600 hover:text-white rounded-lg transition-all duration-300 group"
                 >
                   <el-icon :size="14"><ChatLineSquare /></el-icon>
                   <span class="text-[12px] font-black">引用至 AI 助手</span>
