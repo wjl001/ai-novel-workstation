@@ -70,7 +70,7 @@
               </div>
 
               <div class="flex justify-end gap-3">
-                <el-button :icon="Edit" plain>编辑脚本</el-button>
+                <el-button :icon="Edit" class="!bg-indigo-50 !text-indigo-600 !border-indigo-100 hover:!bg-indigo-600 hover:!text-white transition-all">编辑脚本</el-button>
                 <el-button type="primary" :icon="RefreshRight" class="theme-primary-btn">再次生成</el-button>
               </div>
             </div>

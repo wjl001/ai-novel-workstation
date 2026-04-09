@@ -329,7 +329,7 @@
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
-                      class="h-9 px-6 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-100 dark:border-indigo-900 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
+                      class="h-9 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
                     >
                       <el-icon class="group-hover:rotate-12 transition-transform"><Edit /></el-icon>
                       <span>编辑脚本</span>

@@ -41,10 +41,23 @@
       </div>
 
       <div :class="s.right" class="flex items-center gap-3">
+        <!-- Tab Switcher -->
+        <div :class="s.tabSwitcher">
+          <button 
+            v-for="tab in availableTabs" 
+            :key="tab.value"
+            :class="[s.tabBtn, s['tabBtn_' + tab.value], { [s.active]: activeTab === tab.value }]"
+            @click="activeTab = tab.value"
+          >
+            {{ tab.label }}
+            <span :class="s.tabCount">{{ getTabCount(tab.value) }}</span>
+          </button>
+        </div>
+
         <!-- Product Design Info Button -->
         <button 
           @click="showDesignDialog = true"
-          class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] shadow-sm border border-slate-200 transition-all duration-300 mr-2"
+          class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] shadow-sm border border-slate-200 transition-all duration-300"
         >
           <el-icon :size="16"><InfoFilled /></el-icon>
           <span>产品设计说明</span>
@@ -53,104 +66,64 @@
     </div>
 
     <!-- Episode Grid Layout -->
-    <div :class="[s.container, s.gridLayout]" ref="listRef">
-      <div 
-        v-for="ep in filteredEpisodes" 
-        :key="ep.id" 
-        :class="s.gridCard"
-        @click="handleCardClick(ep)"
-      >
-        <div :class="s.index">{{ ep.index }}</div>
-        
-        <div :class="s.posterWrapper">
-          <div :class="s.poster">
-            <el-image :src="getPosterUrl(ep)" fit="cover">
-              <template #error>
-                <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
-                  <el-icon :size="40"><Picture /></el-icon>
-                </div>
-              </template>
-            </el-image>
-            <!-- Duration Badge -->
-            <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
-              {{ ep.duration || '01:12' }}
-            </div>
-          </div>
-        </div>
-
-        <div :class="s.info">
-          <div class="flex items-center justify-between">
-            <h3 :class="s.epTitle">{{ ep.title }}</h3>
-            <span v-if="ep.synthesisStatus === 'success'" class="flex items-center gap-1 text-emerald-500 font-black text-[12px] bg-emerald-50 px-2 py-0.5 rounded-md">
-              <el-icon><Check /></el-icon> 已完成
-            </span>
-          </div>
-          
-          <div v-if="ep.scriptStatus === 'success'" :class="s.meta">
-            <span><el-icon><User /></el-icon> {{ ep.roleCount }} 角色</span>
-            <span><el-icon><Location /></el-icon> {{ ep.sceneCount }} 场景</span>
-            <span><el-icon><Box /></el-icon> {{ ep.propCount || 0 }} 道具</span>
-            <span><el-icon><VideoCamera /></el-icon> {{ ep.storyboardCount || 16 }} 分镜</span>
-          </div>
-
-          <!-- Status Indicator Row -->
-          <div :class="s.statusIndicatorRow">
-            <div :class="[s.statusBadge, s[ep.scriptStatus]]">
-              <el-icon><Document /></el-icon>
-              <span>剧本: {{ ep.scriptStatus === 'success' ? '已创作' : '待创作' }}</span>
-            </div>
-            <div :class="[s.statusBadge, s[ep.assetsStatus || 'pending']]">
-              <el-icon><User /></el-icon>
-              <span>主体: {{ ep.assetsStatus === 'success' ? '已设置' : '待设置' }}</span>
-            </div>
-            <div :class="[s.statusBadge, s[ep.storyboardStatus]]">
-              <el-icon v-if="ep.storyboardStatus === 'generating'" class="is-loading"><Loading /></el-icon>
-              <el-icon v-else><Picture /></el-icon>
-              <span>分镜: {{ getStoryboardStatusShortLabel(ep.storyboardStatus) }}</span>
-            </div>
-            <div :class="[s.statusBadge, s[ep.synthesisStatus]]">
-              <el-icon v-if="ep.synthesisStatus === 'synthesizing'" class="is-loading"><Loading /></el-icon>
-              <el-icon v-else-if="ep.synthesisStatus === 'success'"><VideoPlay /></el-icon>
-              <el-icon v-else><Film /></el-icon>
-              <span>合成: {{ getSynthesisStatusShortLabel(ep.synthesisStatus) }}</span>
+    <div :class="s.container" ref="listRef">
+      <div :class="s.gridLayout">
+        <div 
+          v-for="ep in currentTabEpisodes" 
+          :key="ep.id" 
+          :class="s.gridCard"
+          @click="handleCardClick(ep)"
+        >
+          <div :class="s.posterWrapper">
+            <div :class="s.poster">
+              <el-image :src="getPosterUrl(ep)" fit="cover">
+                <template #error>
+                  <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
+                    <el-icon :size="24"><Picture /></el-icon>
+                  </div>
+                </template>
+              </el-image>
+              <!-- Duration Badge -->
+              <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
+                {{ ep.duration || '01:12' }}
+              </div>
+              <div :class="s.indexBadge">{{ ep.index }}</div>
             </div>
           </div>
 
-          <!-- Step Hint Text -->
-          <div :class="s.stepHint">
-            <span class="text-indigo-600 font-bold">💡 当前建议: </span>
-            <span class="text-slate-600 font-medium">{{ getStepHint(ep) }}</span>
-          </div>
-          
-          <!-- Actions Logic: Stepper Buttons -->
-          <div :class="s.gridActions">
-            <button 
-              :class="[s.stepBtn, { [s.active]: ep.scriptStatus === 'pending' }]"
-              @click.stop="navigateToOutline(ep)"
-            >
-              <el-icon class="mr-1.5"><Document /></el-icon>剧本创作
-            </button>
-            <button 
-              :class="[s.stepBtn, { [s.active]: ep.scriptStatus === 'success' && (ep.assetsStatus === 'pending') }]"
-              :disabled="ep.scriptStatus !== 'success'"
-              @click.stop="navigateToAssets(ep)"
-            >
-              <el-icon class="mr-1.5"><User /></el-icon>主体设置
-            </button>
-            <button 
-              :class="[s.stepBtn, { [s.active]: ep.assetsStatus === 'success' && (ep.storyboardStatus === 'pending' || ep.storyboardStatus === 'generating') }]"
-              :disabled="ep.assetsStatus !== 'success'"
-              @click.stop="navigateToDetail(ep)"
-            >
-              <el-icon class="mr-1.5"><Picture /></el-icon>分镜生成
-            </button>
-            <button 
-              :class="[s.stepBtn, { [s.active]: ep.storyboardStatus === 'success' && (ep.synthesisStatus === 'pending' || ep.synthesisStatus === 'synthesizing') }]"
-              :disabled="ep.storyboardStatus !== 'success'"
-              @click.stop="handleSynthesis(ep)"
-            >
-              <el-icon class="mr-1.5"><MagicStick /></el-icon>视频合成
-            </button>
+          <div :class="s.info">
+            <div class="flex flex-col gap-1 min-w-0">
+              <h3 :class="s.epTitle" :title="ep.title">{{ ep.title }}</h3>
+              
+              <!-- Single Status Indicator -->
+              <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
+                <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
+                <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
+                <el-icon v-else><Document /></el-icon>
+                <span>{{ getSingleStatusLabel(ep) }}</span>
+              </div>
+            </div>
+
+            <!-- Actions Logic: Two Mini Buttons Only -->
+            <div :class="s.gridActions">
+              <button 
+                :class="[s.stepBtn, s.edit]"
+                @click.stop="handleEdit(ep)"
+                title="编辑"
+              >
+                <el-icon><EditPen /></el-icon>
+                <span>编辑</span>
+              </button>
+              <button 
+                :class="[s.stepBtn, s.preview]"
+                :disabled="ep.synthesisStatus !== 'success'"
+                @click.stop="handlePreview(ep)"
+                title="预览"
+              >
+                <el-icon><VideoPlay /></el-icon>
+                <span>预览</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -310,7 +283,8 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   ArrowLeft, InfoFilled, Search, User, Location, Box, VideoCamera, 
-  Document, Picture, Film, MagicStick, Loading, VideoPlay, Check, Download
+  Document, Picture, Film, MagicStick, Loading, VideoPlay, Check, Download,
+  EditPen
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -368,6 +342,74 @@ const filteredEpisodes = computed(() => {
 
 const hasGeneratedAny = computed(() => episodes.value.some(ep => ep.status === 'success'));
 
+const activeTab = ref('processing');
+const availableTabs = [
+  { label: '制作中', value: 'processing' },
+  { label: '主体设置', value: 'assets' },
+  { label: '待开始', value: 'pending' },
+  { label: '已完成', value: 'completed' }
+];
+
+const getTabCount = (tabValue: string) => {
+  switch (tabValue) {
+    case 'completed': return episodes.value.filter(ep => ep.synthesisStatus === 'success').length;
+    case 'pending': return episodes.value.filter(ep => ep.scriptStatus === 'pending').length;
+    case 'assets': return episodes.value.filter(ep => ep.scriptStatus === 'success' && ep.assetsStatus === 'pending').length;
+    case 'processing': return episodes.value.filter(ep => ep.synthesisStatus !== 'success' && ep.assetsStatus === 'success').length;
+    default: return 0;
+  }
+};
+
+const currentTabEpisodes = computed(() => {
+  return filteredEpisodes.value.filter(ep => {
+    if (activeTab.value === 'completed') return ep.synthesisStatus === 'success';
+    if (activeTab.value === 'pending') return ep.scriptStatus === 'pending';
+    if (activeTab.value === 'assets') return ep.scriptStatus === 'success' && ep.assetsStatus === 'pending';
+    if (activeTab.value === 'processing') return ep.synthesisStatus !== 'success' && ep.assetsStatus === 'success';
+    return true;
+  });
+});
+
+const groupedEpisodes = computed(() => {
+  const groups = [
+    { label: '已完成', status: 'completed', items: [] as any[] },
+    { label: '制作中', status: 'processing', items: [] as any[] },
+    { label: '主体设置', status: 'assets', items: [] as any[] },
+    { label: '待开始', status: 'pending', items: [] as any[] },
+  ];
+
+  filteredEpisodes.value.forEach(ep => {
+    if (ep.synthesisStatus === 'success') {
+      groups[0].items.push(ep);
+    } else if (ep.scriptStatus === 'pending') {
+      groups[3].items.push(ep);
+    } else if (ep.assetsStatus === 'pending') {
+      groups[2].items.push(ep);
+    } else {
+      groups[1].items.push(ep);
+    }
+  });
+
+  return groups.filter(g => g.items.length > 0);
+});
+
+const getSingleStatusType = (ep: any) => {
+  if (ep.synthesisStatus === 'success') return 'completed';
+  if (ep.scriptStatus === 'pending') return 'pending';
+  if (ep.assetsStatus === 'pending') return 'assets';
+  return 'processing';
+};
+
+const getSingleStatusLabel = (ep: any) => {
+  if (ep.synthesisStatus === 'success') return '已完成';
+  if (ep.synthesisStatus === 'synthesizing') return '合成中...';
+  if (ep.storyboardStatus === 'generating') return '分镜生成中...';
+  if (ep.storyboardStatus === 'success') return '待合成视频';
+  if (ep.assetsStatus === 'success') return '待生成分镜';
+  if (ep.scriptStatus === 'success') return '待设置主体';
+  return '待创作剧本';
+};
+
 // Initialize mock data if empty
 onMounted(() => {
   if (episodes.value.length === 0) {
@@ -394,7 +436,7 @@ onMounted(() => {
       {
         id: '2',
         index: 2,
-        title: '第 2 集：重生归来',
+        title: '第 2 集：重生归来之境',
         poster: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=400',
         roleCount: 5,
         sceneCount: 3,
@@ -410,6 +452,42 @@ onMounted(() => {
         gif: '',
       },
       {
+        id: '4',
+        index: 4,
+        title: '第 4 集：真相大白',
+        poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400',
+        roleCount: 8,
+        sceneCount: 4,
+        propCount: 6,
+        storyboardCount: 20,
+        scriptStatus: 'success',
+        assetsStatus: 'success',
+        storyboardStatus: 'success',
+        synthesisStatus: 'synthesizing',
+        status: 'generating',
+        storyboardGenerated: true,
+        duration: '01:45',
+        gif: '',
+      },
+      {
+        id: '5',
+        index: 5,
+        title: '第 5 集：暗流涌动',
+        poster: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=400',
+        roleCount: 3,
+        sceneCount: 2,
+        propCount: 4,
+        storyboardCount: 0,
+        scriptStatus: 'success',
+        assetsStatus: 'pending',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        status: 'pending',
+        storyboardGenerated: false,
+        duration: '00:00',
+        gif: '',
+      },
+      {
         id: '3',
         index: 3,
         title: '第 3 集：商战风云',
@@ -417,7 +495,7 @@ onMounted(() => {
         roleCount: 4,
         sceneCount: 2,
         propCount: 2,
-        storyboardCount: 10,
+        storyboardCount: 0,
         scriptStatus: 'pending',
         assetsStatus: 'pending',
         storyboardStatus: 'pending',
@@ -425,6 +503,24 @@ onMounted(() => {
         status: 'pending',
         storyboardGenerated: false,
         duration: '00:45',
+        gif: '',
+      },
+      {
+        id: '6',
+        index: 6,
+        title: '第 6 集：最后对决',
+        poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=400',
+        roleCount: 10,
+        sceneCount: 5,
+        propCount: 8,
+        storyboardCount: 0,
+        scriptStatus: 'pending',
+        assetsStatus: 'pending',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        status: 'pending',
+        storyboardGenerated: false,
+        duration: '00:00',
         gif: '',
       }
     ]);
@@ -510,17 +606,18 @@ const handleSynthesis = async (ep: any) => {
 };
 
 // Actions
-const handleCardClick = (ep: any) => {
-  // 根据当前状态决定点击后的行为
+const handleEdit = (ep: any) => {
   if (ep.scriptStatus === 'pending') {
     navigateToOutline(ep);
   } else if (ep.assetsStatus === 'pending') {
     navigateToAssets(ep);
-  } else if (ep.storyboardStatus === 'pending' || ep.storyboardStatus === 'generating' || ep.storyboardStatus === 'success') {
+  } else {
     navigateToDetail(ep);
-  } else if (ep.synthesisStatus === 'success') {
-    handlePreview(ep);
   }
+};
+
+const handleCardClick = (ep: any) => {
+  handleEdit(ep);
 };
 
 const handleGenerate = async (ep: any) => {

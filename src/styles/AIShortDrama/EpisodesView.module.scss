@@ -87,250 +87,292 @@
 }
 
 .container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
-.gridCard {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  padding: 20px;
+.tabSwitcher {
   display: flex;
-  gap: 0; // Set gap to 0 to manage ratios better
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  padding: 6px;
+  border-radius: 18px;
+  gap: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.08);
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(to bottom, #6366f1, #a855f7);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+.tabBtn {
+  padding: 8px 20px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #64748b;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
 
   &:hover {
-    transform: translateY(-4px) scale(1.005);
-    box-shadow: 0 15px 40px -12px rgba(99, 102, 241, 0.15);
-    background: rgba(255, 255, 255, 0.9);
-    
-    &::before {
-      opacity: 1;
-    }
+    color: #1e293b;
+    background: #f8fafc;
+    transform: translateY(-1px);
+  }
 
+  &.active {
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+    
+    // Default Active Style (can be overridden by specific classes if added)
+    background: #6366f1; 
+
+    .tabCount {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+  }
+
+  // Specific colors based on label/value if we can target them
+  // Since we use v-for, let's use the active status logic in Vue to apply dynamic classes or just style the active one strongly
+}
+
+// Add state-specific active styles
+.tabBtn_processing.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4) !important;
+}
+
+.tabBtn_assets.active {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%) !important; // Pink/Rose
+  box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.4) !important;
+}
+
+.tabBtn_pending.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4) !important;
+}
+
+.tabBtn_completed.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4) !important;
+}
+
+.tabCount {
+  font-size: 12px;
+  font-weight: 900;
+  background: #f1f5f9;
+  color: #94a3b8;
+  padding: 2px 8px;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.gridLayout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); // Default to 4 columns
+  gap: 16px;
+
+  @media (max-width: 1600px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.gridCard {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row; // Horizontal layout inside card
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
+    
     .poster img {
       transform: scale(1.05);
     }
   }
 }
 
-.index {
-  position: absolute;
-  top: -6px;
-  left: 10px;
-  font-size: 50px;
-  font-weight: 900;
-  color: rgba(99, 102, 241, 0.03);
-  pointer-events: none;
-  z-index: 0;
-}
-
 .posterWrapper {
-  width: 15%; // Reduced from 20% to make it smaller
-  z-index: 1;
+  width: 100px; // Small square-ish poster
   flex-shrink: 0;
+  z-index: 1;
 }
 
 .poster {
   width: 100%;
-  aspect-ratio: 2/3; // Movie poster aspect ratio
-  border-radius: 12px;
+  aspect-ratio: 16/10; 
+  border-radius: 10px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  background: transparent;
+  background: #f8fafc;
   
   :deep(.el-image) {
     width: 100%;
     height: 100%;
     display: block;
-    background: transparent;
-  }
-
-  :deep(.el-image__inner) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s;
   }
+}
+
+.indexBadge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
 }
 
 .durationBadge {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  color: #fff;
-  font-size: 10px;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e293b;
+  font-size: 9px;
   font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 6px;
-  letter-spacing: 0.5px;
+  padding: 1px 4px;
+  border-radius: 4px;
   z-index: 2;
 }
 
-.generatingOverlay {
-  display: none; /* Removed as requested */
-}
-
 .info {
-  width: 85%; // Increased from 80% to give more space to content
-  padding-left: 20px;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 8px;
   z-index: 1;
-  min-width: 0;
 }
 
 .epTitle {
-  font-size: 19px;
-  font-weight: 900;
-  color: #0f172a;
-  letter-spacing: -0.5px;
-  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.meta {
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
-  flex-wrap: wrap;
-  
-  span {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748b;
-    background: #f1f5f9;
-    padding: 3px 8px;
-    border-radius: 6px;
-
-    i, svg {
-      color: #6366f1;
-      font-size: 13px;
-    }
-  }
-}
-
-.statusIndicatorRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.statusBadge {
+.singleStatus {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 8px;
+  gap: 4px;
   font-size: 11px;
   font-weight: 800;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  color: #94a3b8;
-  transition: all 0.3s;
+  padding: 2px 10px;
+  border-radius: 20px;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
-  &.success {
-    background: #f0fdf4;
-    color: #16a34a;
-    border-color: #bbf7d0;
+  &.completed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    border: none;
   }
 
-  &.generating, &.synthesizing {
-    background: #eef2ff;
-    color: #4f46e5;
-    border-color: #c7d2fe;
+  &.processing {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #fff;
+    border: none;
     
     i, svg {
       animation: spin 2s linear infinite;
     }
   }
-}
 
-.stepHint {
-  margin-top: 14px;
-  padding: 10px 14px;
-  background: linear-gradient(to right, #f8fafc, #fff);
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  font-size: 12px;
-  line-height: 1.4;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  &.pending {
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    color: #fff;
+    border: none;
+  }
 }
 
 .gridActions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 8px;
-  margin-top: 16px;
 }
 
 .stepBtn {
-  height: 38px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  color: #64748b;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  border: none;
 
   &:hover:not(:disabled) {
-    border-color: #6366f1;
-    color: #6366f1;
-    background: #f5f3ff;
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
   }
 
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-    background: #f1f5f9;
+    filter: grayscale(1);
   }
 
-  &.active {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  &.edit {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); // Amber/Orange
     color: #fff;
-    border: none;
-    box-shadow: 0 6px 15px -4px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
 
     &:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 10px 20px -6px rgba(99, 102, 241, 0.6);
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+  }
+
+  &.preview {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); // Purple/Indigo
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
     }
   }
 }

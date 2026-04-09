@@ -2,16 +2,8 @@
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative ai-drama-container">
     <!-- Header Steps -->
     <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center z-20 relative transition-all duration-300">
-      <div class="bg-white/95 dark:bg-slate-900/95 rounded-full px-10 py-3 flex items-center gap-16 justify-between border border-white dark:border-slate-700 shadow-[0_12px_40px_rgb(0,0,0,0.08)] relative">
-        <!-- Product Design Info Button -->
-        <button 
-          @click="showDesignDialog = true"
-          class="absolute -right-14 translate-x-full top-1/2 -translate-y-1/2 h-9 px-4 flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 text-slate-500 dark:text-slate-400 rounded-full font-black text-[12px] shadow-md border border-slate-100 dark:border-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition-all duration-300 backdrop-blur-sm"
-        >
-          <el-icon :size="14"><InfoFilled /></el-icon>
-          <span>设计说明</span>
-        </button>
-
+      <div class="bg-white dark:bg-slate-900 rounded-full px-12 py-3.5 flex items-center gap-14 justify-between border border-white dark:border-slate-700 shadow-[0_12px_60px_rgba(0,0,0,0.12)] relative">
+        
         <!-- Step 1 -->
         <div 
           class="flex items-center gap-4 cursor-pointer group relative py-0.5"
@@ -19,7 +11,7 @@
         >
           <div 
             class="w-10 h-10 rounded-full flex items-center justify-center text-[14px] transition-all duration-500 relative z-10"
-            :class="activeStep >= 0 ? (activeStep > 0 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-xl shadow-indigo-500/50 ring-4 ring-indigo-500/20') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
+            :class="activeStep >= 0 ? (activeStep > 0 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-[0_0_20px_rgba(168,85,247,0.5)] ring-4 ring-indigo-500/20') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
             <el-icon v-if="activeStep > 0" :size="20"><Check /></el-icon>
             <span v-else>01</span>
@@ -29,11 +21,11 @@
               class="text-[16px] leading-tight transition-all duration-300"
               :class="activeStep >= 0 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
             >剧本创作</span>
-            <span class="text-[11px] opacity-60 font-black uppercase tracking-widest" :class="activeStep >= 0 ? 'text-indigo-600' : 'text-slate-400'">STEP ONE</span>
+            <span class="text-[10px] font-black uppercase tracking-widest mt-0.5" :class="activeStep >= 0 ? 'text-indigo-500' : 'text-slate-400'">STEP ONE</span>
           </div>
           
           <!-- Connector -->
-          <div class="absolute left-[calc(100%+16px)] w-10 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+          <div class="absolute left-[calc(100%+12px)] w-8 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
             <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700 ease-in-out" :style="{ width: activeStep > 0 ? '100%' : '0%' }"></div>
           </div>
         </div>
@@ -46,7 +38,7 @@
         >
           <div 
             class="w-10 h-10 rounded-full flex items-center justify-center text-[14px] transition-all duration-500 relative z-10"
-            :class="activeStep >= 1 ? (activeStep > 1 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-xl shadow-indigo-500/50 ring-4 ring-indigo-500/20') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
+            :class="activeStep >= 1 ? (activeStep > 1 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-[0_0_20px_rgba(168,85,247,0.5)] ring-4 ring-indigo-500/20') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
             <el-icon v-if="activeStep > 1" :size="20"><Check /></el-icon>
             <span v-else>02</span>
@@ -56,11 +48,11 @@
               class="text-[16px] leading-tight transition-all duration-300"
               :class="activeStep >= 1 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
             >主体设置</span>
-            <span class="text-[11px] opacity-60 font-black uppercase tracking-widest" :class="activeStep >= 1 ? 'text-indigo-600' : 'text-slate-400'">STEP TWO</span>
+            <span class="text-[10px] font-black uppercase tracking-widest mt-0.5" :class="activeStep >= 1 ? 'text-indigo-500' : 'text-slate-400'">STEP TWO</span>
           </div>
 
           <!-- Connector -->
-          <div class="absolute left-[calc(100%+16px)] w-10 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+          <div class="absolute left-[calc(100%+12px)] w-8 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
             <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700 ease-in-out" :style="{ width: activeStep > 1 ? '100%' : '0%' }"></div>
           </div>
         </div>
@@ -73,7 +65,7 @@
         >
           <div 
             class="w-10 h-10 rounded-full flex items-center justify-center text-[14px] transition-all duration-500 relative z-10"
-            :class="activeStep >= 2 ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-xl shadow-indigo-500/50 ring-4 ring-indigo-500/20' : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
+            :class="activeStep >= 2 ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white font-black scale-110 shadow-[0_0_20px_rgba(168,85,247,0.5)] ring-4 ring-indigo-500/20' : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
             <span>03</span>
           </div>
@@ -82,9 +74,18 @@
               class="text-[16px] leading-tight transition-all duration-300"
               :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-400 font-bold'"
             >分镜视频</span>
-            <span class="text-[11px] opacity-60 font-black uppercase tracking-widest" :class="activeStep >= 2 ? 'text-indigo-600' : 'text-slate-400'">STEP THREE</span>
+            <span class="text-[10px] font-black uppercase tracking-widest mt-0.5" :class="activeStep >= 2 ? 'text-indigo-500' : 'text-slate-400'">STEP THREE</span>
           </div>
         </div>
+
+        <!-- Product Design Info Button -->
+        <button 
+          @click="showDesignDialog = true"
+          class="ml-6 h-9 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full font-black text-[12px] shadow-sm border border-slate-100 dark:border-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition-all duration-300 backdrop-blur-sm"
+        >
+          <el-icon :size="14"><InfoFilled /></el-icon>
+          <span>设计说明</span>
+        </button>
       </div>
     </div>
 
