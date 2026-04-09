@@ -75,7 +75,7 @@
               <el-skeleton animated :rows="8" />
             </div>
 
-            <div v-else class="space-y-8 animate-fade-in">
+            <div v-else-if="form" class="space-y-8 animate-fade-in">
               <!-- Basic Info Card -->
               <div class="bg-slate-50/50 dark:bg-slate-900/30 rounded-3xl p-5 space-y-6 border border-slate-100 dark:border-slate-800">
                 <div class="grid grid-cols-1 gap-5">
@@ -216,76 +216,102 @@
 
           <!-- 剧集大纲 (Episode Outline Tab) -->
           <div v-show="activeLeftTab === 'episode-outline'" class="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-5 min-h-0 animate-fade-in">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex flex-col">
-                <span class="text-[17px] font-black text-slate-800 dark:text-white">分集列表</span>
-                <span class="text-[12px] text-slate-500 font-black uppercase tracking-widest">共 {{ form.episodesData.length }} 集</span>
-              </div>
-              <button 
-                @click="addEpisode"
-                class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[13px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
-              >
-                <el-icon><Plus /></el-icon> 新增分集
-              </button>
+            <div v-if="isInfoLoading" class="space-y-6">
+              <el-skeleton animated :rows="8" />
             </div>
-
-            <!-- Draggable List -->
-            <div class="flex flex-col gap-6 pb-10">
-              <transition-group name="list">
-                <div 
-                  v-for="(ep, index) in form.episodesData" 
-                  :key="ep.id"
-                  class="bg-indigo-50/40 dark:bg-indigo-900/10 border-2 border-indigo-100/50 dark:border-indigo-500/20 rounded-2xl p-6 shadow-md hover:shadow-2xl hover:shadow-indigo-500/20 hover:-translate-y-1 transition-all duration-300 group relative cursor-move border-l-[6px] border-l-indigo-500"
-                  draggable="true"
-                  @dragstart="onDragStartEpisode($event, index)"
-                  @dragover.prevent
-                  @drop="onDropEpisode($event, index)"
-                >
-                  <!-- Drag Handle Indicator -->
-                  <div class="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-300">
-                    <el-icon :size="16"><MoreFilled class="rotate-90" /></el-icon>
-                  </div>
-
-                  <div class="flex justify-between items-center mb-5 pl-2 -mx-6 -mt-6 p-4 bg-white/40 dark:bg-slate-800/40 border-b border-indigo-100/50 dark:border-indigo-500/10 rounded-tr-2xl backdrop-blur-md">
-                    <div class="flex items-center gap-2">
-                      <div class="w-1.5 h-6 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-full mr-1.5"></div>
-                      <span class="text-[18px] font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-                        第 {{ index + 1 }} 集
-                      </span>
-                    </div>
-                    <button 
-                      @click="removeEpisode(index)"
-                      class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
-                    >
-                      <el-icon :size="20"><Delete /></el-icon>
-                    </button>
-                  </div>
-
-                  <div class="space-y-5 pl-2">
-                    <div class="space-y-2">
-                      <label class="text-[12px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-wider">剧情梗概</label>
-                      <el-input v-model="ep.summary" type="textarea" :rows="3" placeholder="这一集讲了什么？" class="modern-textarea-v3" />
-                    </div>
-                    <div class="grid grid-cols-1 gap-4">
-                      <div class="space-y-2">
-                        <label class="text-[12px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-wider">核心场景</label>
-                        <el-input v-model="ep.scenes" placeholder="地点、时间..." class="modern-input-v3" prefix-icon="Location" />
-                      </div>
-                      <div class="space-y-2">
-                        <label class="text-[12px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-wider">登场角色</label>
-                        <el-input v-model="ep.characters" placeholder="谁在这一集出现？" class="modern-input-v3" prefix-icon="User" />
-                      </div>
-                    </div>
-                  </div>
+            
+            <template v-else-if="form">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex flex-col">
+                  <span class="text-[17px] font-black text-slate-800 dark:text-white">分集列表</span>
+                  <span class="text-[12px] text-slate-500 font-black uppercase tracking-widest">共 {{ form.episodesData.length }} 集</span>
                 </div>
-              </transition-group>
-
-              <div v-if="form.episodesData.length === 0" class="py-20 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[32px] text-slate-400">
-                <el-icon size="48" class="opacity-20 mb-4"><Document /></el-icon>
-                <p class="font-black text-base">暂无剧集大纲</p>
-                <p class="text-[12px] mt-1 opacity-60">点击上方按钮开始规划你的故事</p>
+                <button 
+                  @click="addEpisode"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[13px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                >
+                  <el-icon><Plus /></el-icon> 新增分集
+                </button>
               </div>
-            </div>
+
+              <!-- Draggable List -->
+              <div class="flex flex-col gap-6 pb-10">
+                <transition-group name="list">
+                    <div 
+                    v-for="(ep, epIdx) in (form?.episodesData || [])" 
+                    :key="ep.id"
+                    class="rounded-2xl p-6 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group relative cursor-pointer border-l-[6px]"
+                    :class="isCurrentEpisode(ep.id, epIdx)
+                      ? 'active-episode border-l-purple-600 bg-indigo-50/80 dark:bg-indigo-900/20 border-2 border-indigo-300/80 dark:border-indigo-400/40 shadow-2xl shadow-indigo-500/20'
+                      : 'inactive-episode bg-white/80 dark:bg-slate-800/70 border-2 border-slate-200/80 dark:border-slate-700/70 border-l-transparent dark:border-l-transparent hover:border-indigo-200/80 dark:hover:border-indigo-500/30 hover:shadow-indigo-500/10'"
+                    @click="selectEpisode(epIdx)"
+                    draggable="true"
+                    @dragstart="onDragStartEpisode($event, epIdx)"
+                    @dragover.prevent
+                    @drop="onDropEpisode($event, epIdx)"
+                  >
+                    <!-- Drag Handle Indicator -->
+                    <div class="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-300">
+                      <el-icon :size="16"><MoreFilled class="rotate-90" /></el-icon>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-5 pl-2 -mx-6 -mt-6 p-4 border-b rounded-tr-2xl backdrop-blur-md"
+                      :class="isCurrentEpisode(ep.id, epIdx)
+                        ? 'bg-white/70 dark:bg-slate-800/60 border-indigo-200/70 dark:border-indigo-500/20'
+                        : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-700/50'"
+                    >
+                      <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-6 rounded-full mr-1.5"
+                          :class="isCurrentEpisode(ep.id, epIdx) ? 'bg-gradient-to-b from-indigo-600 to-purple-600' : 'bg-slate-300 dark:bg-slate-600'"
+                        ></div>
+                        <span class="text-[18px] font-black tracking-tight"
+                          :class="isCurrentEpisode(ep.id, epIdx)
+                            ? 'bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400'
+                            : 'text-slate-500 dark:text-slate-300'"
+                        >
+                          第 {{ epIdx + 1 }} 集
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span
+                          v-if="isCurrentEpisode(ep.id, epIdx)"
+                          class="px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-widest shadow-lg shadow-indigo-500/20"
+                        >
+                          当前编辑
+                        </span>
+                        <button 
+                          @mousedown.stop
+                          @click.stop="removeEpisode(epIdx)"
+                          class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+                        >
+                          <el-icon :size="20"><Delete /></el-icon>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="space-y-5 pl-2">
+                      <div class="space-y-2">
+                        <label class="text-[12px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-wider">剧情梗概</label>
+                        <el-input 
+                          v-model="ep.summary" 
+                          type="textarea" 
+                          :rows="3" 
+                          placeholder="这一集讲了什么？" 
+                          class="modern-textarea-v3"
+                          @mousedown.stop="selectEpisode(epIdx)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </transition-group>
+
+                <div v-if="!form?.episodesData || form.episodesData.length === 0" class="py-20 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[32px] text-slate-400">
+                  <el-icon size="48" class="opacity-20 mb-4"><Document /></el-icon>
+                  <p class="font-black text-base">暂无剧集大纲</p>
+                  <p class="text-[12px] mt-1 opacity-60">点击上方按钮开始规划你的故事</p>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -311,7 +337,7 @@
     </div>
 
     <!-- Right Edit Area -->
-    <div class="right-panel flex-1 flex gap-4 lg:gap-6 h-full min-h-0 transition-all duration-500 overflow-visible">
+    <div v-if="form" class="right-panel flex-1 flex gap-4 lg:gap-6 h-full min-h-0 transition-all duration-500 overflow-visible">
       
       <!-- Central Canvas (Tiptap Script Body) -->
       <div class="flex-1 flex flex-col h-full min-h-0 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-[28px] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative group z-10">
@@ -322,76 +348,62 @@
             <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
               <el-icon :size="16"><Edit /></el-icon>
             </div>
-            <div>
-              <h3 class="text-[16px] font-black text-slate-800 dark:text-white flex items-center gap-2">
-                剧本正文
-              </h3>
-              <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">剧本正文编辑</p>
+            <div class="min-w-0">
+              <transition name="fade" mode="out-in">
+                <h3 :key="currentEpisodeIndex + editMode + (currentEpisode?.id || '')" class="text-[16px] font-black text-slate-800 dark:text-white flex items-center gap-2">
+                  {{ editMode === 'full' ? '全集剧本正文' : '剧本正文' }}
+                </h3>
+              </transition>
+              <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">
+                {{ editMode === 'full' ? '剧本正文编辑' : `当前编辑：${currentEpisodeLabel}` }}
+              </p>
+              <p v-if="editMode === 'episode'" class="mt-1 max-w-[420px] truncate text-[12px] text-slate-500 dark:text-slate-400">
+                {{ currentEpisodeSummary }}
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-3">
               <transition name="fade">
-                <button 
+                <span 
                   v-if="editorTextContent"
-                  @click="saveScriptContent"
-                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300 border shadow-sm"
-                  :class="!isEditingLocked ? 'bg-emerald-600 text-white border-emerald-500 hover:bg-emerald-700' : 'bg-white dark:bg-slate-700 text-slate-500 border-slate-100 dark:border-slate-600 hover:text-indigo-600'"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-[12px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400"
                 >
                   <template v-if="!isSavingScript">
-                    <el-icon><Edit v-if="isEditingLocked" /><Check v-else /></el-icon>
-                    {{ isEditingLocked ? '编辑剧本' : '保存剧本' }}
+                    <el-icon><Check /></el-icon>
+                    已自动保存
                   </template>
                   <template v-else>
                     <el-icon class="animate-spin"><Loading /></el-icon>
                     保存中...
                   </template>
-                </button>
+                </span>
               </transition>
-
-              <!-- Episode Selector -->
-              <div class="flex items-center gap-2 mr-4 bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-xl">
-              <div 
-                v-for="mode in ['full', 'episode']" 
-                :key="mode"
-                class="px-3 py-1 rounded-lg text-[12px] font-black cursor-pointer transition-all duration-300"
-                :class="editMode === mode ? 'bg-white dark:bg-slate-600 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
-                @click="editMode = mode as 'full' | 'episode'"
-              >
-                {{ mode === 'full' ? '全集' : '分集' }}
-              </div>
-            </div>
-
-            <el-select 
-              v-if="editMode === 'episode'" 
-              v-model="currentEpisodeIndex" 
-              class="modern-select-v2 !w-28 mr-2" 
-              placeholder="选择分集"
-            >
-              <el-option 
-                v-for="(ep, idx) in form.episodesData" 
-                :key="ep.id" 
-                :label="`第 ${idx + 1} 集`" 
-                :value="idx" 
-                :disabled="isEpisodeLocked(idx)"
-              >
-                <div class="flex items-center justify-between w-full">
-                  <span>第 {{ idx + 1 }} 集</span>
-                  <el-icon v-if="isEpisodeLocked(idx)" class="text-slate-300"><Lock /></el-icon>
-                </div>
-              </el-option>
-            </el-select>
           </div>
         </div>
 
         <!-- Canvas Main Body -->
         <div class="flex-1 min-h-0 relative bg-[#FDFDFD] dark:bg-slate-900/30 flex flex-col">
+          
+          <!-- Loading Overlay -->
+          <transition name="fade">
+            <div v-if="isSwitchingContent" class="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-[20px]">
+              <div class="flex flex-col items-center gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl border border-indigo-100 dark:border-slate-700">
+                <el-icon class="is-loading text-indigo-600 dark:text-indigo-400" :size="28"><Loading /></el-icon>
+                <span class="text-[13px] font-black text-indigo-600 dark:text-indigo-400 tracking-widest">加载中...</span>
+              </div>
+            </div>
+          </transition>
+
           <!-- Tiptap Editor Wrapper -->
           <div 
             class="flex-1 overflow-y-auto custom-scrollbar p-2 lg:p-3"
             @contextmenu.prevent="openContextMenu"
             ref="scriptBodyRef"
           >
-            <div class="min-h-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-[20px] shadow-sm relative overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/5">
+            <div
+              class="min-h-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-[20px] shadow-sm relative overflow-hidden transition-all duration-150 hover:shadow-xl hover:shadow-indigo-500/5"
+              :class="isSwitchingContent ? 'opacity-50 scale-[0.98]' : 'opacity-100 scale-100'"
+            >
               <!-- Selection Bubble Menu -->
               <bubble-menu 
                 v-if="tiptapEditor" 
@@ -413,33 +425,45 @@
 
               <!-- Empty State -->
               <transition name="fade">
-                <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-slate-900 z-10 p-4 text-center">
+                <div v-if="!isGenerating && !editorTextContent && showEmptyPlaceholder && !isEpisodeLocked(currentEpisodeIndex)" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-slate-900 z-10 p-4 text-center">
                   <div class="w-20 h-20 rounded-[32px] bg-[#F5F7FF] dark:bg-slate-800/50 flex items-center justify-center text-[#6366F1]/30 dark:text-indigo-500/20 mb-4 border border-white dark:border-slate-700 shadow-inner">
                     <el-icon size="40"><Document /></el-icon>
                   </div>
-                  <h4 class="text-[20px] font-black text-[#1E293B] dark:text-white mb-1">剧本还是一片空白</h4>
+                  <h4 class="text-[20px] font-black text-[#1E293B] dark:text-white mb-1">
+                    {{ editMode === 'full' ? '全集剧本还是一片空白' : `${currentEpisodeLabel}剧本还是一片空白` }}
+                  </h4>
                   <p class="mb-6 text-[#64748B] text-[13px] font-medium max-w-md leading-relaxed">
-                    万事开头难，不如让 AI 助手根据你的大纲，为你创作一个精彩的开场？
+                    {{ editMode === 'full' ? '万事开头难，不如让 AI 助手根据你的大纲，为你创作一个精彩的开场？' : `当前正在查看${currentEpisodeLabel}，${currentEpisodeSummary}` }}
                   </p>
                   <div class="flex items-center gap-4">
                     <button 
                       @click="generateScriptBody"
-                      :disabled="isEpisodeLocked(currentEpisodeIndex)"
-                      class="h-[44px] px-6 bg-[#6366F1] text-white rounded-[16px] text-[14px] font-black shadow-[0_10px_20px_rgba(99,102,241,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                      class="h-[44px] px-6 bg-[#6366F1] text-white rounded-[16px] text-[14px] font-black shadow-[0_10px_20px_rgba(99,102,241,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                     >
                       <el-icon :size="16"><MagicStick /></el-icon> 
-                      {{ editMode === 'full' ? '全集智能生成' : `第 ${currentEpisodeIndex + 1} 集智能生成` }}
+                      {{ editMode === 'full' ? '全集智能生成' : `${currentEpisodeLabel}智能生成` }}
                     </button>
                     <button 
                       @click="startManualWrite"
-                      :disabled="isEpisodeLocked(currentEpisodeIndex)"
-                      class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                      class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm"
                     >
                       <el-icon :size="16"><Edit /></el-icon> 我要自己写
                     </button>
                   </div>
-                  <p v-if="isEpisodeLocked(currentEpisodeIndex)" class="mt-4 text-red-400 text-[12px] font-black animate-pulse flex items-center justify-center gap-2">
-                    <el-icon><Lock /></el-icon> 请先完成上一集的剧本编写
+                </div>
+              </transition>
+
+              <!-- Locked State Overlay -->
+              <transition name="fade">
+                <div v-if="isEpisodeLocked(currentEpisodeIndex)" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm z-10 p-4 text-center">
+                  <div class="w-20 h-20 rounded-[32px] bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-500 mb-4 border border-red-100 dark:border-red-900/50 shadow-inner">
+                    <el-icon size="40"><Lock /></el-icon>
+                  </div>
+                  <h4 class="text-[20px] font-black text-slate-800 dark:text-white mb-2">
+                    {{ currentEpisodeLabel }} 已锁定
+                  </h4>
+                  <p class="text-red-500 text-[13px] font-bold">
+                    请先完成上一集的剧本编写
                   </p>
                 </div>
               </transition>
@@ -484,7 +508,7 @@
           >
             <el-icon v-if="!editorTextContent"><MagicStick /></el-icon>
             <el-icon v-else><Refresh /></el-icon>
-            {{ editorTextContent ? '不满意？重来' : (editMode === 'full' ? '帮我写全集' : `帮我写第 ${currentEpisodeIndex + 1} 集`) }}
+            {{ editorTextContent ? (editMode === 'full' ? '不满意？重写全集' : `不满意？重写${currentEpisodeLabel}`) : (editMode === 'full' ? '帮我写全集' : `帮我写${currentEpisodeLabel}`) }}
           </button>
 
           <button 
@@ -761,13 +785,37 @@ import {
   ArrowLeft, ArrowRight, Document, Setting, ArrowDown, 
   Expand, Fold, VideoPause, VideoPlay, User, 
   RefreshLeft, RefreshRight, DocumentAdd, Top, InfoFilled,
-  Location, MoreFilled, ChatLineSquare, Close, Lock
+  Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
+import Placeholder from '@tiptap/extension-placeholder';
+
+interface EpisodeData {
+  id: string;
+  title?: string;
+  summary: string;
+  scenes?: string;
+  characters?: string;
+  content: string;
+  chatHistory: any[];
+}
+
+interface DramaForm {
+  title: string;
+  scriptType: string;
+  genre: string;
+  targetAudience: string;
+  episodesCount: number;
+  expectedDuration: number;
+  synopsis: string;
+  background: string;
+  fullContent: string;
+  episodesData: EpisodeData[];
+}
 
 const router = useRouter();
 const dramaStore = useDramaStore();
@@ -781,104 +829,253 @@ const isGenerating = ref(false);
 const isPaused = ref(false);
 const isSavingScript = ref(false);
 
-const editMode = ref<'full' | 'episode'>('full');
+const editMode = ref<'full' | 'episode'>('episode');
 const currentEpisodeIndex = ref(0);
 
 // Form Data
-const form = reactive({
-  title: '',
-  scriptType: '',
-  genre: '',
-  targetAudience: '',
-  episodesCount: null as number | null,
-  expectedDuration: null as number | null,
-  synopsis: '',
-  background: '',
-  fullContent: '',
-  episodesData: [] as any[]
-});
-
+const form = ref<DramaForm | null>(null);
 const errors = reactive<Record<string, string>>({});
 
-// Use a flag to avoid infinite loops when switching content
+// UI & Panel State
+const isLeftCollapsed = ref(false);
+const isRightPanelVisible = ref(true);
+const activeLeftTab = ref('basic-settings');
+const leftPanelWidth = ref(320);
+const isEditingLocked = ref(true);
+
+// Editor State
+const tiptapEditor = ref<Editor | null>(null);
+const editorTextContent = ref('');
+const showEmptyPlaceholder = ref(true);
 const isSwitchingContent = ref(false);
+const scriptBodyRef = ref<HTMLElement | null>(null);
+
+// AI Assistant & Chat State
+const chatMessages = ref<{id: string, role: 'ai'|'user', content: string, isGenerating?: boolean}[]>([]);
+const aiPromptPopoverVisible = ref<Record<string, boolean>>({});
+const aiPromptInput = ref('');
+const quotedText = ref('');
+const rightPanelChatRef = ref<HTMLElement | null>(null);
+
+// AI Proposal State
+const aiProposal = reactive({
+  isActive: false,
+  original: '',
+  modified: '',
+  action: '',
+  selection: { from: 0, to: 0 },
+  isGenerating: false
+});
+
+// Design Dialog State
+const showDesignDialog = ref(false);
+
+// Context Menu State
+const contextMenuVisible = ref(false);
+const contextMenuX = ref(0);
+const contextMenuY = ref(0);
 
 const SEPARATOR = '<p>------------------</p>';
 
 const isEpisodeLocked = (index: number) => {
   if (editMode.value === 'full') return false;
   if (index === 0) return false;
-  const prevEpisode = form.episodesData[index - 1];
+  if (!form.value || !form.value.episodesData) return false;
+  const prevEpisode = form.value.episodesData[index - 1];
   // 检查前一集是否有实际内容（过滤掉空标签、分隔符、空格等）
   const content = prevEpisode?.content || '';
   const cleanContent = content.replace(/<p><\/p>|<p>------------------<\/p>|<br>|[\s\n\t\r]/g, '').trim();
   return cleanContent.length === 0;
 };
 
-const saveCurrentContentToStore = () => {
-  if (isSwitchingContent.value || !tiptapEditor.value) return;
-  const content = tiptapEditor.value.getHTML();
-  
-  if (editMode.value === 'full') {
-    form.fullContent = content;
-    // 使用正则匹配分隔符，允许标签内包含样式属性
-    const parts = content.split(/<p[^>]*>------------------<\/p>/g);
-    form.episodesData.forEach((ep, idx) => {
-      if (parts[idx] !== undefined) {
-        // 去除多余的空行和 HTML 标签，仅保留纯内容或标准格式
-        ep.content = parts[idx].trim();
-      }
-    });
-  } else {
-    // 同步当前分集内容
-    if (form.episodesData[currentEpisodeIndex.value]) {
-      form.episodesData[currentEpisodeIndex.value].content = content;
+const currentEpisode = computed(() => {
+  if (!form.value?.episodesData?.length) return null;
+  return form.value.episodesData[currentEpisodeIndex.value] || null;
+});
+
+const currentEpisodeLabel = computed(() => {
+  const fallback = `第 ${currentEpisodeIndex.value + 1} 集`;
+  const title = currentEpisode.value?.title?.trim();
+  return title || fallback;
+});
+
+const currentEpisodeSummary = computed(() => {
+  const summary = currentEpisode.value?.summary?.trim();
+  return summary || '当前分集暂无剧情梗概';
+});
+
+const isCurrentEpisode = (episodeId: string, episodeIndex: number) => {
+  if (editMode.value !== 'episode') return false;
+  return currentEpisodeIndex.value === episodeIndex;
+};
+
+let isSwitchingEpisode = false;
+
+const selectEpisode = async (index: number | string) => {
+  if (isSwitchingEpisode) return; // 防止快速点击导致状态错乱
+
+  try {
+    isSwitchingEpisode = true;
+    
+    if (!form.value || !Array.isArray(form.value.episodesData)) {
+      console.warn('Form or episodesData not ready');
+      return;
     }
-    // 同步全集内容：重新合并所有分集
-    form.fullContent = form.episodesData
-      .map(ep => ep.content || '<p></p>')
-      .join(SEPARATOR);
+    
+    const targetIndex = Number(index);
+    if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= form.value.episodesData.length) {
+      console.warn('Invalid target index:', index);
+      return;
+    }
+    
+    // 如果已经在该集且是分集模式，则不需要切换
+    if (editMode.value === 'episode' && currentEpisodeIndex.value === targetIndex) return;
+
+    // 触发切换淡出动画
+    isSwitchingContent.value = true;
+    
+    // 等待 150ms 以允许 fade-out 动画执行
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    // 切换前保存当前分集的数据
+    if (editMode.value === 'episode') {
+      saveCurrentContentToStore();
+      if (form.value.episodesData[currentEpisodeIndex.value]) {
+        form.value.episodesData[currentEpisodeIndex.value].chatHistory = [...chatMessages.value];
+      }
+    }
+
+    // 更新状态
+    editMode.value = 'episode';
+    currentEpisodeIndex.value = targetIndex;
+    isRightPanelVisible.value = true;
+    
+    // 加载目标分集的内容
+    loadContentFromStore();
+
+    // 加载目标分集的聊天历史
+    if (form.value.episodesData[targetIndex]) {
+      chatMessages.value = [...(form.value.episodesData[targetIndex].chatHistory || [])];
+    }
+    
+    // 滚动到顶部并结束动画
+    await nextTick();
+    if (rightPanelChatRef.value) rightPanelChatRef.value.scrollTop = 0;
+    if (scriptBodyRef.value) scriptBodyRef.value.scrollTop = 0;
+    
+    // 触发 fade-in
+    isSwitchingContent.value = false;
+  } catch (error) {
+    console.error('Error in selectEpisode:', error);
+    isSwitchingContent.value = false;
+    // 延迟显示错误，避免在组件卸载或更新过程中触发 Element Plus 内部错误
+    setTimeout(() => {
+      ElMessage.error('切换剧集失败，请重试');
+    }, 100);
+  } finally {
+    // 稍微延迟释放锁，防止动画期间的二次触发
+    setTimeout(() => {
+      isSwitchingEpisode = false;
+    }, 200);
   }
-  
-  // 同步至 Pinia
-  dramaStore.setOutlineData(JSON.parse(JSON.stringify(form)));
+};
+
+const saveCurrentContentToStore = () => {
+  try {
+    if (!form.value || isSwitchingContent.value || !tiptapEditor.value) return;
+    const content = tiptapEditor.value.getHTML();
+    
+    if (editMode.value === 'full') {
+      form.value.fullContent = content;
+      // 使用正则匹配分隔符，允许标签内包含样式属性
+      const parts = content.split(/<p[^>]*>------------------<\/p>/g);
+      form.value.episodesData.forEach((ep, idx) => {
+        if (parts[idx] !== undefined) {
+          // 去除多余的空行和 HTML 标签，仅保留纯内容或标准格式
+          ep.content = parts[idx].trim();
+        }
+      });
+    } else {
+      // 同步当前分集内容
+      if (form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
+        form.value.episodesData[currentEpisodeIndex.value].content = content;
+        form.value.episodesData[currentEpisodeIndex.value].chatHistory = [...chatMessages.value];
+      }
+      // 同步全集内容：重新合并所有分集
+      form.value.fullContent = form.value.episodesData
+        .map(ep => ep.content || '<p></p>')
+        .join(SEPARATOR);
+    }
+    
+    // 同步至 Pinia
+    if (dramaStore && typeof dramaStore.setOutlineData === 'function') {
+      dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
+    }
+  } catch (error) {
+    console.error('Error in saveCurrentContentToStore:', error);
+  }
 };
 
 const loadContentFromStore = () => {
-  if (!tiptapEditor.value) return;
-  isSwitchingContent.value = true;
-  
-  let content = '';
-  if (editMode.value === 'full') {
-    // 每次进入全集模式，都尝试根据分集数据重新生成全集内容，确保数据是最新的
-    const mergedContent = form.episodesData
-      .map(ep => ep.content || '<p></p>')
-      .join(SEPARATOR);
+  try {
+    if (!form.value || !tiptapEditor.value) return;
     
-    // 只有当分集确实有内容时，才使用合并内容，否则使用之前存的全集内容
-    const hasAnyContent = form.episodesData.some(ep => ep.content && ep.content.replace(/<p><\/p>/g, '').trim().length > 0);
-    if (hasAnyContent) {
-      content = mergedContent;
-      form.fullContent = mergedContent;
+    let content = '';
+    if (editMode.value === 'full') {
+      const mergedContent = form.value.episodesData
+        .map(ep => ep.content || '<p></p>')
+        .join(SEPARATOR);
+      
+      const hasAnyContent = form.value.episodesData.some(ep => ep.content && ep.content.replace(/<p><\/p>/g, '').trim().length > 0);
+      if (hasAnyContent) {
+        content = mergedContent;
+        form.value.fullContent = mergedContent;
+      } else {
+        content = form.value.fullContent || '';
+      }
     } else {
-      content = form.fullContent || '';
+      if (form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
+        content = form.value.episodesData[currentEpisodeIndex.value].content || '';
+      }
     }
-  } else {
-    if (form.episodesData[currentEpisodeIndex.value]) {
-      content = form.episodesData[currentEpisodeIndex.value].content || '';
+    
+    tiptapEditor.value.commands.setContent(content);
+    
+    const text = tiptapEditor.value.getText().trim();
+    editorTextContent.value = text;
+    
+    if (!text) {
+      isEditingLocked.value = false;
     }
+    
+    showEmptyPlaceholder.value = !text;
+    
+    if (dramaStore && typeof dramaStore.setScriptGenerated === 'function') {
+      dramaStore.setScriptGenerated(!!text);
+    }
+  } catch (error) {
+    console.error('Error in loadContentFromStore:', error);
   }
-  
-  tiptapEditor.value.commands.setContent(content);
-  editorTextContent.value = tiptapEditor.value.getText().trim();
-  dramaStore.setScriptGenerated(!!editorTextContent.value);
-  showEmptyPlaceholder.value = !editorTextContent.value;
-  isSwitchingContent.value = false;
 };
 
 // Add watch for other form fields to ensure they are also persisted to Pinia
-watch(form, (newForm) => {
-  dramaStore.setOutlineData(JSON.parse(JSON.stringify(newForm)));
+let isSyncingToStore = false;
+watch(() => form.value, (newForm) => {
+  if (newForm && !isSyncingToStore) {
+    isSyncingToStore = true;
+    dramaStore.setOutlineData(JSON.parse(JSON.stringify(newForm)));
+    nextTick(() => {
+      isSyncingToStore = false;
+    });
+  }
+}, { deep: true });
+
+// Sync chat history back to form when chatMessages changes
+watch(chatMessages, (newMsgs) => {
+  if (form.value && editMode.value === 'episode' && form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
+    // 避免在此处改变引用的地址，否则会触发上方的 deep watch 造成循环
+    form.value.episodesData[currentEpisodeIndex.value].chatHistory = newMsgs;
+  }
 }, { deep: true });
 
 // Watch for mode or episode changes
@@ -887,44 +1084,45 @@ watch([editMode, currentEpisodeIndex], (newVal, oldVal) => {
 });
 
 const saveScriptContent = () => {
-  if (!isEditingLocked.value) {
-    isSavingScript.value = true;
-    setTimeout(() => {
-      isSavingScript.value = false;
-      isEditingLocked.value = true; // Lock after saving
-      ElMessage.success('剧本保存成功');
-    }, 600);
-  } else {
-    isEditingLocked.value = false; // Unlock for editing
-  }
+  // 此方法现作为内部防抖保存使用
+  isSavingScript.value = true;
+  setTimeout(() => {
+    isSavingScript.value = false;
+  }, 600);
 };
 
-const goToSubjectSettings = () => {
+const goToSubjectSettings = async () => {
   if (!editorTextContent.value) {
-    ElMessage.warning('请先生成剧本内容，再进行后续设置');
+    ElMessage.warning('请先生成或编写剧本内容，再进行后续设置');
     return;
   }
   isSavingScript.value = true;
-  // Sync current content before leaving
+  // 强制同步当前所有内容
   saveCurrentContentToStore();
   
-  setTimeout(() => {
-    isSavingScript.value = false;
-    ElMessage.success('正在前往主体设置...');
+  // 模拟后端持久化 API 调用
+  try {
+    await new Promise(resolve => setTimeout(resolve, 800)); // 模拟网络请求
+    ElMessage.success('剧本完全保存成功！正在前往主体设置...');
     router.push('/ai-short-drama-creator/assets');
-  }, 500);
+  } catch (error) {
+    ElMessage.error('保存失败，请检查网络后重试');
+  } finally {
+    isSavingScript.value = false;
+  }
 };
 
 const validateField = (field: string) => {
+  if (!form.value) return;
   if (field === 'background') {
-    if (form.background.length > 200) {
+    if (form.value.background.length > 200) {
       errors.background = '故事背景不能超过200字';
     } else {
       errors.background = '';
     }
   }
   if (field === 'synopsis') {
-    if (form.synopsis.length > 300) {
+    if (form.value.synopsis.length > 300) {
       errors.synopsis = '故事梗概不能超过300字';
     } else {
       errors.synopsis = '';
@@ -933,7 +1131,8 @@ const validateField = (field: string) => {
 };
 
 const getWordCountColor = (field: string) => {
-  const value = form[field as keyof typeof form];
+  if (!form.value) return 'text-slate-400';
+  const value = form.value[field as keyof typeof form.value];
   const length = typeof value === 'string' ? value.length : 0;
   if (field === 'background') return length > 200 ? 'text-red-500' : 'text-slate-400';
   if (field === 'synopsis') return length > 300 ? 'text-red-500' : 'text-slate-400';
@@ -1009,37 +1208,6 @@ const rejectAIProposal = () => {
   ElMessage.info('已放弃 AI 建议');
 };
 
-const isLeftCollapsed = ref(false);
-const isRightPanelVisible = ref(true);
-const activeLeftTab = ref('basic-settings');
-const leftPanelWidth = ref(320);
-const tiptapEditor = ref<Editor | null>(null);
-const editorTextContent = ref('');
-const showEmptyPlaceholder = ref(true);
-const chatMessages = ref<{id: string, role: 'ai'|'user', content: string, isGenerating?: boolean}[]>([]);
-const aiPromptPopoverVisible = ref<Record<string, boolean>>({});
-const aiPromptInput = ref('');
-const quotedText = ref('');
-const isEditingLocked = ref(true);
-
-// AI Proposal State
-const aiProposal = reactive({
-  isActive: false,
-  original: '',
-  modified: '',
-  action: '',
-  selection: { from: 0, to: 0 },
-  isGenerating: false
-});
-
-// Design Dialog State
-const showDesignDialog = ref(false);
-
-// Context Menu State
-const contextMenuVisible = ref(false);
-const contextMenuX = ref(0);
-const contextMenuY = ref(0);
-
 const openContextMenu = (e: MouseEvent) => {
   // Positioning directly under the mouse
   contextMenuX.value = e.clientX;
@@ -1081,9 +1249,9 @@ const fetchAutoPrefillInfo = () => {
         background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为泡影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',
         fullContent: '',
         episodesData: [
-          { id: 'p1', title: '第一集', summary: '订婚宴上，沈薇薇突然闯入并宣布怀了姐夫顾承泽的孩子，全场震惊，沈念安的世界崩塌。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 司仪', content: '' },
-          { id: 'p2', title: '第二集', summary: '沈家父母偏袒亲生女儿沈薇薇，当众羞辱沈念安是养女并撕毁其致辞，亲情彻底决裂。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父', content: '' },
-          { id: 'p3', title: '第三集', summary: '沈念安被保安驱逐，发现工作室被查封，在暴雨中绝望等死时遇到神秘劳斯莱斯。', scenes: '酒店门口, 街道, 工作室', characters: '沈念安, 周助理, 神秘先生', content: '' }
+          { id: 'p1', title: '第一集', summary: '订婚宴上，沈薇薇突然闯入并宣布怀了姐夫顾承泽的孩子，全场震惊，沈念安的世界崩塌。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 司仪', content: '', chatHistory: [] },
+          { id: 'p2', title: '第二集', summary: '沈家父母偏袒亲生女儿沈薇薇，当众羞辱沈念安是养女并撕毁其致辞，亲情彻底决裂。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父', content: '', chatHistory: [] },
+          { id: 'p3', title: '第三集', summary: '沈念安被保安驱逐，发现工作室被查封，在暴雨中绝望等死时遇到神秘劳斯莱斯。', scenes: '酒店门口, 街道, 工作室', characters: '沈念安, 周助理, 神秘先生', content: '', chatHistory: [] }
         ]
       });
     }, 400);
@@ -1107,13 +1275,25 @@ onMounted(async () => {
       CharacterCount.configure({ limit: 50000 }),
       BubbleMenuExtension.configure({
         element: document.querySelector('.bubble-menu-element') as HTMLElement,
+      }),
+      Placeholder.configure({
+        placeholder: ({ node }) => {
+          return editMode.value === 'full' ? '全集剧本还是一片空白' : currentEpisodeLabel.value;
+        }
       })
     ],
     content: '',
     onUpdate: ({ editor }) => {
-      editorTextContent.value = editor.getText().trim();
-      dramaStore.setScriptGenerated(!!editorTextContent.value);
-      saveCurrentContentToStore();
+      // 防止在切换内容时产生的 update 触发无限循环
+      if (isSwitchingContent.value) return;
+      
+      const text = editor.getText().trim();
+      if (editorTextContent.value !== text) {
+        editorTextContent.value = text;
+        showEmptyPlaceholder.value = !text;
+        dramaStore.setScriptGenerated(!!text);
+        saveCurrentContentToStore();
+      }
     },
     editorProps: {
       attributes: {
@@ -1124,23 +1304,38 @@ onMounted(async () => {
   });
 
   // 监听锁定状态、当前分集、编辑模式或分集内容变化，实时更新编辑器可编辑状态
-  watch([isEditingLocked, currentEpisodeIndex, editMode, () => form.episodesData], () => {
+  watch([isEditingLocked, currentEpisodeIndex, editMode, () => form.value?.episodesData], () => {
+    // 防止在编辑器加载时频繁切换状态触发循环
+    if (isSwitchingContent.value) return;
     tiptapEditor.value?.setEditable(!isEditingLocked.value && !isEpisodeLocked(currentEpisodeIndex.value));
   }, { deep: true });
 
   isInfoLoading.value = true;
-  // Load from Pinia store if available (survives route changes but not refresh)
-  if (dramaStore.outlineData) {
-    Object.assign(form, dramaStore.outlineData);
-    // After loading, update the editor content
-    loadContentFromStore();
-  } else {
-    const data: any = await fetchAutoPrefillInfo();
-    Object.assign(form, data);
-    // Initially update Pinia store
-    dramaStore.setOutlineData({ ...form });
+  try {
+    // Load from Pinia store if available (survives route changes but not refresh)
+    if (dramaStore.outlineData) {
+      form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+      // Sync current chat messages with initial currentEpisodeIndex
+      if (form.value && form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
+        chatMessages.value = form.value.episodesData[currentEpisodeIndex.value].chatHistory || [];
+      }
+      // After loading, update the editor content
+      loadContentFromStore();
+    } else {
+      const data: any = await fetchAutoPrefillInfo();
+      if (data) {
+        form.value = JSON.parse(JSON.stringify(data));
+        // Initially update Pinia store
+        dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
+        // After loading mock data, update the editor content
+        loadContentFromStore();
+      }
+    }
+  } catch (error) {
+    console.error('Error during OutlineView initialization:', error);
+  } finally {
+    isInfoLoading.value = false;
   }
-  isInfoLoading.value = false;
 });
 
 onBeforeUnmount(() => {
@@ -1212,11 +1407,11 @@ const handleAIGenerateAction = (field: string, action: 'replace' | 'append' | 'c
   // Mock generation for other fields
   const mockResponse = `【AI生成内容】这是基于您的要求“${aiPromptInput.value}”生成的补充内容...`;
   if (action === 'replace') {
-    if (field === 'synopsis') form.synopsis = mockResponse;
-    if (field === 'background') form.background = mockResponse;
+    if (field === 'synopsis' && form.value) form.value.synopsis = mockResponse;
+    if (field === 'background' && form.value) form.value.background = mockResponse;
   } else {
-    if (field === 'synopsis') form.synopsis += '\n' + mockResponse;
-    if (field === 'background') form.background += '\n' + mockResponse;
+    if (field === 'synopsis' && form.value) form.value.synopsis += '\n' + mockResponse;
+    if (field === 'background' && form.value) form.value.background += '\n' + mockResponse;
   }
   aiPromptInput.value = '';
 };
@@ -1240,19 +1435,53 @@ const startResizeLeftPanel = (e: MouseEvent) => {
 };
 
 const addEpisode = () => {
-  form.episodesData.push({ id: Date.now().toString(), summary: '', scenes: '', characters: '', content: '' });
+  if (!form.value) return;
+  form.value.episodesData.push({ 
+    id: Date.now().toString(), 
+    summary: '', 
+    scenes: '', 
+    characters: '', 
+    content: '',
+    chatHistory: [] 
+  });
 };
 const removeEpisode = (index: number) => {
-  form.episodesData.splice(index, 1);
+  if (!form.value || !form.value.episodesData) return;
+  
+  const isRemovingCurrent = currentEpisodeIndex.value === index;
+  form.value.episodesData.splice(index, 1);
+  
+  // If we removed the current episode or an episode before it, update the index
+  if (isRemovingCurrent || currentEpisodeIndex.value >= form.value.episodesData.length) {
+    currentEpisodeIndex.value = Math.max(0, Math.min(currentEpisodeIndex.value, form.value.episodesData.length - 1));
+  } else if (currentEpisodeIndex.value > index) {
+    currentEpisodeIndex.value--;
+  }
+  
+  // Always reload to ensure state is consistent
+  loadContentFromStore();
+  saveCurrentContentToStore();
 };
 
 let draggedIndex = -1;
 const onDragStartEpisode = (e: DragEvent, index: number) => { draggedIndex = index; };
 const onDropEpisode = (e: DragEvent, index: number) => {
-  if (draggedIndex === -1 || draggedIndex === index) return;
-  const item = form.episodesData.splice(draggedIndex, 1)[0];
-  form.episodesData.splice(index, 0, item);
+  if (!form.value || draggedIndex === -1 || draggedIndex === index) return;
+  
+  // Save ID of current episode to restore index after move
+  const selectedEpId = form.value.episodesData[currentEpisodeIndex.value]?.id;
+  
+  const item = form.value.episodesData.splice(draggedIndex, 1)[0];
+  form.value.episodesData.splice(index, 0, item);
+  
+  // Update currentEpisodeIndex if needed
+  if (selectedEpId) {
+    const newIdx = form.value.episodesData.findIndex((ep: any) => ep.id === selectedEpId);
+    if (newIdx !== -1) currentEpisodeIndex.value = newIdx;
+  }
+  
   draggedIndex = -1;
+  saveCurrentContentToStore();
 };
 
 const generateScriptBody = () => {
@@ -1270,7 +1499,7 @@ const generateScriptBody = () => {
 
   if (editMode.value === 'full') {
     mockText = ``;
-    form.episodesData.forEach((_, idx) => {
+    form.value?.episodesData.forEach((_, idx) => {
       mockText += (EPISODE_SCRIPTS[idx] || `第 ${idx + 1} 集内容生成中...`) + '\n\n' + SEPARATOR.replace(/<p>|<\/p>/g, '') + '\n\n';
     });
   } else {
@@ -1289,13 +1518,21 @@ const generateScriptBody = () => {
     }
   }, 40);
 };
-
-const rightPanelChatRef = ref<HTMLElement | null>(null);
-const scriptBodyRef = ref<HTMLElement | null>(null);
 </script>
 
 <style scoped>
 /* Modern Scrollbar */
+.active-episode {
+  border-left-color: #7c3aed !important; /* Use purple-600 color */
+  background-color: rgba(224, 231, 255, 0.6) !important;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3) !important;
+  outline: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.bg-indigo-50\/40.border-l-indigo-50.dark\:border-l-indigo-900\/30 {
+  border-left-color: transparent;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -1511,6 +1748,18 @@ const scriptBodyRef = ref<HTMLElement | null>(null);
 }
 .dark .prose-modern {
   color: #CBD5E1;
+}
+
+/* Tiptap Placeholder */
+.prose-modern p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.dark .prose-modern p.is-editor-empty:first-child::before {
+  color: #475569;
 }
 
 /* No Scrollbar helper */

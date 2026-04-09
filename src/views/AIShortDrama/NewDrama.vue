@@ -5,85 +5,125 @@
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
     <!-- Main Content: Top Creation Area -->
-    <div class="flex-1 overflow-hidden p-4 lg:p-6 relative z-10 flex flex-col min-h-0">
-      <div class="max-w-7xl mx-auto flex flex-col items-center w-full h-full">
+    <div class="flex-1 overflow-y-auto p-4 lg:p-6 relative z-10 flex flex-col min-h-0 custom-scrollbar">
+      <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
         <!-- Header: More compact -->
-        <div class="text-center mb-6 max-w-3xl shrink-0 relative">
+        <div class="text-center mb-4 max-w-3xl shrink-0 relative w-full">
           <!-- Product Design Info Button -->
           <button 
             @click="showDesignDialog = true"
-            class="absolute top-0 right-[-100px] h-10 px-4 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-300 rounded-full font-bold text-xs shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+            class="absolute top-0 right-0 md:right-[-40px] h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
           >
-            <el-icon :size="14"><InfoFilled /></el-icon>
+            <el-icon :size="12"><InfoFilled /></el-icon>
             <span>产品设计说明</span>
           </button>
           
-          <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight leading-tight">
+          <h1 class="text-2xl md:text-3xl font-black mb-2 tracking-tight leading-tight">
             <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
               智能极速创作，打造爆款短剧
             </span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 text-base md:text-lg font-medium leading-relaxed opacity-80">
-            AI全流程辅助，零门槛创作，内置高转化剧情模板，让创意触手可及。
+          <p class="text-slate-500 dark:text-slate-400 text-sm md:text-base font-medium leading-relaxed opacity-70">
+            AI全流程辅助，内置高转化剧情模板，让创意触手可及。
           </p>
         </div>
 
-        <!-- Creation Card: Wider and Flatter -->
-        <div class="w-full max-w-6xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl rounded-[32px] shadow-2xl shadow-indigo-500/5 border border-white/40 dark:border-slate-700/50 overflow-hidden mb-8 transition-all duration-500 hover:shadow-indigo-500/10 shrink-0">
-          <div class="p-1.5 bg-slate-100/50 dark:bg-slate-900/50 flex m-3 rounded-[20px]">
+        <!-- Creation Card: More compact and color-distinguished -->
+        <div class="w-full max-w-5xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl rounded-[32px] shadow-xl shadow-indigo-500/5 border border-white dark:border-slate-700/50 overflow-hidden mb-6 transition-all duration-500 shrink-0">
+          <div class="p-1 bg-slate-100/50 dark:bg-slate-900/50 flex m-2 rounded-[18px]">
             <button 
-              class="flex-1 py-3 text-[15px] font-black transition-all rounded-[16px] flex items-center justify-center gap-2.5"
-              :class="activeTab === 'ai' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
+              class="flex-1 py-2 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+              :class="activeTab === 'ai' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
               @click="activeTab = 'ai'"
             >
-              <el-icon :size="18"><MagicStick /></el-icon> AI 灵感生成
+              <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
             </button>
             <button 
-              class="flex-1 py-3 text-[15px] font-black transition-all rounded-[16px] flex items-center justify-center gap-2.5"
-              :class="activeTab === 'upload' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
+              class="flex-1 py-2 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+              :class="activeTab === 'upload' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
               @click="activeTab = 'upload'"
             >
-              <el-icon :size="18"><Upload /></el-icon> 导入已有剧本
+              <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
             </button>
           </div>
 
-          <div class="px-6 py-4 md:px-8 md:py-6 pt-2">
-            <div class="h-[320px] flex flex-col justify-center">
+          <div class="px-6 py-4 md:px-8 md:py-5 pt-1">
+            <div class="min-h-[280px] flex flex-col">
               <!-- AI Tab Content -->
-              <div v-if="activeTab === 'ai'" class="flex flex-col gap-6 animate-fade-in h-full justify-center">
-                <div class="relative group">
-                  <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-[28px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
-                  <textarea 
-                    v-model="aiPrompt"
-                    class="relative w-full h-40 md:h-44 resize-none bg-slate-50/50 dark:bg-slate-900/50 border-2 border-slate-100/50 dark:border-slate-700/50 focus:border-indigo-500/20 rounded-[28px] outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 text-[18px] p-7 transition-all font-bold leading-relaxed shadow-inner"
-                    placeholder="在此输入你构想的故事内容。可以尝试输入这些要素:故事设定、主角特征、剧情脉络、最终结局等等"
-                  ></textarea>
+              <div v-if="activeTab === 'ai'" class="flex flex-col gap-4 animate-fade-in h-full">
+                <!-- AI Assistant Features -->
+                <div class="flex flex-wrap items-center gap-2 mb-0.5">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1 flex items-center gap-1">
+                    <el-icon><MagicStick /></el-icon> 灵感建议:
+                  </span>
                   <button 
-                    class="absolute bottom-5 right-5 flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-[13px] font-black text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all shadow-md hover:shadow-lg active:scale-95"
-                    @click="showAssistant = true"
+                    v-for="feature in assistantFeatures" 
+                    :key="feature.key"
+                    @click="applyAssistant(feature.key)"
+                    class="px-3 py-1.5 rounded-full text-[12px] font-bold border border-slate-100 dark:border-slate-700 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-1.5 group bg-white dark:bg-slate-800"
                   >
-                    <el-icon><EditPen /></el-icon> 灵感助手
+                    <el-icon class="group-hover:rotate-12 transition-transform" :size="14"><component :is="feature.icon" /></el-icon>
+                    {{ feature.label }}
                   </button>
                 </div>
-                
-                <div class="flex items-center justify-center relative">
-                  <!-- Divider Line -->
-                  <div class="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent"></div>
+
+                <div class="relative group">
+                  <!-- Dynamic Glowing Border -->
+                  <div 
+                    class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[24px] blur-lg opacity-0 transition-opacity duration-1000"
+                    :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-10'"
+                  ></div>
                   
-                  <button 
-                    class="relative z-10 h-16 px-16 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-2xl text-[18px] font-black shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-[1.05] active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center justify-center gap-3 border border-white/20"
-                    :disabled="(!aiPrompt.trim() && !isGenerating) || isGenerating"
-                    @click="startCreation"
-                  >
-                    <el-icon v-if="isGenerating" class="is-loading" :size="24"><Loading /></el-icon>
-                    <el-icon v-else :size="24"><MagicStick /></el-icon>
-                    <span>立即开启 AI 创作之旅</span>
-                  </button>
+                  <div class="relative bg-slate-50/50 dark:bg-slate-900/50 rounded-[22px] border border-slate-200/60 dark:border-slate-700 group-focus-within:border-indigo-500/30 transition-all overflow-hidden shadow-inner">
+                    <textarea 
+                      v-model="aiPrompt"
+                      class="w-full h-32 md:h-36 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 text-base p-6 transition-all font-bold leading-relaxed"
+                      placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
+                    ></textarea>
+                    
+                    <!-- Textarea Bottom Toolbar -->
+                    <div class="px-5 py-2.5 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                      <div class="flex items-center gap-3 text-slate-400">
+                        <span class="text-[10px] font-bold flex items-center gap-1">
+                          <el-icon><EditPen /></el-icon> {{ aiPrompt.length }} 字
+                        </span>
+                        <div class="w-px h-3 bg-slate-200 dark:bg-slate-700"></div>
+                        <button class="hover:text-indigo-600 transition-colors" title="插入常用模版">
+                          <el-icon :size="14"><Document /></el-icon>
+                        </button>
+                        <button class="hover:text-indigo-600 transition-colors" title="优化描述">
+                          <el-icon :size="14"><Brush /></el-icon>
+                        </button>
+                      </div>
+                      
+                      <div class="flex items-center gap-2">
+                         <span v-if="isGenerating" class="text-[10px] font-bold text-indigo-600 animate-pulse mr-1 flex items-center gap-1">
+                           <el-icon class="is-loading"><Loading /></el-icon> 正在构思...
+                         </span>
+                         <button 
+                          class="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50"
+                          :disabled="!aiPrompt.trim() || isGenerating"
+                          @click="startCreation"
+                        >
+                          <el-icon v-if="!isGenerating" :size="14"><MagicStick /></el-icon>
+                          <span>立即创作</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Featured Categories -->
+                <div class="flex items-center justify-center gap-6 mt-1 opacity-50 hover:opacity-100 transition-opacity">
+                   <div v-for="tag in ['都市异能', '玄幻重生', '霸道总裁', '无限流']" :key="tag" class="text-[10px] font-black text-slate-500 cursor-pointer hover:text-indigo-600 flex items-center gap-1">
+                     <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                     {{ tag }}
+                   </div>
                 </div>
               </div>
 
               <!-- Upload Tab Content -->
-              <div v-if="activeTab === 'upload'" class="py-2 animate-fade-in h-full flex flex-col justify-center">
+              <div v-if="activeTab === 'upload'" class="py-1 animate-fade-in h-full flex flex-col justify-center">
                 <el-upload
                   drag
                   action="#"
@@ -91,14 +131,14 @@
                   class="custom-upload-v2 w-full h-full"
                   @change="handleFileUpload"
                 >
-                  <div class="py-10">
-                    <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
-                      <el-icon :size="32"><upload-filled /></el-icon>
+                  <div class="py-6">
+                    <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                      <el-icon :size="24"><upload-filled /></el-icon>
                     </div>
-                    <div class="el-upload__text text-slate-500 dark:text-slate-400 font-bold text-lg mb-2">
+                    <div class="el-upload__text text-slate-500 dark:text-slate-400 font-bold text-base mb-1">
                       将剧本文件拖到此处，或 <em class="text-indigo-600 dark:text-indigo-400 not-italic">点击上传</em>
                     </div>
-                    <div class="text-slate-400 text-sm font-medium">
+                    <div class="text-slate-400 text-[12px] font-medium">
                       支持 docx, pdf, txt 格式，不超过 20MB
                     </div>
                   </div>
@@ -109,60 +149,60 @@
         </div>
 
         <!-- Recent Projects Section -->
-        <div class="w-full relative flex-1 min-h-0 flex flex-col">
+        <div class="w-full relative flex-1 min-h-0 flex flex-col bg-slate-50/50 dark:bg-slate-900/30 rounded-[32px] p-6 border border-slate-100 dark:border-slate-800">
           <div class="flex items-center justify-between mb-4 shrink-0">
-            <h2 class="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
-              <span class="w-2 h-7 bg-indigo-600 rounded-full"></span>
+            <h2 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+              <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span>
               近期作品
-              <span class="text-slate-300 font-light text-xl">/</span>
-              <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest mt-1">Recent Projects</span>
+              <span class="text-slate-300 font-light text-lg">/</span>
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Recent Projects</span>
             </h2>
             <button 
               @click="router.push('/ai-short-drama-creator/works')" 
-              class="group h-10 px-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black text-[13px] transition-all flex items-center gap-2 shadow-xl shadow-slate-200 dark:shadow-none hover:scale-105 active:scale-95"
+              class="group h-8 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
             >
               <span>管理作品</span>
-              <el-icon class="group-hover:translate-x-1 transition-transform"><ArrowRight /></el-icon>
+              <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
             <div 
               v-for="work in recentWorks.slice(0, 4)" 
               :key="work.id"
-              class="bg-white dark:bg-slate-800 rounded-[24px] overflow-hidden border border-slate-100 dark:border-slate-700 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-500 cursor-pointer group flex flex-col"
+              class="bg-white dark:bg-slate-800 rounded-[20px] overflow-hidden border border-slate-100/50 dark:border-slate-700 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-500 cursor-pointer group flex flex-col"
               @click="router.push('/ai-short-drama-creator/outline')"
             >
-              <!-- Previews Area -->
-              <div class="h-32 bg-slate-100 dark:bg-slate-900 flex p-1.5 gap-1.5 overflow-hidden relative shrink-0">
+              <!-- Previews Area: More compact -->
+              <div class="h-24 bg-slate-100 dark:bg-slate-900 flex p-1 gap-1 overflow-hidden relative shrink-0">
                 <template v-if="work.previews && work.previews.length > 0">
                   <div 
                     v-for="(img, idx) in work.previews" 
                     :key="idx"
-                    class="flex-1 h-full rounded-xl overflow-hidden bg-slate-200"
+                    class="flex-1 h-full rounded-lg overflow-hidden bg-slate-200"
                   >
-                    <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                   </div>
                 </template>
-                <div v-else class="w-full h-full flex items-center justify-center text-indigo-200 dark:text-indigo-900/30 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 rounded-xl">
-                   <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+                <div v-else class="w-full h-full flex items-center justify-center text-indigo-200 dark:text-indigo-900/30 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 rounded-lg">
+                   <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
                 </div>
-                <div v-if="work.isExample" class="absolute top-3 left-3 px-2 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-widest rounded-md shadow-lg z-10">
+                <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
                   Example
                 </div>
               </div>
 
-              <div class="p-4 flex flex-col gap-2.5">
-                <h3 class="font-black text-slate-900 dark:text-white truncate text-[18px] group-hover:text-indigo-600 transition-colors" :title="work.title">
+              <div class="p-3 flex flex-col gap-1.5">
+                <h3 class="font-black text-slate-800 dark:text-white truncate text-[14px] group-hover:text-indigo-600 transition-colors" :title="work.title">
                   {{ work.title }}
                 </h3>
-                <div class="flex items-center justify-between text-[13px] font-black text-slate-500 uppercase tracking-tighter">
-                  <div class="flex items-center gap-1.5">
-                    <el-icon class="text-indigo-500"><Clock /></el-icon>
+                <div class="flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                  <div class="flex items-center gap-1">
+                    <el-icon class="text-indigo-500" :size="10"><Clock /></el-icon>
                     <span>{{ work.updatedAt.split(' ')[0] }}</span>
                   </div>
-                  <span v-if="work.episodes" class="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-md text-slate-700 dark:text-slate-300">
-                    <span class="text-[14px]">{{ work.episodes }}</span> 集
+                  <span v-if="work.episodes" class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">
+                    {{ work.episodes }} 集
                   </span>
                 </div>
               </div>
@@ -180,63 +220,6 @@
         </div>
       </div>
     </div>
-
-    <!-- AI Assistant Dialog -->
-    <el-dialog
-      v-model="showAssistant"
-      title="AI 创作助手"
-      width="640px"
-      class="inspiration-dialog-v3"
-      destroy-on-close
-    >
-      <template #header>
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-            <el-icon :size="24"><MagicStick /></el-icon>
-          </div>
-          <div>
-            <h3 class="text-2xl font-black text-slate-800 dark:text-white leading-none">AI 创作助手</h3>
-            <p class="text-[13px] text-slate-500 font-black mt-2 uppercase tracking-widest">AI Creative Assistant</p>
-          </div>
-        </div>
-      </template>
-
-      <div class="grid grid-cols-2 gap-6 p-1">
-        <div 
-          v-for="feature in assistantFeatures" 
-          :key="feature.key"
-          class="relative group cursor-pointer"
-          @click="applyAssistant(feature.key)"
-        >
-          <!-- Card Background & Border -->
-          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative p-6 rounded-[32px] bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 shadow-sm group-hover:shadow-xl group-hover:shadow-indigo-500/10 group-hover:-translate-y-1 transition-all duration-500">
-            <div class="flex flex-col gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                <el-icon :size="24"><component :is="feature.icon" /></el-icon>
-              </div>
-              <div>
-                <h4 class="text-[18px] font-black text-slate-800 dark:text-white mb-2 group-hover:text-indigo-600 transition-colors">
-                  {{ feature.label }}
-                </h4>
-                <p class="text-[14px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                  {{ feature.desc }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 p-4 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100/50 dark:border-indigo-500/10 flex items-center gap-4">
-        <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm">
-          <el-icon :size="20"><InfoFilled /></el-icon>
-        </div>
-        <p class="text-xs text-indigo-700 dark:text-indigo-300 font-bold">
-          点击上方功能，AI 将立即为您提供创作灵感或优化现有内容。
-        </p>
-      </div>
-    </el-dialog>
 
     <!-- Product Design Dialog -->
     <el-dialog v-model="showDesignDialog" title="产品设计说明 - 新建短剧" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
@@ -321,10 +304,9 @@ const showDesignDialog = ref(false);
 // --- State Management ---
 const activeTab = ref('ai'); 
 const aiPrompt = ref('');
-const showAssistant = ref(false);
 const isGenerating = ref(false);
 
-// Mock Recent Works Data based on user screenshot
+// Mock Recent Works Data with more reliable image placeholders
 const recentWorks = ref([
   { 
     id: 1, 
@@ -332,16 +314,19 @@ const recentWorks = ref([
     episodes: 1, 
     updatedAt: '2026-04-01 14:11',
     previews: [
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=300&fit=crop'
+      'https://picsum.photos/id/1011/200/300',
+      'https://picsum.photos/id/1027/200/300',
+      'https://picsum.photos/id/1005/200/300'
     ]
   },
   { 
     id: 2, 
     title: '烽火铁牛：开局掀翻元廷', 
     updatedAt: '2026-03-23 12:01',
-    previews: [] // Test empty state
+    previews: [
+      'https://picsum.photos/id/1015/200/300',
+      'https://picsum.photos/id/1016/200/300'
+    ]
   },
   { 
     id: 3, 
@@ -350,9 +335,9 @@ const recentWorks = ref([
     updatedAt: '2026-03-19 10:48',
     isExample: true,
     previews: [
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&h=300&fit=crop'
+      'https://picsum.photos/id/1024/200/300',
+      'https://picsum.photos/id/1025/200/300',
+      'https://picsum.photos/id/1012/200/300'
     ]
   },
   { 
@@ -362,9 +347,9 @@ const recentWorks = ref([
     updatedAt: '2026-03-16 14:10',
     isExample: true,
     previews: [
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=200&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=300&fit=crop'
+      'https://picsum.photos/id/1035/200/300',
+      'https://picsum.photos/id/1039/200/300',
+      'https://picsum.photos/id/1043/200/300'
     ]
   }
 ]);
@@ -387,8 +372,11 @@ const getFeatureColorClass = (key: string) => {
 };
 
 const applyAssistant = (key: string) => {
-  showAssistant.value = false;
+  if (isGenerating.value) return;
+  
   isGenerating.value = true;
+  const originalPrompt = aiPrompt.value;
+  aiPrompt.value = ''; // Clear for typing effect
 
   const mockPrompts: Record<string, string> = {
     generate: `【剧本大纲生成】\n剧名：《逆袭：从赘婿到世界首富》\n故事设定：现代都市，隐藏身份的顶级豪门继承人沈浩。\n主角特征：沈浩（隐忍、睿智），苏晴（坚韧、美丽）。\n剧情脉络：\n1. 沈浩入赘苏家三年，受尽羞辱，只为守护报恩。\n2. 苏家面临破产危机，竞争对手赵公子步步紧逼。\n3. 沈浩在关键时刻动用百亿财团资源，反杀赵家，震惊全城。\n最终结局：沈浩身份揭晓，两人携手登顶商界巅峰，让所有看不起他的人悔恨终生。`,
@@ -397,15 +385,28 @@ const applyAssistant = (key: string) => {
     rewrite: `【创意改写】\n如果沈浩不是为了报恩入赘，而是为了寻找失踪的亲生父亲而潜伏呢？他每在苏家受一次委屈，就离真相更近一步。当他最终发现苏家老爷子正是当年陷害父亲的真凶之一，他该如何在爱人与仇恨之间做出最终的抉择？`
   };
 
-  setTimeout(() => {
-    aiPrompt.value = mockPrompts[key] || '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
-    isGenerating.value = false;
-  }, 1000);
+  const targetText = mockPrompts[key] || '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
+  
+  // Simulated Typing Effect
+  let currentPos = 0;
+  const speed = 20; // ms per character
+  
+  const typeNextChar = () => {
+    if (currentPos < targetText.length) {
+      aiPrompt.value += targetText.charAt(currentPos);
+      currentPos++;
+      setTimeout(typeNextChar, speed);
+    } else {
+      isGenerating.value = false;
+    }
+  };
+
+  setTimeout(typeNextChar, 500); // Initial delay
 };
 
 const startCreation = () => {
   if (!aiPrompt.value.trim()) {
-    showAssistant.value = true;
+    ElMessage.warning('请输入创作灵感或点击上方建议');
     return;
   }
   isGenerating.value = true;
@@ -431,47 +432,6 @@ const handleFileUpload = (file: any) => {
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #334155;
-}
-
-:deep(.inspiration-dialog-v3 .el-dialog) {
-  border-radius: 48px !important;
-  padding: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.1) !important;
-}
-.dark :deep(.inspiration-dialog-v3 .el-dialog) {
-  background-color: #0f172a !important;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-:deep(.inspiration-dialog-v3 .el-dialog__header) {
-  margin-right: 0;
-  padding: 40px 40px 20px;
-}
-
-:deep(.inspiration-dialog-v3 .el-dialog__body) {
-  padding: 0 40px 40px;
-}
-
-:deep(.inspiration-dialog-v3 .el-dialog__headerbtn) {
-  top: 40px;
-  right: 40px;
-  width: 40px;
-  height: 40px;
-  background: #f8fafc;
-  border-radius: 12px;
-  transition: all 0.3s;
-}
-.dark :deep(.inspiration-dialog-v3 .el-dialog__headerbtn) {
-  background: #1e293b;
-}
-:deep(.inspiration-dialog-v3 .el-dialog__headerbtn:hover) {
-  background: #fee2e2;
-  transform: rotate(90deg);
-}
-:deep(.inspiration-dialog-v3 .el-dialog__headerbtn:hover .el-dialog__close) {
-  color: #ef4444;
 }
 
 :deep(.custom-upload-v2) {

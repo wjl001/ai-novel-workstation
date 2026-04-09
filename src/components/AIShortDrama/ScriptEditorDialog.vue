@@ -83,7 +83,7 @@
                   @click="insertMention(item)"
                 >
                   <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0">
-                    <img v-if="item.image" :src="item.image" class="w-full h-full object-cover" />
+                    <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover" />
                     <el-icon v-else class="text-slate-400"><component :is="item.icon" /></el-icon>
                   </div>
                   <div class="flex flex-col min-w-0">
@@ -181,6 +181,7 @@ const currentLanguage = ref('zh-CN');
 
 // Mention Menu Logic
 const showMentionMenu = ref(false);
+const mentionSearch = ref('');
 const mentionMenuRef = ref<HTMLElement | null>(null);
 const mentionMenuStyle = ref({ top: '0px', left: '0px' });
 const mentionItems = computed(() => {

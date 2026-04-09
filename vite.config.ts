@@ -8,6 +8,13 @@ export default defineConfig({
   server: {
     host: true, // 或者 '0.0.0.0'
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler'
+      }
+    }
+  },
   plugins: [vue()],
   base: '/',
   resolve: {
