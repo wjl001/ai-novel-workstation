@@ -105,23 +105,23 @@
     <main class="flex-1 flex gap-3 overflow-hidden p-3 bg-transparent relative z-10">
       <!-- Left Sidebar: Subject Library -->
       <aside 
-        class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col overflow-hidden shrink-0 transition-all duration-500 relative border border-white dark:border-slate-700/50"
+        class="bg-indigo-50/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-xl shadow-indigo-100/50 dark:shadow-none flex flex-col overflow-hidden shrink-0 transition-all duration-500 relative border border-indigo-100 dark:border-slate-700/50"
         :style="{ width: isLeftCollapsed ? '0px' : '220px', opacity: isLeftCollapsed ? 0 : 1, marginRight: isLeftCollapsed ? '-12px' : '0' }"
       >
         <div class="flex-1 flex flex-col overflow-hidden" v-show="!isLeftCollapsed">
-          <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-            <span class="font-black text-[14px] text-slate-800 dark:text-white tracking-wide">主体库</span>
+          <div class="p-4 border-b border-indigo-100 dark:border-slate-700 flex justify-between items-center shrink-0">
+            <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">主体库</span>
             <button 
               @click="showLibraryModal = true"
-              class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"
+              class="w-7 h-7 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center justify-center shadow-lg shadow-indigo-200"
             >
               <el-icon :size="16"><Plus /></el-icon>
             </button>
           </div>
 
-          <div class="flex-1 overflow-y-auto custom-scrollbar p-3 pb-10 space-y-4">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-3 pb-10 space-y-4 bg-white/40">
             <!-- Character Category Area -->
-            <div class="bg-indigo-50/30 dark:bg-indigo-900/10 rounded-[20px] p-3 border border-indigo-100/50 dark:border-indigo-800/30 transition-all hover:shadow-md">
+            <div class="bg-white/90 dark:bg-indigo-900/10 rounded-[20px] p-3 border border-indigo-100 dark:border-indigo-800/30 transition-all hover:shadow-md">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -134,7 +134,7 @@
                 </div>
                 <button 
                   @click="handleAddSubject('character')"
-                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
+                  class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
                 >
                   <el-icon :size="12"><Plus /></el-icon>
                 </button>
@@ -154,7 +154,7 @@
             </div>
 
             <!-- Scene Category Area -->
-            <div class="bg-emerald-50/30 dark:bg-emerald-900/10 rounded-[20px] p-3 border border-emerald-100/50 dark:border-emerald-800/30 transition-all hover:shadow-md">
+            <div class="bg-white/90 dark:bg-emerald-900/10 rounded-[20px] p-3 border border-emerald-100 dark:border-emerald-800/30 transition-all hover:shadow-md">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
@@ -167,7 +167,7 @@
                 </div>
                 <button 
                   @click="handleAddSubject('scene')"
-                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
+                  class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
                 >
                   <el-icon :size="12"><Plus /></el-icon>
                 </button>
@@ -187,7 +187,7 @@
             </div>
 
             <!-- Props Category Area -->
-            <div class="bg-amber-50/30 dark:bg-amber-900/10 rounded-[20px] p-3 border border-amber-100/50 dark:border-amber-800/30 transition-all hover:shadow-md">
+            <div class="bg-white/90 dark:bg-amber-900/10 rounded-[20px] p-3 border border-amber-100 dark:border-amber-800/30 transition-all hover:shadow-md">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/20">
@@ -200,7 +200,7 @@
                 </div>
                 <button 
                   @click="handleAddSubject('prop')"
-                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
+                  class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
                 >
                   <el-icon :size="12"><Plus /></el-icon>
                 </button>
@@ -228,8 +228,8 @@
         :style="{ left: isLeftCollapsed ? '-12px' : '206px' }"
         @click="isLeftCollapsed = !isLeftCollapsed"
       >
-        <div class="absolute inset-0 bg-white dark:bg-slate-800 shadow-[0_4px_20px_rgba(99,102,241,0.2)] rounded-full border border-indigo-100 dark:border-indigo-900/50 transition-all duration-300 group-hover:scale-y-110 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30"></div>
-        <el-icon class="relative z-10 text-indigo-500 group-hover:text-indigo-700 transition-all duration-300" :size="14">
+        <div class="absolute inset-0 bg-indigo-600 shadow-[0_4px_20px_rgba(99,102,241,0.3)] rounded-full transition-all duration-300 group-hover:scale-y-110 group-hover:bg-indigo-700"></div>
+        <el-icon class="relative z-10 text-white" :size="14">
           <ArrowLeft v-if="!isLeftCollapsed" />
           <ArrowRight v-else />
         </el-icon>
@@ -238,15 +238,15 @@
       <!-- Right Column: Editor & Timeline -->
       <div class="flex-1 flex flex-col gap-3 min-w-0 transition-all duration-500">
         <!-- Center: Script Editor Area -->
-        <section class="flex-1 flex flex-col min-h-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative">
+        <section class="flex-1 flex flex-col min-h-0 bg-[#F0F7FF] dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100 dark:shadow-none border border-blue-100 dark:border-slate-700/50 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-3.5 bg-transparent flex justify-between items-center shrink-0 border-b border-slate-50 dark:border-slate-700/50">
+          <div class="px-6 py-3.5 bg-white/60 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
               <div class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">分镜 {{ currentSceneIdx + 1 }}</div>
-              <span class="text-[12px] text-slate-400 dark:text-slate-500 font-medium">输入“@”可快速引用主体，分镜建议 4-15s</span>
+              <span class="text-[12px] text-indigo-400 dark:text-slate-500 font-bold">输入“@”可快速引用主体，分镜建议 4-15s</span>
             </div>
             <div class="flex items-center gap-2">
-              <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-100/50 dark:bg-slate-900/50 rounded-full border border-slate-200/50">
+              <div class="flex items-center gap-1.5 px-3 py-1 bg-white/80 dark:bg-slate-900/50 rounded-full border border-blue-100/50 shadow-sm">
                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">创作模式已开启</span>
               </div>
@@ -255,11 +255,11 @@
 
           <!-- Content Wrapper -->
           <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-            <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden">
+            <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden mt-4">
               <!-- Left: Script Content Box -->
               <div 
                 class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
-                :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-400 shadow-2xl shadow-indigo-500/10' : 'bg-slate-50/40 dark:bg-slate-900/50 border border-transparent'"
+                :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-200/50' : 'bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm'"
               >
                 <!-- Read-only View -->
                 <div 
@@ -325,35 +325,35 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
+                <div class="px-6 py-3 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
-                      class="h-8 px-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-full text-[12px] font-bold hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm flex items-center gap-2"
+                      class="h-9 px-6 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-100 dark:border-indigo-900 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
                     >
-                      <el-icon><Edit /></el-icon>
+                      <el-icon class="group-hover:rotate-12 transition-transform"><Edit /></el-icon>
                       <span>编辑脚本</span>
                     </button>
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-8 px-6 rounded-full text-[12px] font-black transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                      class="h-9 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
-                      <el-icon><MagicStick /></el-icon>
+                      <el-icon class="animate-pulse"><MagicStick /></el-icon>
                       <span>重新生成分镜</span>
                     </button>
                   </template>
                   <template v-else>
                     <button 
                       @click="handleCancelEdit"
-                      class="h-8 px-4 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[12px] font-bold hover:text-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                      class="h-9 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[13px] font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                     >
                       取消
                     </button>
                     <button 
                       @click="handleSaveScriptInline"
-                      class="h-8 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                      class="h-9 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
                     >
                       确认保存
                     </button>
@@ -362,7 +362,7 @@
               </div>
 
               <!-- Right: Preview Area -->
-              <div class="flex-1 rounded-[24px] bg-slate-950/5 dark:bg-slate-950/50 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden relative shadow-inner">
+              <div class="flex-1 rounded-[24px] bg-slate-900 flex flex-col items-center justify-center border border-slate-800 overflow-hidden relative shadow-2xl">
                 <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
                   <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/60 to-purple-600/60 backdrop-blur-2xl"></div>
                   <div class="relative flex flex-col items-center gap-4">
@@ -384,7 +384,7 @@
                     @timeupdate="onCenterVideoTimeUpdate"
                   ></video>
                 </div>
-                <div v-else class="flex flex-col items-center gap-4 text-slate-300 dark:text-slate-600">
+                <div v-else class="flex flex-col items-center gap-4 text-slate-700 dark:text-slate-600">
                   <el-icon :size="64"><Picture /></el-icon>
                   <span class="text-[14px] font-black uppercase tracking-widest">未生成分镜视频</span>
                 </div>
@@ -394,11 +394,11 @@
         </section>
 
         <!-- Bottom: Timeline Area -->
-        <div class="h-[110px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-xl shadow-slate-200/40 dark:shadow-none border border-white dark:border-slate-700/50 p-3.5 flex flex-col gap-2 shrink-0 transition-all duration-500">
+        <div class="h-[110px] bg-[#F5F3FF] dark:bg-slate-900/50 backdrop-blur-xl rounded-[32px] shadow-xl shadow-purple-100 dark:shadow-none border border-purple-100 dark:border-slate-800 p-3.5 flex flex-col gap-2 shrink-0 transition-all duration-500">
           <div class="flex items-center justify-between shrink-0 pl-1 pr-1">
             <div class="flex items-center gap-3">
               <div 
-                class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 cursor-pointer hover:scale-110 active:scale-95 transition-all"
+                class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-200 cursor-pointer hover:scale-110 active:scale-95 transition-all"
                 @click="handleSequentialPlay"
               >
                 <el-icon :size="12">
@@ -406,7 +406,7 @@
                   <VideoPlay v-else />
                 </el-icon>
               </div>
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-black font-mono tracking-tight">
+              <span class="text-[11px] text-purple-600 dark:text-slate-400 font-black font-mono tracking-tight">
                 {{ formatTime(isSequentialPlaying ? sequentialCurrentTime : 0) }} / {{ formatTime(totalStoryboardDuration) }}
               </span>
             </div>
@@ -414,7 +414,7 @@
             <div class="flex items-center gap-3">
               <button 
                 @click="toggleMultiSelect" 
-                class="h-6 px-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                class="h-6 px-3 bg-white dark:bg-slate-700 text-purple-600 dark:text-slate-300 rounded-full text-[10px] font-black hover:bg-purple-600 hover:text-white transition-all shadow-sm border border-purple-100"
               >
                 {{ isMultiSelectMode ? '退出多选' : '多选管理' }}
               </button>
@@ -424,16 +424,16 @@
           <!-- Timeline Items -->
           <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5">
             <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-slate-100 dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
+              class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
               :class="[
                 (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
-                  ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
-                  : 'border-transparent'
+                  ? 'border-purple-500 ring-4 ring-purple-500/10' 
+                  : 'border-white dark:border-slate-700'
               ]"
               @click="toggleSceneSelection(idx)"
             >
               <div v-if="scene.image" class="absolute inset-0 w-full h-full">
-                <img :src="scene.image" class="w-full h-full object-cover" />
+                <img :src="scene.image" class="absolute inset-0 w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
               </div>
 
@@ -445,7 +445,7 @@
               <!-- Index Badge -->
               <div class="absolute top-1.5 left-1.5 z-10">
                 <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
-                  :class="currentSceneIdx === idx ? 'bg-indigo-600 text-white' : 'bg-white text-slate-800'">
+                  :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
                   {{ idx + 1 }}
                 </div>
               </div>
@@ -456,7 +456,7 @@
                 class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
               >
                 <div 
-                  class="absolute bottom-0 left-0 h-1 bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] transition-all duration-100 ease-linear"
+                  class="absolute bottom-0 left-0 h-1 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] transition-all duration-100 ease-linear"
                   :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
                 ></div>
               </div>
@@ -474,7 +474,7 @@
             </div>
             
             <button 
-              class="flex-shrink-0 w-10 h-10 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all group"
+              class="flex-shrink-0 w-10 h-10 rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
               @click="addTimelineScene"
             >
               <el-icon :size="18" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
