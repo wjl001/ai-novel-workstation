@@ -102,120 +102,119 @@
     </header>
 
     <!-- Main Workspace -->
-    <main class="flex-1 flex gap-4 overflow-hidden p-4 bg-transparent relative z-10">
+    <main class="flex-1 flex gap-3 overflow-hidden p-3 bg-transparent relative z-10">
       <!-- Left Sidebar: Subject Library -->
       <aside 
-        class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col overflow-hidden shrink-0 transition-all duration-500 relative border border-white dark:border-slate-700/50"
-        :style="{ width: isLeftCollapsed ? '0px' : '280px', opacity: isLeftCollapsed ? 0 : 1, marginRight: isLeftCollapsed ? '-16px' : '0' }"
+        class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col overflow-hidden shrink-0 transition-all duration-500 relative border border-white dark:border-slate-700/50"
+        :style="{ width: isLeftCollapsed ? '0px' : '220px', opacity: isLeftCollapsed ? 0 : 1, marginRight: isLeftCollapsed ? '-12px' : '0' }"
       >
-        <!-- Subject Library Content -->
         <div class="flex-1 flex flex-col overflow-hidden" v-show="!isLeftCollapsed">
-          <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-            <span class="font-black text-[16px] text-slate-800 dark:text-white tracking-wide">主体库</span>
+          <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
+            <span class="font-black text-[14px] text-slate-800 dark:text-white tracking-wide">主体库</span>
             <button 
               @click="showLibraryModal = true"
-              class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"
+              class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"
             >
-              <el-icon :size="18"><Plus /></el-icon>
+              <el-icon :size="16"><Plus /></el-icon>
             </button>
           </div>
 
-          <div class="flex-1 overflow-y-auto custom-scrollbar p-4 pb-10 space-y-6">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-3 pb-10 space-y-4">
             <!-- Character Category Area -->
-            <div class="bg-indigo-50/30 dark:bg-indigo-900/10 rounded-[24px] p-4 border border-indigo-100/50 dark:border-indigo-800/30 transition-all hover:shadow-md">
-              <div class="flex items-center justify-between mb-4">
+            <div class="bg-indigo-50/30 dark:bg-indigo-900/10 rounded-[20px] p-3 border border-indigo-100/50 dark:border-indigo-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <el-icon :size="16"><User /></el-icon>
+                  <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <el-icon :size="14"><User /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">角色形象</span>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Characters ({{ filteredCharacters.length }})</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">角色形象</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredCharacters.length }})</span>
                   </div>
                 </div>
                 <button 
                   @click="handleAddSubject('character')"
-                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
+                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
                 >
-                  <el-icon :size="14"><Plus /></el-icon>
+                  <el-icon :size="12"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(char)">
-                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-indigo-400 dark:group-hover:border-indigo-500 p-1">
-                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+              <div class="grid grid-cols-2 gap-2">
+                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(char)">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-indigo-400 dark:group-hover:border-indigo-500 p-1">
+                    <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
+                      <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name.split('-')[0] }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name.split('-')[0] }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Scene Category Area -->
-            <div class="bg-emerald-50/30 dark:bg-emerald-900/10 rounded-[24px] p-4 border border-emerald-100/50 dark:border-emerald-800/30 transition-all hover:shadow-md">
-              <div class="flex items-center justify-between mb-4">
+            <div class="bg-emerald-50/30 dark:bg-emerald-900/10 rounded-[20px] p-3 border border-emerald-100/50 dark:border-emerald-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                    <el-icon :size="16"><Location /></el-icon>
+                  <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <el-icon :size="14"><Location /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">拍摄场景</span>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Scenes ({{ filteredScenes.length }})</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">拍摄场景</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredScenes.length }})</span>
                   </div>
                 </div>
                 <button 
                   @click="handleAddSubject('scene')"
-                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
+                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
                 >
-                  <el-icon :size="14"><Plus /></el-icon>
+                  <el-icon :size="12"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(scene)">
-                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-emerald-400 dark:group-hover:border-emerald-500 p-1">
-                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+              <div class="grid grid-cols-2 gap-2">
+                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(scene)">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-emerald-400 dark:group-hover:border-emerald-500 p-1">
+                    <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
+                      <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-emerald-600 transition-colors">{{ scene.name }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-emerald-600 transition-colors">{{ scene.name }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Props Category Area -->
-            <div class="bg-amber-50/30 dark:bg-amber-900/10 rounded-[24px] p-4 border border-amber-100/50 dark:border-amber-800/30 transition-all hover:shadow-md">
-              <div class="flex items-center justify-between mb-4">
+            <div class="bg-amber-50/30 dark:bg-amber-900/10 rounded-[20px] p-3 border border-amber-100/50 dark:border-amber-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/20">
-                    <el-icon :size="16"><Box /></el-icon>
+                  <div class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <el-icon :size="14"><Box /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">道具物品</span>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Props ({{ filteredProps.length }})</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">道具物品</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredProps.length }})</span>
                   </div>
                 </div>
                 <button 
                   @click="handleAddSubject('prop')"
-                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
+                  class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
                 >
-                  <el-icon :size="14"><Plus /></el-icon>
+                  <el-icon :size="12"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(prop)">
-                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-amber-400 dark:group-hover:border-amber-500 p-1">
-                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+              <div class="grid grid-cols-2 gap-2">
+                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(prop)">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-amber-400 dark:group-hover:border-amber-500 p-1">
+                    <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
+                      <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-amber-600 transition-colors">{{ prop.name }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-amber-600 transition-colors">{{ prop.name }}</span>
                 </div>
               </div>
             </div>
@@ -225,26 +224,32 @@
 
       <!-- Sidebar Collapse Toggle Button -->
       <div 
-        class="absolute left-[266px] top-1/2 -translate-y-1/2 w-7 h-20 flex items-center justify-center cursor-pointer z-[150] group transition-all duration-500"
-        :style="{ left: isLeftCollapsed ? '-14px' : '266px' }"
+        class="absolute left-[206px] top-1/2 -translate-y-1/2 w-6 h-16 flex items-center justify-center cursor-pointer z-[150] group transition-all duration-500"
+        :style="{ left: isLeftCollapsed ? '-12px' : '206px' }"
         @click="isLeftCollapsed = !isLeftCollapsed"
       >
-        <div class="absolute inset-0 bg-white dark:bg-slate-800 shadow-[0_4px_25px_rgba(99,102,241,0.25)] rounded-full border border-indigo-100 dark:border-indigo-900/50 transition-all duration-300 group-hover:scale-y-110 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30"></div>
-        <el-icon class="relative z-10 text-indigo-500 group-hover:text-indigo-700 transition-all duration-300" :size="16">
+        <div class="absolute inset-0 bg-white dark:bg-slate-800 shadow-[0_4px_20px_rgba(99,102,241,0.2)] rounded-full border border-indigo-100 dark:border-indigo-900/50 transition-all duration-300 group-hover:scale-y-110 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30"></div>
+        <el-icon class="relative z-10 text-indigo-500 group-hover:text-indigo-700 transition-all duration-300" :size="14">
           <ArrowLeft v-if="!isLeftCollapsed" />
           <ArrowRight v-else />
         </el-icon>
       </div>
 
       <!-- Right Column: Editor & Timeline -->
-      <div class="flex-1 flex flex-col gap-4 min-w-0 transition-all duration-500">
+      <div class="flex-1 flex flex-col gap-3 min-w-0 transition-all duration-500">
         <!-- Center: Script Editor Area -->
-        <section class="flex-1 flex flex-col min-h-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative">
+        <section class="flex-1 flex flex-col min-h-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-4 bg-transparent flex justify-between items-center shrink-0 border-b border-slate-50 dark:border-slate-700/50">
+          <div class="px-6 py-3.5 bg-transparent flex justify-between items-center shrink-0 border-b border-slate-50 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
-              <div class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-black text-xs uppercase tracking-widest">分镜 {{ currentSceneIdx + 1 }}</div>
-              <span class="text-[12px] text-slate-400 dark:text-slate-500 font-medium">分镜时长请限制在4-15s，输入“@”可快速调整镜头时长、引用角色、场景、道具</span>
+              <div class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">分镜 {{ currentSceneIdx + 1 }}</div>
+              <span class="text-[12px] text-slate-400 dark:text-slate-500 font-medium">输入“@”可快速引用主体，分镜建议 4-15s</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-100/50 dark:bg-slate-900/50 rounded-full border border-slate-200/50">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">创作模式已开启</span>
+              </div>
             </div>
           </div>
 
@@ -253,21 +258,21 @@
             <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden">
               <!-- Left: Script Content Box -->
               <div 
-                class="flex-[3] rounded-2xl transition-all duration-500 relative flex flex-col overflow-hidden"
-                :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-400 shadow-2xl' : 'bg-slate-50/50 dark:bg-slate-900/50 border border-transparent'"
+                class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
+                :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-400 shadow-2xl shadow-indigo-500/10' : 'bg-slate-50/40 dark:bg-slate-900/50 border border-transparent'"
               >
                 <!-- Read-only View -->
                 <div 
                   v-if="!isEditingScript"
-                  class="p-6 text-[15px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
+                  class="p-8 text-[16px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
                   v-html="currentScript"
                 >
                 </div>
 
                 <!-- Edit Mode (TipTap) -->
-                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-6">
+                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-8">
                   <div class="flex-1 overflow-y-auto custom-scrollbar">
-                    <editor-content :editor="editor" class="script-editor-content w-full h-full" />
+                    <editor-content :editor="editor" class="script-editor-content w-full h-full text-[16px]" />
                   </div>
                   
                   <!-- @ Mention Popup -->
@@ -320,11 +325,11 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-800/50">
+                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
-                      class="h-10 px-6 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-md flex items-center gap-2"
+                      class="h-8 px-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-full text-[12px] font-bold hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm flex items-center gap-2"
                     >
                       <el-icon><Edit /></el-icon>
                       <span>编辑脚本</span>
@@ -332,8 +337,8 @@
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-10 px-8 rounded-full text-[14px] font-black transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-0.5' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                      class="h-8 px-6 rounded-full text-[12px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
                       <el-icon><MagicStick /></el-icon>
                       <span>重新生成分镜</span>
@@ -342,13 +347,13 @@
                   <template v-else>
                     <button 
                       @click="handleCancelEdit"
-                      class="h-10 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                      class="h-8 px-4 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[12px] font-bold hover:text-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                     >
                       取消
                     </button>
                     <button 
                       @click="handleSaveScriptInline"
-                      class="h-10 px-10 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[14px] font-black shadow-xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                      class="h-8 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
                     >
                       确认保存
                     </button>
@@ -357,7 +362,7 @@
               </div>
 
               <!-- Right: Preview Area -->
-              <div class="flex-1 rounded-2xl bg-slate-900/5 dark:bg-slate-900/50 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden relative">
+              <div class="flex-1 rounded-[24px] bg-slate-950/5 dark:bg-slate-950/50 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden relative shadow-inner">
                 <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
                   <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/60 to-purple-600/60 backdrop-blur-2xl"></div>
                   <div class="relative flex flex-col items-center gap-4">
@@ -389,19 +394,19 @@
         </section>
 
         <!-- Bottom: Timeline Area -->
-        <div class="h-[130px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 p-4 flex flex-col gap-2 shrink-0 transition-all duration-500">
-          <div class="flex items-center justify-between shrink-0 pl-1 pr-2">
+        <div class="h-[110px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-xl shadow-slate-200/40 dark:shadow-none border border-white dark:border-slate-700/50 p-3.5 flex flex-col gap-2 shrink-0 transition-all duration-500">
+          <div class="flex items-center justify-between shrink-0 pl-1 pr-1">
             <div class="flex items-center gap-3">
               <div 
-                class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 cursor-pointer hover:scale-110 active:scale-95 transition-all"
+                class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 cursor-pointer hover:scale-110 active:scale-95 transition-all"
                 @click="handleSequentialPlay"
               >
-                <el-icon :size="14">
+                <el-icon :size="12">
                   <VideoPause v-if="isSequentialPlaying" />
                   <VideoPlay v-else />
                 </el-icon>
               </div>
-              <span class="text-[12px] text-slate-500 dark:text-slate-400 font-black font-mono">
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-black font-mono tracking-tight">
                 {{ formatTime(isSequentialPlaying ? sequentialCurrentTime : 0) }} / {{ formatTime(totalStoryboardDuration) }}
               </span>
             </div>
@@ -409,7 +414,7 @@
             <div class="flex items-center gap-3">
               <button 
                 @click="toggleMultiSelect" 
-                class="h-7 px-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-[11px] font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                class="h-6 px-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
               >
                 {{ isMultiSelectMode ? '退出多选' : '多选管理' }}
               </button>
@@ -417,9 +422,9 @@
           </div>
 
           <!-- Timeline Items -->
-          <div class="flex-1 flex gap-3 overflow-x-auto custom-scrollbar items-center pb-1 pl-1">
+          <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5">
             <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[130px] h-[75px] rounded-xl bg-slate-100 dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
+              class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-slate-100 dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
               :class="[
                 (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
                   ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
@@ -433,13 +438,13 @@
               </div>
 
               <!-- Duration Badge (New Request) -->
-              <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[9px] font-black z-10">
+              <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[8px] font-black z-10">
                 {{ getSceneDuration(scene.script) }}s
               </div>
 
               <!-- Index Badge -->
               <div class="absolute top-1.5 left-1.5 z-10">
-                <div class="w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-black shadow-md"
+                <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
                   :class="currentSceneIdx === idx ? 'bg-indigo-600 text-white' : 'bg-white text-slate-800'">
                   {{ idx + 1 }}
                 </div>
@@ -458,21 +463,21 @@
 
               <div class="flex items-center justify-center w-full h-full relative z-10">
                 <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-1">
-                  <div class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                  <span class="text-[9px] font-bold text-white uppercase tracking-tighter">AI生成中</span>
+                  <div class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                  <span class="text-[8px] font-bold text-white uppercase tracking-tighter">AI生成中</span>
                 </div>
                 <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
-                  <el-icon :size="20" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
+                  <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
                 </div>
-                <el-icon v-else :size="20" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
+                <el-icon v-else :size="18" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
               </div>
             </div>
             
             <button 
-              class="flex-shrink-0 w-12 h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all group"
+              class="flex-shrink-0 w-10 h-10 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all group"
               @click="addTimelineScene"
             >
-              <el-icon :size="20" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
+              <el-icon :size="18" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
             </button>
           </div>
         </div>
