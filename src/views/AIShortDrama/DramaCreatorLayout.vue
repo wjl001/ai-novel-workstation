@@ -1,88 +1,88 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative ai-drama-container">
     <!-- Header Steps -->
-    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center z-20 relative">
-      <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl px-8 py-2 flex items-center min-w-[720px] justify-between border border-slate-200/50 dark:border-slate-700/50 shadow-inner relative">
+    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-3 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center z-20 relative">
+      <div class="bg-white/80 dark:bg-slate-900/80 rounded-full px-6 py-1.5 flex items-center gap-12 justify-between border border-white dark:border-slate-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
         <!-- Product Design Info Button -->
         <button 
           @click="showDesignDialog = true"
-          class="absolute -right-36 top-1/2 -translate-y-1/2 h-10 px-4 flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full font-bold text-xs shadow-sm border border-slate-200 dark:border-slate-700 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+          class="absolute -right-12 translate-x-full top-1/2 -translate-y-1/2 h-8 px-3 flex items-center gap-1.5 bg-white/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 rounded-full font-medium text-[11px] shadow-sm border border-slate-100 dark:border-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition-all duration-300 backdrop-blur-sm"
         >
-          <el-icon :size="14"><InfoFilled /></el-icon>
-          <span>产品设计说明</span>
+          <el-icon :size="12"><InfoFilled /></el-icon>
+          <span>设计说明</span>
         </button>
 
         <!-- Step 1 -->
         <div 
-          class="flex items-center gap-4 cursor-pointer group relative py-1.5"
+          class="flex items-center gap-3 cursor-pointer group relative py-1"
           @click="goToStep(0, '/ai-short-drama-creator/outline')"
         >
           <div 
-            class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
-            :class="activeStep >= 0 ? (activeStep > 0 ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-black scale-110 shadow-xl shadow-indigo-500/40 ring-4 ring-indigo-500/10') : 'border border-slate-300 text-slate-400 bg-white'"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[12px] transition-all duration-500 relative z-10"
+            :class="activeStep >= 0 ? (activeStep > 0 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-bold scale-110 shadow-xl shadow-indigo-500/30 ring-4 ring-indigo-500/10') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
-            <el-icon v-if="activeStep > 0" :size="20"><Check /></el-icon>
-            <span v-else class="text-[14px]">01</span>
+            <el-icon v-if="activeStep > 0" :size="16"><Check /></el-icon>
+            <span v-else>01</span>
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col justify-center">
             <span 
-              class="text-[15px] transition-all duration-300"
-              :class="activeStep >= 0 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
+              class="text-[13px] leading-tight transition-all duration-300"
+              :class="activeStep >= 0 ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-400 font-medium'"
             >剧本创作</span>
-            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step One</span>
+            <span class="text-[9px] opacity-60 font-bold uppercase tracking-tighter" :class="activeStep >= 0 ? 'text-indigo-600' : 'text-slate-400'">STEP ONE</span>
           </div>
           
           <!-- Connector -->
-          <div class="absolute left-[calc(100%+24px)] w-[80px] h-[3px] bg-slate-200 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-in-out" :style="{ width: activeStep > 0 ? '100%' : '0%' }"></div>
+          <div class="absolute left-[calc(100%+12px)] w-6 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700 ease-in-out" :style="{ width: activeStep > 0 ? '100%' : '0%' }"></div>
           </div>
         </div>
 
         <!-- Step 2 -->
         <div 
-          class="flex items-center gap-4 group relative py-1.5"
-          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'"
+          class="flex items-center gap-3 group relative py-1"
+          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
           @click="goToStep(1, '/ai-short-drama-creator/assets')"
         >
           <div 
-            class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
-            :class="activeStep >= 1 ? (activeStep > 1 ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-black scale-110 shadow-xl shadow-indigo-500/40 ring-4 ring-indigo-500/10') : 'border border-slate-300 text-slate-400 bg-white'"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[12px] transition-all duration-500 relative z-10"
+            :class="activeStep >= 1 ? (activeStep > 1 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-bold scale-110 shadow-xl shadow-indigo-500/30 ring-4 ring-indigo-500/10') : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
-            <el-icon v-if="activeStep > 1" :size="20"><Check /></el-icon>
-            <span v-else class="text-[14px]">02</span>
+            <el-icon v-if="activeStep > 1" :size="16"><Check /></el-icon>
+            <span v-else>02</span>
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col justify-center">
             <span 
-              class="text-[15px] transition-all duration-300"
-              :class="activeStep >= 1 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
+              class="text-[13px] leading-tight transition-all duration-300"
+              :class="activeStep >= 1 ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-400 font-medium'"
             >主体设置</span>
-            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step Two</span>
+            <span class="text-[9px] opacity-60 font-bold uppercase tracking-tighter" :class="activeStep >= 1 ? 'text-indigo-600' : 'text-slate-400'">STEP TWO</span>
           </div>
 
           <!-- Connector -->
-          <div class="absolute left-[calc(100%+24px)] w-[80px] h-[3px] bg-slate-200 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-in-out" :style="{ width: activeStep > 1 ? '100%' : '0%' }"></div>
+          <div class="absolute left-[calc(100%+12px)] w-6 h-[2px] bg-slate-100 dark:bg-slate-700 top-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700 ease-in-out" :style="{ width: activeStep > 1 ? '100%' : '0%' }"></div>
           </div>
         </div>
 
         <!-- Step 3 -->
         <div 
-          class="flex items-center gap-4 group py-1.5"
-          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'"
+          class="flex items-center gap-3 group py-1"
+          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
           @click="goToStep(2, '/ai-short-drama-creator/storyboard')"
         >
           <div 
-            class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
-            :class="activeStep >= 2 ? 'bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-black scale-110 shadow-xl shadow-indigo-500/40 ring-4 ring-indigo-500/10' : 'border border-slate-300 text-slate-400 bg-white'"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[12px] transition-all duration-500 relative z-10"
+            :class="activeStep >= 2 ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-bold scale-110 shadow-xl shadow-indigo-500/30 ring-4 ring-indigo-500/10' : 'border-2 border-slate-200 text-slate-400 bg-slate-50'"
           >
-            <span class="text-[14px]">03</span>
+            <span>03</span>
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col justify-center">
             <span 
-              class="text-[15px] transition-all duration-300"
-              :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
+              class="text-[13px] leading-tight transition-all duration-300"
+              :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-400 font-medium'"
             >分镜视频</span>
-            <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step Three</span>
+            <span class="text-[9px] opacity-60 font-bold uppercase tracking-tighter" :class="activeStep >= 2 ? 'text-indigo-600' : 'text-slate-400'">STEP THREE</span>
           </div>
         </div>
       </div>
