@@ -431,7 +431,7 @@
                       {{ editMode === 'full' ? '全集智能生成' : `第 ${currentEpisodeIndex + 1} 集智能生成` }}
                     </button>
                     <button 
-                      @click="showEmptyPlaceholder = false"
+                      @click="startManualWrite"
                       :disabled="isEpisodeLocked(currentEpisodeIndex)"
                       class="h-[44px] px-6 bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#F1F5F9] dark:border-slate-700 rounded-[16px] text-[14px] font-black hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:pointer-events-none"
                     >
@@ -1150,6 +1150,14 @@ onBeforeUnmount(() => {
     tiptapEditor.value.destroy();
   }
 });
+
+const startManualWrite = () => {
+  showEmptyPlaceholder.value = false;
+  isEditingLocked.value = false;
+  nextTick(() => {
+    tiptapEditor.value?.commands.focus();
+  });
+};
 
 const handleAIGenerateAction = (field: string, action: 'replace' | 'append' | 'cancel') => {
   if (field !== 'bubble') {
