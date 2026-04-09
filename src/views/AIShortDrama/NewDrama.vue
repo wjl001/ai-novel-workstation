@@ -50,62 +50,75 @@
           <div class="px-6 py-4 md:px-8 md:py-5 pt-1">
             <div class="min-h-[280px] flex flex-col">
               <!-- AI Tab Content -->
-              <div v-if="activeTab === 'ai'" class="flex flex-col gap-4 animate-fade-in h-full">
+              <div v-if="activeTab === 'ai'" class="flex flex-col gap-5 animate-fade-in h-full">
                 <!-- AI Assistant Features -->
-                <div class="flex flex-wrap items-center gap-2 mb-0.5">
-                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1 flex items-center gap-1">
-                    <el-icon><MagicStick /></el-icon> 灵感建议:
+                <div class="flex flex-wrap items-center gap-3 mb-1">
+                  <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest mr-2 flex items-center gap-1.5 opacity-80">
+                    <el-icon :size="14"><MagicStick /></el-icon> 灵感建议
                   </span>
-                  <button 
+                  <el-tooltip
                     v-for="feature in assistantFeatures" 
                     :key="feature.key"
-                    @click="applyAssistant(feature.key)"
-                    class="px-3 py-1.5 rounded-full text-[12px] font-bold border border-slate-100 dark:border-slate-700 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-1.5 group bg-white dark:bg-slate-800"
+                    :content="!aiPrompt.trim() ? '请先输入您的灵感或选择下方题材' : feature.desc"
+                    placement="top"
+                    :disabled="!!aiPrompt.trim() && !feature.desc"
                   >
-                    <el-icon class="group-hover:rotate-12 transition-transform" :size="14"><component :is="feature.icon" /></el-icon>
-                    {{ feature.label }}
-                  </button>
+                    <button 
+                      @click="applyAssistant(feature.key)"
+                      :disabled="!aiPrompt.trim() || isGenerating"
+                      class="px-4 py-2 rounded-2xl text-[13px] font-bold border transition-all flex items-center gap-2 group shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale"
+                      :class="[
+                        getFeatureStyle(feature.key),
+                        aiPrompt.trim() ? 'hover:shadow-md hover:-translate-y-0.5' : ''
+                      ]"
+                    >
+                      <el-icon class="group-hover:rotate-12 transition-transform" :size="16"><component :is="feature.icon" /></el-icon>
+                      {{ feature.label }}
+                    </button>
+                  </el-tooltip>
                 </div>
 
                 <div class="relative group">
                   <!-- Dynamic Glowing Border -->
                   <div 
-                    class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[24px] blur-lg opacity-0 transition-opacity duration-1000"
-                    :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-10'"
+                    class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
+                    :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
                   ></div>
                   
-                  <div class="relative bg-slate-50/50 dark:bg-slate-900/50 rounded-[22px] border border-slate-200/60 dark:border-slate-700 group-focus-within:border-indigo-500/30 transition-all overflow-hidden shadow-inner">
+                  <div class="relative bg-white dark:bg-slate-900 rounded-[28px] border-2 border-slate-100 dark:border-slate-800 group-focus-within:border-indigo-500/40 transition-all overflow-hidden shadow-2xl shadow-indigo-500/5">
                     <textarea 
                       v-model="aiPrompt"
-                      class="w-full h-32 md:h-36 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 text-base p-6 transition-all font-bold leading-relaxed"
+                      class="w-full h-40 md:h-48 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400/60 text-lg p-8 transition-all font-medium leading-relaxed"
                       placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
                     ></textarea>
                     
                     <!-- Textarea Bottom Toolbar -->
-                    <div class="px-5 py-2.5 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                      <div class="flex items-center gap-3 text-slate-400">
-                        <span class="text-[10px] font-bold flex items-center gap-1">
-                          <el-icon><EditPen /></el-icon> {{ aiPrompt.length }} 字
+                    <div class="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                      <div class="flex items-center gap-4 text-slate-400">
+                        <span class="text-[11px] font-bold flex items-center gap-1.5 bg-white dark:bg-slate-700 px-3 py-1 rounded-full shadow-sm">
+                          <el-icon class="text-indigo-500"><EditPen /></el-icon> {{ aiPrompt.length }} 字
                         </span>
-                        <div class="w-px h-3 bg-slate-200 dark:bg-slate-700"></div>
-                        <button class="hover:text-indigo-600 transition-colors" title="插入常用模版">
-                          <el-icon :size="14"><Document /></el-icon>
-                        </button>
-                        <button class="hover:text-indigo-600 transition-colors" title="优化描述">
-                          <el-icon :size="14"><Brush /></el-icon>
-                        </button>
+                        <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="flex items-center gap-1">
+                          <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 transition-all shadow-sm" title="清空内容" @click="aiPrompt = ''" v-if="aiPrompt">
+                            <el-icon :size="14"><Delete /></el-icon>
+                          </button>
+                          <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 transition-all shadow-sm" title="优化描述">
+                            <el-icon :size="14"><Brush /></el-icon>
+                          </button>
+                        </div>
                       </div>
                       
-                      <div class="flex items-center gap-2">
-                         <span v-if="isGenerating" class="text-[10px] font-bold text-indigo-600 animate-pulse mr-1 flex items-center gap-1">
-                           <el-icon class="is-loading"><Loading /></el-icon> 正在构思...
+                      <div class="flex items-center gap-3">
+                         <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-600 animate-pulse mr-2 flex items-center gap-1.5">
+                           <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
                          </span>
                          <button 
-                          class="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50"
+                          class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                           :disabled="!aiPrompt.trim() || isGenerating"
                           @click="startCreation"
                         >
-                          <el-icon v-if="!isGenerating" :size="14"><MagicStick /></el-icon>
+                          <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
                           <span>立即创作</span>
                         </button>
                       </div>
@@ -114,11 +127,23 @@
                 </div>
 
                 <!-- Featured Categories -->
-                <div class="flex items-center justify-center gap-6 mt-1 opacity-50 hover:opacity-100 transition-opacity">
-                   <div v-for="tag in ['都市异能', '玄幻重生', '霸道总裁', '无限流']" :key="tag" class="text-[10px] font-black text-slate-500 cursor-pointer hover:text-indigo-600 flex items-center gap-1">
-                     <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                     {{ tag }}
-                   </div>
+                <div class="flex flex-col items-center gap-4 mt-2">
+                  <div class="flex items-center gap-2 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-60">
+                    <span class="w-8 h-[1px] bg-slate-200"></span>
+                    热门题材灵感
+                    <span class="w-8 h-[1px] bg-slate-200"></span>
+                  </div>
+                  <div class="flex flex-wrap items-center justify-center gap-3">
+                    <div 
+                      v-for="topic in hotTopics" 
+                      :key="topic.label" 
+                      @click="selectHotTopic(topic)"
+                      class="px-5 py-2 rounded-2xl text-[13px] font-bold cursor-pointer transition-all flex items-center gap-2 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md hover:-translate-y-0.5 group"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-indigo-400 transition-colors"></span>
+                      {{ topic.label }}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -293,7 +318,11 @@ import {
   Document,
   Location,
   Monitor,
-  Pointer
+  Pointer,
+  Delete,
+  Star,
+  Lightning,
+  Collection
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
@@ -305,6 +334,26 @@ const showDesignDialog = ref(false);
 const activeTab = ref('ai'); 
 const aiPrompt = ref('');
 const isGenerating = ref(false);
+
+// Hot Topics with templates
+const hotTopics = [
+  { 
+    label: '霸道总裁', 
+    template: '【霸道总裁题材】\n剧名：《傲娇总裁的契约娇妻》\n核心冲突：平凡少女意外撞破财阀继承人的秘密，被迫签订为期一年的“假结婚”协议。在豪门恩怨与商战博弈中，冷酷总裁逐渐卸下心防。\n名场面：总裁将她抵在墙角，声音低沉：“既然签了字，这辈子你都别想逃出我的手掌心。”' 
+  },
+  { 
+    label: '都市异能', 
+    template: '【都市异能题材】\n剧名：《我能看见万物价值》\n核心冲突：外卖小哥意外觉醒“神之眼”，能看穿任何物品的真实价值与未来走势。他凭借异能从捡漏开始，一步步建立属于自己的商业帝国，同时对抗隐藏在都市阴影下的神秘组织。' 
+  },
+  { 
+    label: '玄幻重生', 
+    template: '【玄幻重生题材】\n剧名：《万古剑帝：重回少年时》\n核心冲突：一代剑帝陨落后重生回十六岁。这一世，他要弥补所有遗憾，守护至亲，将前世背叛他的诸神一一斩落于剑下。' 
+  },
+  { 
+    label: '无限流', 
+    template: '【无限流题材】\n剧名：《规则怪谈：只有我能看到提示》\n核心冲突：全球被卷入诡异恐怖的规则游戏。主角在充满死亡陷阱的任务中，发现自己能看到隐藏的提示信息。在绝望中寻找生机，在惊悚中探寻世界的真相。' 
+  }
+];
 
 // Mock Recent Works Data with more reliable image placeholders
 const recentWorks = ref([
@@ -355,53 +404,64 @@ const recentWorks = ref([
 ]);
 
 const assistantFeatures = [
-  { key: 'generate', label: '一键生成', desc: '根据热门趋势生成完整短剧大纲', icon: DocumentAdd },
-  { key: 'polish', label: '文本润色', desc: '修饰语言，使对白更具戏剧张力', icon: Brush },
-  { key: 'expand', label: '情节扩写', desc: '增加细节描述，丰富故事层次感', icon: EditPen },
-  { key: 'rewrite', label: '创意改写', desc: '变换故事角度，发掘更多可能性', icon: Refresh }
+  { key: 'generate', label: '一键生成', desc: '根据您的灵感快速生成完整剧本大纲', icon: DocumentAdd },
+  { key: 'polish', label: '文本润色', desc: '优化遣词造句，增强对白的戏剧张力和感染力', icon: Brush },
+  { key: 'expand', label: '情节扩写', desc: '为现有情节增加细节描写，丰富故事层次', icon: EditPen },
+  { key: 'rewrite', label: '创意改写', desc: '尝试从不同视角或风格重新演绎当前内容', icon: Refresh }
 ];
 
-const getFeatureColorClass = (key: string) => {
-  const map: Record<string, string> = {
-    generate: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
-    polish: 'bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400',
-    expand: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400',
-    rewrite: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400'
+const getFeatureStyle = (key: string) => {
+  const styles: Record<string, string> = {
+    generate: 'bg-blue-50/50 border-blue-100 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400',
+    polish: 'bg-purple-50/50 border-purple-100 text-purple-600 hover:bg-purple-100 dark:bg-purple-500/10 dark:border-purple-500/20 dark:text-purple-400',
+    expand: 'bg-indigo-50/50 border-indigo-100 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400',
+    rewrite: 'bg-pink-50/50 border-pink-100 text-pink-600 hover:bg-pink-100 dark:bg-pink-500/10 dark:border-pink-500/20 dark:text-pink-400'
   };
-  return map[key] || 'bg-slate-50 text-slate-600';
+  return styles[key] || 'bg-slate-50 border-slate-100 text-slate-600';
+};
+
+const selectHotTopic = (topic: any) => {
+  if (isGenerating.value) return;
+  typeText(topic.template);
+};
+
+const typeText = (text: string) => {
+  isGenerating.value = true;
+  aiPrompt.value = '';
+  let currentPos = 0;
+  const speed = 15;
+  
+  const timer = setInterval(() => {
+    if (currentPos < text.length) {
+      aiPrompt.value += text.charAt(currentPos);
+      currentPos++;
+    } else {
+      clearInterval(timer);
+      isGenerating.value = false;
+    }
+  }, speed);
 };
 
 const applyAssistant = (key: string) => {
-  if (isGenerating.value) return;
+  if (isGenerating.value || !aiPrompt.value.trim()) return;
   
   isGenerating.value = true;
-  const originalPrompt = aiPrompt.value;
-  aiPrompt.value = ''; // Clear for typing effect
-
-  const mockPrompts: Record<string, string> = {
-    generate: `【剧本大纲生成】\n剧名：《逆袭：从赘婿到世界首富》\n故事设定：现代都市，隐藏身份的顶级豪门继承人沈浩。\n主角特征：沈浩（隐忍、睿智），苏晴（坚韧、美丽）。\n剧情脉络：\n1. 沈浩入赘苏家三年，受尽羞辱，只为守护报恩。\n2. 苏家面临破产危机，竞争对手赵公子步步紧逼。\n3. 沈浩在关键时刻动用百亿财团资源，反杀赵家，震惊全城。\n最终结局：沈浩身份揭晓，两人携手登顶商界巅峰，让所有看不起他的人悔恨终生。`,
-    polish: `【文本润色】\n沈浩冷冷地看着赵公子：“你说苏家不配，那我配吗？”他随手丢出一张通体漆黑的至尊龙卡。赵公子的脸色瞬间从张狂变得煞白，冷汗顺着额头流下。这张卡，全球仅此一张，代表着那个富可敌国的沈氏家族！`,
-    expand: `【情节扩写】\n昏暗的走廊里，苏晴紧紧攥着那份破产协议，指尖因为用力而泛白。沈浩走到她身后，轻轻拍了拍她的肩膀，声音低沉而有力：“别怕，有我在。”苏晴猛地转过头，在沈浩那双平日里平淡无奇的眸子里，她第一次看到了足以吞噬一切的深邃与霸气。`,
-    rewrite: `【创意改写】\n如果沈浩不是为了报恩入赘，而是为了寻找失踪的亲生父亲而潜伏呢？他每在苏家受一次委屈，就离真相更近一步。当他最终发现苏家老爷子正是当年陷害父亲的真凶之一，他该如何在爱人与仇恨之间做出最终的抉择？`
+  const currentContent = aiPrompt.value;
+  
+  // Simulated AI Processing logic
+  const mockPrefix: Record<string, string> = {
+    generate: '【剧本大纲已生成】\n',
+    polish: '【文本已深度润色】\n',
+    expand: '【情节已扩充细节】\n',
+    rewrite: '【已为您创意改写】\n'
   };
 
-  const targetText = mockPrompts[key] || '【灵感内容】：这是一个关于重生与反击的爆爽故事...';
-  
-  // Simulated Typing Effect
-  let currentPos = 0;
-  const speed = 20; // ms per character
-  
-  const typeNextChar = () => {
-    if (currentPos < targetText.length) {
-      aiPrompt.value += targetText.charAt(currentPos);
-      currentPos++;
-      setTimeout(typeNextChar, speed);
-    } else {
-      isGenerating.value = false;
-    }
-  };
-
-  setTimeout(typeNextChar, 500); // Initial delay
+  setTimeout(() => {
+    // For demo purposes, we just wrap the existing content with some "AI magic"
+    const newContent = `${mockPrefix[key] || '【处理结果】\n'}${currentContent}`;
+    aiPrompt.value = '';
+    typeText(newContent);
+  }, 800);
 };
 
 const startCreation = () => {
@@ -423,6 +483,21 @@ const handleFileUpload = (file: any) => {
 </script>
 
 <style scoped>
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -432,6 +507,10 @@ const handleFileUpload = (file: any) => {
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #334155;
+}
+
+:deep(.el-tooltip__wrapper) {
+  display: inline-block;
 }
 
 :deep(.custom-upload-v2) {
