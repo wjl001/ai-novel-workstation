@@ -2,10 +2,44 @@
   <div :class="s.page" class="relative">
     <!-- Header: Title and Batch Action -->
     <div :class="s.header">
-      <div :class="s.left">
-        <h2 class="text-2xl font-black text-slate-800 tracking-tight">共 {{ episodes.length }} 集</h2>
-        <p class="text-slate-400 text-sm mt-1">智能生成分镜脚本，开启你的短剧创作之旅</p>
+      <div :class="s.left" class="flex items-center gap-4">
+        <button 
+          @click="$router.push('/ai-short-drama-creator/works')" 
+          class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+        >
+          <el-icon><ArrowLeft /></el-icon>
+        </button>
+        <div>
+          <h2 class="text-2xl font-black text-slate-800 tracking-tight">共 {{ filteredEpisodes.length }} 集</h2>
+          <p class="text-slate-400 text-sm mt-1">智能生成分镜脚本，开启你的短剧创作之旅</p>
+        </div>
       </div>
+
+      <!-- Search & Filters -->
+      <div :class="s.searchBar">
+        <div :class="s.searchInputWrapper">
+          <el-icon><Search /></el-icon>
+          <input 
+            type="text" 
+            v-model="searchQuery" 
+            placeholder="搜索剧集标题..." 
+            @input="handleSearch"
+          />
+        </div>
+        <el-select 
+          v-model="statusFilter" 
+          placeholder="全部状态" 
+          clearable 
+          :class="s.statusSelect"
+          popper-class="status-select-popper"
+        >
+          <el-option label="剧本待写" value="script_pending" />
+          <el-option label="主体待设" value="assets_pending" />
+          <el-option label="分镜制作" value="storyboard_generating" />
+          <el-option label="视频合成" value="completed" />
+        </el-select>
+      </div>
+
       <div :class="s.right" class="flex items-center gap-3">
         <!-- Product Design Info Button -->
         <button 
@@ -15,134 +49,108 @@
           <el-icon :size="16"><InfoFilled /></el-icon>
           <span>产品设计说明</span>
         </button>
-
-        <button 
-          v-if="!isMultiSelect" 
-          @click="isMultiSelect = true" 
-          class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-sm"
-        >
-          多选
-        </button>
-        <template v-else>
-          <button 
-            @click="handleToggleSelectAll"
-            class="h-10 px-6 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[14px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
-          >
-            {{ isAllSelected ? '取消全选' : '全选' }}
-          </button>
-          <button 
-            @click="cancelMultiSelect"
-            class="h-10 px-6 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all"
-          >
-            取消
-          </button>
-          <button 
-            :disabled="selectedIds.length === 0" 
-            @click="handleBatchGenerate"
-            class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
-          >
-            <el-icon><MagicStick /></el-icon>
-            批量生成
-          </button>
-        </template>
       </div>
     </div>
 
     <!-- Episode Grid Layout -->
     <div :class="[s.container, s.gridLayout]" ref="listRef">
       <div 
-        v-for="ep in episodes" 
+        v-for="ep in filteredEpisodes" 
         :key="ep.id" 
-        :class="[
-          s.gridCard, 
-          { [s.selected]: selectedIds.includes(ep.id) }
-        ]"
+        :class="s.gridCard"
         @click="handleCardClick(ep)"
       >
-        <div v-if="isMultiSelect" :class="s.checkbox">
-          <el-checkbox :model-value="selectedIds.includes(ep.id)" @change="toggleSelect(ep.id)" @click.stop />
-        </div>
-        
         <div :class="s.index">{{ ep.index }}</div>
         
         <div :class="s.posterWrapper">
           <div :class="s.poster">
-            <el-image :src="ep.poster" fit="cover" />
-            <div v-if="ep.status === 'generating'" :class="s.generatingOverlay">
-              <el-icon class="is-loading"><Loading /></el-icon>
-              <span>生成中</span>
-            </div>
+            <el-image :src="getPosterUrl(ep)" fit="cover">
+              <template #error>
+                <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
+                  <el-icon :size="40"><Picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
             <!-- Duration Badge -->
-            <div v-if="ep.status === 'success' && ep.storyboardGenerated" :class="s.durationBadge">
+            <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
               {{ ep.duration || '01:12' }}
             </div>
           </div>
         </div>
 
         <div :class="s.info">
-          <h3 :class="s.epTitle">{{ ep.title }}</h3>
-          <div :class="s.meta">
+          <div class="flex items-center justify-between">
+            <h3 :class="s.epTitle">{{ ep.title }}</h3>
+            <span v-if="ep.synthesisStatus === 'success'" class="flex items-center gap-1 text-emerald-500 font-black text-[12px] bg-emerald-50 px-2 py-0.5 rounded-md">
+              <el-icon><Check /></el-icon> 已完成
+            </span>
+          </div>
+          
+          <div v-if="ep.scriptStatus === 'success'" :class="s.meta">
             <span><el-icon><User /></el-icon> {{ ep.roleCount }} 角色</span>
             <span><el-icon><Location /></el-icon> {{ ep.sceneCount }} 场景</span>
             <span><el-icon><Box /></el-icon> {{ ep.propCount || 0 }} 道具</span>
             <span><el-icon><VideoCamera /></el-icon> {{ ep.storyboardCount || 16 }} 分镜</span>
           </div>
-          
-          <!-- Actions Logic -->
-          <div :class="s.gridActions">
-            <!-- 脚本生成后且未合成全集，只显示编辑按钮 -->
-            <template v-if="ep.status === 'success' && ep.storyboardGenerated">
-              <template v-if="ep.synthesisStatus === 'success'">
-                <button 
-                  class="h-9 px-4 bg-indigo-50 text-indigo-600 rounded-lg text-[13px] font-bold hover:bg-indigo-100 transition-all flex items-center gap-1.5"
-                  @click.stop="handlePreview(ep)"
-                >
-                  <el-icon><VideoPlay /></el-icon> 预览
-                </button>
-                <button 
-                  class="h-9 px-4 bg-white text-slate-600 border border-slate-200 rounded-lg text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-100 transition-all flex items-center gap-1.5"
-                  @click.stop="navigateToDetail(ep)"
-                >
-                  <el-icon><Edit /></el-icon> 编辑
-                </button>
-                <button 
-                  class="h-9 px-4 bg-slate-900 text-white rounded-lg text-[13px] font-bold hover:bg-black transition-all flex items-center gap-1.5 shadow-sm"
-                  @click.stop="handleExport(ep)"
-                >
-                  <el-icon><Download /></el-icon> 导出
-                </button>
-              </template>
-              <template v-else>
-                <button 
-                  class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-indigo-500/10"
-                  @click.stop="navigateToDetail(ep)"
-                >
-                  <el-icon><Edit /></el-icon> 进入编辑
-                </button>
-              </template>
-            </template>
 
-            <!-- 未生成状态显示生成按钮 -->
-            <button 
-              v-else-if="ep.status === 'pending' || ep.status === 'failed'" 
-              @click.stop="handleGenerate(ep)"
-              class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-indigo-500/10"
-            >
-              <el-icon><MagicStick /></el-icon>
-              立即生成
-            </button>
-            
-            <div v-else :class="s.status" class="flex items-center gap-2">
-              <span v-if="ep.status === 'generating'" class="flex items-center gap-2 text-indigo-600 font-bold text-sm">
-                <el-icon class="is-loading"><Loading /></el-icon> 分镜脚本生成中...
-              </span>
+          <!-- Status Indicator Row -->
+          <div :class="s.statusIndicatorRow">
+            <div :class="[s.statusBadge, s[ep.scriptStatus]]">
+              <el-icon><Document /></el-icon>
+              <span>剧本: {{ ep.scriptStatus === 'success' ? '已创作' : '待创作' }}</span>
+            </div>
+            <div :class="[s.statusBadge, s[ep.assetsStatus || 'pending']]">
+              <el-icon><User /></el-icon>
+              <span>主体: {{ ep.assetsStatus === 'success' ? '已设置' : '待设置' }}</span>
+            </div>
+            <div :class="[s.statusBadge, s[ep.storyboardStatus]]">
+              <el-icon v-if="ep.storyboardStatus === 'generating'" class="is-loading"><Loading /></el-icon>
+              <el-icon v-else><Picture /></el-icon>
+              <span>分镜: {{ getStoryboardStatusShortLabel(ep.storyboardStatus) }}</span>
+            </div>
+            <div :class="[s.statusBadge, s[ep.synthesisStatus]]">
+              <el-icon v-if="ep.synthesisStatus === 'synthesizing'" class="is-loading"><Loading /></el-icon>
+              <el-icon v-else-if="ep.synthesisStatus === 'success'"><VideoPlay /></el-icon>
+              <el-icon v-else><Film /></el-icon>
+              <span>合成: {{ getSynthesisStatusShortLabel(ep.synthesisStatus) }}</span>
             </div>
           </div>
 
-          <!-- Pending/Generating Status Text -->
-          <div v-if="ep.status !== 'success'" :class="s.statusText">
-            <span v-if="ep.status === 'pending'" :class="s.pending">等待生成</span>
-            <span v-else-if="ep.status === 'failed'" :class="s.failed">生成失败</span>
+          <!-- Step Hint Text -->
+          <div :class="s.stepHint">
+            <span class="text-indigo-600 font-bold">💡 当前建议: </span>
+            <span class="text-slate-600 font-medium">{{ getStepHint(ep) }}</span>
+          </div>
+          
+          <!-- Actions Logic: Stepper Buttons -->
+          <div :class="s.gridActions">
+            <button 
+              :class="[s.stepBtn, { [s.active]: ep.scriptStatus === 'pending' }]"
+              @click.stop="navigateToOutline(ep)"
+            >
+              <el-icon class="mr-1.5"><Document /></el-icon>剧本创作
+            </button>
+            <button 
+              :class="[s.stepBtn, { [s.active]: ep.scriptStatus === 'success' && (ep.assetsStatus === 'pending') }]"
+              :disabled="ep.scriptStatus !== 'success'"
+              @click.stop="navigateToAssets(ep)"
+            >
+              <el-icon class="mr-1.5"><User /></el-icon>主体设置
+            </button>
+            <button 
+              :class="[s.stepBtn, { [s.active]: ep.assetsStatus === 'success' && (ep.storyboardStatus === 'pending' || ep.storyboardStatus === 'generating') }]"
+              :disabled="ep.assetsStatus !== 'success'"
+              @click.stop="navigateToDetail(ep)"
+            >
+              <el-icon class="mr-1.5"><Picture /></el-icon>分镜生成
+            </button>
+            <button 
+              :class="[s.stepBtn, { [s.active]: ep.storyboardStatus === 'success' && (ep.synthesisStatus === 'pending' || ep.synthesisStatus === 'synthesizing') }]"
+              :disabled="ep.storyboardStatus !== 'success'"
+              @click.stop="handleSynthesis(ep)"
+            >
+              <el-icon class="mr-1.5"><MagicStick /></el-icon>视频合成
+            </button>
           </div>
         </div>
       </div>
@@ -168,25 +176,75 @@
       @cancel="cancelBatchGenerate"
     />
 
-    <!-- Preview Modal for Synthesized Video -->
+    <!-- Video Preview Dialog -->
     <el-dialog
       v-model="previewVisible"
-      :title="`预览全集: ${previewEpisode?.title}`"
-      width="800px"
-      destroy-on-close
+      title="预览全集"
+      width="1000px"
       center
-      class="preview-dialog"
+      destroy-on-close
+      :class="s.previewDialog"
     >
-      <div class="aspect-video bg-black rounded-lg overflow-hidden">
-        <video 
-          v-if="previewEpisode?.synthesisVideo"
-          :src="previewEpisode.synthesisVideo" 
-          class="w-full h-full"
-          controls
-          autoplay
-        ></video>
-        <div v-else class="w-full h-full flex items-center justify-center text-white">
-          视频加载失败
+      <div v-if="previewEpisode" :class="s.previewContent">
+        <!-- Video Player Section -->
+        <div :class="s.videoSection">
+          <video 
+            ref="previewVideoRef"
+            :src="previewEpisode.synthesisVideo" 
+            controls 
+            autoplay
+            class="w-full rounded-xl shadow-2xl"
+          ></video>
+        </div>
+
+        <!-- Export Settings Section -->
+        <div :class="s.exportSettings">
+          <div class="flex items-center justify-between mt-8 px-2">
+            <div class="flex gap-12">
+              <!-- Watermark Setting -->
+              <div :class="s.settingGroup">
+                <span :class="s.settingLabel">水印设置</span>
+                <div :class="s.segmentedControl">
+                  <button 
+                    :class="{ [s.active]: watermarkType === 'brand' }"
+                    @click="watermarkType = 'brand'"
+                  >带品牌水印</button>
+                  <button 
+                    :class="{ [s.active]: watermarkType === 'none' }"
+                    @click="watermarkType = 'none'"
+                  >无水印</button>
+                </div>
+              </div>
+
+              <!-- Resolution Setting -->
+              <div :class="s.settingGroup">
+                <span :class="s.settingLabel">导出分辨率</span>
+                <div :class="s.segmentedControl">
+                  <button 
+                    :class="{ [s.active]: resolution === '1080P' }"
+                    @click="resolution = '1080P'"
+                  >1080P</button>
+                  <button 
+                    :class="{ [s.active]: resolution === '720P' }"
+                    @click="resolution = '720P'"
+                  >720P</button>
+                  <button 
+                    :class="{ [s.active]: resolution === '4K' }"
+                    @click="resolution = '4K'"
+                  >4K</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Button -->
+            <button 
+              :class="s.exportButton"
+              @click="handleExport(previewEpisode)"
+            >
+              <el-icon><Download /></el-icon>
+              <span>导出到本地</span>
+            </button>
+          </div>
         </div>
       </div>
     </el-dialog>
@@ -248,11 +306,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
-  Loading, User, Location, Check, Warning, QuestionFilled, 
-  VideoCamera, VideoPlay, Edit, Download, Box, InfoFilled, Close, Document, Monitor, Pointer 
+  ArrowLeft, InfoFilled, Search, User, Location, Box, VideoCamera, 
+  Document, Picture, Film, MagicStick, Loading, VideoPlay, Check, Download
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -267,18 +325,48 @@ const episodeStore = useEpisodeStore();
 
 // State
 const showDesignDialog = ref(false);
-const isMultiSelect = ref(false);
-const selectedIds = ref<string[]>([]);
 const drawerVisible = ref(false);
 const editingEpisode = ref<any>(null);
 const progressVisible = ref(false);
 const batchProgress = ref(0);
 const previewVisible = ref(false);
 const previewEpisode = ref<any>(null);
+const searchQuery = ref('');
+const statusFilter = ref('');
+
+// Export Settings
+const watermarkType = ref('brand');
+const resolution = ref('1080P');
+const previewVideoRef = ref<HTMLVideoElement | null>(null);
 
 const episodes = computed(() => episodeStore.episodes);
+const filteredEpisodes = computed(() => {
+  return episodes.value.filter(ep => {
+    const matchesQuery = ep.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+    
+    if (!statusFilter.value) return matchesQuery;
+    
+    let matchesStatus = false;
+    switch (statusFilter.value) {
+      case 'script_pending':
+        matchesStatus = ep.scriptStatus === 'pending';
+        break;
+      case 'assets_pending':
+        matchesStatus = ep.scriptStatus === 'success' && ep.assetsStatus === 'pending';
+        break;
+      case 'storyboard_generating':
+        matchesStatus = ep.storyboardStatus === 'generating';
+        break;
+      case 'completed':
+        matchesStatus = ep.synthesisStatus === 'success';
+        break;
+    }
+    
+    return matchesQuery && matchesStatus;
+  });
+});
+
 const hasGeneratedAny = computed(() => episodes.value.some(ep => ep.status === 'success'));
-const isAllSelected = computed(() => episodes.value.length > 0 && selectedIds.value.length === episodes.value.length);
 
 // Initialize mock data if empty
 onMounted(() => {
@@ -288,74 +376,158 @@ onMounted(() => {
         id: '1',
         index: 1,
         title: '第 1 集：命运抉择系统自毁',
-        poster: 'https://picsum.photos/seed/1/200/300',
+        poster: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400',
         roleCount: 7,
         sceneCount: 2,
         propCount: 5,
         storyboardCount: 16,
-        status: 'pending',
-        storyboardGenerated: false,
+        scriptStatus: 'success',
+        assetsStatus: 'success',
+        storyboardStatus: 'success',
+        synthesisStatus: 'success',
+        status: 'success',
+        storyboardGenerated: true,
         duration: '01:12',
         gif: '',
-        synthesisStatus: 'pending'
+        synthesisVideo: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
       },
       {
         id: '2',
         index: 2,
         title: '第 2 集：重生归来',
-        poster: 'https://picsum.photos/seed/2/200/300',
+        poster: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=400',
         roleCount: 5,
         sceneCount: 3,
         propCount: 3,
         storyboardCount: 12,
-        status: 'pending',
+        scriptStatus: 'success',
+        assetsStatus: 'success',
+        storyboardStatus: 'generating',
+        synthesisStatus: 'pending',
+        status: 'generating',
         storyboardGenerated: false,
         duration: '00:38',
         gif: '',
-        synthesisStatus: 'pending'
+      },
+      {
+        id: '3',
+        index: 3,
+        title: '第 3 集：商战风云',
+        poster: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=400',
+        roleCount: 4,
+        sceneCount: 2,
+        propCount: 2,
+        storyboardCount: 10,
+        scriptStatus: 'pending',
+        assetsStatus: 'pending',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        status: 'pending',
+        storyboardGenerated: false,
+        duration: '00:45',
+        gif: '',
       }
     ]);
   }
 });
 
+// Helper Functions
+const handleSearch = () => {
+  // Computed property handles the filtering
+};
+const getStoryboardStatusShortLabel = (status: string) => {
+  const map: any = {
+    pending: '待制作',
+    generating: '制作中',
+    success: '已生成',
+    failed: '失败'
+  };
+  return map[status] || '未知';
+};
+
+const getSynthesisStatusShortLabel = (status: string) => {
+  const map: any = {
+    pending: '待合成',
+    synthesizing: '合成中',
+    success: '已完结',
+    failed: '失败'
+  };
+  return map[status] || '未知';
+};
+
+const getStepHint = (ep: any) => {
+  if (ep.scriptStatus === 'pending') return '故事的起点，快去开启您的剧本创作之旅吧';
+  if (ep.assetsStatus === 'pending') return '剧本已就绪，接下来请为您的剧集设置统一的角色与场景形象';
+  if (ep.storyboardStatus === 'pending') return '主体形象已锁定，现在可以开始生成精美的分镜脚本了';
+  if (ep.storyboardStatus === 'generating') return 'AI 正在为您精心雕琢每一帧画面，请稍候...';
+  if (ep.synthesisStatus === 'pending') return '万事俱备，点击视频合成，将分镜转化为完整的短剧大片';
+  if (ep.synthesisStatus === 'synthesizing') return '正在将分镜与音轨完美融合，即将为您呈现精彩视频...';
+  if (ep.synthesisStatus === 'success') return '恭喜！您的短剧作品已制作完成，点击预览或导出分享吧';
+  return '准备就绪';
+};
+
+const getPosterUrl = (ep: any) => {
+  const defaultImage = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=400';
+  if (ep.storyboardStatus === 'success' || ep.synthesisStatus === 'success') {
+    return ep.poster || defaultImage;
+  }
+  return defaultImage;
+};
+
+const navigateToOutline = (ep: any) => {
+  router.push({
+    path: '/ai-short-drama-creator/outline',
+    query: { id: ep.id }
+  });
+};
+
+const navigateToAssets = (ep: any) => {
+  router.push({
+    path: '/ai-short-drama-creator/assets',
+    query: { id: ep.id }
+  });
+};
+
+const handleSynthesis = async (ep: any) => {
+  if (ep.synthesisStatus === 'success') {
+    handlePreview(ep);
+  } else {
+    // Start synthesis simulation
+    episodeStore.updateEpisode(ep.id, { synthesisStatus: 'synthesizing' });
+    ElMessage.info(`正在开始合成《${ep.title}》...`);
+    
+    // Simulate synthesis process
+    setTimeout(() => {
+      episodeStore.updateEpisode(ep.id, { 
+        synthesisStatus: 'success',
+        synthesisVideo: 'https://www.w3schools.com/html/movie.mp4'
+      });
+      ElMessage.success(`《${ep.title}》合成完成！`);
+      // After success, show the preview dialog automatically
+      handlePreview(episodeStore.episodes.find(e => e.id === ep.id));
+    }, 2000);
+  }
+};
+
 // Actions
-const toggleSelect = (id: string) => {
-  const index = selectedIds.value.indexOf(id);
-  if (index > -1) {
-    selectedIds.value.splice(index, 1);
-  } else {
-    selectedIds.value.push(id);
-  }
-};
-
-const cancelMultiSelect = () => {
-  isMultiSelect.value = false;
-  selectedIds.value = [];
-};
-
-const handleToggleSelectAll = () => {
-  if (isAllSelected.value) {
-    selectedIds.value = [];
-  } else {
-    selectedIds.value = episodes.value.map(ep => ep.id);
-  }
-};
-
 const handleCardClick = (ep: any) => {
-  if (isMultiSelect.value) {
-    toggleSelect(ep.id);
-  } else {
-    if (ep.status === 'success') {
-      // 如果已经生成，点击卡片默认进入详情编辑
-      navigateToDetail(ep);
-    } else {
-      handleGenerate(ep);
-    }
+  // 根据当前状态决定点击后的行为
+  if (ep.scriptStatus === 'pending') {
+    navigateToOutline(ep);
+  } else if (ep.assetsStatus === 'pending') {
+    navigateToAssets(ep);
+  } else if (ep.storyboardStatus === 'pending' || ep.storyboardStatus === 'generating' || ep.storyboardStatus === 'success') {
+    navigateToDetail(ep);
+  } else if (ep.synthesisStatus === 'success') {
+    handlePreview(ep);
   }
 };
 
 const handleGenerate = async (ep: any) => {
-  episodeStore.updateEpisode(ep.id, { status: 'generating' });
+  episodeStore.updateEpisode(ep.id, { 
+    status: 'generating',
+    storyboardStatus: 'generating' 
+  });
   
   // Track event
   trackEvent('shortDrama_generate_storyboard', { episodeId: ep.id });
@@ -366,17 +538,15 @@ const handleGenerate = async (ep: any) => {
     
     episodeStore.updateEpisode(ep.id, { 
       status: 'success', 
+      storyboardStatus: 'success',
       storyboardGenerated: true 
     });
     
     ElMessage.success('分镜脚本生成成功');
-    // 如果是第一集生成，刷新页面布局
-    if (!hasGeneratedAny.value) {
-      // 触发计算属性更新
-    }
   } catch (error) {
     episodeStore.updateEpisode(ep.id, { 
       status: 'failed', 
+      storyboardStatus: 'failed',
       errorReason: '网络超时，请稍后重试' 
     });
     ElMessage.error('分镜脚本生成失败');
@@ -384,18 +554,19 @@ const handleGenerate = async (ep: any) => {
 };
 
 const handlePreview = (ep: any) => {
-  if (ep.synthesisVideo) {
-    previewEpisode.value = ep;
-    previewVisible.value = true;
-  } else {
-    ElMessage.warning('全集视频尚未合成，无法预览');
-  }
+  // Use a mock video URL for simulation (Storyboard 1 video)
+  const sampleVideo = 'https://www.w3schools.com/html/movie.mp4';
+  previewEpisode.value = {
+    ...ep,
+    synthesisVideo: ep.synthesisVideo || sampleVideo
+  };
+  previewVisible.value = true;
 };
 
 const handleExport = (ep: any) => {
-  if (ep.synthesisVideo) {
+  if (ep.synthesisVideo || ep.synthesisStatus === 'success') {
     const link = document.createElement('a');
-    link.href = ep.synthesisVideo;
+    link.href = ep.synthesisVideo || 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
     link.download = `${ep.title}-full.mp4`;
     document.body.appendChild(link);
     link.click();
@@ -404,40 +575,6 @@ const handleExport = (ep: any) => {
   } else {
     ElMessage.warning('全集视频尚未合成，无法导出');
   }
-};
-
-const handleBatchGenerate = async () => {
-  progressVisible.value = true;
-  batchProgress.value = 0;
-  
-  trackEvent('shortDrama_batchGenerate_storyboard', { count: selectedIds.value.length });
-
-  const total = selectedIds.value.length;
-  for (let i = 0; i < total; i++) {
-    const id = selectedIds.value[i];
-    episodeStore.updateEpisode(id, { status: 'generating' });
-    
-    // Simulate progress
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    batchProgress.value = Math.floor(((i + 1) / total) * 100);
-    
-    episodeStore.updateEpisode(id, { 
-      status: 'success', 
-      storyboardGenerated: true 
-    });
-  }
-  
-  setTimeout(() => {
-    progressVisible.value = false;
-    isMultiSelect.value = false;
-    selectedIds.value = [];
-    ElMessage.success('批量生成成功');
-  }, 500);
-};
-
-const cancelBatchGenerate = () => {
-  progressVisible.value = false;
-  ElMessage.info('批量生成已取消');
 };
 
 const openEditDrawer = (ep: any) => {
@@ -450,8 +587,8 @@ const navigateToDetail = (ep: any) => {
   drawerVisible.value = false;
   trackEvent('shortDrama_enter_detail', { episodeId: ep.id });
   router.push({
-    path: `/storyboard/${ep.id}`,
-    query: { subjectId: episodeStore.subjectId }
+    path: `/ai-short-drama-creator/storyboard`,
+    query: { subjectId: episodeStore.subjectId, id: ep.id }
   });
 };
 

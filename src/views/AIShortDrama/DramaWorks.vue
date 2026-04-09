@@ -387,7 +387,7 @@ const getStatusLabel = (status: string) => {
 };
 
 const openWork = (work: any) => {
-  router.push('/ai-short-drama-creator/outline');
+  router.push('/ai-short-drama-creator/episodes');
 };
 
 const handleCommand = (command: string, work: any) => {

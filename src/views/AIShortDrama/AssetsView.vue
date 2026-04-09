@@ -180,7 +180,7 @@
             :disabled="!isAssetsComplete"
             class="h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
-            <span>下一步：分集生成</span>
+            <span>下一步：分镜视频</span>
             <el-icon><ArrowRight /></el-icon>
           </button>
         </span>
@@ -264,7 +264,7 @@
             </li>
             <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
               <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>强制前置校验：</strong>必须至少完成一个角色和一个场景的设定，才能点击“下一步：分集生成”。</span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>强制前置校验：</strong>必须至少完成一个角色和一个场景的设定，才能点击“下一步：分镜视频”。</span>
             </li>
           </ul>
         </div>
@@ -308,7 +308,7 @@ const handleNextStep = () => {
 
 const goToEpisodes = () => {
   confirmVisible.value = false;
-  router.push('/ai-short-drama-creator/episodes');
+  router.push('/ai-short-drama-creator/storyboard');
 };
 
 // Mock Data

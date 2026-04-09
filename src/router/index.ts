@@ -82,9 +82,9 @@ const router = createRouter({
       component: NewDrama
     },
     {
-      path: '/storyboard/:id',
-      name: 'storyboard-detail',
-      component: StoryboardView
+      path: '/ai-short-drama-creator/episodes',
+      name: 'drama-episodes-list',
+      component: EpisodesView
     },
     {
       path: '/ai-short-drama-creator',
@@ -101,9 +101,9 @@ const router = createRouter({
           component: AssetsView
         },
         {
-          path: 'episodes',
-          name: 'drama-episodes',
-          component: EpisodesView
+          path: 'storyboard',
+          name: 'drama-storyboard',
+          component: StoryboardView
         }
       ]
     }

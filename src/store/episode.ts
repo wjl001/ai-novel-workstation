@@ -7,6 +7,10 @@ export interface Episode {
   duration: string;
   poster: string;
   gif: string;
+  scriptStatus: 'pending' | 'success';
+  assetsStatus: 'pending' | 'success';
+  storyboardStatus: 'pending' | 'generating' | 'success' | 'failed';
+  synthesisStatus: 'pending' | 'synthesizing' | 'success' | 'failed';
   storyboardGenerated: boolean;
   status: 'pending' | 'generating' | 'success' | 'failed';
   errorReason?: string;
@@ -15,7 +19,6 @@ export interface Episode {
   sceneCount?: number;
   propCount?: number;
   storyboardCount?: number;
-  synthesisStatus?: 'pending' | 'synthesizing' | 'success' | 'failed';
   synthesisProgress?: number;
   synthesisVideo?: string;
 }

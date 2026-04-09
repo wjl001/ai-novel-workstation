@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-[#f0f2f5] overflow-hidden">
+  <div class="h-full flex flex-col bg-[#f0f2f5] overflow-hidden">
     <!-- Header -->
     <header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0 z-20 relative shadow-sm">
       <!-- Product Design Info Button -->
@@ -1724,7 +1724,7 @@ const handleEpisodeSwitch = (id: string) => {
   ElMessage.info(`已切换至 ${episodeStore.episodes.find(e => e.id === id)?.title}`);
 };
 
-const episodeId = computed(() => route.query.id as string);
+const episodeId = computed(() => (route.query.id as string) || episodeStore.episodes[0]?.id || '1');
 const episode = computed(() => episodeStore.episodes.find(e => e.id === episodeId.value));
 const episodeNotFound = computed(() => episodeId.value && !episode.value);
 

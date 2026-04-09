@@ -69,7 +69,7 @@
         <div 
           class="flex items-center gap-4 group py-1.5"
           :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'"
-          @click="goToStep(2, '/ai-short-drama-creator/episodes')"
+          @click="goToStep(2, '/ai-short-drama-creator/storyboard')"
         >
           <div 
             class="w-10 h-10 rounded-2xl flex items-center justify-center text-[13px] transition-all duration-500 shadow-sm"
@@ -81,7 +81,7 @@
             <span 
               class="text-[15px] transition-all duration-300"
               :class="activeStep >= 2 ? 'text-slate-900 dark:text-white font-black' : 'text-slate-500 font-bold'"
-            >分集视频</span>
+            >分镜视频</span>
             <span class="text-[11px] text-slate-500 font-black uppercase tracking-widest -mt-0.5">Step Three</span>
           </div>
         </div>
@@ -168,7 +168,7 @@ const activeStep = computed(() => {
   switch (route.name) {
     case 'drama-outline': return 0;
     case 'drama-assets': return 1;
-    case 'drama-episodes': return 2;
+    case 'drama-storyboard': return 2;
     default: return 0;
   }
 });
