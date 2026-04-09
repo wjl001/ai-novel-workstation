@@ -1,11 +1,16 @@
 <template>
-  <div class="h-full flex flex-col bg-[#f0f2f5] overflow-hidden">
+  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative">
+    <!-- Decorative background elements for C-end feel -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
     <!-- Header -->
-    <header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0 z-20 relative shadow-sm">
+    <header class="h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 shrink-0 z-30 relative shadow-sm transition-all duration-300">
       <!-- Product Design Info Button -->
       <button 
         @click="showDesignDialog = true"
-        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] shadow-sm border border-slate-200/50 transition-all duration-300 z-50"
+        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-full font-bold text-[12px] shadow-sm border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 z-50"
       >
         <el-icon :size="14"><InfoFilled /></el-icon>
         <span>产品设计说明</span>
@@ -14,16 +19,16 @@
       <div class="flex items-center gap-4">
         <button 
           @click="router.back()" 
-          class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-full transition-all font-medium"
+          class="flex items-center gap-2 px-3 py-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-all font-bold text-sm"
         >
           <el-icon><ArrowLeft /></el-icon>
           <span>返回</span>
         </button>
-        <el-divider direction="vertical" class="!h-6 !mx-2" />
+        <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
         
         <el-dropdown trigger="click" @command="handleEpisodeSwitch">
-          <div class="flex items-center gap-2 cursor-pointer group px-4 py-2 hover:bg-slate-50 rounded-full transition-all">
-            <h1 class="text-[16px] font-extrabold text-slate-800 truncate max-w-[400px] group-hover:text-indigo-600 transition-colors">
+          <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
+            <h1 class="text-[15px] font-black text-slate-800 dark:text-white truncate max-w-[300px] group-hover:text-indigo-600 transition-colors">
               <template v-if="episodeNotFound">
                 视频不存在
               </template>
@@ -50,10 +55,10 @@
         </el-dropdown>
       </div>
       
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
           <el-icon class="text-indigo-500"><Menu /></el-icon>
-          <el-select v-model="synthesisModel" size="small" class="w-40 !border-none custom-select-transparent">
+          <el-select v-model="synthesisModel" size="small" class="w-36 !border-none custom-select-transparent">
             <el-option label="Seedance 2.0 • Fast" value="seedance-fast" />
             <el-option label="Seedance 2.0 • Quality" value="seedance-quality" />
           </el-select>
@@ -61,198 +66,156 @@
         
         <button 
           @click="handleExport"
-          class="h-10 px-5 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+          class="h-9 px-4 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
           :disabled="!timelineScenes[currentSceneIdx]?.video"
         >
           <el-icon><RefreshRight /></el-icon> 导出
         </button>
 
-        <!-- Background Music Button -->
-        <el-tooltip 
-          :content="!isAllScenesGenerated ? '请先生成所有分镜视频' : (bgmConfig.confirmed ? '已确认配置' : '配置背景音乐')" 
-          placement="top"
+        <button 
+          @click="showBgmConfig = true"
+          :disabled="!isAllScenesGenerated"
+          class="h-9 px-4 rounded-full text-[13px] font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/10 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          :class="bgmConfig.confirmed ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-indigo-600 text-white shadow-indigo-500/20'"
         >
-          <div class="inline-block">
-            <button 
-              @click="showBgmConfig = true"
-              :disabled="!isAllScenesGenerated"
-              class="h-10 px-6 rounded-full text-[14px] font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/10 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-              :class="bgmConfig.confirmed ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-indigo-600 text-white shadow-indigo-500/20 theme-primary-btn'"
-            >
-              <el-icon><Headset /></el-icon> 
-              <span>背景音乐</span>
-              <span v-if="bgmConfig.status === 'ready'" class="w-2 h-2 rounded-full bg-white animate-pulse ml-1 shadow-sm"></span>
-            </button>
-          </div>
-        </el-tooltip>
+          <el-icon><Headset /></el-icon> 
+          <span>背景音乐</span>
+        </button>
 
         <button 
           v-if="isSynthesisCompleted || episodeStore.episodes.find(e => e.id === episodeId)?.synthesisVideo"
           @click="handlePreviewFull"
-          class="h-10 px-5 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold hover:bg-indigo-100 transition-all flex items-center gap-2 shadow-sm"
+          class="h-9 px-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-[13px] font-bold hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-all flex items-center gap-2 shadow-sm"
         >
           <el-icon><VideoPlay /></el-icon> 预览全集
         </button>
 
-        <!-- Synthesize All Button -->
-        <el-tooltip 
-          :content="synthesisTooltip" 
-          placement="top" 
-          :disabled="canSynthesizeAll"
+        <button 
+          @click="handleSynthesis"
+          :disabled="!canSynthesizeAll"
+          class="h-9 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[13px] font-bold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
         >
-          <div class="inline-block">
-            <button 
-              @click="handleSynthesis"
-              :disabled="!canSynthesizeAll"
-              class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
-            >
-              <el-icon><MagicStick /></el-icon>
-              合成全集
-            </button>
-          </div>
-        </el-tooltip>
+          <el-icon><MagicStick /></el-icon>
+          合成全集
+        </button>
       </div>
     </header>
 
     <!-- Main Workspace -->
-    <main class="flex-1 flex gap-4 overflow-hidden p-4 bg-[#f8fafc]">
+    <main class="flex-1 flex gap-4 overflow-hidden p-4 bg-transparent relative z-10">
       <!-- Left Sidebar: Subject Library -->
-      <aside class="w-[300px] bg-white rounded-xl shadow-sm flex flex-col overflow-hidden shrink-0">
+      <aside 
+        class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col overflow-hidden shrink-0 transition-all duration-500 relative border border-white dark:border-slate-700/50"
+        :style="{ width: isLeftCollapsed ? '0px' : '280px', opacity: isLeftCollapsed ? 0 : 1, marginRight: isLeftCollapsed ? '-16px' : '0' }"
+      >
         <!-- Subject Library Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-          <div class="p-5 border-b border-slate-50 flex justify-between items-center shrink-0">
-            <span class="font-bold text-[16px] text-slate-800 tracking-wide">主体库</span>
-            <el-tooltip content="打开主体库弹窗" placement="top">
-              <button 
-                @click="showLibraryModal = true"
-                class="text-slate-500 hover:text-indigo-600 transition-colors"
-              >
-                <el-icon size="20"><Plus /></el-icon>
-              </button>
-            </el-tooltip>
+        <div class="flex-1 flex flex-col overflow-hidden" v-show="!isLeftCollapsed">
+          <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
+            <span class="font-black text-[16px] text-slate-800 dark:text-white tracking-wide">主体库</span>
+            <button 
+              @click="showLibraryModal = true"
+              class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"
+            >
+              <el-icon :size="18"><Plus /></el-icon>
+            </button>
           </div>
 
-          <div class="flex-1 overflow-y-auto custom-scrollbar p-5 pb-10">
-            <!-- Character Category -->
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-4 text-slate-500">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-4 pb-10 space-y-6">
+            <!-- Character Category Area -->
+            <div class="bg-indigo-50/30 dark:bg-indigo-900/10 rounded-[24px] p-4 border border-indigo-100/50 dark:border-indigo-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
-                  <el-icon size="16"><User /></el-icon>
-                  <span class="text-[14px] font-black tracking-wider">角色 ({{ filteredCharacters.length }})</span>
+                  <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <el-icon :size="16"><User /></el-icon>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">角色形象</span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Characters ({{ filteredCharacters.length }})</span>
+                  </div>
                 </div>
-                <button class="text-indigo-500 hover:text-indigo-600 transition-colors" @click="handleAddSubject('character')">
-                  <el-icon><Plus /></el-icon>
+                <button 
+                  @click="handleAddSubject('character')"
+                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
+                >
+                  <el-icon :size="14"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-            <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(char)">
-                  <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md flex items-center justify-center p-1">
-                    <!-- Delete Button -->
-                    <button 
-                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-500 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
-                      @click.stop="handleDeleteSubject(char)"
-                    >
-                      <el-icon><Delete /></el-icon>
-                    </button>
-                    <!-- White Circle for Avatar -->
-                    <div class="w-20 h-20 rounded-full bg-slate-50 overflow-hidden flex items-center justify-center relative">
-                      <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover" loading="lazy" />
-                      <el-icon v-else size="32" class="text-slate-300"><User /></el-icon>
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(char)">
+                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-indigo-400 dark:group-hover:border-indigo-500 p-1">
+                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+                      <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
                     </div>
-                    
-                    <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
-                      <button 
-                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
-                        @click.stop="handleEditSubject(char)"
-                      >
-                        <el-icon size="16"><Edit /></el-icon>
-                      </button>
-                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[13px] text-slate-800 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name }}</span>
+                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name.split('-')[0] }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- Scene Category -->
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-4 text-slate-500">
+            <!-- Scene Category Area -->
+            <div class="bg-emerald-50/30 dark:bg-emerald-900/10 rounded-[24px] p-4 border border-emerald-100/50 dark:border-emerald-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
-                  <el-icon size="16"><Location /></el-icon>
-                  <span class="text-[14px] font-black tracking-wider">场景 ({{ filteredScenes.length }})</span>
+                  <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <el-icon :size="16"><Location /></el-icon>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">拍摄场景</span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Scenes ({{ filteredScenes.length }})</span>
+                  </div>
                 </div>
-                <button class="text-indigo-500 hover:text-indigo-600 transition-colors" @click="handleAddSubject('scene')">
-                  <el-icon><Plus /></el-icon>
+                <button 
+                  @click="handleAddSubject('scene')"
+                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
+                >
+                  <el-icon :size="14"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-            <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(scene)">
-                  <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md">
-                    <!-- Delete Button -->
-                    <button 
-                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-500 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
-                      @click.stop="handleDeleteSubject(scene)"
-                    >
-                      <el-icon><Delete /></el-icon>
-                    </button>
-                    <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover" loading="lazy" />
-                    <div v-else class="flex flex-col items-center justify-center w-full h-full text-slate-400 bg-slate-50">
-                      <el-icon size="28"><Location /></el-icon>
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(scene)">
+                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-emerald-400 dark:group-hover:border-emerald-500 p-1">
+                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+                      <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
                     </div>
-                    
-                    <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
-                      <button 
-                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
-                        @click.stop="handleEditSubject(scene)"
-                      >
-                        <el-icon size="16"><Edit /></el-icon>
-                      </button>
-                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ scene.name }}</span>
+                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-emerald-600 transition-colors">{{ scene.name }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- Props Category -->
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-4 text-slate-400">
+            <!-- Props Category Area -->
+            <div class="bg-amber-50/30 dark:bg-amber-900/10 rounded-[24px] p-4 border border-amber-100/50 dark:border-amber-800/30 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
-                  <el-icon size="14"><Box /></el-icon>
-                  <span class="text-[13px] font-medium tracking-wider">道具 ({{ filteredProps.length }})</span>
+                  <div class="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <el-icon :size="16"><Box /></el-icon>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[13px] font-black text-slate-800 dark:text-white leading-tight">道具物品</span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Props ({{ filteredProps.length }})</span>
+                  </div>
                 </div>
-                <button class="text-indigo-400 hover:text-indigo-600 transition-colors" @click="handleAddSubject('prop')">
-                  <el-icon><Plus /></el-icon>
+                <button 
+                  @click="handleAddSubject('prop')"
+                  class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
+                >
+                  <el-icon :size="14"><Plus /></el-icon>
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-x-3 gap-y-6">
-            <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-2 group cursor-pointer relative" @click="handleEditSubject(prop)">
-                  <div class="w-full aspect-[4/3] rounded-2xl bg-white border border-slate-100 overflow-hidden relative transition-all group-hover:shadow-md">
-                    <!-- Delete Button -->
-                    <button 
-                      class="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
-                      @click.stop="handleDeleteSubject(prop)"
-                    >
-                      <el-icon><Delete /></el-icon>
-                    </button>
-                    <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover" loading="lazy" />
-                    <div v-else class="flex flex-col items-center justify-center w-full h-full text-slate-300 bg-slate-50">
-                      <el-icon size="28"><Box /></el-icon>
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-2 group cursor-pointer" @click="handleEditSubject(prop)">
+                  <div class="w-full aspect-square rounded-[20px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-amber-400 dark:group-hover:border-amber-500 p-1">
+                    <div class="w-full h-full rounded-[14px] overflow-hidden relative">
+                      <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <el-icon v-else :size="24" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
                     </div>
-                    
-                    <!-- Hover Overlay with Edit Icon -->
-                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-all flex justify-end items-start p-2">
-                      <button 
-                        class="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center transition-all shadow-md hover:scale-110 active:scale-90"
-                        @click.stop="handleEditSubject(prop)"
-                      >
-                        <el-icon size="16"><Edit /></el-icon>
-                      </button>
-                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <span class="text-[12px] text-slate-700 font-bold truncate w-full px-1 text-center group-hover:text-indigo-600 transition-colors">{{ prop.name }}</span>
+                  <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-amber-600 transition-colors">{{ prop.name }}</span>
                 </div>
               </div>
             </div>
@@ -260,32 +223,43 @@
         </div>
       </aside>
 
+      <!-- Sidebar Collapse Toggle Button -->
+      <div 
+        class="absolute left-[266px] top-1/2 -translate-y-1/2 w-7 h-20 flex items-center justify-center cursor-pointer z-[150] group transition-all duration-500"
+        :style="{ left: isLeftCollapsed ? '-14px' : '266px' }"
+        @click="isLeftCollapsed = !isLeftCollapsed"
+      >
+        <div class="absolute inset-0 bg-white dark:bg-slate-800 shadow-[0_4px_25px_rgba(99,102,241,0.25)] rounded-full border border-indigo-100 dark:border-indigo-900/50 transition-all duration-300 group-hover:scale-y-110 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30"></div>
+        <el-icon class="relative z-10 text-indigo-500 group-hover:text-indigo-700 transition-all duration-300" :size="16">
+          <ArrowLeft v-if="!isLeftCollapsed" />
+          <ArrowRight v-else />
+        </el-icon>
+      </div>
+
       <!-- Right Column: Editor & Timeline -->
-      <div class="flex-1 flex flex-col gap-4 min-w-0">
+      <div class="flex-1 flex flex-col gap-4 min-w-0 transition-all duration-500">
         <!-- Center: Script Editor Area -->
-        <section class="flex-1 flex flex-col min-h-0 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden relative">
+        <section class="flex-1 flex flex-col min-h-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-4 bg-white flex justify-between items-center shrink-0">
+          <div class="px-6 py-4 bg-transparent flex justify-between items-center shrink-0 border-b border-slate-50 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
-              <h1 class="text-[15px] font-bold text-slate-800">分镜 {{ currentSceneIdx + 1 }}</h1>
-              <span class="text-[12px] text-slate-400">分镜时长请限制在4-15s，输入“@”可快速调整镜头时长、引用角色、场景、道具</span>
+              <div class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-black text-xs uppercase tracking-widest">分镜 {{ currentSceneIdx + 1 }}</div>
+              <span class="text-[12px] text-slate-400 dark:text-slate-500 font-medium">分镜时长请限制在4-15s，输入“@”可快速调整镜头时长、引用角色、场景、道具</span>
             </div>
-            <span class="text-[12px] text-slate-400"></span>
           </div>
 
-          <!-- Content Wrapper for Scroll control and Action buttons -->
+          <!-- Content Wrapper -->
           <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-            <!-- Content Split Area -->
             <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden">
               <!-- Left: Script Content Box -->
               <div 
-                class="flex-[3] rounded-xl transition-all relative flex flex-col overflow-hidden"
-                :class="isEditingScript ? 'bg-white border border-indigo-200 shadow-lg' : 'bg-[#f8fafc] border border-transparent'"
+                class="flex-[3] rounded-2xl transition-all duration-500 relative flex flex-col overflow-hidden"
+                :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-400 shadow-2xl' : 'bg-slate-50/50 dark:bg-slate-900/50 border border-transparent'"
               >
                 <!-- Read-only View -->
                 <div 
                   v-if="!isEditingScript"
-                  class="p-6 text-[14px] text-slate-700 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text"
+                  class="p-6 text-[15px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
                   v-html="currentScript"
                 >
                 </div>
@@ -296,80 +270,48 @@
                     <editor-content :editor="editor" class="script-editor-content w-full h-full" />
                   </div>
                   
-                  <!-- @ Mention Popup (Teleported to body for top-level visibility) -->
+                  <!-- @ Mention Popup -->
                   <teleport to="body">
                     <transition name="el-zoom-in-top">
                       <div 
                         v-if="showMentionMenu" 
                         ref="mentionMenuRef"
-                        class="fixed z-[9999] bg-white rounded-xl shadow-2xl border border-slate-100 p-2 min-w-[280px] max-w-[340px]"
+                        class="fixed z-[9999] bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/50 dark:border-slate-700/50 p-2 min-w-[280px] max-w-[340px]"
                         :style="mentionMenuStyle"
                       >
-                        <!-- Search Bar (Optional visual indicator, synced with editor typing) -->
-                        <div class="mb-2 px-3 py-1.5 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
+                        <div class="mb-2 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
                           <el-icon class="text-slate-400" size="14"><Search /></el-icon>
-                          <span class="text-[12px] text-slate-500 font-medium">搜索: </span>
-                          <span v-if="mentionSearch" class="text-[12px] text-indigo-600 font-bold">{{ mentionSearch }}</span>
-                          <span v-else class="text-[12px] text-slate-300">输入关键词...</span>
+                          <span class="text-[12px] text-slate-500 font-bold uppercase tracking-wider">快捷引用</span>
                         </div>
 
-                        <div class="flex gap-1 p-1 mb-2 bg-slate-50/50 rounded-lg shrink-0 overflow-x-auto custom-scrollbar">
+                        <div class="flex gap-1 p-1 mb-2 bg-slate-100/50 dark:bg-slate-900/50 rounded-xl shrink-0 overflow-x-auto custom-scrollbar">
                           <button 
-                          v-for="tab in ['all', 'duration', 'character', 'scene', 'asset']" 
-                          :key="tab"
-                          @click="mentionActiveTab = tab"
-                          class="px-2 py-1 text-[10px] rounded-md transition-all whitespace-nowrap"
-                          :class="mentionActiveTab === tab ? 'bg-white text-indigo-600 shadow-sm font-bold' : 'text-slate-400 hover:text-slate-600'"
-                        >
-                          {{ tab === 'all' ? '全部' : tab === 'duration' ? '时长' : tab === 'character' ? '角色' : tab === 'scene' ? '场景' : '道具' }}
-                        </button>
+                            v-for="tab in ['all', 'duration', 'character', 'scene', 'asset']" 
+                            :key="tab"
+                            @click="mentionActiveTab = tab"
+                            class="px-3 py-1.5 text-[11px] rounded-lg transition-all whitespace-nowrap font-black"
+                            :class="mentionActiveTab === tab ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'"
+                          >
+                            {{ tab === 'all' ? '全部' : tab === 'duration' ? '时长' : tab === 'character' ? '角色' : tab === 'scene' ? '场景' : '道具' }}
+                          </button>
                         </div>
 
                         <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
-                          <!-- Custom Duration Input -->
-                          <div v-if="mentionActiveTab === 'duration' || mentionActiveTab === 'all'" class="px-3 py-2 mb-1">
-                            <div class="flex gap-2">
-                              <el-input 
-                                v-model="customDuration" 
-                                size="small" 
-                                placeholder="自定义秒数..." 
-                                @keyup.enter="handleCustomDuration"
-                              />
-                              <button 
-                                @click="handleCustomDuration"
-                                class="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-[13px] font-bold hover:bg-indigo-700 transition-all shadow-md"
-                              >
-                                确定
-                              </button>
-                            </div>
-                          </div>
-
                           <div 
                             v-for="(item, idx) in mentionItems" 
                             :key="idx"
-                            class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors group"
-                            :class="idx === selectedMentionIndex ? 'bg-indigo-50' : 'hover:bg-indigo-50/50'"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
+                            :class="idx === selectedMentionIndex ? 'bg-indigo-600 text-white shadow-lg' : 'hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-700 dark:text-slate-200'"
                             @click="insertMention(item)"
                           >
-                            <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50 relative">
-                              <img 
-                                v-if="'image' in item && item.image" 
-                                :src="item.image" 
-                                class="w-full h-full object-cover relative z-10" 
-                                @error="(e: any) => e.target.style.opacity = 0"
-                              />
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border border-slate-50 dark:border-slate-700 relative">
+                              <img v-if="'image' in item && item.image" :src="item.image" class="w-full h-full object-cover relative z-10" />
                               <el-icon class="text-slate-400 absolute inset-0 m-auto" size="18"><component :is="item.icon" /></el-icon>
                             </div>
                             <div class="flex flex-col min-w-0">
-                              <span class="text-[13px] font-bold text-slate-700 truncate">{{ item.name }}</span>
-                              <span class="text-[11px] text-slate-400 truncate leading-tight">{{ item.desc }}</span>
+                              <span class="text-[13px] font-black truncate">{{ item.name }}</span>
+                              <span class="text-[10px] opacity-60 truncate font-medium">{{ item.desc }}</span>
                             </div>
-                            <div class="ml-auto text-indigo-400 transition-opacity" :class="idx === selectedMentionIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'">
-                              <el-icon><Select /></el-icon>
-                            </div>
-                          </div>
-                          <div v-if="mentionItems.length === 0" class="py-8 text-center text-slate-400 text-[12px]">
-                            未找到相关项
                           </div>
                         </div>
                       </div>
@@ -378,11 +320,11 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-50 bg-white/50">
+                <div class="px-6 py-4 flex justify-end gap-3 shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-800/50">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
-                      class="h-10 px-6 bg-white text-slate-600 border border-slate-200 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-md flex items-center gap-2"
+                      class="h-10 px-6 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-full text-[14px] font-bold hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-md flex items-center gap-2"
                     >
                       <el-icon><Edit /></el-icon>
                       <span>编辑脚本</span>
@@ -390,214 +332,147 @@
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-10 px-6 rounded-full text-[14px] font-bold transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700' : 'bg-slate-100 text-slate-400 border border-slate-100 cursor-not-allowed opacity-50'"
+                      class="h-10 px-8 rounded-full text-[14px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-0.5' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
                       <el-icon><MagicStick /></el-icon>
-                      <span>再次生成</span>
+                      <span>重新生成分镜</span>
                     </button>
                   </template>
                   <template v-else>
                     <button 
                       @click="handleCancelEdit"
-                      class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 shadow-sm"
+                      class="h-10 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[14px] font-bold hover:text-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                     >
                       取消
                     </button>
                     <button 
                       @click="handleSaveScriptInline"
-                      class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                      class="h-10 px-10 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[14px] font-black shadow-xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
                     >
-                      保存
-                    </button>
-                    <button 
-                      disabled
-                      class="h-10 px-6 bg-slate-100 text-slate-400 border border-slate-100 rounded-full text-[14px] font-bold flex items-center gap-2 opacity-50 cursor-not-allowed"
-                    >
-                      <el-icon><MagicStick /></el-icon>
-                      <span>再次生成</span>
+                      确认保存
                     </button>
                   </template>
                 </div>
               </div>
 
-              <!-- Right: Preview/Status Placeholder -->
-              <div class="flex-1 rounded-xl bg-[#f8fafc] flex flex-col items-center justify-center border border-transparent overflow-hidden relative">
+              <!-- Right: Preview Area -->
+              <div class="flex-1 rounded-2xl bg-slate-900/5 dark:bg-slate-900/50 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden relative">
                 <div v-if="timelineScenes[currentSceneIdx]?.status === 'generating'" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white overflow-hidden">
-                  <!-- Blurred Background -->
-                  <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 backdrop-blur-xl transition-all duration-500"></div>
-                  <!-- Content -->
-                  <div class="relative flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
-                    <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-lg"></div>
-                    <div class="flex flex-col items-center gap-2">
-                      <span class="text-[18px] font-bold tracking-widest drop-shadow-md">生成中...</span>
-                      <span class="text-[13px] text-white/80 font-medium bg-black/10 px-4 py-1 rounded-full backdrop-blur-sm">大约还需 3 分钟</span>
-                    </div>
+                  <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/60 to-purple-600/60 backdrop-blur-2xl"></div>
+                  <div class="relative flex flex-col items-center gap-4">
+                    <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    <span class="text-[16px] font-black tracking-widest">生成中...</span>
                   </div>
                 </div>
 
-                <div v-else-if="currentPreview" class="w-full h-full relative rounded-xl overflow-hidden group bg-black">
+                <div v-else-if="currentPreview" class="w-full h-full relative rounded-2xl overflow-hidden group bg-black shadow-2xl">
                   <video 
+                    ref="centerVideoRef"
                     :src="currentPreview" 
                     class="w-full h-full object-contain"
                     controls
                     autoplay
-                    loop
+                    :loop="!isSequentialPlaying"
                     muted
+                    @ended="handleSceneVideoEnded"
+                    @timeupdate="onCenterVideoTimeUpdate"
                   ></video>
-                  <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
-                    >
-                      <el-icon><RefreshRight /></el-icon>
-                    </button>
-                    <button 
-                      class="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-all shadow-md"
-                    >
-                      <el-icon><FullScreen /></el-icon>
-                    </button>
-                  </div>
                 </div>
-                <div v-else class="flex flex-col items-center gap-4 text-slate-400 opacity-60">
-                  <!-- Film Icon SVG -->
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                    <line x="7" y1="2" x2="7" y2="22"></line>
-                    <line x1="17" y1="2" x2="17" y2="22"></line>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <line x1="2" y1="7" x2="7" y2="7"></line>
-                    <line x1="2" y1="17" x2="7" y2="17"></line>
-                    <line x1="17" y1="17" x2="22" y2="17"></line>
-                    <line x1="17" y1="7" x2="22" y2="7"></line>
-                  </svg>
-                  <span class="text-[14px] font-medium tracking-wide">未生成内容</span>
+                <div v-else class="flex flex-col items-center gap-4 text-slate-300 dark:text-slate-600">
+                  <el-icon :size="64"><Picture /></el-icon>
+                  <span class="text-[14px] font-black uppercase tracking-widest">未生成分镜视频</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Bottom: Timeline / Audio Player Area -->
-        <div class="h-[160px] bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2 shrink-0">
-          <!-- Audio Controls Header -->
+        <!-- Bottom: Timeline Area -->
+        <div class="h-[130px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700/50 p-4 flex flex-col gap-2 shrink-0 transition-all duration-500">
           <div class="flex items-center justify-between shrink-0 pl-1 pr-2">
             <div class="flex items-center gap-3">
-              <button class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-              <span class="text-[12px] text-slate-500 font-mono font-medium">00:00 / 00:00</span>
+              <div 
+                class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 cursor-pointer hover:scale-110 active:scale-95 transition-all"
+                @click="handleSequentialPlay"
+              >
+                <el-icon :size="14">
+                  <VideoPause v-if="isSequentialPlaying" />
+                  <VideoPlay v-else />
+                </el-icon>
+              </div>
+              <span class="text-[12px] text-slate-500 dark:text-slate-400 font-black font-mono">
+                {{ formatTime(isSequentialPlaying ? sequentialCurrentTime : 0) }} / {{ formatTime(totalStoryboardDuration) }}
+              </span>
             </div>
             
-            <!-- Multi-select Controls -->
-            <div v-if="isMultiSelectMode" class="flex items-center gap-3">
-              <button 
-                @click="isAllSelected = !isAllSelected"
-                class="h-8 px-4 bg-white text-indigo-600 border border-indigo-100 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm flex items-center gap-1.5"
-              >
-                <el-checkbox 
-                  :model-value="isAllSelected" 
-                  :indeterminate="isIndeterminate" 
-                  class="custom-button-checkbox !mr-0 pointer-events-none"
-                />
-                {{ isAllSelected ? '取消全选' : '全选' }}
-              </button>
-              <button 
-                @click="toggleMultiSelect"
-                class="h-8 px-4 bg-white text-slate-500 rounded-full text-[12px] font-bold hover:text-slate-700 transition-all"
-              >
-                取消
-              </button>
-              <button 
-                :disabled="selectedScenes.length === 0" 
-                @click="handleBatchGenerate"
-                class="h-8 px-5 bg-indigo-600 text-white rounded-full text-[12px] font-bold shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-1.5"
-              >
-                <el-icon><MagicStick /></el-icon>
-                批量生成
-              </button>
-            </div>
-            <div v-else>
+            <div class="flex items-center gap-3">
               <button 
                 @click="toggleMultiSelect" 
-                class="h-8 px-4 bg-white text-slate-600 border border-slate-200 rounded-full text-[12px] font-bold hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all shadow-sm"
+                class="h-7 px-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-[11px] font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
               >
-                多选
+                {{ isMultiSelectMode ? '退出多选' : '多选管理' }}
               </button>
             </div>
           </div>
 
           <!-- Timeline Items -->
-          <div class="flex-1 flex gap-4 overflow-x-auto custom-scrollbar items-center pb-2 pl-1">
+          <div class="flex-1 flex gap-3 overflow-x-auto custom-scrollbar items-center pb-1 pl-1">
             <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[150px] h-[90px] rounded-2xl bg-slate-50 border shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:border-indigo-400 overflow-hidden group"
+              class="flex-shrink-0 w-[130px] h-[75px] rounded-xl bg-slate-100 dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
               :class="[
                 (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
                   ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
-                  : 'border-slate-100'
+                  : 'border-transparent'
               ]"
               @click="toggleSceneSelection(idx)"
             >
-              <!-- Background Image if generated -->
-              <div v-if="scene.status === 'success' && scene.image" class="absolute inset-0 w-full h-full">
-                <img :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors"></div>
+              <div v-if="scene.image" class="absolute inset-0 w-full h-full">
+                <img :src="scene.image" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
               </div>
 
-              <!-- Index Badge & Checkbox -->
-              <div class="absolute top-2 left-2 flex items-center gap-1.5 z-10">
-                <div 
-                  v-if="!isMultiSelectMode" 
-                  class="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold shadow-md transition-all"
-                  :class="currentSceneIdx === idx ? 'bg-indigo-600 text-white scale-110' : 'bg-white/90 backdrop-blur-sm text-slate-600'"
-                >
+              <!-- Duration Badge (New Request) -->
+              <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[9px] font-black z-10">
+                {{ getSceneDuration(scene.script) }}s
+              </div>
+
+              <!-- Index Badge -->
+              <div class="absolute top-1.5 left-1.5 z-10">
+                <div class="w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-black shadow-md"
+                  :class="currentSceneIdx === idx ? 'bg-indigo-600 text-white' : 'bg-white text-slate-800'">
                   {{ idx + 1 }}
                 </div>
-                
-                <div v-if="isMultiSelectMode" class="w-6 h-6 flex items-center justify-center pointer-events-none">
-                  <el-checkbox :model-value="selectedScenes.includes(idx)" class="!mr-0 custom-timeline-checkbox"></el-checkbox>
-                </div>
               </div>
 
-              <!-- Delete Button -->
-              <button 
-                class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center text-[12px] shadow-md opacity-0 group-hover:opacity-100 transition-all z-10 hover:scale-110 active:scale-90"
-                @click.stop="deleteScene(idx)"
+              <!-- Playback Progress Overlay -->
+              <div 
+                v-if="isSequentialPlaying && currentSceneIdx === idx"
+                class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
               >
-                <el-icon><Delete /></el-icon>
-              </button>
+                <div 
+                  class="absolute bottom-0 left-0 h-1 bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] transition-all duration-100 ease-linear"
+                  :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
+                ></div>
+              </div>
 
-              <!-- Center Content -->
               <div class="flex items-center justify-center w-full h-full relative z-10">
-                <!-- Generating Progress -->
-                <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-2 w-full h-full justify-center bg-indigo-600/20 backdrop-blur-sm">
-                  <div class="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                  <span class="text-[11px] font-bold text-white tracking-widest">生成中</span>
+                <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-1">
+                  <div class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                  <span class="text-[9px] font-bold text-white uppercase tracking-tighter">AI生成中</span>
                 </div>
-                
-                <!-- Success State -->
-                <div v-else-if="scene.status === 'success'" class="flex items-center gap-2 text-white bg-indigo-600/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 scale-90 group-hover:scale-100">
-                  <el-icon size="16"><VideoPlay /></el-icon>
-                  <span class="text-[13px] font-bold">预览</span>
+                <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
+                  <el-icon :size="20" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
                 </div>
-
-                <!-- Default/Pending State -->
-                <button 
-                  v-else 
-                  class="flex items-center gap-2 text-indigo-600 bg-white hover:bg-indigo-600 hover:text-white px-5 py-2 rounded-full shadow-md border border-indigo-100 transition-all font-bold"
-                  @click="handleGenerateSingleScene(idx)"
-                >
-                  <el-icon><MagicStick /></el-icon>
-                  <span class="text-[13px]">生成</span>
-                </button>
+                <el-icon v-else :size="20" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
               </div>
             </div>
             
-            <!-- Add New Scene Button -->
             <button 
-              class="flex-shrink-0 w-14 h-14 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all hover:bg-indigo-50/30 group"
+              class="flex-shrink-0 w-12 h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-300 hover:text-indigo-600 hover:border-indigo-400 transition-all group"
               @click="addTimelineScene"
             >
-              <el-icon size="24" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
+              <el-icon :size="20" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
             </button>
           </div>
         </div>
@@ -1050,8 +925,107 @@ const showGuide = ref(true);
 const currentSceneIdx = ref(0);
 const showLibraryModal = ref(false);
 const isEditingScript = ref(false);
+const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
+
+const centerVideoRef = ref<HTMLVideoElement | null>(null);
+const isSequentialPlaying = ref(false);
+const sequentialCurrentTime = ref(0);
+const currentSceneVideoTime = ref(0);
+
+// Helper function to extract and sum durations from script HTML
+const getSceneDuration = (script: string) => {
+  if (!script) return 0;
+  // Regex to find duration values like "6.0s", "15s", etc inside mention-pill duration tags
+  // The structure is usually <span class="mention-pill duration">...6.0s</span>
+  const durationRegex = /<span class="mention-pill duration">.*?([\d.]+)\s*s<\/span>/g;
+  let total = 0;
+  let match;
+  while ((match = durationRegex.exec(script)) !== null) {
+    total += parseFloat(match[1]);
+  }
+  return total || 0;
+};
+
+const totalStoryboardDuration = computed(() => {
+  return timelineScenes.value.reduce((acc, scene) => acc + (getSceneDuration(scene.script) || 0), 0);
+});
+
+const handleSequentialPlay = () => {
+  if (isSequentialPlaying.value) {
+    isSequentialPlaying.value = false;
+    sequentialCurrentTime.value = 0; // Reset time
+    currentSceneVideoTime.value = 0; // Reset scene time
+    if (centerVideoRef.value) centerVideoRef.value.pause();
+    return;
+  }
+
+  // 从第一个有视频的分镜开始播放
+  const firstVideoIdx = timelineScenes.value.findIndex(s => s.video);
+  if (firstVideoIdx === -1) {
+    return ElMessage.warning('暂无已生成的视频可播放');
+  }
+
+  currentSceneIdx.value = firstVideoIdx;
+  isSequentialPlaying.value = true;
+  
+  nextTick(() => {
+    if (centerVideoRef.value) {
+      centerVideoRef.value.currentTime = 0;
+      centerVideoRef.value.play();
+    }
+  });
+};
+
+const handleSceneVideoEnded = () => {
+  if (!isSequentialPlaying.value) return;
+
+  // 寻找下一个有视频的分镜
+  let nextIdx = -1;
+  for (let i = currentSceneIdx.value + 1; i < timelineScenes.value.length; i++) {
+    if (timelineScenes.value[i].video) {
+      nextIdx = i;
+      break;
+    }
+  }
+
+  if (nextIdx !== -1) {
+    currentSceneIdx.value = nextIdx;
+    currentSceneVideoTime.value = 0; // Reset scene time for the next scene
+    nextTick(() => {
+      if (centerVideoRef.value) {
+        centerVideoRef.value.currentTime = 0;
+        centerVideoRef.value.play();
+      }
+    });
+  } else {
+    isSequentialPlaying.value = false;
+    sequentialCurrentTime.value = 0;
+    currentSceneVideoTime.value = 0; // Reset scene time
+    ElMessage.success('所有分镜视频已播放完毕');
+  }
+};
+
+const onCenterVideoTimeUpdate = () => {
+  if (centerVideoRef.value) {
+    currentSceneVideoTime.value = centerVideoRef.value.currentTime;
+  }
+
+  if (!isSequentialPlaying.value) {
+    sequentialCurrentTime.value = 0;
+    return;
+  }
+  
+  let elapsed = 0;
+  for (let i = 0; i < currentSceneIdx.value; i++) {
+    elapsed += getSceneDuration(timelineScenes.value[i].script);
+  }
+  if (centerVideoRef.value) {
+    elapsed += centerVideoRef.value.currentTime;
+  }
+  sequentialCurrentTime.value = elapsed;
+};
 
 const dramaSettings = reactive({
   title: '沈念安与顾承泽的订婚',
@@ -1355,7 +1329,6 @@ const timelineScenes = ref([
     status: 'success', 
     video: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4', 
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-    duration: 6.0,
     progress: 0,
     modified: false,
     script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
@@ -1370,8 +1343,7 @@ const timelineScenes = ref([
     id: 'scene-2',
     status: 'pending', 
     video: null,
-    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-    duration: 4.0,
+      image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
     progress: 0,
     modified: false,
     script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
@@ -1735,7 +1707,6 @@ const addTimelineScene = () => {
     status: 'pending',
     video: null,
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-    duration: 5.0,
     progress: 0,
     modified: false,
     script: ''
@@ -1772,7 +1743,10 @@ onMounted(() => {
         storyboardGenerated: false,
         duration: '01:12',
         gif: '',
-        synthesisStatus: 'pending'
+        synthesisStatus: 'pending',
+        scriptStatus: 'pending',
+        assetsStatus: 'pending',
+        storyboardStatus: 'pending'
       },
       {
         id: '2',
@@ -1787,7 +1761,10 @@ onMounted(() => {
         storyboardGenerated: false,
         duration: '00:38',
         gif: '',
-        synthesisStatus: 'pending'
+        synthesisStatus: 'pending',
+        scriptStatus: 'pending',
+        assetsStatus: 'pending',
+        storyboardStatus: 'pending'
       }
     ]);
   }
@@ -1901,6 +1878,94 @@ onMounted(() => {
 .theme-primary-btn:hover {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   transform: translateY(-1px);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* Mention Pill Styles */
+:deep(.mention-pill) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #EEF2FF;
+  border: 1px solid #E0E7FF;
+  border-radius: 6px;
+  color: #4F46E5;
+  font-weight: 700;
+  font-size: 13px;
+  margin: 0 2px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+.dark :deep(.mention-pill) {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #818CF8;
+}
+
+:deep(.mention-pill.role) {
+  background: #FDF2F8;
+  border-color: #FCE7F3;
+  color: #DB2777;
+}
+
+.dark :deep(.mention-pill.role) {
+  background: rgba(219, 39, 119, 0.15);
+  border-color: rgba(219, 39, 119, 0.3);
+  color: #F472B6;
+}
+
+:deep(.mention-pill.role img) {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-cover: cover;
+}
+
+:deep(.mention-pill.location) {
+  background: #F0FDF4;
+  border-color: #DCFCE7;
+  color: #16A34A;
+}
+
+.dark :deep(.mention-pill.location) {
+  background: rgba(22, 163, 74, 0.15);
+  border-color: rgba(22, 163, 74, 0.3);
+  color: #4ADE80;
+}
+
+:deep(.mention-pill.duration) {
+  background: #FFFBEB;
+  border-color: #FEF3C7;
+  color: #D97706;
+}
+
+.dark :deep(.mention-pill.duration) {
+  background: rgba(217, 119, 6, 0.15);
+  border-color: rgba(217, 119, 6, 0.3);
+  color: #FBBF24;
+}
+
+:deep(.mention-pill i.timer-icon) {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23D97706'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 @keyframes fadeIn {

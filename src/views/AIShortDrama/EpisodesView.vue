@@ -173,7 +173,7 @@
       v-model="progressVisible"
       :progress="batchProgress"
       title="正在批量生成分镜脚本"
-      @cancel="cancelBatchGenerate"
+      @cancel="progressVisible = false"
     />
 
     <!-- Video Preview Dialog -->
