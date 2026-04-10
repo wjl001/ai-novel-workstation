@@ -34,10 +34,10 @@
           :class="s.statusSelect"
           popper-class="status-select-popper"
         >
-          <el-option label="剧本待写" value="script_pending" />
-          <el-option label="主体待设" value="assets_pending" />
-          <el-option label="分镜制作" value="storyboard_generating" />
-          <el-option label="视频合成" value="completed" />
+          <el-option label="剧本待写" value="pending" />
+          <el-option label="主体待设" value="assets" />
+          <el-option label="分镜制作" value="processing" />
+          <el-option label="已完成" value="completed" />
         </el-select>
       </div>
 
@@ -100,6 +100,7 @@
               <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
                 <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
                 <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
+                <el-icon v-else-if="getSingleStatusType(ep) === 'assets'"><Box /></el-icon>
                 <el-icon v-else><Document /></el-icon>
                 <span>{{ getSingleStatusLabel(ep) }}</span>
               </div>
@@ -323,14 +324,14 @@ const filteredEpisodes = computed(() => {
     
     let matchesStatus = false;
     switch (statusFilter.value) {
-      case 'script_pending':
+      case 'pending':
         matchesStatus = ep.scriptStatus === 'pending';
         break;
-      case 'assets_pending':
+      case 'assets':
         matchesStatus = ep.scriptStatus === 'success' && ep.assetsStatus === 'pending';
         break;
-      case 'storyboard_generating':
-        matchesStatus = ep.storyboardStatus === 'generating';
+      case 'processing':
+        matchesStatus = ep.assetsStatus === 'success' && ep.synthesisStatus !== 'success';
         break;
       case 'completed':
         matchesStatus = ep.synthesisStatus === 'success';
@@ -343,62 +344,39 @@ const filteredEpisodes = computed(() => {
 
 const hasGeneratedAny = computed(() => episodes.value.some(ep => ep.status === 'success'));
 
-const activeTab = ref('processing');
+const activeTab = ref('pending');
 const availableTabs = [
-  { label: '制作中', value: 'processing' },
-  { label: '主体设置', value: 'assets' },
-  { label: '待开始', value: 'pending' },
+  { label: '剧本待写', value: 'pending' },
+  { label: '主体待设', value: 'assets' },
+  { label: '分镜制作', value: 'processing' },
   { label: '已完成', value: 'completed' }
 ];
 
 const getTabCount = (tabValue: string) => {
   switch (tabValue) {
-    case 'completed': return episodes.value.filter(ep => ep.synthesisStatus === 'success').length;
     case 'pending': return episodes.value.filter(ep => ep.scriptStatus === 'pending').length;
     case 'assets': return episodes.value.filter(ep => ep.scriptStatus === 'success' && ep.assetsStatus === 'pending').length;
-    case 'processing': return episodes.value.filter(ep => ep.synthesisStatus !== 'success' && ep.assetsStatus === 'success').length;
+    case 'processing': return episodes.value.filter(ep => ep.assetsStatus === 'success' && ep.synthesisStatus !== 'success').length;
+    case 'completed': return episodes.value.filter(ep => ep.synthesisStatus === 'success').length;
     default: return 0;
   }
 };
 
 const currentTabEpisodes = computed(() => {
   return filteredEpisodes.value.filter(ep => {
-    if (activeTab.value === 'completed') return ep.synthesisStatus === 'success';
     if (activeTab.value === 'pending') return ep.scriptStatus === 'pending';
     if (activeTab.value === 'assets') return ep.scriptStatus === 'success' && ep.assetsStatus === 'pending';
-    if (activeTab.value === 'processing') return ep.synthesisStatus !== 'success' && ep.assetsStatus === 'success';
+    if (activeTab.value === 'processing') return ep.assetsStatus === 'success' && ep.synthesisStatus !== 'success';
+    if (activeTab.value === 'completed') return ep.synthesisStatus === 'success';
     return true;
   });
 });
 
-const groupedEpisodes = computed(() => {
-  const groups = [
-    { label: '已完成', status: 'completed', items: [] as any[] },
-    { label: '制作中', status: 'processing', items: [] as any[] },
-    { label: '主体设置', status: 'assets', items: [] as any[] },
-    { label: '待开始', status: 'pending', items: [] as any[] },
-  ];
-
-  filteredEpisodes.value.forEach(ep => {
-    if (ep.synthesisStatus === 'success') {
-      groups[0].items.push(ep);
-    } else if (ep.scriptStatus === 'pending') {
-      groups[3].items.push(ep);
-    } else if (ep.assetsStatus === 'pending') {
-      groups[2].items.push(ep);
-    } else {
-      groups[1].items.push(ep);
-    }
-  });
-
-  return groups.filter(g => g.items.length > 0);
-});
-
 const getSingleStatusType = (ep: any) => {
   if (ep.synthesisStatus === 'success') return 'completed';
-  if (ep.scriptStatus === 'pending') return 'pending';
-  if (ep.assetsStatus === 'pending') return 'assets';
-  return 'processing';
+  if (ep.assetsStatus === 'success') return 'processing';
+  if (ep.scriptStatus === 'success') return 'assets';
+  return 'pending';
 };
 
 const getSingleStatusLabel = (ep: any) => {
@@ -406,9 +384,9 @@ const getSingleStatusLabel = (ep: any) => {
   if (ep.synthesisStatus === 'synthesizing') return '合成中...';
   if (ep.storyboardStatus === 'generating') return '分镜生成中...';
   if (ep.storyboardStatus === 'success') return '待合成视频';
-  if (ep.assetsStatus === 'success') return '待生成分镜';
-  if (ep.scriptStatus === 'success') return '待设置主体';
-  return '待创作剧本';
+  if (ep.assetsStatus === 'success') return '分镜制作';
+  if (ep.scriptStatus === 'success') return '主体待设';
+  return '剧本待写';
 };
 
 // Initialize mock data if empty
