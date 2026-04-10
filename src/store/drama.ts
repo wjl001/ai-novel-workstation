@@ -4,7 +4,8 @@ export const useDramaStore = defineStore('drama', {
   state: () => ({
     currentDramaId: null as string | null,
     outlineData: null as any,
-    isScriptGenerated: false
+    isScriptGenerated: false,
+    expandedPrompt: '' as string
   }),
   actions: {
     setCurrentDramaId(id: string) {
@@ -15,6 +16,9 @@ export const useDramaStore = defineStore('drama', {
     },
     setScriptGenerated(status: boolean) {
       this.isScriptGenerated = status
+    },
+    setExpandedPrompt(prompt: string) {
+      this.expandedPrompt = prompt
     }
   }
 })

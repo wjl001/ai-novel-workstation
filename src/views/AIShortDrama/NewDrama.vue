@@ -51,34 +51,7 @@
             <div class="min-h-[280px] flex flex-col">
               <!-- AI Tab Content -->
               <div v-if="activeTab === 'ai'" class="flex flex-col gap-5 animate-fade-in h-full">
-                <!-- AI Assistant Features -->
-                <div class="flex flex-wrap items-center gap-3 mb-1">
-                  <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest mr-2 flex items-center gap-1.5 opacity-80">
-                    <el-icon :size="14"><MagicStick /></el-icon> 灵感建议
-                  </span>
-                  <el-tooltip
-                    v-for="feature in assistantFeatures" 
-                    :key="feature.key"
-                    :content="!aiPrompt.trim() ? '请先输入您的灵感或选择下方题材' : feature.desc"
-                    placement="top"
-                    :disabled="!!aiPrompt.trim() && !feature.desc"
-                  >
-                    <button 
-                      @click="applyAssistant(feature.key)"
-                      :disabled="!aiPrompt.trim() || isGenerating"
-                      class="px-4 py-2 rounded-2xl text-[13px] font-bold border transition-all flex items-center gap-2 group shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale"
-                      :class="[
-                        getFeatureStyle(feature.key),
-                        aiPrompt.trim() ? 'hover:shadow-md hover:-translate-y-0.5' : ''
-                      ]"
-                    >
-                      <el-icon class="group-hover:rotate-12 transition-transform" :size="16"><component :is="feature.icon" /></el-icon>
-                      {{ feature.label }}
-                    </button>
-                  </el-tooltip>
-                </div>
-
-                <div class="relative group">
+                <div class="relative group mt-4">
                   <!-- Dynamic Glowing Border -->
                   <div 
                     class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
@@ -246,6 +219,198 @@
       </div>
     </div>
 
+    <!-- Hot Topic Configuration Dialog -->
+    <el-dialog 
+      v-model="showHotTopicDialog" 
+      :title="null"
+      width="800px" 
+      class="hot-topic-dialog rounded-[32px] overflow-hidden" 
+      :show-close="false"
+      destroy-on-close
+    >
+      <div class="relative min-h-[500px] flex flex-col bg-white dark:bg-slate-900">
+        <!-- Close Button -->
+        <button 
+          @click="showHotTopicDialog = false" 
+          class="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100/50 dark:bg-slate-800/50 text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-all shadow-sm"
+        >
+          <el-icon :size="20"><Close /></el-icon>
+        </button>
+
+        <!-- Sidebar / Progress -->
+        <div class="flex flex-1">
+          <div class="w-1/3 bg-slate-50 dark:bg-slate-800/50 p-8 border-r border-slate-100 dark:border-slate-800 flex flex-col">
+            <div class="mb-10">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-500/20">
+                <el-icon :size="24"><MagicStick /></el-icon>
+              </div>
+              <h2 class="text-xl font-black text-slate-800 dark:text-white">基础设定</h2>
+              <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Basic Settings</p>
+            </div>
+
+            <div class="space-y-6 flex-1">
+              <div 
+                v-for="step in [1, 2, 3]" 
+                :key="step"
+                class="flex items-center gap-4 transition-all duration-500"
+                :class="currentStep >= step ? 'opacity-100' : 'opacity-30'"
+              >
+                <div 
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-black transition-all duration-500"
+                  :class="currentStep === step ? 'bg-indigo-600 text-white scale-110 shadow-lg shadow-indigo-500/30' : (currentStep > step ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500')"
+                >
+                  <el-icon v-if="currentStep > step"><Check /></el-icon>
+                  <span v-else>{{ step }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[13px] font-black" :class="currentStep === step ? 'text-indigo-600' : 'text-slate-500'">
+                    {{ step === 1 ? '主角设定' : (step === 2 ? '核心冲突' : '发行参数') }}
+                  </span>
+                  <span class="text-[10px] text-slate-400 font-medium">{{ step === 1 ? '塑造灵魂人物' : (step === 2 ? '引爆剧情张力' : '设定目标受众') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-auto p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800/50">
+              <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold leading-relaxed">
+                <el-icon class="mr-1"><InfoFilled /></el-icon>
+                AI 将根据您的选择，为您生成专属的爆款剧本大纲。
+              </p>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="w-2/3 p-10 flex flex-col h-full overflow-y-auto custom-scrollbar">
+            <!-- Step 1: Protagonist -->
+            <div v-if="currentStep === 1" class="animate-fade-in space-y-6">
+              <div class="mb-6">
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">选择主角设定</h3>
+                <p class="text-slate-400 text-sm">主角是故事的核心，选择一个最具张力的设定。</p>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4">
+                <div 
+                  v-for="opt in protagonistOptions" 
+                  :key="opt.label"
+                  @click="configForm.protagonistSetting = opt.label"
+                  class="p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1"
+                  :class="configForm.protagonistSetting === opt.label ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20 shadow-xl shadow-indigo-500/5' : 'border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 bg-white dark:bg-slate-800'"
+                >
+                  <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all" :class="configForm.protagonistSetting === opt.label ? 'bg-indigo-600 text-white' : ''">
+                    <el-icon :size="24"><component :is="opt.icon" /></el-icon>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-black text-slate-800 dark:text-white mb-1">{{ opt.label }}</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">{{ opt.desc }}</p>
+                  </div>
+                  <div v-if="configForm.protagonistSetting === opt.label" class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                    <el-icon><Check /></el-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Conflict -->
+            <div v-if="currentStep === 2" class="animate-fade-in space-y-6">
+              <div class="mb-6">
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">设定核心冲突</h3>
+                <p class="text-slate-400 text-sm">冲突决定了故事的节奏与看点，选择一个吸睛的设定。</p>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4">
+                <div 
+                  v-for="opt in conflictOptions" 
+                  :key="opt.label"
+                  @click="configForm.conflictSetting = opt.label"
+                  class="p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1"
+                  :class="configForm.conflictSetting === opt.label ? 'border-purple-500 bg-purple-50/30 dark:bg-purple-900/20 shadow-xl shadow-purple-500/5' : 'border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-700 bg-white dark:bg-slate-800'"
+                >
+                  <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all" :class="configForm.conflictSetting === opt.label ? 'bg-purple-600 text-white' : ''">
+                    <el-icon :size="24"><component :is="opt.icon" /></el-icon>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-black text-slate-800 dark:text-white mb-1">{{ opt.label }}</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">{{ opt.desc }}</p>
+                  </div>
+                  <div v-if="configForm.conflictSetting === opt.label" class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white">
+                    <el-icon><Check /></el-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Parameters -->
+            <div v-if="currentStep === 3" class="animate-fade-in space-y-8">
+              <div class="mb-6">
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">发行与参数</h3>
+                <p class="text-slate-400 text-sm">设定剧本的目标受众与体量，优化内容产出。</p>
+              </div>
+
+              <div class="space-y-6">
+                <div class="space-y-3">
+                  <label class="text-sm font-black text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 目标受众
+                  </label>
+                  <div class="flex flex-wrap gap-3">
+                    <div 
+                      v-for="aud in audienceOptions" 
+                      :key="aud"
+                      @click="configForm.targetAudience = aud"
+                      class="px-6 py-2.5 rounded-xl border-2 font-bold text-sm cursor-pointer transition-all"
+                      :class="configForm.targetAudience === aud ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 text-slate-500 hover:border-indigo-200'"
+                    >
+                      {{ aud }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="text-sm font-black text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 剧本集数
+                  </label>
+                  <div class="grid grid-cols-3 gap-4">
+                    <div 
+                      v-for="opt in episodeOptions" 
+                      :key="opt.label"
+                      @click="configForm.episodesCount = opt.count"
+                      class="p-4 rounded-2xl border-2 cursor-pointer transition-all text-center group"
+                      :class="configForm.episodesCount === opt.count ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-200'"
+                    >
+                      <div class="text-lg font-black mb-1" :class="configForm.episodesCount === opt.count ? 'text-indigo-600' : 'text-slate-800 dark:text-white'">{{ opt.count }} 集</div>
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ opt.label }}</div>
+                      <p class="text-[10px] text-slate-400 leading-tight group-hover:text-slate-500">{{ opt.desc }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="mt-auto pt-10 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+              <button 
+                v-if="currentStep > 1"
+                @click="prevStep" 
+                class="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >
+                <el-icon><ArrowLeft /></el-icon> 上一步
+              </button>
+              <div v-else></div>
+
+              <button 
+                @click="nextStep"
+                :disabled="currentStep === 1 && !configForm.protagonistSetting || currentStep === 2 && !configForm.conflictSetting"
+                class="flex items-center gap-2 px-10 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+              >
+                <span>{{ currentStep === 3 ? '开始智能创作' : '下一步' }}</span>
+                <el-icon v-if="currentStep < 3"><ArrowRight /></el-icon>
+                <el-icon v-else><MagicStick /></el-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
     <!-- Product Design Dialog -->
     <el-dialog v-model="showDesignDialog" title="产品设计说明 - 新建短剧" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
       <template #header="{ close, titleId, titleClass }">
@@ -299,7 +464,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
+import { ref, inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   Upload, 
@@ -323,18 +488,45 @@ import {
   Delete,
   Star,
   Lightning,
-  Collection
+  Collection,
+  Check,
+  User,
+  Avatar,
+  UserFilled,
+  StarFilled,
+  Link,
+  Warning,
+  Heart,
+  GoldMedal
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
+import { useDramaStore } from '../../store/drama';
+
 const router = useRouter();
+const dramaStore = useDramaStore();
 const isLight = inject('isLight', ref(true));
 const showDesignDialog = ref(false);
+const showHotTopicDialog = ref(false);
+const currentStep = ref(1);
+const selectedTopic = ref<any>(null);
 
 // --- State Management ---
 const activeTab = ref('ai'); 
 const aiPrompt = ref('');
 const isGenerating = ref(false);
+
+// Configuration state
+const configForm = reactive({
+  scriptType: 'short_drama',
+  genre: '',
+  targetAudience: '女性向',
+  episodesCount: 80,
+  expectedDuration: 120,
+  protagonistSetting: '',
+  conflictSetting: '',
+  themeSetting: ''
+});
 
 // Hot Topics with templates
 const hotTopics = [
@@ -356,7 +548,7 @@ const hotTopics = [
   }
 ];
 
-// Mock Recent Works Data with more reliable image placeholders
+// Mock Recent Works Data
 const recentWorks = ref([
   { 
     id: 1, 
@@ -404,26 +596,66 @@ const recentWorks = ref([
   }
 ]);
 
-const assistantFeatures = [
-  { key: 'generate', label: '一键生成', desc: '根据您的灵感快速生成完整剧本大纲', icon: DocumentAdd },
-  { key: 'polish', label: '文本润色', desc: '优化遣词造句，增强对白的戏剧张力和感染力', icon: Brush },
-  { key: 'expand', label: '情节扩写', desc: '为现有情节增加细节描写，丰富故事层次', icon: EditPen },
-  { key: 'rewrite', label: '创意改写', desc: '尝试从不同视角或风格重新演绎当前内容', icon: Refresh }
+const protagonistOptions = [
+  { label: '落魄千金', desc: '家族破产，背负巨债，却拥有一手惊人的调香/设计才华。', icon: 'User' },
+  { label: '冷面总裁', desc: '商界奇才，性格孤僻，因童年阴影不再相信爱情。', icon: 'Avatar' },
+  { label: '平民少女', desc: '乐观坚韧，为了给母亲治病，卷入豪门恩怨。', icon: 'UserFilled' },
+  { label: '神秘杀手', desc: '隐姓埋名在都市中，执行最后一次任务。', icon: 'StarFilled' }
 ];
 
-const getFeatureStyle = (key: string) => {
-  const styles: Record<string, string> = {
-    generate: 'bg-blue-50/50 border-blue-100 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400',
-    polish: 'bg-purple-50/50 border-purple-100 text-purple-600 hover:bg-purple-100 dark:bg-purple-500/10 dark:border-purple-500/20 dark:text-purple-400',
-    expand: 'bg-indigo-50/50 border-indigo-100 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400',
-    rewrite: 'bg-pink-50/50 border-pink-100 text-pink-600 hover:bg-pink-100 dark:bg-pink-500/10 dark:border-pink-500/20 dark:text-pink-400'
-  };
-  return styles[key] || 'bg-slate-50 border-slate-100 text-slate-600';
+const conflictOptions = [
+  { label: '契约婚姻', desc: '被迫签订为期一年的“假结婚”协议，日久生情。', icon: 'Link' },
+  { label: '复仇归来', desc: '隐姓埋名五年，只为夺回属于自己的一切。', icon: 'Warning' },
+  { label: '命中注定', desc: '失忆后的重逢，即使忘记姓名也依然心动。', icon: 'Heart' },
+  { label: '商战博弈', desc: '在利益与情感的边缘徘徊，最终选择守护对方。', icon: 'GoldMedal' }
+];
+
+const audienceOptions = ['男性向', '女性向', '青少年', '中老年', '大众向'];
+const episodeOptions = [
+  { label: '精简版', count: 24, desc: '快节奏，适合碎片化观看' },
+  { label: '标准版', count: 80, desc: '主流配置，内容充实' },
+  { label: '长篇版', count: 120, desc: '宏大叙事，深度刻画' }
+];
+
+const nextStep = () => {
+  if (currentStep.value < 3) {
+    currentStep.value++;
+  } else {
+    finishConfig();
+  }
+};
+
+const prevStep = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--;
+  }
+};
+
+const finishConfig = () => {
+  isGenerating.value = true;
+  showHotTopicDialog.value = false;
+  
+  // Combine all selections into a prompt
+  const finalPrompt = `【题材】${selectedTopic.value.label}
+【主角设定】${configForm.protagonistSetting}
+【核心冲突】${configForm.conflictSetting}
+【受众】${configForm.targetAudience}
+【集数】${configForm.episodesCount}集`;
+
+  dramaStore.setExpandedPrompt(finalPrompt);
+  
+  setTimeout(() => {
+    router.push('/ai-short-drama-creator/outline');
+    isGenerating.value = false;
+  }, 1000);
 };
 
 const selectHotTopic = (topic: any) => {
   if (isGenerating.value) return;
-  typeText(topic.template);
+  selectedTopic.value = topic;
+  configForm.genre = topic.label;
+  currentStep.value = 1;
+  showHotTopicDialog.value = true;
 };
 
 const typeText = (text: string) => {
@@ -443,34 +675,34 @@ const typeText = (text: string) => {
   }, speed);
 };
 
-const applyAssistant = (key: string) => {
-  if (isGenerating.value || !aiPrompt.value.trim()) return;
-  
-  isGenerating.value = true;
-  const currentContent = aiPrompt.value;
-  
-  // Simulated AI Processing logic
-  const mockPrefix: Record<string, string> = {
-    generate: '【剧本大纲已生成】\n',
-    polish: '【文本已深度润色】\n',
-    expand: '【情节已扩充细节】\n',
-    rewrite: '【已为您创意改写】\n'
-  };
-
-  setTimeout(() => {
-    // For demo purposes, we just wrap the existing content with some "AI magic"
-    const newContent = `${mockPrefix[key] || '【处理结果】\n'}${currentContent}`;
-    aiPrompt.value = '';
-    typeText(newContent);
-  }, 800);
-};
-
 const startCreation = () => {
   if (!aiPrompt.value.trim()) {
     ElMessage.warning('请输入创作灵感或点击上方建议');
     return;
   }
   isGenerating.value = true;
+
+  const expandedContent = `【故事设定】
+这是一个充满未知与冲突的世界，规则残酷但机遇并存。主角所在的环境看似寻常，实则暗流涌动，各方势力在此交织博弈。
+
+【主角特征】
+- 身份背景：身处低谷或看似平凡，但拥有某种不为人知的特质。
+- 核心性格：外冷内热，行事果断，在关键时刻能够爆发出惊人的意志力。
+- 核心动机：为了打破不公的命运，或是守护内心最珍视的信念。
+
+【剧情脉络】
+1. 起因：主角因一场意外（或必然的安排）被卷入风暴中心，原本平静的生活被彻底打破。
+2. 发展：在应对危机的过程中，主角逐渐觉醒并结识了性格各异的同伴。他们一路披荆斩棘，发现了隐藏在表象之下的惊天秘密。
+3. 高潮：各方矛盾彻底激化，主角团队面临生死存亡的绝境。在最黑暗的时刻，主角利用关键线索完成绝地反击，局势瞬间逆转。
+4. 结尾：危机解除，最大的反派倒台。主角完成了自己的使命，但也付出了相应的代价。
+
+【最终结局】
+世界迎来了新的黎明，旧的秩序被打破。主角没有选择留在聚光灯下，而是带着同伴踏上了新的旅程，留下了一段属于他们的传奇。
+
+（基于您的灵感：“${aiPrompt.value}”生成）`;
+
+  dramaStore.setExpandedPrompt(expandedContent);
+  
   setTimeout(() => {
     router.push('/ai-short-drama-creator/outline');
     isGenerating.value = false;

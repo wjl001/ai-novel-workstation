@@ -231,7 +231,7 @@
         <!-- Center: Script Editor Area -->
         <section class="flex-1 flex flex-col min-h-0 bg-[#F0F7FF] dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100 dark:shadow-none border border-blue-100 dark:border-slate-700/50 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-3.5 bg-white/60 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-700/50">
+          <div class="px-6 py-2.5 bg-white/60 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
               <div class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">分镜 {{ currentSceneIdx + 1 }}</div>
               <span class="text-[12px] text-indigo-400 dark:text-slate-500 font-bold">输入“@”可快速引用主体，分镜建议 4-15s</span>
@@ -246,7 +246,7 @@
 
           <!-- Content Wrapper -->
           <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-            <div class="flex-1 flex gap-4 px-6 pb-6 overflow-hidden mt-4">
+            <div class="flex-1 flex gap-4 px-6 pb-4 overflow-hidden mt-3">
               <!-- Left: Script Content Box -->
               <div 
                 class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
@@ -255,13 +255,13 @@
                 <!-- Read-only View -->
                 <div 
                   v-if="!isEditingScript"
-                  class="p-8 text-[16px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
+                  class="px-6 py-4 text-[16px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
                   v-html="currentScript"
                 >
                 </div>
 
                 <!-- Edit Mode (TipTap) -->
-                <div v-else class="flex-1 flex flex-col relative overflow-hidden p-8">
+                <div v-else class="flex-1 flex flex-col relative overflow-hidden px-6 py-4">
                   <div class="flex-1 overflow-y-auto custom-scrollbar">
                     <editor-content :editor="editor" class="script-editor-content w-full h-full text-[16px]" />
                   </div>
@@ -316,11 +316,11 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-3 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
+                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
-                      class="h-9 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
+                      class="h-8 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
                     >
                       <el-icon class="group-hover:rotate-12 transition-transform"><Edit /></el-icon>
                       <span>编辑脚本</span>
@@ -328,7 +328,7 @@
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-9 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
+                      class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
                       :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
                       <el-icon class="animate-pulse"><MagicStick /></el-icon>
@@ -338,13 +338,13 @@
                   <template v-else>
                     <button 
                       @click="handleCancelEdit"
-                      class="h-9 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[13px] font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                      class="h-8 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[13px] font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                     >
                       取消
                     </button>
                     <button 
                       @click="handleSaveScriptInline"
-                      class="h-9 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
+                      class="h-8 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
                     >
                       确认保存
                     </button>

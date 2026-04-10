@@ -48,259 +48,86 @@
 
         <!-- Expanded State Content -->
         <div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
-          <!-- Tabs -->
+          <!-- Sidebar Header -->
           <div class="h-16 px-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/50 shrink-0">
-            <div class="flex bg-slate-100/50 dark:bg-slate-900/50 rounded-[18px] p-1 w-full">
-              <div 
-                class="flex-1 py-1.5 text-[13px] font-black cursor-pointer rounded-[14px] text-center transition-all duration-300 flex items-center justify-center gap-2"
-                :class="activeLeftTab === 'basic-settings' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.02]' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'"
-                @click="activeLeftTab = 'basic-settings'"
-              >
-                <el-icon><Setting /></el-icon> 基础设定
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+                <el-icon :size="18"><Document /></el-icon>
               </div>
-              <div 
-                class="flex-1 py-1.5 text-[13px] font-black cursor-pointer rounded-[14px] text-center transition-all duration-300 flex items-center justify-center gap-2"
-                :class="activeLeftTab === 'episode-outline' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.02]' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'"
-                @click="activeLeftTab = 'episode-outline'"
-              >
-                <el-icon><Document /></el-icon> 剧集大纲
-              </div>
-            </div>
-          </div>
-
-          <!-- 基础设定 (Basic Settings Tab) -->
-          <div v-show="activeLeftTab === 'basic-settings'" class="flex-1 overflow-y-auto custom-scrollbar p-5 min-h-0 space-y-8">
-            <!-- Loading skeleton -->
-            <div v-if="isInfoLoading" class="space-y-6">
-              <el-skeleton animated :rows="8" />
-            </div>
-
-            <div v-else-if="form" class="space-y-8 animate-fade-in">
-              <!-- Basic Info Card -->
-              <div class="bg-slate-50/50 dark:bg-slate-900/30 rounded-3xl p-5 space-y-6 border border-slate-100 dark:border-slate-800">
-                <div class="grid grid-cols-1 gap-5">
-                  <div class="space-y-2">
-                    <label class="text-[14px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 剧本类型
-                    </label>
-                    <el-select v-model="form.scriptType" class="modern-select-v2 w-full" placeholder="请选择剧本类型">
-                      <el-option label="微短剧" value="short_drama" />
-                      <el-option label="电影" value="movie" />
-                      <el-option label="长篇剧集" value="long_drama" />
-                    </el-select>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-[14px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 题材
-                    </label>
-                    <el-select v-model="form.genre" class="modern-select-v2 w-full" placeholder="请选择题材">
-                      <el-option v-for="item in GENRES" :key="item" :label="item" :value="item" />
-                    </el-select>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-[14px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 目标受众
-                    </label>
-                    <el-select v-model="form.targetAudience" class="modern-select-v2 w-full" placeholder="请选择目标受众">
-                      <el-option v-for="item in AUDIENCES" :key="item" :label="item" :value="item" />
-                    </el-select>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                      <label class="text-[14px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 集数
-                      </label>
-                      <el-input-number v-model="form.episodesCount" :min="1" :max="1000" class="modern-number-input-v2 !w-full" controls-position="right" />
-                    </div>
-
-                    <div class="space-y-2">
-                      <label class="text-[14px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 时长 (秒)
-                      </label>
-                      <el-input-number v-model="form.expectedDuration" :min="1" :max="10000" class="modern-number-input-v2 !w-full" controls-position="right" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 故事背景 -->
-              <div class="space-y-4">
-                <div class="flex justify-between items-center group">
-                  <h3 class="text-[15px] font-black flex items-center gap-2 text-slate-800 dark:text-slate-100">
-                    <span class="w-1.5 h-5 bg-indigo-600 rounded-full"></span> 故事背景
-                  </h3>
-                  <el-popover
-                    v-model:visible="aiPromptPopoverVisible['background']"
-                    placement="right"
-                    width="320"
-                    trigger="click"
-                    popper-class="modern-popover-v2"
-                  >
-                    <template #reference>
-                      <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
-                        <el-icon><MagicStick /></el-icon> AI 优化
-                      </button>
-                    </template>
-                    <div class="p-2 space-y-4">
-                      <div class="flex items-center gap-2 text-indigo-600">
-                        <el-icon><MagicStick /></el-icon>
-                        <span class="text-[13px] font-black uppercase tracking-wider">AI 创作助手</span>
-                      </div>
-                      <el-input v-model="aiPromptInput" type="textarea" :rows="3" placeholder="描述你想要的背景细节，如：增加反转、强化冲突..." class="modern-textarea-small" />
-                      <div class="flex justify-end gap-2">
-                        <button @click="handleAIGenerateAction('background', 'cancel')" class="px-4 py-2 rounded-xl text-[12px] font-bold bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all">取消</button>
-                        <button @click="handleAIGenerateAction('background', 'append')" class="px-4 py-2 rounded-xl text-[12px] font-bold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all">追加</button>
-                        <button @click="handleAIGenerateAction('background', 'replace')" class="px-5 py-2 rounded-xl text-[12px] font-bold bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">替换</button>
-                      </div>
-                    </div>
-                  </el-popover>
-                </div>
-                <div class="relative group">
-                  <el-input v-model="form.background" type="textarea" :rows="6" placeholder="描述故事发生的宏大背景..." class="modern-textarea-v3" :class="{'is-error': errors.background}" @input="validateField('background')" />
-                  <div class="absolute bottom-3 right-4 px-2 py-1 rounded-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-100 dark:border-slate-700 text-[11px] font-bold shadow-sm" :class="getWordCountColor('background')">
-                    {{ form.background?.length || 0 }} <span class="text-slate-300 mx-1">/</span> 200
-                  </div>
-                </div>
-                <p v-if="errors.background" class="mt-2 text-red-500 text-[12px] font-bold flex items-center gap-1.5">
-                  <el-icon><InfoFilled /></el-icon> {{ errors.background }}
-                </p>
-              </div>
-
-              <!-- 故事梗概 -->
-              <div class="space-y-4">
-                <div class="flex justify-between items-center group">
-                  <h3 class="text-[15px] font-black flex items-center gap-2 text-slate-800 dark:text-slate-100">
-                    <span class="w-1.5 h-5 bg-purple-600 rounded-full"></span> 故事梗概
-                  </h3>
-                  <el-popover
-                    v-model:visible="aiPromptPopoverVisible['synopsis']"
-                    placement="right"
-                    width="320"
-                    trigger="click"
-                    popper-class="modern-popover-v2"
-                  >
-                    <template #reference>
-                      <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-[12px] font-bold hover:bg-purple-600 hover:text-white transition-all shadow-sm">
-                        <el-icon><MagicStick /></el-icon> AI 优化
-                      </button>
-                    </template>
-                    <div class="p-2 space-y-4">
-                      <div class="flex items-center gap-2 text-purple-600">
-                        <el-icon><MagicStick /></el-icon>
-                        <span class="text-[13px] font-black uppercase tracking-wider">AI 创作助手</span>
-                      </div>
-                      <el-input v-model="aiPromptInput" type="textarea" :rows="3" placeholder="描述你想要的梗概风格，如：快节奏、反转多..." class="modern-textarea-small" />
-                      <div class="flex justify-end gap-2">
-                        <button @click="handleAIGenerateAction('synopsis', 'cancel')" class="px-4 py-2 rounded-xl text-[12px] font-bold bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all">取消</button>
-                        <button @click="handleAIGenerateAction('synopsis', 'append')" class="px-4 py-2 rounded-xl text-[12px] font-bold bg-purple-50 text-purple-600 hover:bg-purple-100 transition-all">追加</button>
-                        <button @click="handleAIGenerateAction('synopsis', 'replace')" class="px-5 py-2 rounded-xl text-[12px] font-bold bg-purple-600 text-white shadow-lg shadow-purple-500/20 hover:bg-purple-700 transition-all">替换</button>
-                      </div>
-                    </div>
-                  </el-popover>
-                </div>
-                <div class="relative group">
-                  <el-input v-model="form.synopsis" type="textarea" :rows="6" placeholder="精炼地概括故事的核心冲突与结局..." class="modern-textarea-v3" :class="{'is-error': errors.synopsis}" @input="validateField('synopsis')" />
-                  <div class="absolute bottom-3 right-4 px-2 py-1 rounded-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-100 dark:border-slate-700 text-[11px] font-bold shadow-sm" :class="getWordCountColor('synopsis')">
-                    {{ form.synopsis?.length || 0 }} <span class="text-slate-300 mx-1">/</span> 300
-                  </div>
-                </div>
-                <p v-if="errors.synopsis" class="mt-2 text-red-500 text-[12px] font-bold flex items-center gap-1.5">
-                  <el-icon><InfoFilled /></el-icon> {{ errors.synopsis }}
-                </p>
-              </div>
+              <span class="font-black text-[16px] text-slate-800 dark:text-white">剧集大纲</span>
             </div>
           </div>
 
           <!-- 剧集大纲 (Episode Outline Tab) -->
-          <div v-show="activeLeftTab === 'episode-outline'" class="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-5 min-h-0 animate-fade-in">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-5 min-h-0 animate-fade-in">
             <div v-if="isInfoLoading" class="space-y-6">
               <el-skeleton animated :rows="8" />
             </div>
             
             <template v-else-if="form">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex flex-col">
-                  <span class="text-[17px] font-black text-slate-800 dark:text-white">分集列表</span>
-                  <span class="text-[12px] text-slate-500 font-black uppercase tracking-widest">共 {{ form.episodesData.length }} 集</span>
+              <div class="flex items-center justify-between mb-2 bg-slate-50/50 dark:bg-slate-900/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-[13px] font-black text-slate-800 dark:text-white">分集列表</span>
+                  <span class="px-2 py-0.5 bg-slate-200 dark:bg-slate-700 rounded-md text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">共 {{ form.episodesData.length }} 集</span>
                 </div>
                 <button 
                   @click="addEpisode"
-                  class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[13px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                  class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-[11px] font-black shadow-md shadow-indigo-500/10 hover:scale-105 active:scale-95 transition-all"
                 >
-                  <el-icon><Plus /></el-icon> 新增分集
+                  <el-icon><Plus /></el-icon> 新增
                 </button>
               </div>
 
               <!-- Draggable List -->
-              <div class="flex flex-col gap-6 pb-10">
+              <div class="flex flex-col gap-1.5 pb-4">
                 <transition-group name="list">
                     <div 
-                    v-for="(ep, epIdx) in (form?.episodesData || [])" 
+                    v-for="(ep, relIdx) in displayedEpisodes" 
                     :key="ep.id"
-                    class="rounded-2xl p-6 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group relative cursor-pointer border-l-[6px]"
-                    :class="isCurrentEpisode(ep.id, epIdx)
-                      ? 'active-episode border-l-purple-600 bg-indigo-50/80 dark:bg-indigo-900/20 border-2 border-indigo-300/80 dark:border-indigo-400/40 shadow-2xl shadow-indigo-500/20'
-                      : 'inactive-episode bg-white/80 dark:bg-slate-800/70 border-2 border-slate-200/80 dark:border-slate-700/70 border-l-transparent dark:border-l-transparent hover:border-indigo-200/80 dark:hover:border-indigo-500/30 hover:shadow-indigo-500/10'"
-                    @click="selectEpisode(epIdx)"
+                    class="rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border-l-[3px]"
+                    :class="isCurrentEpisode(ep.id, episodeRange + relIdx)
+                      ? 'active-episode border-l-purple-600 bg-indigo-50/60 dark:bg-indigo-900/10 border border-indigo-200/50 dark:border-indigo-400/20 shadow-sm'
+                      : 'inactive-episode bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/50 border-l-transparent dark:border-l-transparent hover:border-indigo-100 dark:hover:border-indigo-500/20'"
+                    @click="selectEpisode(episodeRange + relIdx)"
                     draggable="true"
-                    @dragstart="onDragStartEpisode($event, epIdx)"
+                    @dragstart="onDragStartEpisode($event, episodeRange + relIdx)"
                     @dragover.prevent
-                    @drop="onDropEpisode($event, epIdx)"
+                    @drop="onDropEpisode($event, episodeRange + relIdx)"
                   >
-                    <!-- Drag Handle Indicator -->
-                    <div class="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-300">
-                      <el-icon :size="16"><MoreFilled class="rotate-90" /></el-icon>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-5 pl-2 -mx-6 -mt-6 p-4 border-b rounded-tr-2xl backdrop-blur-md"
-                      :class="isCurrentEpisode(ep.id, epIdx)
-                        ? 'bg-white/70 dark:bg-slate-800/60 border-indigo-200/70 dark:border-indigo-500/20'
-                        : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-700/50'"
-                    >
-                      <div class="flex items-center gap-2">
-                        <div class="w-1.5 h-6 rounded-full mr-1.5"
-                          :class="isCurrentEpisode(ep.id, epIdx) ? 'bg-gradient-to-b from-indigo-600 to-purple-600' : 'bg-slate-300 dark:bg-slate-600'"
-                        ></div>
-                        <span class="text-[18px] font-black tracking-tight"
-                          :class="isCurrentEpisode(ep.id, epIdx)
-                            ? 'bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400'
-                            : 'text-slate-500 dark:text-slate-300'"
+                    <div class="flex justify-between items-center mb-1">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[12px] font-black tracking-tight"
+                          :class="isCurrentEpisode(ep.id, episodeRange + relIdx)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-slate-600 dark:text-slate-400'"
                         >
-                          第 {{ epIdx + 1 }} 集
+                          第 {{ episodeRange + relIdx + 1 }} 集
                         </span>
-                      </div>
-                      <div class="flex items-center gap-2">
                         <span
-                          v-if="isCurrentEpisode(ep.id, epIdx)"
-                          class="px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-widest shadow-lg shadow-indigo-500/20"
+                          v-if="isCurrentEpisode(ep.id, episodeRange + relIdx)"
+                          class="px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[8px] font-black tracking-widest"
                         >
-                          当前编辑
+                          当前
                         </span>
-                        <button 
-                          @mousedown.stop
-                          @click.stop="removeEpisode(epIdx)"
-                          class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
-                        >
-                          <el-icon :size="20"><Delete /></el-icon>
-                        </button>
                       </div>
+                      <button 
+                        @mousedown.stop
+                        @click.stop="removeEpisode(episodeRange + relIdx)"
+                        class="w-5 h-5 flex items-center justify-center rounded text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+                      >
+                        <el-icon :size="14"><Delete /></el-icon>
+                      </button>
                     </div>
 
-                    <div class="space-y-5 pl-2">
-                      <div class="space-y-2">
-                        <label class="text-[12px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-wider">剧情梗概</label>
-                        <el-input 
-                          v-model="ep.summary" 
-                          type="textarea" 
-                          :rows="3" 
-                          placeholder="这一集讲了什么？" 
-                          class="modern-textarea-v3"
-                          @mousedown.stop="selectEpisode(epIdx)"
-                        />
-                      </div>
+                    <div class="pl-0">
+                      <el-input 
+                        v-model="ep.summary" 
+                        type="textarea" 
+                        :rows="1" 
+                        placeholder="分集梗概..." 
+                        class="ultra-compact-textarea"
+                        @mousedown.stop="selectEpisode(episodeRange + relIdx)"
+                      />
                     </div>
                   </div>
                 </transition-group>
@@ -312,6 +139,23 @@
                 </div>
               </div>
             </template>
+          </div>
+
+          <!-- Sidebar Pagination Footer (Fixed at bottom) -->
+          <div v-if="form && episodeRangeOptions.length > 1" class="shrink-0 p-4 border-t border-slate-100 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md">
+            <div class="flex flex-wrap items-center justify-center gap-1.5 p-2 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+              <button 
+                v-for="opt in episodeRangeOptions" 
+                :key="opt.value"
+                @click="episodeRange = opt.value"
+                class="px-2.5 py-1 rounded-lg text-[10px] font-black transition-all border"
+                :class="episodeRange === opt.value 
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm scale-105' 
+                  : 'bg-white dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-700 hover:border-indigo-300 hover:text-indigo-600'"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -820,9 +664,6 @@ interface DramaForm {
 const router = useRouter();
 const dramaStore = useDramaStore();
 
-const GENRES = ['古装权谋', '民国谍战', '都市情感', '科幻未来', '草根逆袭', '历史战争', '越狱风云', '揭竿而起'];
-const AUDIENCES = ['热血青年', '大众向', '男性向', '女性向', '青少年', '中老年', '二次元'];
-
 // State
 const isInfoLoading = ref(true);
 const isGenerating = ref(false);
@@ -832,6 +673,29 @@ const isSavingScript = ref(false);
 const editMode = ref<'full' | 'episode'>('episode');
 const currentEpisodeIndex = ref(0);
 
+// Pagination State
+const episodeRange = ref(0); // 0 for 1-20, 20 for 21-40, etc.
+const EPISODES_PER_PAGE = 20;
+
+const displayedEpisodes = computed(() => {
+  if (!form.value?.episodesData) return [];
+  return form.value.episodesData.slice(episodeRange.value, episodeRange.value + EPISODES_PER_PAGE);
+});
+
+const episodeRangeOptions = computed(() => {
+  if (!form.value?.episodesData) return [];
+  const total = form.value.episodesData.length;
+  const options = [];
+  for (let i = 0; i < total; i += EPISODES_PER_PAGE) {
+    const end = Math.min(i + EPISODES_PER_PAGE, total);
+    options.push({
+      label: `${i + 1}-${end}集`,
+      value: i
+    });
+  }
+  return options;
+});
+
 // Form Data
 const form = ref<DramaForm | null>(null);
 const errors = reactive<Record<string, string>>({});
@@ -839,7 +703,6 @@ const errors = reactive<Record<string, string>>({});
 // UI & Panel State
 const isLeftCollapsed = ref(false);
 const isRightPanelVisible = ref(true);
-const activeLeftTab = ref('basic-settings');
 const leftPanelWidth = ref(320);
 const isEditingLocked = ref(true);
 
@@ -1237,22 +1100,34 @@ const quoteSelectedText = () => {
 // --- Mock API for Prefilling Info ---
 const fetchAutoPrefillInfo = () => {
   return new Promise((resolve) => {
+    const episodes = Array.from({ length: 30 }, (_, i) => ({
+      id: `p${i + 1}`,
+      title: `第${i + 1}集`,
+      summary: i === 0 
+        ? '订婚宴上，沈薇薇突然闯入并宣布怀了姐夫顾承泽的孩子，全场震惊，沈念安的世界崩塌。'
+        : i === 1
+        ? '沈家父母偏袒亲生女儿沈薇薇，当众羞辱沈念安是养女并撕毁其致辞，亲情彻底决裂。'
+        : i === 2
+        ? '沈念安被保安驱逐，发现工作室被查封，在暴雨中绝望等死时遇到神秘劳斯莱斯。'
+        : `这是第 ${i + 1} 集的剧情发展，故事更加扑朔迷离...`,
+      scenes: '场景待定',
+      characters: '沈念安等',
+      content: '',
+      chatHistory: []
+    }));
+
     setTimeout(() => {
       resolve({
         title: '沈念安的重生',
         scriptType: 'short_drama',
         genre: '都市情感',
         targetAudience: '女性向',
-        episodesCount: 3,
+        episodesCount: 30,
         expectedDuration: 120,
         synopsis: '沈念安本以为订婚是幸福的开始，却在订婚宴上遭遇妹妹沈薇薇怀了未婚夫顾承泽孩子的重击。随后被沈家父母以养女身份驱逐，甚至工作室也被查封。在大雨中，神秘人周助理和他的先生出现在她面前，开启了她的逆袭之路。',
-        background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为泡影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',
+        background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',
         fullContent: '',
-        episodesData: [
-          { id: 'p1', title: '第一集', summary: '订婚宴上，沈薇薇突然闯入并宣布怀了姐夫顾承泽的孩子，全场震惊，沈念安的世界崩塌。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 司仪', content: '', chatHistory: [] },
-          { id: 'p2', title: '第二集', summary: '沈家父母偏袒亲生女儿沈薇薇，当众羞辱沈念安是养女并撕毁其致辞，亲情彻底决裂。', scenes: '豪华酒店宴会厅', characters: '沈念安, 顾承泽, 沈薇薇, 沈母, 沈父', content: '', chatHistory: [] },
-          { id: 'p3', title: '第三集', summary: '沈念安被保安驱逐，发现工作室被查封，在暴雨中绝望等死时遇到神秘劳斯莱斯。', scenes: '酒店门口, 街道, 工作室', characters: '沈念安, 周助理, 神秘先生', content: '', chatHistory: [] }
-        ]
+        episodesData: episodes
       });
     }, 400);
   });
@@ -1444,6 +1319,9 @@ const addEpisode = () => {
     content: '',
     chatHistory: [] 
   });
+  // Switch to the page containing the new episode
+  const total = form.value.episodesData.length;
+  episodeRange.value = Math.floor((total - 1) / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
 };
 const removeEpisode = (index: number) => {
   if (!form.value || !form.value.episodesData) return;
@@ -1456,6 +1334,12 @@ const removeEpisode = (index: number) => {
     currentEpisodeIndex.value = Math.max(0, Math.min(currentEpisodeIndex.value, form.value.episodesData.length - 1));
   } else if (currentEpisodeIndex.value > index) {
     currentEpisodeIndex.value--;
+  }
+
+  // Ensure episodeRange is still valid
+  const total = form.value.episodesData.length;
+  if (episodeRange.value >= total && total > 0) {
+    episodeRange.value = Math.max(0, Math.floor((total - 1) / EPISODES_PER_PAGE) * EPISODES_PER_PAGE);
   }
   
   // Always reload to ensure state is consistent
@@ -1491,6 +1375,9 @@ const generateScriptBody = () => {
   let i = 0;
   let mockText = '';
 
+  // Use expanded prompt as context if available
+  const promptContext = dramaStore.expandedPrompt ? `基于设定：${dramaStore.expandedPrompt}\n\n` : '';
+
   const EPISODE_SCRIPTS: Record<number, string> = {
     0: `第1集 \n 1-1 日 内 豪华酒店宴会厅 \n 人物：沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 宾客若干, 司仪 \n △宴会厅内鲜花簇拥，水晶灯璀璨夺目，宾客们衣着华丽，举杯交谈。 \n △舞台中央，司仪手持话筒，面带微笑。 \n 司仪：今天，是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。 \n △聚光灯下，沈念安身着一袭纯白礼服，挽着顾承泽的手臂，脸上洋溢着幸福的笑容。 \n 沈念安（含情脉脉）：承泽，我好像在做梦。 \n 顾承泽（温柔凝视）：念安，这不是梦。从今天起，你就是我唯一的未婚妻。 \n △台下，沈父沈母满面春风地接受着宾客的祝贺。 \n 宾客甲：沈总，沈夫人，恭喜啊！念安真是越来越出色了！ \n 沈母（得意）：这孩子，从小就懂事，是我们沈家的骄傲。 \n △沈念安看着台下为她祝福的亲友，眼眶微湿，充满了对未来的憧憬。 \n 沈念安OS：二十年了，我终于要嫁给最爱的人，拥有自己的家了。 \n △突然，宴会厅的大门被人猛地推开，发出一声巨响。 \n △音乐戛而止，所有人的目光都被吸引过去。 \n △沈薇薇衣衫不整，头发凌乱地冲了进来，妆容哭花了，看起来狼狈不堪. \n 沈薇薇（凄厉哭喊）：承泽哥！ \n △宾客们纷纷避让，窃窃私语。 \n 宾客乙：那不是沈家的小女儿沈薇薇吗？她这是怎么了？ \n 宾客丙：看样子是来砸场子的啊！ \n △沈念安脸上的笑容僵住。 \n 沈念安（错愕）：薇薇？ \n △沈母和沈父脸色大变，立刻上前试图阻拦。 \n 沈母（厉声）：沈薇薇！你疯了吗！滚出去！ \n 沈父：保安！保安在哪里！ \n △沈薇薇不管不顾，一把推开父母，跌跌撞撞地冲向舞台。 \n △她扑到顾承泽面前，死死抓住他的手臂。 \n 沈薇薇（泣不成声）：承泽哥…… \n 顾承泽（慌乱，试图推开她）：薇薇，你冷静点！有什么事我们回家再说！ \n 沈薇薇（抬头，泪眼婆娑地看着沈念安）：姐姐，对不起…… \n △沈薇薇一手抚上自己的小腹，声音颤抖却清晰地传遍整个宴会厅。 \n 沈薇薇（哭着宣布）：我……我怀了承泽哥的孩子！ \n △话音落下，全场瞬间陷入一片死寂。 \n △宾客们倒吸一口凉气，现场瞬间炸开了锅。 \n 宾客甲：天合！我没听错吧？妹妹怀了姐夫的孩子？ \n 宾客乙：这……这简直是豪门丑闻啊！ \n △沈念安如遭雷击，浑身冰冷，大脑一片空白。她难以置信地看着顾承泽，又看看哭倒在他怀里的妹妹。 \n 沈念安（声音发颤）：承泽……她说的，是真的吗？ \n △顾承泽眼神躲闪，嘴唇翕动，却一个字都说不出来。 \n △沈薇薇见状，哭得更凶了。 \n 沈薇薇（紧紧抱着顾承澤）：承泽哥，你告诉姐姐，我们是真心相爱的！你快告诉她啊！ \n △特写镜头，沈念安脸上的笑容彻底凝固，眼中所有的光芒瞬间熄灭，世界在她眼前崩塌。`,
     1: `第2集 \n 2-1 日 内 豪华酒店宴会厅 \n 人物：沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 宾客若干 \n △聚光灯下，沈念安脸色煞白，身体微微颤抖，紧紧盯着顾承泽。 \n △全场的宾客都在窃窃私语，指指点点。 \n 宾客甲：这下有好戏看了，未婚夫搞大了小姨子的肚子。 \n 宾客乙：沈家这脸可丢大了。 \n 沈念安（声音颤抖）：承泽，你说话啊！她说的……是不是真的？ \n △顾承泽的眼神躲闪，不敢直视沈念安，愧疚地低下了头。 \n △这无声的沉默，像一把最锋利的刀，狠狠刺进沈念安的心脏。 \n 沈念安（绝望地后退一步）：所以……是真的。 \n △沈薇薇见状，哭着抱紧顾承泽。 \n 沈薇薇（抽泣）：姐姐，你不要怪承泽哥，都是我的错！我们是真心相爱的…… \n △沈母和沈父脸色铁青，快步冲上舞台。 \n △沈念安以为他们是来安慰自己的，眼中燃起一丝希望. \n 沈念安（哽咽）：妈…… \n △沈母却看也不看她，径直走到她面前，扬手就想打她。 \n △顾承泽下意识地挡了一下。 \n 顾承泽：阿姨，别…… \n 沈母（怒不可遏，指着沈念安的鼻子）：你还有脸哭！你这个白眼狼！ \n 沈念安（难以置信）：妈，你说什么？ \n 沈母（尖声）：我们沈家养了你二十年，好吃好喝地供着你，你就是这么回报我们的？占着薇薇的位置不说，现在还想毁了薇薇的幸福！ \n 沈父（附和，满脸嫌恶）：念安，你怎么这么不懂事！薇薇才是我们的亲生女儿！你一个养女，有什么资格跟她争！ \n 沈念安（心如刀绞）：爸，妈……我也是你们的女儿啊！ \n 沈母（冷笑）：女儿？你配吗？你不过是我们沈家养的一条狗！现在竟然还想鸠占鹊巢！ \n △沈念安踉跄着，手里紧紧攥着为订婚准备的致辞稿，那是她熬了好几个通宵，写满了对未来憧憬的文字。 \n △沈母的视线落在稿纸上，眼中闪过一丝狠毒。 \n △她一把抢过沈念安手中的致辞稿。 \n 沈念安（惊慌）：妈，你干什么！还给我！ \n △沈母看也不看，当着所有人的面，将稿纸“撕拉”一声撕成两半，然后疯狂地撕扯，直到变成一堆碎片。 \n 沈母（咬牙切齿）：你的幸福？你的未来？你也配！ \n △沈母扬起手，将满手的纸屑，狠狠地砸在沈念安的脸上，身上。 \n △纸屑纷飞，像一场绝望的雪，将沈念安彻底淹没。 \n 沈母（指着她，对众人宣布）：我们沈家，没有你这种不知感恩、丢人现眼的东西！`,
@@ -1500,10 +1387,10 @@ const generateScriptBody = () => {
   if (editMode.value === 'full') {
     mockText = ``;
     form.value?.episodesData.forEach((_, idx) => {
-      mockText += (EPISODE_SCRIPTS[idx] || `第 ${idx + 1} 集内容生成中...`) + '\n\n' + SEPARATOR.replace(/<p>|<\/p>/g, '') + '\n\n';
+      mockText += (EPISODE_SCRIPTS[idx] || `基于您的灵感：${dramaStore.expandedPrompt.substring(0, 30)}... \n 第 ${idx + 1} 集内容正在智能创作中...`) + '\n\n' + SEPARATOR.replace(/<p>|<\/p>/g, '') + '\n\n';
     });
   } else {
-    mockText = EPISODE_SCRIPTS[currentEpisodeIndex.value] || `第 ${currentEpisodeIndex.value + 1} 集剧本正文生成中...`;
+    mockText = EPISODE_SCRIPTS[currentEpisodeIndex.value] || `基于您的灵感：${dramaStore.expandedPrompt.substring(0, 30)}... \n 第 ${currentEpisodeIndex.value + 1} 集剧本正文正在智能创作中...`;
   }
   
   const interval = setInterval(() => {
@@ -1524,9 +1411,8 @@ const generateScriptBody = () => {
 /* Modern Scrollbar */
 .active-episode {
   border-left-color: #7c3aed !important; /* Use purple-600 color */
-  background-color: rgba(224, 231, 255, 0.6) !important;
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3) !important;
-  outline: 2px solid rgba(99, 102, 241, 0.2);
+  background-color: rgba(224, 231, 255, 0.4) !important;
+  outline: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .bg-indigo-50\/40.border-l-indigo-50.dark\:border-l-indigo-900\/30 {
@@ -1737,6 +1623,32 @@ const generateScriptBody = () => {
   padding: 16px !important;
   border: 1px solid rgba(99, 102, 241, 0.1) !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+:deep(.ultra-compact-textarea .el-textarea__inner) {
+  background-color: transparent !important;
+  border-radius: 8px !important;
+  border: 1px solid #F1F5F9 !important;
+  padding: 6px 10px !important;
+  font-size: 12px;
+  line-height: 1.4;
+  resize: none;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+  color: #475569;
+}
+.dark :deep(.ultra-compact-textarea .el-textarea__inner) {
+  border-color: #334155 !important;
+  color: #94a3b8;
+}
+:deep(.ultra-compact-textarea .el-textarea__inner:focus) {
+  border-color: #6366f1 !important;
+  background-color: #fff !important;
+  color: #1e293b;
+}
+.dark :deep(.ultra-compact-textarea .el-textarea__inner:focus) {
+  background-color: #1e293b !important;
+  color: #f1f5f9;
 }
 
 /* Prose Modern Styling */
