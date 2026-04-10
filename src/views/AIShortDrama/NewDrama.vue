@@ -454,21 +454,48 @@
                   </div>
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-4">
                   <label class="text-sm font-black text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 剧本集数
+                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 剧本规格
                   </label>
-                  <div class="grid grid-cols-3 gap-4">
-                    <div 
-                      v-for="opt in episodeOptions" 
-                      :key="opt.label"
-                      @click="configForm.episodesCount = opt.count"
-                      class="p-4 rounded-2xl border-2 cursor-pointer transition-all text-center group"
-                      :class="configForm.episodesCount === opt.count ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-200'"
-                    >
-                      <div class="text-lg font-black mb-1" :class="configForm.episodesCount === opt.count ? 'text-indigo-600' : 'text-slate-800 dark:text-white'">{{ opt.count }} 集</div>
-                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ opt.label }}</div>
-                      <p class="text-[10px] text-slate-400 leading-tight group-hover:text-slate-500">{{ opt.desc }}</p>
+                  
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[12px] font-bold text-slate-500">生成集数</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                      <div 
+                        v-for="opt in episodeOptions" 
+                        :key="opt.label"
+                        @click="configForm.episodesCount = opt.count"
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all text-center group"
+                        :class="configForm.episodesCount === opt.count ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-200'"
+                      >
+                        <div class="text-lg font-black mb-1" :class="configForm.episodesCount === opt.count ? 'text-indigo-600' : 'text-slate-800 dark:text-white'">{{ opt.count }} 集</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ opt.label }}</div>
+                        <p class="text-[10px] text-slate-400 leading-tight group-hover:text-slate-500">{{ opt.desc }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3 pt-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[12px] font-bold text-slate-500">单集时长 (秒)</span>
+                      <el-tooltip content="AI生成时会以此为参考，但时长会有一定浮动" placement="top">
+                        <el-icon class="text-slate-400 cursor-help hover:text-indigo-500"><QuestionFilled /></el-icon>
+                      </el-tooltip>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <el-slider 
+                        v-model="configForm.expectedDuration" 
+                        :min="30" 
+                        :max="300" 
+                        :step="10"
+                        class="flex-1 custom-slider"
+                      />
+                      <div class="w-20 px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-center font-black text-indigo-600">
+                        {{ configForm.expectedDuration }}s
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -587,7 +614,8 @@ import {
   Link,
   Warning,
   Heart,
-  GoldMedal
+  GoldMedal,
+  QuestionFilled
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
@@ -614,7 +642,7 @@ const isGeneratingField = reactive<Record<string, boolean>>({
 const configForm = reactive({
   scriptType: 'short_drama',
   genre: '',
-  targetAudience: '女性向',
+  targetAudience: '女频',
   episodesCount: 80,
   expectedDuration: 120,
   protagonistSetting: '',
@@ -713,7 +741,7 @@ const conflictOptions = [
   { label: '自定义', desc: '手动输入或 AI 生成最具张力的核心冲突。', icon: 'EditPen' }
 ];
 
-const audienceOptions = ['男性向', '女性向', '青少年', '中老年', '大众向'];
+const audienceOptions = ['男频', '女频', '大众'];
 const episodeOptions = [
   { label: '精简版', count: 24, desc: '快节奏，适合碎片化观看' },
   { label: '标准版', count: 80, desc: '主流配置，内容充实' },
@@ -774,7 +802,7 @@ const finishConfig = () => {
 ${protagonist}
 ${conflict}
 【受众】${configForm.targetAudience}
-【集数】${configForm.episodesCount}集`;
+【规格】${configForm.episodesCount}集，单集时长${configForm.expectedDuration}秒`;
 
   dramaStore.setExpandedPrompt(finalPrompt);
   
@@ -939,5 +967,12 @@ const handleFileUpload = (file: any) => {
 :deep(.custom-upload-v2 .el-upload-dragger:hover) {
   border-color: #6366f1;
   background-color: rgba(99, 102, 241, 0.05);
+}
+
+:deep(.custom-slider .el-slider__bar) {
+  background-color: #6366f1;
+}
+:deep(.custom-slider .el-slider__button) {
+  border-color: #6366f1;
 }
 </style>
