@@ -10,9 +10,22 @@
           <el-icon :size="18"><ArrowLeft /></el-icon>
         </button>
         <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></div>
-        <div>
-          <h2 class="text-2xl font-black text-slate-800 tracking-tight">共 {{ filteredEpisodes.length }} 集</h2>
-          <p class="text-slate-400 text-sm mt-1">智能生成分镜脚本，开启你的短剧创作之旅</p>
+        
+        <!-- C-end redesigned "Total Episodes" badge -->
+        <div class="relative group ml-1 cursor-default">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+          
+          <div class="relative flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-xl shadow-sm border border-white/50 dark:border-white/10 transform hover:-translate-y-0.5 transition-all duration-300">
+            <div class="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-inner">
+              <el-icon class="text-white text-sm"><MagicStick /></el-icon>
+            </div>
+            
+            <div class="flex items-baseline gap-1">
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-extrabold text-sm tracking-wider">共</span>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 font-black text-xl tabular-nums drop-shadow-sm">{{ filteredEpisodes.length }}</span>
+              <span class="text-transparent bg-clip-text bg-gradient-to-l from-pink-500 to-purple-600 font-extrabold text-sm tracking-wider">集</span>
+            </div>
+          </div>
         </div>
       </div>
 
