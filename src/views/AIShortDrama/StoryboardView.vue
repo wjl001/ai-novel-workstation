@@ -16,16 +16,7 @@
         <span>产品设计说明</span>
       </button>
 
-      <div class="flex items-center gap-4">
-        <button 
-          @click="router.back()" 
-          class="flex items-center gap-2 px-3 py-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-all font-bold text-sm"
-        >
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </button>
-        <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-        
+      <div class="flex items-center gap-4 pl-12">
         <el-dropdown trigger="click" @command="handleEpisodeSwitch">
           <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
             <h1 class="text-[15px] font-black text-slate-800 dark:text-white truncate max-w-[300px] group-hover:text-indigo-600 transition-colors">

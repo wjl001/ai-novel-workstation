@@ -1,24 +1,22 @@
 <template>
-  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 p-6 lg:p-10 relative overflow-hidden">
-    <!-- Decorative background elements for C-end feel -->
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
+  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 relative overflow-x-hidden overflow-y-auto custom-scrollbar p-6 lg:p-10">
     <!-- Header Section -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 relative z-10">
-      <div class="flex-1">
-        <div class="flex items-center gap-3 mb-2">
-          <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-            <el-icon :size="20"><VideoCamera /></el-icon>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 relative z-10 pl-4 md:pl-0">
+      <div class="flex-1 flex items-center gap-4">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+              <el-icon :size="20"><VideoCamera /></el-icon>
+            </div>
+            <h1 class="text-3xl lg:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
+              我的作品
+            </h1>
+            <div class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+              Library
+            </div>
           </div>
-          <h1 class="text-3xl lg:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
-            我的作品
-          </h1>
-          <div class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-            Library
-          </div>
+          <p class="text-slate-500 dark:text-slate-400 text-base font-medium pl-[52px]">释放 AI 生产力，从这里开启您的爆款短剧创作之旅</p>
         </div>
-        <p class="text-slate-500 dark:text-slate-400 text-base font-medium pl-[52px]">释放 AI 生产力，从这里开启您的爆款短剧创作之旅</p>
       </div>
 
       <div class="flex items-center gap-4">
@@ -339,7 +337,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
+import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 const router = useRouter();

@@ -848,15 +848,8 @@ const goBack = () => {
   // 确保数据同步到缓存，以便 NovelGenerator 回显
   sessionStorage.setItem('novel_generator_chapters_cache', JSON.stringify(loreStore.currentNovel.chapters || []))
   
-  // 返回到剧集管理页面（携带正确的 ID）
-  const projectId = route.query.id || '1' // 默认 ID 1
-  router.push({ 
-    name: 'novel-generator', 
-    query: { 
-      id: projectId.toString(),
-      step: 'chapters' 
-    } 
-  })
+  // 模拟浏览器返回
+  router.back()
 }
 
 const saveCurrentChapter = () => {

@@ -2,10 +2,22 @@
   <div class="h-full p-8 overflow-y-auto custom-scrollbar transition-colors duration-300" :class="bgClass">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <div class="flex justify-between items-end mb-8 border-b pb-6" :class="isLight ? 'border-slate-200' : 'border-slate-800'">
-        <div>
-          <h1 class="text-3xl font-bold mb-2 tracking-tight" :class="isLight ? 'text-slate-800' : 'text-white'">{{ title }}</h1>
-          <p :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ description }}</p>
+      <div class="flex justify-between items-end mb-8 border-b pb-6 relative" :class="isLight ? 'border-slate-200' : 'border-slate-800'">
+         <div class="flex items-center gap-4 pl-12">
+           <!-- Floating Back Button (C-end Design) -->
+           <div class="absolute -left-2 top-1/2 -translate-y-1/2">
+             <button 
+               @click="router.back()" 
+               class="flex items-center justify-center w-11 h-11 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgba(79,70,229,0.12)] border border-white dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300"
+             >
+               <el-icon :size="20"><ArrowLeft /></el-icon>
+             </button>
+           </div>
+           <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+          <div>
+            <h1 class="text-3xl font-bold mb-2 tracking-tight" :class="isLight ? 'text-slate-800' : 'text-white'">{{ title }}</h1>
+            <p :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ description }}</p>
+          </div>
         </div>
         <el-button type="primary" size="large" class="shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all bg-indigo-600 border-none" @click="createNew">
           <el-icon class="mr-2"><Plus /></el-icon> 新建剧本
@@ -192,7 +204,7 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus, Picture, User, View, Star, Edit, Delete, FolderAdd, List, EditPen, Setting, Download, CopyDocument, Upload, MagicStick, Check, Loading, VideoCamera } from '@element-plus/icons-vue'
+import { Plus, Picture, User, View, Star, Edit, Delete, FolderAdd, List, EditPen, Setting, Download, CopyDocument, Upload, MagicStick, Check, Loading, VideoCamera, ArrowLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { UploadFile } from 'element-plus'
 

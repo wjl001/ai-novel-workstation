@@ -9,12 +9,21 @@
       @open="openProject"
     />
 
-    <div v-else class="h-full flex flex-col">
+    <div v-else class="h-full flex flex-col relative overflow-hidden">
       <!-- Top Progress Bar -->
-      <header class="px-6 py-3 z-10 transition-colors duration-300" :class="headerClass">
-        <div class="flex items-center justify-between mb-4">
+      <header class="px-6 py-3 z-10 transition-colors duration-300 relative" :class="headerClass">
+        <!-- Floating Back Button (C-end Design) - Moved into Header Area to avoid overlap -->
+        <div class="absolute left-6 top-1/2 -translate-y-1/2 z-50">
+          <button 
+            @click="router.back()" 
+            class="flex items-center justify-center w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300"
+          >
+            <el-icon :size="18"><ArrowLeft /></el-icon>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between mb-4 pl-12">
           <div class="flex items-center gap-2">
-            <el-button circle size="small" :icon="ArrowLeft" class="mr-2" @click="isCreating = false" />
             <div class="bg-indigo-600 text-white p-1.5 rounded-lg">
               <el-icon><VideoCameraFilled /></el-icon>
             </div>
@@ -61,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref, computed, inject, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { VideoCameraFilled, ArrowRight, ArrowLeft, Check } from '@element-plus/icons-vue'
 import ProjectList from '@/components/Common/ProjectList.vue'
 import Step1_ProjectInit from './components/Step1_ProjectInit.vue'
@@ -73,6 +82,7 @@ import { ElMessage } from 'element-plus'
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
 const route = useRoute()
+const router = useRouter()
 
 const bgClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-transparent'

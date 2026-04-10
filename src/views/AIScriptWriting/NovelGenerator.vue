@@ -10,10 +10,15 @@
           <!-- Step 1: Outline Generation -->
           <transition name="el-fade-in-linear">
             <div v-if="step === 'outline'" class="space-y-6 flex-1 flex flex-col">
-              <div class="flex items-center justify-between mb-2">
-                <el-button link :class="isLight ? 'text-slate-600 hover:text-indigo-600' : 'text-slate-300 hover:text-indigo-300'" @click="handleBack">
-                  <el-icon class="mr-1"><ArrowLeft /></el-icon> 返回基础设置
-                </el-button>
+              <div class="flex items-center gap-4 mb-2">
+                <button 
+                  @click="handleBack" 
+                  class="flex items-center justify-center w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300 shrink-0"
+                >
+                  <el-icon :size="18"><ArrowLeft /></el-icon>
+                </button>
+                <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></div>
+                <span class="text-sm font-bold opacity-60">返回基础设置</span>
               </div>
               <!-- Hero Banner (Compact Row) -->
               <div class="flex items-center gap-6 p-4 rounded-xl border transition-all" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'">
@@ -160,9 +165,11 @@
                <div class="grid grid-cols-4 gap-3 mb-3 items-center">
                   <div class="p-3 rounded-xl border flex items-center justify-between transition-all hover:-translate-y-0.5 cursor-pointer group" :class="isLight ? 'bg-white border-slate-200 shadow-sm hover:border-indigo-300' : 'bg-slate-800 border-slate-700 shadow-lg hover:border-indigo-500/50'">
                      <div class="flex items-center gap-3" @click="handleBack">
-                       <div class="w-9 h-9 rounded-full flex items-center justify-center transition-colors group-hover:bg-indigo-500/20" :class="isLight ? 'bg-slate-50 text-slate-500 group-hover:text-indigo-600' : 'bg-slate-700/50 text-slate-400 group-hover:text-indigo-400'">
-                          <el-icon :size="18"><ArrowLeft /></el-icon>
-                       </div>
+                       <button 
+                         class="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300 shrink-0"
+                       >
+                         <el-icon :size="16"><ArrowLeft /></el-icon>
+                       </button>
                        <div>
                           <div class="text-xs opacity-60" :class="isLight ? 'text-slate-500' : 'text-slate-400'">返回</div>
                           <div class="text-lg font-bold" :class="isLight ? 'text-slate-800' : 'text-white'">大纲列表</div>
@@ -636,7 +643,8 @@ const handleBack = () => {
   if (step.value === 'chapters') {
     step.value = 'outline'
   } else {
-    router.push({ path: '/ai-write-novel', query: { mode: 'create' } })
+    // 模拟浏览器返回
+    router.back()
   }
 }
 

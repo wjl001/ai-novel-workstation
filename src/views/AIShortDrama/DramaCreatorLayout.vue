@@ -1,7 +1,17 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative ai-drama-container">
     <!-- Header Steps -->
-    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center z-20 relative transition-all duration-300">
+    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center items-center z-20 relative transition-all duration-300">
+      <!-- Floating Back Button (C-end Design) - Moved to Header Area but outside Capsule -->
+      <div class="absolute left-8 group">
+        <button 
+          @click="router.back()" 
+          class="flex items-center justify-center w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300"
+        >
+          <el-icon :size="18"><ArrowLeft /></el-icon>
+        </button>
+      </div>
+
       <div class="bg-white dark:bg-slate-900 rounded-full px-12 py-3.5 flex items-center gap-14 justify-between border border-white dark:border-slate-700 shadow-[0_12px_60px_rgba(0,0,0,0.12)] relative">
         
         <!-- Step 1 -->
@@ -91,7 +101,7 @@
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
-      <div class="flex-1 overflow-hidden" :class="{ 'p-4 sm:p-6 lg:p-8': activeStep !== 2 }">
+      <div class="flex-1 overflow-hidden relative" :class="{ 'p-4 sm:p-6 lg:p-8': activeStep !== 2 }">
         <div 
           class="h-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl shadow-2xl shadow-indigo-500/5 border border-slate-100 dark:border-slate-700 overflow-hidden transition-all duration-500"
           :class="activeStep === 2 ? 'rounded-0' : 'rounded-[40px]'"
@@ -157,7 +167,7 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
-import { Check, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
+import { Check, InfoFilled, Close, Document, Location, Monitor, Pointer, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const route = useRoute();

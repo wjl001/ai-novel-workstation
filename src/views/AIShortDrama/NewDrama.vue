@@ -312,6 +312,7 @@ import {
   Picture,
   Clock,
   ArrowRight,
+  ArrowLeft,
   VideoCamera,
   InfoFilled,
   Close,

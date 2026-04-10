@@ -13,9 +13,16 @@
       <!-- Top Bar: Compact Header & Step Indicator -->
       <div class="shrink-0 px-6 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-50">
           <div class="flex items-center gap-4">
-             <el-button :icon="ArrowLeft" circle size="small" :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-100' : '!bg-slate-800 !border-slate-700 !text-slate-300 hover:!text-white hover:!bg-slate-700'" @click="exitCreation" />
+             <!-- Inline Back Button (C-end Design) -->
+             <button 
+               @click="exitCreation" 
+               class="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300 shrink-0"
+             >
+               <el-icon :size="16"><ArrowLeft /></el-icon>
+             </button>
+             <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0"></div>
              <div>
-                <h1 class="text-lg font-bold flex items-center gap-2" :class="isLight ? 'text-slate-800' : 'text-slate-100'">
+                <h1 class="text-lg font-bold flex items-center gap-2 shrink-0" :class="isLight ? 'text-slate-800' : 'text-slate-100'">
                    AI剧本
                    <el-tag size="small" effect="plain" round class="ml-2">基础设定</el-tag>
                 </h1>
@@ -996,7 +1003,8 @@ const startCreation = () => {
 }
 
 const exitCreation = () => {
-  router.push({ name: 'ai-write-novel' })
+  // 模拟浏览器返回
+  router.back()
 }
 
 const openProject = (id: number) => {

@@ -4,11 +4,12 @@
     <div :class="s.header">
       <div :class="s.left" class="flex items-center gap-4">
         <button 
-          @click="$router.push('/ai-short-drama-creator/works')" 
-          class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+          @click="router.back()" 
+          class="flex items-center justify-center w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-105 active:scale-95 transition-all duration-300 shrink-0"
         >
-          <el-icon><ArrowLeft /></el-icon>
+          <el-icon :size="18"><ArrowLeft /></el-icon>
         </button>
+        <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></div>
         <div>
           <h2 class="text-2xl font-black text-slate-800 tracking-tight">共 {{ filteredEpisodes.length }} 集</h2>
           <p class="text-slate-400 text-sm mt-1">智能生成分镜脚本，开启你的短剧创作之旅</p>
