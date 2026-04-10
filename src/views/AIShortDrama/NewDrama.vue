@@ -223,12 +223,12 @@
     <el-dialog 
       v-model="showHotTopicDialog" 
       :title="null"
-      width="800px" 
+      width="700px" 
       class="hot-topic-dialog rounded-[32px] overflow-hidden" 
       :show-close="false"
       destroy-on-close
     >
-      <div class="relative min-h-[500px] flex flex-col bg-white dark:bg-slate-900">
+      <div class="relative flex flex-col bg-white dark:bg-slate-900 p-8">
         <!-- Close Button -->
         <button 
           @click="showHotTopicDialog = false" 
@@ -237,293 +237,152 @@
           <el-icon :size="20"><Close /></el-icon>
         </button>
 
-        <!-- Sidebar / Progress -->
-        <div class="flex flex-1">
-          <div class="w-1/3 bg-slate-50 dark:bg-slate-800/50 p-8 border-r border-slate-100 dark:border-slate-800 flex flex-col">
-            <div class="mb-10">
-              <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white mb-4 shadow-lg shadow-indigo-500/20">
-                <el-icon :size="24"><MagicStick /></el-icon>
-              </div>
+        <div class="mb-6">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <el-icon :size="20"><MagicStick /></el-icon>
+            </div>
+            <div>
               <h2 class="text-xl font-black text-slate-800 dark:text-white">基础设定</h2>
-              <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Basic Settings</p>
+              <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Basic Settings</p>
+            </div>
+          </div>
+          <p class="text-[13px] text-slate-500 dark:text-slate-400 font-medium">AI 将根据您的选择，为您生成专属的爆款剧本大纲。</p>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-6">
+          
+          <!-- Custom Genre Input -->
+          <div v-if="selectedTopic?.isCustom" class="space-y-2">
+            <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">自定义题材名称</label>
+            <el-input 
+              v-model="configForm.genre" 
+              placeholder="请输入您的题材，如：未来末世、职场逆袭等..." 
+              class="custom-input-v2"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <!-- Protagonist Select -->
+            <div class="space-y-2">
+              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>主角设定
+              </label>
+              <el-select v-model="configForm.protagonistSetting" placeholder="请选择或自定义" class="w-full" size="large">
+                <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label" class="!h-auto py-2">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 shrink-0">
+                      <el-icon><component :is="opt.icon" /></el-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="font-bold text-[13px] leading-tight">{{ opt.label }}</span>
+                      <span class="text-[11px] text-slate-400 leading-tight">{{ opt.desc }}</span>
+                    </div>
+                  </div>
+                </el-option>
+              </el-select>
             </div>
 
-            <div class="space-y-6 flex-1">
-              <div 
-                v-for="step in [1, 2, 3]" 
-                :key="step"
-                class="flex items-center gap-4 transition-all duration-500"
-                :class="currentStep >= step ? 'opacity-100' : 'opacity-30'"
-              >
-                <div 
-                  class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-black transition-all duration-500"
-                  :class="currentStep === step ? 'bg-indigo-600 text-white scale-110 shadow-lg shadow-indigo-500/30' : (currentStep > step ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500')"
-                >
-                  <el-icon v-if="currentStep > step"><Check /></el-icon>
-                  <span v-else>{{ step }}</span>
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-[13px] font-black" :class="currentStep === step ? 'text-indigo-600' : 'text-slate-500'">
-                    {{ step === 1 ? '主角设定' : (step === 2 ? '核心冲突' : '发行参数') }}
-                  </span>
-                  <span class="text-[10px] text-slate-400 font-medium">{{ step === 1 ? '塑造灵魂人物' : (step === 2 ? '引爆剧情张力' : '设定目标受众') }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-auto p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800/50">
-              <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold leading-relaxed">
-                <el-icon class="mr-1"><InfoFilled /></el-icon>
-                AI 将根据您的选择，为您生成专属的爆款剧本大纲。
-              </p>
+            <!-- Conflict Select -->
+            <div class="space-y-2">
+              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-1 h-3 bg-purple-500 rounded-full"></span>核心冲突
+              </label>
+              <el-select v-model="configForm.conflictSetting" placeholder="请选择或自定义" class="w-full" size="large">
+                <el-option v-for="opt in conflictOptions" :key="opt.label" :label="opt.label" :value="opt.label" class="!h-auto py-2">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 shrink-0">
+                      <el-icon><component :is="opt.icon" /></el-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="font-bold text-[13px] leading-tight">{{ opt.label }}</span>
+                      <span class="text-[11px] text-slate-400 leading-tight">{{ opt.desc }}</span>
+                    </div>
+                  </div>
+                </el-option>
+              </el-select>
             </div>
           </div>
 
-          <!-- Content Area -->
-          <div class="w-2/3 p-10 flex flex-col h-full overflow-y-auto custom-scrollbar">
-            <!-- Step 1: Protagonist -->
-            <div v-if="currentStep === 1" class="animate-fade-in space-y-6">
-              <div class="mb-6">
-                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">选择主角设定</h3>
-                <p class="text-slate-400 text-sm">主角是故事的核心，选择一个最具张力的设定。</p>
-              </div>
+          <!-- Custom Textareas -->
+          <div class="grid grid-cols-2 gap-6" v-if="configForm.protagonistSetting === '自定义' || configForm.conflictSetting === '自定义'">
+            <div v-if="configForm.protagonistSetting === '自定义'" class="space-y-2 relative">
+               <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">主角详细设定</label>
+                  <button 
+                    @click="handleAIFeature('protagonist', 'generate')"
+                    :disabled="isGeneratingField.protagonist"
+                    class="text-indigo-600 hover:text-indigo-700 text-[11px] font-bold flex items-center gap-1"
+                  >
+                    <el-icon :class="{'is-loading': isGeneratingField.protagonist}"><MagicStick /></el-icon>AI 生成
+                  </button>
+               </div>
+               <el-input v-model="configForm.protagonistDesc" type="textarea" :rows="3" placeholder="主角身份、性格、核心目标..." class="custom-textarea-v2" />
+            </div>
 
-              <!-- Custom Genre Input for Custom Topic -->
-              <div v-if="selectedTopic?.isCustom" class="mb-4">
-                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 block">自定义题材名称</label>
-                <el-input 
-                  v-model="configForm.genre" 
-                  placeholder="请输入您的题材，如：未来末世、职场逆袭等..." 
-                  class="custom-input-v2"
+            <div v-if="configForm.conflictSetting === '自定义'" class="space-y-2 relative" :class="{'col-start-2': configForm.protagonistSetting !== '自定义'}">
+               <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">冲突详细设定</label>
+                  <button 
+                    @click="handleAIFeature('conflict', 'generate')"
+                    :disabled="isGeneratingField.conflict"
+                    class="text-purple-600 hover:text-purple-700 text-[11px] font-bold flex items-center gap-1"
+                  >
+                    <el-icon :class="{'is-loading': isGeneratingField.conflict}"><MagicStick /></el-icon>AI 生成
+                  </button>
+               </div>
+               <el-input v-model="configForm.conflictDesc" type="textarea" :rows="3" placeholder="具体冲突、爆发点..." class="custom-textarea-v2" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6">
+            <!-- Target Audience -->
+            <div class="space-y-2">
+              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-1 h-3 bg-pink-500 rounded-full"></span>目标受众
+              </label>
+              <el-select v-model="configForm.targetAudience" class="w-full" size="large">
+                <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud" />
+              </el-select>
+            </div>
+
+            <!-- Episodes -->
+            <div class="space-y-2">
+              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-1 h-3 bg-blue-500 rounded-full"></span>生成集数
+              </label>
+              <el-select v-model="configForm.episodesCount" class="w-full" size="large">
+                <el-option v-for="opt in episodeOptions" :key="opt.count" :label="`${opt.count} 集 (${opt.label})`" :value="opt.count" />
+              </el-select>
+            </div>
+
+            <!-- Duration -->
+            <div class="space-y-2">
+              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-1 h-3 bg-emerald-500 rounded-full"></span>单集时长
+              </label>
+              <div class="flex items-center gap-2 h-10">
+                <el-input-number 
+                  v-model="configForm.expectedDuration" 
+                  :min="30" :max="300" :step="10" 
+                  controls-position="right"
+                  class="!w-full"
                 />
               </div>
-
-              <div class="grid grid-cols-1 gap-4">
-                <div 
-                  v-for="opt in protagonistOptions" 
-                  :key="opt.label"
-                  @click="configForm.protagonistSetting = opt.label"
-                  class="p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1"
-                  :class="configForm.protagonistSetting === opt.label ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20 shadow-xl shadow-indigo-500/5' : 'border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 bg-white dark:bg-slate-800'"
-                >
-                  <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all" :class="configForm.protagonistSetting === opt.label ? 'bg-indigo-600 text-white' : ''">
-                    <el-icon :size="20"><component :is="opt.icon" /></el-icon>
-                  </div>
-                  <div class="flex-1">
-                    <h4 class="font-black text-slate-800 dark:text-white mb-0.5 text-sm">{{ opt.label }}</h4>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">{{ opt.desc }}</p>
-                  </div>
-                  <div v-if="configForm.protagonistSetting === opt.label" class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                    <el-icon :size="12"><Check /></el-icon>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Custom Protagonist Input -->
-              <div v-if="configForm.protagonistSetting === '自定义'" class="mt-4 animate-fade-in">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">主角详细设定</label>
-                  <div class="flex gap-2">
-                    <button 
-                      @click="handleAIFeature('protagonist', 'generate')"
-                      :disabled="isGeneratingField.protagonist"
-                      class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-[10px] font-black flex items-center gap-1.5 hover:bg-indigo-100 transition-all disabled:opacity-50"
-                    >
-                      <el-icon :class="{'is-loading': isGeneratingField.protagonist}"><MagicStick /></el-icon>
-                      AI 生成
-                    </button>
-                    <button 
-                      @click="handleAIFeature('protagonist', 'polish')"
-                      :disabled="isGeneratingField.protagonist || !configForm.protagonistDesc"
-                      class="px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg text-[10px] font-black flex items-center gap-1.5 hover:bg-purple-100 transition-all disabled:opacity-50"
-                    >
-                      <el-icon :class="{'is-loading': isGeneratingField.protagonist}"><Brush /></el-icon>
-                      AI 润色
-                    </button>
-                  </div>
-                </div>
-                <div class="relative">
-                  <el-input
-                    v-model="configForm.protagonistDesc"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="请输入主角的身份、性格、核心目标等..."
-                    class="custom-textarea-v2"
-                  />
-                  <div v-if="isGeneratingField.protagonist" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-[2px] rounded-xl flex items-center justify-center z-10">
-                    <div class="flex flex-col items-center gap-2">
-                      <el-icon class="is-loading text-indigo-600" :size="20"><Loading /></el-icon>
-                      <span class="text-[10px] font-black text-indigo-600 animate-pulse">AI 正在构思中...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 2: Conflict -->
-            <div v-if="currentStep === 2" class="animate-fade-in space-y-6">
-              <div class="mb-6">
-                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">设定核心冲突</h3>
-                <p class="text-slate-400 text-sm">冲突决定了故事的节奏与看点，选择一个吸睛的设定。</p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-4">
-                <div 
-                  v-for="opt in conflictOptions" 
-                  :key="opt.label"
-                  @click="configForm.conflictSetting = opt.label"
-                  class="p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1"
-                  :class="configForm.conflictSetting === opt.label ? 'border-purple-500 bg-purple-50/30 dark:bg-purple-900/20 shadow-xl shadow-purple-500/5' : 'border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-700 bg-white dark:bg-slate-800'"
-                >
-                  <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all" :class="configForm.conflictSetting === opt.label ? 'bg-purple-600 text-white' : ''">
-                    <el-icon :size="20"><component :is="opt.icon" /></el-icon>
-                  </div>
-                  <div class="flex-1">
-                    <h4 class="font-black text-slate-800 dark:text-white mb-0.5 text-sm">{{ opt.label }}</h4>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">{{ opt.desc }}</p>
-                  </div>
-                  <div v-if="configForm.conflictSetting === opt.label" class="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center text-white">
-                    <el-icon :size="12"><Check /></el-icon>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Custom Conflict Input -->
-              <div v-if="configForm.conflictSetting === '自定义'" class="mt-4 animate-fade-in">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">核心冲突详细设定</label>
-                  <div class="flex gap-2">
-                    <button 
-                      @click="handleAIFeature('conflict', 'generate')"
-                      :disabled="isGeneratingField.conflict"
-                      class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-[10px] font-black flex items-center gap-1.5 hover:bg-indigo-100 transition-all disabled:opacity-50"
-                    >
-                      <el-icon :class="{'is-loading': isGeneratingField.conflict}"><MagicStick /></el-icon>
-                      AI 生成
-                    </button>
-                    <button 
-                      @click="handleAIFeature('conflict', 'polish')"
-                      :disabled="isGeneratingField.conflict || !configForm.conflictDesc"
-                      class="px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg text-[10px] font-black flex items-center gap-1.5 hover:bg-purple-100 transition-all disabled:opacity-50"
-                    >
-                      <el-icon :class="{'is-loading': isGeneratingField.conflict}"><Brush /></el-icon>
-                      AI 润色
-                    </button>
-                  </div>
-                </div>
-                <div class="relative">
-                  <el-input
-                    v-model="configForm.conflictDesc"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="请输入核心冲突的具体内容、爆发点及对主角的影响..."
-                    class="custom-textarea-v2"
-                  />
-                  <div v-if="isGeneratingField.conflict" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-[2px] rounded-xl flex items-center justify-center z-10">
-                    <div class="flex flex-col items-center gap-2">
-                      <el-icon class="is-loading text-indigo-600" :size="20"><Loading /></el-icon>
-                      <span class="text-[10px] font-black text-indigo-600 animate-pulse">AI 正在编织冲突...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 3: Parameters -->
-            <div v-if="currentStep === 3" class="animate-fade-in space-y-8">
-              <div class="mb-6">
-                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">发行与参数</h3>
-                <p class="text-slate-400 text-sm">设定剧本的目标受众与体量，优化内容产出。</p>
-              </div>
-
-              <div class="space-y-6">
-                <div class="space-y-3">
-                  <label class="text-sm font-black text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 目标受众
-                  </label>
-                  <div class="flex flex-wrap gap-3">
-                    <div 
-                      v-for="aud in audienceOptions" 
-                      :key="aud"
-                      @click="configForm.targetAudience = aud"
-                      class="px-6 py-2.5 rounded-xl border-2 font-bold text-sm cursor-pointer transition-all"
-                      :class="configForm.targetAudience === aud ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 text-slate-500 hover:border-indigo-200'"
-                    >
-                      {{ aud }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="space-y-4">
-                  <label class="text-sm font-black text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 剧本规格
-                  </label>
-                  
-                  <div class="space-y-3">
-                    <div class="flex items-center gap-2">
-                      <span class="text-[12px] font-bold text-slate-500">生成集数</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4">
-                      <div 
-                        v-for="opt in episodeOptions" 
-                        :key="opt.label"
-                        @click="configForm.episodesCount = opt.count"
-                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all text-center group"
-                        :class="configForm.episodesCount === opt.count ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-200'"
-                      >
-                        <div class="text-lg font-black mb-1" :class="configForm.episodesCount === opt.count ? 'text-indigo-600' : 'text-slate-800 dark:text-white'">{{ opt.count }} 集</div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ opt.label }}</div>
-                        <p class="text-[10px] text-slate-400 leading-tight group-hover:text-slate-500">{{ opt.desc }}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3 pt-2">
-                    <div class="flex items-center gap-2">
-                      <span class="text-[12px] font-bold text-slate-500">单集时长 (秒)</span>
-                      <el-tooltip content="AI生成时会以此为参考，但时长会有一定浮动" placement="top">
-                        <el-icon class="text-slate-400 cursor-help hover:text-indigo-500"><QuestionFilled /></el-icon>
-                      </el-tooltip>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <el-slider 
-                        v-model="configForm.expectedDuration" 
-                        :min="30" 
-                        :max="300" 
-                        :step="10"
-                        class="flex-1 custom-slider"
-                      />
-                      <div class="w-20 px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-center font-black text-indigo-600">
-                        {{ configForm.expectedDuration }}s
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="mt-auto pt-10 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
-              <button 
-                v-if="currentStep > 1"
-                @click="prevStep" 
-                class="flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-              >
-                <el-icon><ArrowLeft /></el-icon> 上一步
-              </button>
-              <div v-else></div>
-
-              <button 
-                @click="nextStep"
-                :disabled="currentStep === 1 && !configForm.protagonistSetting || currentStep === 2 && !configForm.conflictSetting"
-                class="flex items-center gap-2 px-10 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
-              >
-                <span>{{ currentStep === 3 ? '开始智能创作' : '下一步' }}</span>
-                <el-icon v-if="currentStep < 3"><ArrowRight /></el-icon>
-                <el-icon v-else><MagicStick /></el-icon>
-              </button>
             </div>
           </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 pt-6 flex items-center justify-end border-t border-slate-100 dark:border-slate-800">
+          <button 
+            @click="finishConfig"
+            :disabled="!configForm.protagonistSetting || !configForm.conflictSetting"
+            class="flex items-center gap-2 px-10 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+          >
+            <el-icon><MagicStick /></el-icon>
+            <span>开始智能创作</span>
+          </button>
         </div>
       </div>
     </el-dialog>
@@ -747,20 +606,6 @@ const episodeOptions = [
   { label: '标准版', count: 80, desc: '主流配置，内容充实' },
   { label: '长篇版', count: 120, desc: '宏大叙事，深度刻画' }
 ];
-
-const nextStep = () => {
-  if (currentStep.value < 3) {
-    currentStep.value++;
-  } else {
-    finishConfig();
-  }
-};
-
-const prevStep = () => {
-  if (currentStep.value > 1) {
-    currentStep.value--;
-  }
-};
 
 const handleAIFeature = (field: 'protagonist' | 'conflict', action: 'generate' | 'polish') => {
   isGeneratingField[field] = true;
