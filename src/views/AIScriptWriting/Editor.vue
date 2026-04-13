@@ -206,20 +206,13 @@
       <div v-show="showAiSidePanel" class="flex flex-col h-full w-full">
         <!-- Panel Header -->
         <div class="flex items-center justify-between p-3 border-b shrink-0" :class="rightPanelHeaderClass">
-          <div class="flex gap-1 bg-slate-100/50 p-1 rounded-lg" :class="isLight ? 'bg-slate-100' : 'bg-slate-700/50'">
+          <div class="flex items-center">
             <button 
-              class="px-3 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-1"
-              :class="activeTabClass(activeRightTab === 'chat')"
-              @click="activeRightTab = 'chat'"
+              @click="showInstructionsDialog = true"
+              class="h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
             >
-              <el-icon><ChatDotRound /></el-icon> AI 助手
-            </button>
-            <button 
-              class="px-3 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-1"
-              :class="activeTabClass(activeRightTab === 'optimize')"
-              @click="activeRightTab = 'optimize'"
-            >
-              <el-icon><VideoCamera /></el-icon> 短剧优化
+              <el-icon :size="12"><QuestionFilled /></el-icon>
+              <span>指令说明</span>
             </button>
           </div>
           <el-button link size="small" :class="isLight ? 'text-slate-400 hover:text-slate-600' : 'text-slate-500 hover:text-slate-300'" @click="showAiSidePanel = false">
@@ -538,6 +531,81 @@
         </div>
       </div>
     </el-drawer>
+
+    <!-- AI Feature Instructions Dialog -->
+    <el-dialog 
+      v-model="showInstructionsDialog" 
+      title="AI 智能助手 - 功能使用说明" 
+      width="850px" 
+      class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" 
+      :show-close="false"
+    >
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><MagicStick /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">AI 助手功能指令说明</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+
+      <div class="px-6 py-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-6 p-4 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100/50 dark:border-indigo-800/50">
+          <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-sm mb-2">
+            <el-icon><InfoFilled /></el-icon>
+            <span>核心工作流：想法优先</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+            为了获得最佳生成效果，请遵循以下步骤：<br/>
+            1. 在 AI 助手的输入框中输入您的具体构思或改进要求。<br/>
+            2. (可选) 在编辑器中选中一段文字作为上下文。<br/>
+            3. 点击对应的功能标签。AI 将结合您的想法与选中的文字进行智能处理。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div 
+            v-for="item in aiInstructions" 
+            :key="item.tag"
+            class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all group"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-black">{{ item.tag }}</span>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">AI Intelligent Mode</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <span class="w-1 h-1 rounded-full bg-indigo-500"></span>功能描述
+                </div>
+                <p class="text-[13px] text-slate-700 dark:text-slate-200 font-bold leading-relaxed">{{ item.behavior }}</p>
+              </div>
+              <div>
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <span class="w-1 h-1 rounded-full bg-purple-500"></span>操作指南
+                </div>
+                <p class="text-[12px] text-slate-500 dark:text-slate-400 font-medium">{{ item.instruction }}</p>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                <div class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-1.5">推荐指令示例</div>
+                <p class="text-[12px] text-slate-600 dark:text-slate-300 italic font-medium leading-relaxed">{{ item.command }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showInstructionsDialog = false" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl transition-colors shadow-lg shadow-indigo-500/20">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -546,7 +614,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import CharacterCount from '@tiptap/extension-character-count'
-import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft, Check, InfoFilled } from '@element-plus/icons-vue'
+import { EditPen, MagicStick, Reading, User, ChatDotRound, Position, ArrowLeft, Top, Scissor, ScaleToOriginal, DataLine, MoreFilled, Close, Refresh, Plus, Delete, VideoCamera, Goods, Location, DArrowRight, DArrowLeft, Check, InfoFilled, QuestionFilled } from '@element-plus/icons-vue'
 import { useLoreStore, type Character, type Prop, type Scene } from '@/stores/useLoreStore'
 import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
@@ -668,6 +736,70 @@ const aiOverlayContext = ref('')
 const chatInput = ref('')
 const chatHistory = ref<{role: string, content: string}[]>([])
 const isAiThinking = ref(false)
+const showInstructionsDialog = ref(false)
+
+const aiInstructions = [
+  { 
+    tag: '续写', 
+    behavior: '根据当前上下文逻辑，预测并生成后续剧情或对话。', 
+    instruction: '在输入框输入你想续写的剧情走向，点击续写。',
+    command: '“沈念安在雨中遇到了周助理，请续写他们的初次交谈。”' 
+  },
+  { 
+    tag: '润色', 
+    behavior: '在不改变原意的前提下，优化遣词造句，提升文学性和可读性。', 
+    instruction: '在输入框描述文风要求，点击润色。',
+    command: '“润色这段心理活动，使其显得更加凄美、决绝。”' 
+  },
+  { 
+    tag: '扩写', 
+    behavior: '增加细节描写（环境、动作、神态），使干瘪的句子变得丰满。', 
+    instruction: '输入需要增加的细节重点，点击扩写。',
+    command: '“扩写这段雨景描写，突出环境的压抑感和主角的无助。”' 
+  },
+  { 
+    tag: '改写', 
+    behavior: '改变叙述视角、语气或文风，重新演绎同一段剧情。', 
+    instruction: '在输入框指定新的视角或文风，点击改写。',
+    command: '“用更有悬疑感的方式改写这段沈薇薇出场的剧情。”' 
+  },
+  { 
+    tag: '优化对话', 
+    behavior: '调整对白，使其更符合人设、更具张力或更具口语化。', 
+    instruction: '输入角色性格补充，点击优化对话。',
+    command: '“优化顾承泽的表白对话，让他显得更加深情且带有愧疚。”' 
+  },
+  { 
+    tag: '增加冲突', 
+    behavior: '在现有场景中引入突发矛盾或利益对立，提升剧情爆发力。', 
+    instruction: '输入冲突引子，点击增加冲突。',
+    command: '“在对峙中增加一个关于沈家继承权的秘密冲突。”' 
+  },
+  { 
+    tag: '情感渲染', 
+    behavior: '强化角色内心波动和氛围营造，引发读者情感共鸣。', 
+    instruction: '输入情感关键词，点击情感渲染。',
+    command: '“情感渲染：沈念安看着被撕毁的致辞稿时的绝望心境。”' 
+  },
+  { 
+    tag: '五感填充', 
+    behavior: '从视觉、听觉、嗅觉、味觉、触觉多维度补全细节，增强临场感。', 
+    instruction: '输入重点感官，点击五感填充。',
+    command: '“五感填充：描写宴会厅里的香槟味、嘈杂的人声和冰冷的手心。”' 
+  },
+  { 
+    tag: '内容升华', 
+    behavior: '提炼主题思想，加入富有哲理或金句性质的总结，提升深度。', 
+    instruction: '输入核心哲理，点击内容升华。',
+    command: '“升华：在主角离开时，加入一段关于成长与告别的哲思金句。”' 
+  },
+  { 
+    tag: '增加反差', 
+    behavior: '制造人物行为与环境、或不同人物之间的强烈对比，突出张力。', 
+    instruction: '输入对比元素，点击增加反差。',
+    command: '“增加反差：在繁华璀璨的宴会背景下，衬托沈念安内心的荒凉与孤独。”' 
+  }
+];
 
 // Bubble Menu
 const aiCommandInput = ref('')
@@ -1504,7 +1636,10 @@ const aiAction = (action: string) => {
   const selection = editor.value.state.selection
   const text = editor.value.state.doc.textBetween(selection.from, selection.to, ' ')
   
-  if (!text) return ElMessage.warning('请先选择一段文本')
+  // Requirement: First enter user's idea in the input box, then use these labels.
+  if (!aiCommandInput.value.trim()) {
+    return ElMessage.warning('请先在输入框输入你的想法，然后再点击功能标签')
+  }
 
   let actionName = ''
   if (action === 'polish') { actionName = '润色'; }
@@ -1513,21 +1648,29 @@ const aiAction = (action: string) => {
   else if (action === 'shorten') { actionName = '缩写'; }
   else if (action === 'continue') { actionName = '续写'; }
   
+  // Combine with manual input if exists
+  const finalActionName = aiCommandInput.value.trim() 
+    ? `${actionName}：${aiCommandInput.value.trim()}`
+    : actionName;
+
   // Open full screen overlay for all actions as requested
   aiOverlayOriginalText.value = text
-  aiOverlayActionType.value = actionName
+  aiOverlayActionType.value = finalActionName
   
   // Build context
   const chars = loreStore.characters.map(c => `${c.name}(${c.role})`).join('、')
   aiOverlayContext.value = chars ? `相关角色：${chars}` : ''
   
   showAiOverlay.value = true
+  
+  // Clear input after use
+  aiCommandInput.value = ''
 }
 
 const handleAiOverlayApply = (content: string) => {
   if (!editor.value) return
   
-  if (aiOverlayActionType.value === '续写') {
+  if (aiOverlayActionType.value.includes('续写')) {
     // Append for continue writing
     const selection = editor.value.state.selection
     editor.value.commands.setTextSelection(selection.to)
@@ -1537,7 +1680,7 @@ const handleAiOverlayApply = (content: string) => {
     editor.value.commands.insertContent(content)
   }
   
-  ElMessage.success(`已应用${aiOverlayActionType.value}结果`)
+  ElMessage.success(`已应用 AI 处理结果`)
 }
 
 const handleScriptOptimizationApply = (content: string) => {
@@ -1600,6 +1743,10 @@ const applyRecommendedCommand = (cmd: string) => {
        const text = editor.value.state.doc.textBetween(selection.from, selection.to, ' ')
        originalText.value = text
     }
+    // If there is manual input, use it as a hint for the generation
+    if (aiCommandInput.value.trim()) {
+      ElMessage.info(`将结合您的想法“${aiCommandInput.value.trim()}”进行感官填充`);
+    }
     showFiveSensesDialog.value = true
     return
   }
@@ -1611,10 +1758,14 @@ const aiActionWithPrompt = (promptCmd: string) => {
   const selection = editor.value.state.selection
   const text = editor.value.state.doc.textBetween(selection.from, selection.to, ' ')
   
+  // Combine prompt command with user idea from input box
+  const userIdea = aiCommandInput.value.trim()
+  const fullPrompt = userIdea ? `${promptCmd}：${userIdea}` : promptCmd
+
   if (text) {
      // If text selected, use the new overlay
      aiOverlayOriginalText.value = text
-     aiOverlayActionType.value = promptCmd
+     aiOverlayActionType.value = fullPrompt
      
      // Build context
      const chars = loreStore.characters.map(c => `${c.name}(${c.role})`).join('、')
@@ -1622,13 +1773,18 @@ const aiActionWithPrompt = (promptCmd: string) => {
      
      showAiOverlay.value = true
   } else {
-     // Direct insert if no text selected (fallback, though usually these commands need context)
-     const fullPrompt = `根据指令"${promptCmd}"生成内容`
+     // Direct insert if no text selected
+     // Use input as primary idea if available
+     const promptToUse = userIdea ? `${promptCmd}：${userIdea}` : `根据指令"${promptCmd}"生成内容`
+     
      isAutoWriting.value = true
-     streamLLMResponse(fullPrompt, (chunk) => {
+     streamLLMResponse(promptToUse, (chunk) => {
        editor.value?.commands.insertContent(chunk)
      }, () => isAutoWriting.value = false)
   }
+  
+  // Clear input after use
+  aiCommandInput.value = ''
 }
 
 const applyAiChanges = () => {

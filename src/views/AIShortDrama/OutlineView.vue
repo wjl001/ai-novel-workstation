@@ -404,8 +404,14 @@
                 <span class="text-[9px] text-indigo-500 dark:text-indigo-400 font-black uppercase tracking-widest mt-1 opacity-70">Smart Creative Assistant</span>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button class="w-8 h-8 flex items-center justify-center rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-indigo-600 transition-all shadow-sm border border-slate-100 dark:border-slate-600"><el-icon><Setting /></el-icon></button>
+            <div class="flex items-center">
+              <button 
+                @click="showInstructionsDialog = true"
+                class="h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+              >
+                <el-icon :size="12"><QuestionFilled /></el-icon>
+                <span>指令说明</span>
+              </button>
             </div>
           </div>
 
@@ -641,6 +647,81 @@
         </button>
       </div>
     </el-dialog>
+
+    <!-- AI Feature Instructions Dialog -->
+    <el-dialog 
+      v-model="showInstructionsDialog" 
+      title="AI 智能助手 - 功能使用说明" 
+      width="850px" 
+      class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" 
+      :show-close="false"
+    >
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><MagicStick /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">AI 助手功能指令说明</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+
+      <div class="px-6 py-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-6 p-4 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100/50 dark:border-indigo-800/50">
+          <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-sm mb-2">
+            <el-icon><InfoFilled /></el-icon>
+            <span>核心工作流：想法优先</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+            为了获得最佳生成效果，请遵循以下步骤：<br/>
+            1. 在 AI 助手的输入框中输入您的具体构思或改进要求。<br/>
+            2. (可选) 在左侧编辑器中选中一段文字作为上下文。<br/>
+            3. 点击下方对应的功能标签。AI 将结合您的想法与选中的文字进行智能处理。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div 
+            v-for="item in aiInstructions" 
+            :key="item.tag"
+            class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all group"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-black">{{ item.tag }}</span>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">AI Intelligent Mode</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <span class="w-1 h-1 rounded-full bg-indigo-500"></span>功能描述
+                </div>
+                <p class="text-[13px] text-slate-700 dark:text-slate-200 font-bold leading-relaxed">{{ item.behavior }}</p>
+              </div>
+              <div>
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <span class="w-1 h-1 rounded-full bg-purple-500"></span>操作指南
+                </div>
+                <p class="text-[12px] text-slate-500 dark:text-slate-400 font-medium">{{ item.instruction }}</p>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                <div class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-1.5">推荐指令示例</div>
+                <p class="text-[12px] text-slate-600 dark:text-slate-300 italic font-medium leading-relaxed">{{ item.command }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showInstructionsDialog = false" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl transition-colors shadow-lg shadow-indigo-500/20">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -720,6 +801,24 @@ const episodeRangeOptions = computed(() => {
   return options;
 });
 
+const episodeStats = computed(() => {
+  if (!form.value || !form.value.episodesData) {
+    return { total: 0, finished: 0, unfinished: 0, percentage: 0 };
+  }
+  const total = form.value.episodesData.length;
+  let finished = 0;
+  for (const ep of form.value.episodesData) {
+    const content = ep.content || '';
+    const cleanContent = content.replace(/<p><\/p>|<p>------------------<\/p>|<br>|[\s\n\t\r]/g, '').trim();
+    if (cleanContent.length > 0) {
+      finished++;
+    }
+  }
+  const unfinished = total - finished;
+  const percentage = total === 0 ? 0 : Math.round((finished / total) * 100);
+  return { total, finished, unfinished, percentage };
+});
+
 // Form Data
 const form = ref<DramaForm | null>(null);
 const errors = reactive<Record<string, string>>({});
@@ -729,6 +828,70 @@ const isLeftCollapsed = ref(false);
 const isRightPanelVisible = ref(true);
 const leftPanelWidth = ref(320);
 const isEditingLocked = ref(true);
+const showInstructionsDialog = ref(false);
+
+const aiInstructions = [
+  { 
+    tag: '续写', 
+    behavior: '根据当前上下文逻辑，预测并生成后续剧情或对话。', 
+    instruction: '输入一段已有的剧情概括或对话开头，点击续写。',
+    command: '“沈念安在雨中遇到了周助理，请续写他们的初次交谈。”' 
+  },
+  { 
+    tag: '润色', 
+    behavior: '在不改变原意的前提下，优化遣词造句，提升文学性和可读性。', 
+    instruction: '在输入框描述你想要的文风（如：凄美、干练），点击润色。',
+    command: '“润色这段心理活动，使其显得更加凄美、决绝。”' 
+  },
+  { 
+    tag: '扩写', 
+    behavior: '增加细节描写（环境、动作、神态），使干瘪的句子变得丰满。', 
+    instruction: '输入需要增加的细节重点（如：环境压抑感），点击扩写。',
+    command: '“扩写这段雨景描写，突出环境的压抑感和主角的无助。”' 
+  },
+  { 
+    tag: '改写', 
+    behavior: '改变叙述视角、语气或文风，重新演绎同一段剧情。', 
+    instruction: '在输入框指定新的视角或语气（如：悬疑感），点击改写。',
+    command: '“用更有悬疑感的方式改写这段沈薇薇出场的剧情。”' 
+  },
+  { 
+    tag: '优化对话', 
+    behavior: '调整对白，使其更符合人设、更具张力或更具口语化。', 
+    instruction: '输入对角色的性格补充或对话目的，点击优化对话。',
+    command: '“优化顾承泽的表白对话，让他显得更加深情且带有愧疚。”' 
+  },
+  { 
+    tag: '增加冲突', 
+    behavior: '在现有场景中引入突发矛盾或利益对立，提升剧情爆发力。', 
+    instruction: '输入冲突的引子或秘密，点击增加冲突。',
+    command: '“在对峙中增加一个关于沈家继承权的秘密冲突。”' 
+  },
+  { 
+    tag: '情感渲染', 
+    behavior: '强化角色内心波动和氛围营造，引发读者情感共鸣。', 
+    instruction: '输入想要强化的情感（如：绝望、狂喜），点击情感渲染。',
+    command: '“情感渲染：沈念安看着被撕毁的致辞稿时的绝望心境。”' 
+  },
+  { 
+    tag: '五感填充', 
+    behavior: '从视觉、听觉、嗅觉、味觉、触觉多维度补全细节，增强临场感。', 
+    instruction: '输入想要重点描写的感官，点击五感填充。',
+    command: '“五感填充：描写宴会厅里的香槟味、嘈杂的人声和冰冷的手心。”' 
+  },
+  { 
+    tag: '内容升华', 
+    behavior: '提炼主题思想，加入富有哲理或金句性质的总结，提升深度。', 
+    instruction: '输入想要表达的核心哲理，点击内容升华。',
+    command: '“升华：在主角离开时，加入一段关于成长与告别的哲思金句。”' 
+  },
+  { 
+    tag: '增加反差', 
+    behavior: '制造人物行为与环境、或不同人物之间的强烈对比，突出张力。', 
+    instruction: '输入对比的两个元素（如：繁华背景与荒凉内心），点击增加反差。',
+    command: '“增加反差：在繁华璀璨的宴会背景下，衬托沈念安内心的荒凉与孤独。”' 
+  }
+];
 
 // Editor State
 const tiptapEditor = ref<Editor | null>(null);
@@ -1030,16 +1193,21 @@ const applyAIAction = (actionName: string) => {
   contextMenuVisible.value = false;
   if (!tiptapEditor.value) return;
 
+  // Requirement: First enter user's idea in the input box, then use these labels.
+  if (!aiPromptInput.value.trim()) {
+    ElMessage.warning('请先在输入框输入你的想法，然后再点击功能标签');
+    return;
+  }
+
   const { from, to } = tiptapEditor.value.state.selection;
   const selectedText = tiptapEditor.value.state.doc.textBetween(from, to, ' ');
   
   // Use quotedText if it's set and no new selection is made, or use current selection
   const sourceText = selectedText.trim() || quotedText.value;
 
-  // Combine tag action with manual input if exists
-  const fullPrompt = aiPromptInput.value.trim() 
-    ? `${actionName}：${aiPromptInput.value.trim()}`
-    : actionName;
+  // Combine tag action with manual input
+  const userIdea = aiPromptInput.value.trim();
+  const fullPrompt = userIdea ? `${actionName}：${userIdea}` : actionName;
 
   // Initialize proposal state
   aiProposal.isActive = true;
@@ -1050,6 +1218,7 @@ const applyAIAction = (actionName: string) => {
   aiProposal.selection = { from, to };
 
   // Clear quote and input after use
+  const usedIdea = aiPromptInput.value;
   quotedText.value = '';
   aiPromptInput.value = '';
 
@@ -1063,11 +1232,11 @@ const applyAIAction = (actionName: string) => {
     }
   });
 
-  // Mock AI generation insertion
+  // Mock AI generation insertion - Now using the input to make it feel "combined"
   let i = 0;
   const mockText = sourceText
-    ? `此时，沈念安深吸一口气，雨水混合着泪水流下面庞。她缓缓抬起头，迎向那道深邃的目光。每一个毛孔似乎都在颤栗，但她的脊背挺得笔直，像是要在这一场绝望的暴雨中开出一朵带刺的玫瑰。`
-    : `劳斯莱斯的车门缓缓打开，一个黑影撑着伞走下车，伞尖滴落的水珠在雨幕中划出冰冷的弧线。沈念安看着那双锃亮的皮鞋停在自己面前，听到了一个低沉且富有磁性的声音。`;
+    ? `【AI ${actionName} 建议】针对您的想法“${usedIdea || '优化内容'}”，我将原文进行了深度调整：此时，沈念安深吸一口气，雨水混合着泪水流下面庞。她缓缓抬起头，迎向那道深邃的目光。每一个毛孔似乎都在颤栗，但她的脊背挺得笔直，像是要在这一场绝望的暴雨中开出一朵带刺的玫瑰。`
+    : `【AI ${actionName} 生成】基于您的想法“${usedIdea}”：劳斯莱斯的车门缓缓打开，一个黑影撑着伞走下车，伞尖滴落的水珠在雨幕中划出冰冷的弧线。沈念安看着那双锃亮的皮鞋停在自己面前，听到了一个低沉且富有磁性的声音。`;
 
   const interval = setInterval(() => {
     aiProposal.modified += mockText.charAt(i);
@@ -1077,7 +1246,7 @@ const applyAIAction = (actionName: string) => {
       aiProposal.isGenerating = false;
       ElMessage.success(`AI ${actionName} 已构思完成，请查看对比`);
     }
-  }, 25);
+  }, 20);
 };
 
 const acceptAIProposal = () => {
