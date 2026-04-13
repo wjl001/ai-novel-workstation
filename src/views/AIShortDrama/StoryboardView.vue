@@ -1364,7 +1364,9 @@ const handleSaveScriptInline = () => {
     // 使用 getHTML() 确保保存时保留标签结构（胶囊样式）
     const newScript = editor.value.getHTML();
     currentScript.value = newScript;
+      console.log(newScript);
     if (timelineScenes.value[currentSceneIdx.value]) {
+    
       timelineScenes.value[currentSceneIdx.value].modified = true;
     }
     isEditingScript.value = false;

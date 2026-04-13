@@ -74,10 +74,11 @@
                         <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
                         <div class="flex items-center gap-1">
                           <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 transition-all shadow-sm" title="清空内容" @click="aiPrompt = ''" v-if="aiPrompt">
-                            <el-icon :size="14"><Delete /></el-icon>
+                            <el-icon :size="14" class="text-rose-400 dark:text-rose-500"><Delete /></el-icon>
                           </button>
-                          <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 transition-all shadow-sm" title="优化描述">
-                            <el-icon :size="14"><Brush /></el-icon>
+                          <button class="h-8 px-3 rounded-full flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all shadow-sm text-[11px] font-black border border-indigo-100 dark:border-indigo-800" title="优化描述">
+                            <el-icon :size="14" class="text-indigo-500"><Brush /></el-icon>
+                            <span>AI 润色</span>
                           </button>
                         </div>
                       </div>
@@ -219,169 +220,263 @@
       </div>
     </div>
 
-    <!-- Hot Topic Configuration Dialog -->
     <el-dialog 
       v-model="showHotTopicDialog" 
       :title="null"
-      width="700px" 
-      class="hot-topic-dialog rounded-[32px] overflow-hidden" 
+      width="860px" 
+      class="hot-topic-dialog-v2 overflow-hidden" 
       :show-close="false"
       destroy-on-close
+      top="2vh"
     >
-      <div class="relative flex flex-col bg-white dark:bg-slate-900 p-8">
-        <!-- Close Button -->
-        <button 
-          @click="showHotTopicDialog = false" 
-          class="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100/50 dark:bg-slate-800/50 text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-all shadow-sm"
-        >
-          <el-icon :size="20"><Close /></el-icon>
-        </button>
+      <div class="relative flex flex-col bg-slate-50 dark:bg-slate-950 max-h-[96vh]">
+        <!-- Glassmorphism Background Elements -->
+        <div class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="absolute top-1/2 -right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+        
+        <!-- Header: Hero Style -->
+        <div class="relative px-8 pt-5 pb-3 shrink-0 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5 dark:from-indigo-400/5 dark:to-purple-400/5"></div>
+          
+          <!-- Close Button -->
+          <button 
+            @click="showHotTopicDialog = false" 
+            class="absolute top-4 right-8 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-md text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-all shadow-sm border border-white/20 dark:border-slate-700/20"
+          >
+            <el-icon :size="18"><Close /></el-icon>
+          </button>
 
-        <div class="mb-6">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-              <el-icon :size="20"><MagicStick /></el-icon>
+          <div class="relative flex items-end gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 ring-4 ring-white dark:ring-slate-800">
+              <el-icon :size="24"><MagicStick /></el-icon>
             </div>
-            <div>
-              <h2 class="text-xl font-black text-slate-800 dark:text-white">基础设定</h2>
-              <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Basic Settings</p>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+                  开启灵感之门
+                </h2>
+                <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-md">
+                  AI Creator
+                </span>
+              </div>
+              <p class="text-[12px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">
+                为您精心准备了默认配置，每一项都可以由 AI 深度润色。
+              </p>
             </div>
           </div>
-          <p class="text-[13px] text-slate-500 dark:text-slate-400 font-medium">AI 将根据您的选择，为您生成专属的爆款剧本大纲。</p>
         </div>
 
-        <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-6">
+        <!-- Body: Card Layout -->
+        <div class="flex-1 overflow-y-hidden px-8 pb-4 space-y-3 relative z-10">
           
-          <!-- Custom Genre Input -->
-          <div v-if="selectedTopic?.isCustom" class="space-y-2">
-            <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">自定义题材名称</label>
+          <!-- Custom Genre Input (Conditional) -->
+          <div v-if="selectedTopic?.isCustom" class="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white dark:border-slate-800 shadow-sm animate-fade-in">
+            <label class="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">自定义题材</label>
             <el-input 
               v-model="configForm.genre" 
-              placeholder="请输入您的题材，如：未来末世、职场逆袭等..." 
-              class="custom-input-v2"
+              placeholder="输入题材名称，如：未来末世、职场逆袭..." 
+              class="custom-input-v3"
             />
           </div>
 
-          <div class="grid grid-cols-2 gap-6">
-            <!-- Protagonist Select -->
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>主角设定
-              </label>
-              <el-select v-model="configForm.protagonistSetting" placeholder="请选择或自定义" class="w-full" size="large">
-                <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label" class="!h-auto py-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 shrink-0">
-                      <el-icon><component :is="opt.icon" /></el-icon>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="font-bold text-[13px] leading-tight">{{ opt.label }}</span>
-                      <span class="text-[11px] text-slate-400 leading-tight">{{ opt.desc }}</span>
-                    </div>
+          <!-- Section 1: Story Background (World & Era) -->
+          <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-indigo-50/90 to-white/90 dark:from-indigo-950/30 dark:to-slate-900/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-indigo-200/20 dark:shadow-none relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <div class="flex items-center gap-2">
+                <!-- <span class="px-2 py-0.5 bg-indigo-500 text-white text-[10px] font-black rounded-md">1. 最先写</span> -->
+                <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">故事背景</span>
+              </div>
+              <button @click="handleAIFeature('storyBackground', 'polish')" :disabled="isGeneratingField.storyBackground" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100/50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all text-[11px] font-black shadow-sm border border-indigo-200 dark:border-indigo-800">
+                <el-icon :size="14" class="text-indigo-500" :class="{'is-loading': isGeneratingField.storyBackground}"><Brush /></el-icon>
+                <span>AI 润色</span>
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400 font-medium -mt-1">世界观、时代背景、生存环境（告诉 AI：故事发生在什么地方、什么时代）</p>
+            <el-input v-model="configForm.storyBackground" type="textarea" :rows="1" placeholder="例如：2077年的霓虹都市，贫富差距巨大，底层人民在赛博阴影中挣扎..." class="custom-textarea-v3 flex-1" />
+          </div>
+
+          <!-- Section 2: Identity & Style -->
+          <div class="grid grid-cols-3 gap-4">
+            <!-- Protagonist -->
+            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                  <el-icon><User /></el-icon>
+                </div>
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <!-- <span class="text-[10px] font-black text-indigo-500">2</span> -->
+                    <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">主角设定</label>
+                  </div>
+                </div>
+              </div>
+              <el-select v-model="configForm.protagonistSetting" class="w-full custom-select-v3" size="default">
+                <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+                   <div class="flex items-center justify-between w-full">
+                    <span class="font-bold text-[13px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+                    <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="14"><Check /></el-icon>
                   </div>
                 </el-option>
               </el-select>
             </div>
 
-            <!-- Conflict Select -->
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1 h-3 bg-purple-500 rounded-full"></span>核心冲突
-              </label>
-              <el-select v-model="configForm.conflictSetting" placeholder="请选择或自定义" class="w-full" size="large">
-                <el-option v-for="opt in conflictOptions" :key="opt.label" :label="opt.label" :value="opt.label" class="!h-auto py-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 shrink-0">
-                      <el-icon><component :is="opt.icon" /></el-icon>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="font-bold text-[13px] leading-tight">{{ opt.label }}</span>
-                      <span class="text-[11px] text-slate-400 leading-tight">{{ opt.desc }}</span>
-                    </div>
+            <!-- Video Style -->
+            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-7 h-7 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/20">
+                  <el-icon><Picture /></el-icon>
+                </div>
+                <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">视频风格</label>
+              </div>
+              <el-select v-model="configForm.videoStyle" class="w-full custom-select-v3" size="default">
+                <el-option v-for="opt in videoStyleOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+                    <el-icon v-if="configForm.videoStyle === opt.label" class="text-purple-500" :size="14"><Check /></el-icon>
+                  </div>
+                </el-option>
+              </el-select>
+            </div>
+
+            <!-- Audience -->
+            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-pink-500/10 hover:border-pink-500/30 transition-all duration-300">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-7 h-7 rounded-lg bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-500/20">
+                  <el-icon><Star /></el-icon>
+                </div>
+                <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">目标受众</label>
+              </div>
+              <el-select v-model="configForm.targetAudience" class="w-full custom-select-v3" size="default">
+                <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="text-[13px] font-bold">{{ aud }}</span>
+                    <el-icon v-if="configForm.targetAudience === aud" class="text-pink-500" :size="14"><Check /></el-icon>
                   </div>
                 </el-option>
               </el-select>
             </div>
           </div>
 
-          <!-- Custom Textareas -->
-          <div class="grid grid-cols-2 gap-6" v-if="configForm.protagonistSetting === '自定义' || configForm.conflictSetting === '自定义'">
-            <div v-if="configForm.protagonistSetting === '自定义'" class="space-y-2 relative">
-               <div class="flex items-center justify-between">
-                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">主角详细设定</label>
-                  <button 
-                    @click="handleAIFeature('protagonist', 'generate')"
-                    :disabled="isGeneratingField.protagonist"
-                    class="text-indigo-600 hover:text-indigo-700 text-[11px] font-bold flex items-center gap-1"
-                  >
-                    <el-icon :class="{'is-loading': isGeneratingField.protagonist}"><MagicStick /></el-icon>AI 生成
-                  </button>
-               </div>
-               <el-input v-model="configForm.protagonistDesc" type="textarea" :rows="3" placeholder="主角身份、性格、核心目标..." class="custom-textarea-v2" />
+          <!-- Section 3: Story Setting & Synopsis -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Setting -->
+            <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+              <div class="flex items-center justify-between relative z-10">
+                <div class="flex items-center gap-2">
+                  <!-- <span class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-black rounded-md">3</span> -->
+                  <span class="text-[11px] font-black text-amber-600 uppercase tracking-widest">故事设定</span>
+                </div>
+                <button @click="handleAIFeature('storySetting', 'polish')" :disabled="isGeneratingField.storySetting" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/50 dark:bg-amber-900/30 text-amber-600 hover:bg-amber-100 transition-all text-[11px] font-black shadow-sm border border-amber-200 dark:border-amber-800">
+                  <el-icon :size="14" class="text-amber-500" :class="{'is-loading': isGeneratingField.storySetting}"><Brush /></el-icon>
+                  <span>AI 润色</span>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400 font-medium -mt-1">人物关系、核心矛盾、金手指、规则</p>
+              <el-input v-model="configForm.storySetting" type="textarea" :rows="1" placeholder="例如：主角拥有一种能听见植物心声的能力..." class="custom-textarea-v3 flex-1" />
             </div>
 
-            <div v-if="configForm.conflictSetting === '自定义'" class="space-y-2 relative" :class="{'col-start-2': configForm.protagonistSetting !== '自定义'}">
-               <div class="flex items-center justify-between">
-                  <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">冲突详细设定</label>
-                  <button 
-                    @click="handleAIFeature('conflict', 'generate')"
-                    :disabled="isGeneratingField.conflict"
-                    class="text-purple-600 hover:text-purple-700 text-[11px] font-bold flex items-center gap-1"
-                  >
-                    <el-icon :class="{'is-loading': isGeneratingField.conflict}"><MagicStick /></el-icon>AI 生成
-                  </button>
-               </div>
-               <el-input v-model="configForm.conflictDesc" type="textarea" :rows="3" placeholder="具体冲突、爆发点..." class="custom-textarea-v2" />
+            <!-- Synopsis -->
+            <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group border-indigo-500/30">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+              <div class="flex items-center justify-between relative z-10">
+                <div class="flex items-center gap-2">
+                  <!-- <span class="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-black rounded-md">4. 最后写</span> -->
+                  <span class="text-[11px] font-black text-emerald-600 uppercase tracking-widest">故事梗概</span>
+                </div>
+                <button @click="handleAIFeature('storySynopsis', 'polish')" :disabled="isGeneratingField.storySynopsis" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-100 transition-all text-[11px] font-black shadow-sm border border-emerald-200 dark:border-emerald-800">
+                  <el-icon :size="14" class="text-emerald-500" :class="{'is-loading': isGeneratingField.storySynopsis}"><Brush /></el-icon>
+                  <span>AI 润色</span>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400 font-medium -mt-1">完整剧情（起承转合）</p>
+              <el-input v-model="configForm.storySynopsis" type="textarea" :rows="1" placeholder="例如：原本平凡的少年意外救下了财阀之女，从此开启了..." class="custom-textarea-v3 flex-1" />
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-6">
-            <!-- Target Audience -->
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1 h-3 bg-pink-500 rounded-full"></span>目标受众
-              </label>
-              <el-select v-model="configForm.targetAudience" class="w-full" size="large">
-                <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud" />
-              </el-select>
+          <!-- Section 4: Technical Specs & Custom Settings -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Creation Specs Card -->
+            <div class="bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 p-4 rounded-[24px] border border-indigo-100/50 dark:border-indigo-500/20 shadow-inner flex flex-col gap-3">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
+                <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">创作规格 Specs</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Episodes -->
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                    <el-icon :size="12" class="text-indigo-500"><Collection /></el-icon>
+                    <label class="text-[11px] font-bold">生成集数</label>
+                  </div>
+                  <div class="relative group/input">
+                    <el-input v-model="configForm.episodesCount" placeholder="如：80" class="custom-input-v4" />
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-600/40">集</span>
+                  </div>
+                </div>
+
+                <!-- Duration -->
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                      <el-icon :size="12" class="text-purple-500"><Clock /></el-icon>
+                      <label class="text-[11px] font-bold">单集时长</label>
+                    </div>
+                  </div>
+                  <div class="relative group/input">
+                    <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v4 w-full" />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Episodes -->
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1 h-3 bg-blue-500 rounded-full"></span>生成集数
-              </label>
-              <el-select v-model="configForm.episodesCount" class="w-full" size="large">
-                <el-option v-for="opt in episodeOptions" :key="opt.count" :label="`${opt.count} 集 (${opt.label})`" :value="opt.count" />
-              </el-select>
+            <!-- Custom Protagonist Detail (Conditional) -->
+            <div v-if="configForm.protagonistSetting === '自定义'" class="p-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[24px] border border-white dark:border-slate-800 shadow-sm animate-fade-in flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <el-icon><EditPen /></el-icon>
+                  </div>
+                  <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">主角详细设定</label>
+                </div>
+                <button @click="handleAIFeature('protagonist', 'generate')" :disabled="isGeneratingField.protagonist" class="flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all text-[11px] font-black shadow-sm border border-indigo-100 dark:border-indigo-900/30">
+                  <el-icon class="text-indigo-500" :class="{'is-loading': isGeneratingField.protagonist}"><MagicStick /></el-icon>
+                  <span>AI 生成</span>
+                </button>
+              </div>
+              <el-input v-model="configForm.protagonistDesc" type="textarea" :rows="1" placeholder="主角身份、性格、核心目标、弱点..." class="custom-textarea-v3 flex-1" />
             </div>
-
-            <!-- Duration -->
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1 h-3 bg-emerald-500 rounded-full"></span>单集时长
-              </label>
-              <div class="flex items-center gap-2 h-10">
-                <el-input-number 
-                  v-model="configForm.expectedDuration" 
-                  :min="30" :max="300" :step="10" 
-                  controls-position="right"
-                  class="!w-full"
-                />
+            
+            <!-- Placeholder for alignment if not custom -->
+            <div v-else class="flex items-center justify-center p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[24px] opacity-40">
+              <div class="text-center">
+                <el-icon :size="20" class="text-slate-300 mb-1"><MagicStick /></el-icon>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">自定义主角细节</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-8 pt-6 flex items-center justify-end border-t border-slate-100 dark:border-slate-800">
+        <!-- Footer: Massive CTA -->
+        <div class="px-8 py-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border-t border-white dark:border-slate-800 flex items-center justify-center shrink-0">
           <button 
             @click="finishConfig"
-            :disabled="!configForm.protagonistSetting || !configForm.conflictSetting"
-            class="flex items-center gap-2 px-10 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            :disabled="!configForm.protagonistSetting"
+            class="group relative w-full max-w-md h-12 flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white rounded-2xl font-black text-base shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-[0.98] transition-all duration-500 disabled:opacity-40 disabled:grayscale disabled:pointer-events-none"
           >
-            <el-icon><MagicStick /></el-icon>
-            <span>开始智能创作</span>
+            <!-- Animated Light Streak -->
+            <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+              <div class="absolute top-0 -left-[100%] w-[50%] h-full bg-white/20 skew-x-[45deg] animate-light-streak"></div>
+            </div>
+            
+            <el-icon class="group-hover:rotate-12 transition-transform duration-300" :size="20"><MagicStick /></el-icon>
+            <span class="tracking-widest">开启 AI 剧本创作</span>
+            
+            <!-- Floating Particles Effect (Optional) -->
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full blur-[2px] animate-ping opacity-0 group-hover:opacity-40"></div>
+            <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-indigo-400 rounded-full blur-[1px] animate-ping opacity-0 group-hover:opacity-40" style="animation-delay: 0.5s"></div>
           </button>
         </div>
       </div>
@@ -494,7 +589,10 @@ const aiPrompt = ref('');
 const isGenerating = ref(false);
 const isGeneratingField = reactive<Record<string, boolean>>({
   protagonist: false,
-  conflict: false
+  storySynopsis: false,
+  storyBackground: false,
+  storySetting: false,
+  episodesCount: false
 });
 
 // Configuration state
@@ -502,14 +600,24 @@ const configForm = reactive({
   scriptType: 'short_drama',
   genre: '',
   targetAudience: '女频',
-  episodesCount: 80,
+  videoStyle: '写实',
+  episodesCount: '80',
   expectedDuration: 120,
   protagonistSetting: '',
   protagonistDesc: '',
-  conflictSetting: '',
-  conflictDesc: '',
+  storySynopsis: '',
+  storyBackground: '',
+  storySetting: '',
   themeSetting: ''
 });
+
+const videoStyleOptions = [
+  { label: '写实' },
+  { label: '二次元' },
+  { label: '赛博朋克' },
+  { label: '古风' },
+  { label: '都市丽人' }
+];
 
 // Hot Topics with templates
 const hotTopics = [
@@ -585,29 +693,16 @@ const recentWorks = ref([
 ]);
 
 const protagonistOptions = [
-  { label: '落魄千金', desc: '家族破产，背负巨债，却拥有一手惊人的调香/设计才华。', icon: 'User' },
-  { label: '冷面总裁', desc: '商界奇才，性格孤僻，因童年阴影不再相信爱情。', icon: 'Avatar' },
-  { label: '平民少女', desc: '乐观坚韧，为了给母亲治病，卷入豪门恩怨。', icon: 'UserFilled' },
-  { label: '神秘杀手', desc: '隐姓埋名在都市中，执行最后一次任务。', icon: 'StarFilled' },
-  { label: '自定义', desc: '手动输入或 AI 生成您心目中的完美主角。', icon: 'EditPen' }
-];
-
-const conflictOptions = [
-  { label: '契约婚姻', desc: '被迫签订为期一年的“假结婚”协议，日久生情。', icon: 'Link' },
-  { label: '复仇归来', desc: '隐姓埋名五年，只为夺回属于自己的一切。', icon: 'Warning' },
-  { label: '命中注定', desc: '失忆后的重逢，即使忘记姓名也依然心动。', icon: 'Heart' },
-  { label: '商战博弈', desc: '在利益与情感的边缘徘徊，最终选择守护对方。', icon: 'GoldMedal' },
-  { label: '自定义', desc: '手动输入或 AI 生成最具张力的核心冲突。', icon: 'EditPen' }
+  { label: '落魄千金', desc: '家族破产，背负巨债，却拥有一手惊人的调香/设计才华。' },
+  { label: '冷面总裁', desc: '商界奇才，性格孤僻，因童年阴影不再相信爱情。' },
+  { label: '平民少女', desc: '乐观坚韧，为了给母亲治病，卷入豪门恩怨。' },
+  { label: '神秘杀手', desc: '隐姓埋名在都市中，执行最后一次任务。' },
+  { label: '自定义', desc: '手动输入或 AI 生成您心目中的完美主角。' }
 ];
 
 const audienceOptions = ['男频', '女频', '大众'];
-const episodeOptions = [
-  { label: '精简版', count: 24, desc: '快节奏，适合碎片化观看' },
-  { label: '标准版', count: 80, desc: '主流配置，内容充实' },
-  { label: '长篇版', count: 120, desc: '宏大叙事，深度刻画' }
-];
 
-const handleAIFeature = (field: 'protagonist' | 'conflict', action: 'generate' | 'polish') => {
+const handleAIFeature = (field: 'protagonist' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
   isGeneratingField[field] = true;
   
   // Mock AI behavior
@@ -618,15 +713,24 @@ const handleAIFeature = (field: 'protagonist' | 'conflict', action: 'generate' |
       } else {
         configForm.protagonistDesc = configForm.protagonistDesc + '（已由 AI 润色，强化了冲突感与人设张力）';
       }
-    } else {
-      if (action === 'generate') {
-        configForm.conflictDesc = '主角在送餐时意外撞见当年陷害自己的仇人正在进行非法交易。仇人并未认出主角，但主角已在心中布下复仇大局。生与死的博弈、情感与利益的冲突从此爆发。';
-      } else {
-        configForm.conflictDesc = configForm.conflictDesc + '（已由 AI 深度润色，增加了剧情转折的不可预测性）';
-      }
+    } else if (field === 'storySynopsis') {
+      configForm.storySynopsis = configForm.storySynopsis || '在赛博朋克的未来，一个底层少年意外发现自己能连接已故天才的意识...';
+      configForm.storySynopsis = configForm.storySynopsis + '（已由 AI 深度润色，增加了剧情转折的不可预测性）';
+    } else if (field === 'storyBackground') {
+      configForm.storyBackground = configForm.storyBackground || '2077年的霓虹之城，阶级分明，贫民窟与科技云端并存...';
+      configForm.storyBackground = configForm.storyBackground + '（已由 AI 润色，强化了世界观设定）';
+    } else if (field === 'storySetting') {
+      configForm.storySetting = configForm.storySetting || '所有的意识都可以被数据化，但灵魂的重量依然无法衡量...';
+      configForm.storySetting = configForm.storySetting + '（已由 AI 润色，细化了设定逻辑）';
+    } else if (field === 'episodesCount') {
+      configForm.episodesCount = '80-100';
+      ElMessage.success('AI 已建议最优集数');
+    }
+    
+    if (field !== 'episodesCount') {
+      ElMessage.success(action === 'generate' ? 'AI 生成成功' : 'AI 润色成功');
     }
     isGeneratingField[field] = false;
-    ElMessage.success(action === 'generate' ? 'AI 生成成功' : 'AI 润色成功');
   }, 1500);
 };
 
@@ -638,14 +742,13 @@ const finishConfig = () => {
   const protagonist = configForm.protagonistSetting === '自定义' 
     ? `【主角设定】${configForm.protagonistDesc}` 
     : `【主角设定】${configForm.protagonistSetting}`;
-    
-  const conflict = configForm.conflictSetting === '自定义'
-    ? `【核心冲突】${configForm.conflictDesc}`
-    : `【核心冲突】${configForm.conflictSetting}`;
 
   const finalPrompt = `【题材】${configForm.genre || selectedTopic.value.label}
 ${protagonist}
-${conflict}
+【故事梗概】${configForm.storySynopsis}
+【故事背景】${configForm.storyBackground}
+【故事设定】${configForm.storySetting}
+【视频风格】${configForm.videoStyle}
 【受众】${configForm.targetAudience}
 【规格】${configForm.episodesCount}集，单集时长${configForm.expectedDuration}秒`;
 
@@ -661,6 +764,26 @@ const selectHotTopic = (topic: any) => {
   if (isGenerating.value) return;
   selectedTopic.value = topic;
   configForm.genre = topic.label;
+  
+  // Auto-generate default contents when dialog opens
+  configForm.protagonistSetting = protagonistOptions[0].label;
+  configForm.targetAudience = audienceOptions[1]; // 女频
+  configForm.videoStyle = '写实';
+  configForm.episodesCount = '80';
+  configForm.expectedDuration = 120;
+  
+  // Use template to generate synopsis if available, or use defaults
+  if (topic.template) {
+    const parts = topic.template.split('\n');
+    configForm.storySynopsis = parts.find((p: string) => p.includes('核心冲突'))?.replace('核心冲突：', '') || '';
+    configForm.storyBackground = `在典型的${topic.label}环境下展开，注重情感张力与快节奏转折。`;
+    configForm.storySetting = `主角通过不懈努力，最终实现${topic.label}题材中常见的逆袭。`;
+  } else {
+    configForm.storySynopsis = '这是一个充满未知与挑战的故事，讲述了主角如何在逆境中寻找希望并完成自我救赎。';
+    configForm.storyBackground = '现代都市，繁华表象下隐藏着复杂的权谋与深厚的情感纠葛。';
+    configForm.storySetting = '故事注重细节刻画，力求在真实的社会背景下展现人性的光辉与阴暗面。';
+  }
+  
   currentStep.value = 1;
   showHotTopicDialog.value = true;
 };
@@ -819,5 +942,155 @@ const handleFileUpload = (file: any) => {
 }
 :deep(.custom-slider .el-slider__button) {
   border-color: #6366f1;
+}
+
+/* New V3 UI Styles */
+.hot-topic-dialog-v2 :deep(.el-dialog) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.custom-scrollbar-v2::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar-v2::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 10px;
+}
+
+:deep(.custom-select-v3 .el-input__wrapper) {
+  border-radius: 20px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  padding: 10px 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dark :deep(.custom-select-v3 .el-input__wrapper) {
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+:deep(.custom-select-v3 .el-input__wrapper:hover) {
+  border-color: #6366f1;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.08) !important;
+}
+:deep(.custom-select-v3 .el-input__wrapper.is-focus) {
+  border-color: #6366f1;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12), 0 8px 24px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Option List Styling */
+:deep(.el-select-dropdown__item) {
+  margin: 4px 8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  height: auto !important;
+  line-height: normal !important;
+  padding: 8px 12px !important;
+}
+:deep(.el-select-dropdown__item.hover), 
+:deep(.el-select-dropdown__item:hover) {
+  background-color: rgba(99, 102, 241, 0.05) !important;
+  color: #6366f1 !important;
+}
+:deep(.el-select-dropdown__item.selected) {
+  background-color: #6366f1 !important;
+  color: #fff !important;
+}
+:deep(.el-select-dropdown__item.selected .text-slate-400),
+:deep(.el-select-dropdown__item.selected .text-slate-500) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+:deep(.custom-input-v3 .el-input__wrapper) {
+  border-radius: 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: none !important;
+  padding: 8px 16px;
+}
+.dark :deep(.custom-input-v3 .el-input__wrapper) {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+:deep(.custom-textarea-v3 .el-textarea__inner) {
+  border-radius: 20px;
+  background-color: rgba(248, 250, 252, 0.8);
+  border: 1px solid #e2e8f0;
+  box-shadow: none !important;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+  transition: all 0.3s ease;
+}
+.dark :deep(.custom-textarea-v3 .el-textarea__inner) {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: #334155;
+  color: #f1f5f9;
+}
+:deep(.custom-textarea-v3 .el-textarea__inner:focus) {
+  border-color: #6366f1;
+  background-color: #fff;
+}
+
+:deep(.custom-number-v3 .el-input__wrapper) {
+  border-radius: 12px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+:deep(.custom-input-v4 .el-input__wrapper) {
+  border-radius: 14px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+  padding: 4px 12px;
+  transition: all 0.3s ease;
+}
+.dark :deep(.custom-input-v4 .el-input__wrapper) {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+:deep(.custom-input-v4 .el-input__wrapper.is-focus) {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+:deep(.custom-number-v4 .el-input__wrapper) {
+  border-radius: 14px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+  padding-right: 0;
+}
+.dark :deep(.custom-number-v4 .el-input__wrapper) {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+:deep(.custom-number-v4 .el-input-number__increase),
+:deep(.custom-number-v4 .el-input-number__decrease) {
+  background-color: #f8fafc;
+  border-left-color: #e2e8f0;
+  border-radius: 0 14px 14px 0;
+}
+.dark :deep(.custom-number-v4 .el-input-number__increase),
+.dark :deep(.custom-number-v4 .el-input-number__decrease) {
+  background-color: #0f172a;
+  border-left-color: #334155;
+}
+
+@keyframes light-streak {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.animate-light-streak {
+  animation: light-streak 3s infinite ease-in-out;
 }
 </style>
