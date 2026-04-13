@@ -402,7 +402,25 @@
               </span>
             </div>
             
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+              <el-checkbox
+                v-if="isMultiSelectMode"
+                v-model="isAllSelected"
+                :indeterminate="isIndeterminate"
+                class="custom-timeline-checkbox mr-2"
+              >
+                <span class="text-[10px] font-black text-purple-600 dark:text-slate-400">全选</span>
+              </el-checkbox>
+
+              <button 
+                v-if="isMultiSelectMode && selectedScenes.length > 0"
+                @click="handleBatchGenerate"
+                class="h-6 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[10px] font-black hover:shadow-lg hover:shadow-indigo-500/20 transition-all flex items-center gap-1.5 animate-in fade-in slide-in-from-right-2 duration-300"
+              >
+                <el-icon :size="10"><MagicStick /></el-icon>
+                <span>批量生成视频 ({{ selectedScenes.length }})</span>
+              </button>
+              
               <button 
                 @click="toggleMultiSelect" 
                 class="h-6 px-3 bg-white dark:bg-slate-700 text-purple-600 dark:text-slate-300 rounded-full text-[10px] font-black hover:bg-purple-600 hover:text-white transition-all shadow-sm border border-purple-100"
@@ -1862,10 +1880,17 @@ onMounted(() => {
 :deep(.custom-button-checkbox) {
   height: auto;
 }
+:deep(.custom-timeline-checkbox) {
+  display: inline-flex;
+  align-items: center;
+}
 :deep(.custom-timeline-checkbox .el-checkbox__inner) {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+:deep(.custom-timeline-checkbox .el-checkbox__label) {
+  padding-left: 6px;
 }
 
 /* Animations */
