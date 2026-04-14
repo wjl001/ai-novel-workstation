@@ -222,7 +222,7 @@
 
     <el-dialog 
       v-model="showHotTopicDialog" 
-      :title="null"
+      :title="undefined"
       width="860px" 
       class="hot-topic-dialog-v2 overflow-hidden" 
       :show-close="false"
@@ -567,7 +567,6 @@ import {
   StarFilled,
   Link,
   Warning,
-  Heart,
   GoldMedal,
   QuestionFilled
 } from '@element-plus/icons-vue';

@@ -174,59 +174,66 @@
 
 .gridLayout {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); // Default to 4 columns
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); // Automatically fill with cards, minimum 360px width
   gap: 16px;
 
   @media (max-width: 1600px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 
   @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   }
 
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
 }
 
 .gridCard {
   background: #fff;
   border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  padding: 10px;
+  border-radius: 20px;
+  padding: 12px;
   display: flex;
   flex-direction: row; // Horizontal layout inside card
   align-items: center;
-  gap: 12px;
+  gap: 16px; // Tighter gap
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.03);
+  max-width: 420px;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-    border-color: rgba(99, 102, 241, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
     
     .poster img {
       transform: scale(1.05);
+    }
+
+    .posterActions {
+      opacity: 1;
     }
   }
 }
 
 .posterWrapper {
-  width: 100px; // Small square-ish poster
+  width: 150px; // Wider poster
   flex-shrink: 0;
   z-index: 1;
 }
 
 .poster {
   width: 100%;
-  aspect-ratio: 16/10; 
-  border-radius: 10px;
+  aspect-ratio: 16/10; // Same aspect ratio to maintain proportions if possible
+  border-radius: 14px;
   overflow: hidden;
   position: relative;
   background: #f8fafc;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
   
   :deep(.el-image) {
     width: 100%;
@@ -239,6 +246,55 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s;
+  }
+}
+
+.posterActions {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.8; // Semi-visible by default as requested in screenshot
+  transition: all 0.3s ease;
+  backdrop-filter: blur(2px);
+
+  button {
+    width: 80px;
+    height: 28px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .uploadBtn {
+    background: #fff;
+    color: #4f46e5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .aiGenBtn {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
   }
 }
 
@@ -269,7 +325,7 @@
 }
 
 .info {
-  flex: 1;
+  flex: 1; // Take up middle space
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -278,11 +334,11 @@
 }
 
 .epTitle {
-  font-size: 14px;
+  font-size: 13px; // Smaller
   font-weight: 800;
   color: #1e293b;
-  margin-bottom: 0;
-  line-height: 1.2;
+  margin-bottom: 2px;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -292,9 +348,9 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 10px; // Smaller
   font-weight: 800;
-  padding: 2px 10px;
+  padding: 1px 8px; // Smaller padding
   border-radius: 20px;
   width: fit-content;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -330,14 +386,17 @@
 
 .gridActions {
   display: flex;
-  gap: 8px;
+  flex-direction: column; // Vertical buttons on the right
+  gap: 6px;
+  flex-shrink: 0;
+  padding-left: 8px;
 }
 
 .stepBtn {
-  height: 32px;
-  padding: 0 14px;
-  border-radius: 10px;
-  font-size: 12px;
+  height: 28px; // Smaller
+  padding: 0 12px; // Smaller
+  border-radius: 8px;
+  font-size: 11px; // Smaller
   font-weight: 900;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;

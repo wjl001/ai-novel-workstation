@@ -62,6 +62,12 @@ export const useEpisodeStore = defineStore('episode', {
         this.subjects[index] = { ...this.subjects[index], ...updates };
       }
     },
+    deleteSubject(id: string) {
+      const index = this.subjects.findIndex(s => s.id === id);
+      if (index > -1) {
+        this.subjects.splice(index, 1);
+      }
+    },
     setSubjectId(id: string) {
       this.subjectId = id;
     },

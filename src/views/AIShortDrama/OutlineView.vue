@@ -140,14 +140,26 @@
                           </div>
                         </div>
                         
-                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                          <button 
-                            @mousedown.stop
-                            @click.stop="removeEpisode(episodeRange + relIdx)"
-                            class="w-7 h-7 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20 text-red-400 hover:text-white hover:bg-red-500 transition-all shadow-sm"
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                          <el-popconfirm
+                            width="200"
+                            confirm-button-text="确认删除"
+                            cancel-button-text="点错了"
+                            confirm-button-type="danger"
+                            icon-color="#ff4d4f"
+                            :title="`确认删除 ${ep.title || '该集'} 吗？`"
+                            popper-class="modern-popconfirm-c-end"
+                            @confirm="executeRemoveEpisode(episodeRange + relIdx)"
                           >
-                            <el-icon :size="14"><Delete /></el-icon>
-                          </button>
+                            <template #reference>
+                              <button 
+                                @mousedown.stop
+                                class="w-8 h-8 flex items-center justify-center rounded-xl bg-white dark:bg-slate-700 text-red-500 shadow-lg shadow-red-500/10 hover:bg-red-500 hover:text-white transition-all duration-300"
+                              >
+                                <el-icon :size="16"><Delete /></el-icon>
+                              </button>
+                            </template>
+                          </el-popconfirm>
                         </div>
                       </div>
 
@@ -749,7 +761,7 @@ import {
   RefreshLeft, RefreshRight, DocumentAdd, Top, InfoFilled,
   Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer
 } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -1529,7 +1541,7 @@ const addEpisode = () => {
   const total = form.value.episodesData.length;
   episodeRange.value = Math.floor((total - 1) / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
 };
-const removeEpisode = (index: number) => {
+const executeRemoveEpisode = (index: number) => {
   if (!form.value || !form.value.episodesData) return;
   
   const isRemovingCurrent = currentEpisodeIndex.value === index;
@@ -1551,6 +1563,11 @@ const removeEpisode = (index: number) => {
   // Always reload to ensure state is consistent
   loadContentFromStore();
   saveCurrentContentToStore();
+  ElMessage({
+    message: '剧集已成功删除',
+    type: 'success',
+    customClass: 'modern-message-success'
+  });
 };
 
 let draggedIndex = -1;
@@ -1933,6 +1950,84 @@ const generateScriptBody = () => {
 }
 .dark .prose-modern p.is-editor-empty:first-child::before {
   color: #475569;
+}
+
+/* Modern Popconfirm C-End Styles - Redesigned for Premium C-End Look */
+:deep(.modern-popconfirm-c-end) {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%) !important;
+  border-radius: 24px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(251, 113, 133, 0.3) !important;
+  box-shadow: 
+    0 10px 25px -5px rgba(225, 29, 72, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main) {
+  margin-bottom: 16px !important;
+  font-weight: 900 !important;
+  color: #9f1239 !important; /* rose-900 */
+  font-size: 14px !important;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main .el-popconfirm__icon) {
+  color: #f43f5e !important; /* rose-500 */
+  font-size: 18px !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary) {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  padding: 0 16px !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary:hover) {
+  transform: translateY(-1px) scale(1.05) !important;
+  box-shadow: 0 6px 15px rgba(225, 29, 72, 0.4) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default) {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(251, 113, 133, 0.2) !important;
+  color: #e11d48 !important;
+  transition: all 0.2s ease !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default:hover) {
+  background: #ffffff !important;
+  color: #be123c !important;
+  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+
+:deep(.modern-message-success) {
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  background: #10b981 !important;
+  border: none !important;
+}
+
+:deep(.modern-message-success .el-message__content) {
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+:deep(.modern-message-success .el-message__icon) {
+  color: white !important;
 }
 
 /* No Scrollbar helper */

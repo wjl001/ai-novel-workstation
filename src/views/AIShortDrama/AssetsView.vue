@@ -49,10 +49,31 @@
                     <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- Overlay Action -->
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                    <div 
+                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      @click.stop="openEditModal(char, 'character')"
+                    >
                       <el-icon size="20"><Edit /></el-icon>
                     </div>
+                    <el-popconfirm
+                      width="180"
+                      confirm-button-text="确认"
+                      cancel-button-text="取消"
+                      confirm-button-type="danger"
+                      :title="`确认删除角色 ${char.name}？`"
+                      popper-class="modern-popconfirm-c-end"
+                      @confirm="executeDeleteAsset(char, 'character')"
+                    >
+                      <template #reference>
+                        <div 
+                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          @click.stop
+                        >
+                          <el-icon size="20"><Delete /></el-icon>
+                        </div>
+                      </template>
+                    </el-popconfirm>
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
@@ -100,10 +121,31 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                    <div 
+                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      @click.stop="openEditModal(scene, 'scene')"
+                    >
                       <el-icon size="20"><Edit /></el-icon>
                     </div>
+                    <el-popconfirm
+                      width="180"
+                      confirm-button-text="确认"
+                      cancel-button-text="取消"
+                      confirm-button-type="danger"
+                      :title="`确认删除场景 ${scene.name}？`"
+                      popper-class="modern-popconfirm-c-end"
+                      @confirm="executeDeleteAsset(scene, 'scene')"
+                    >
+                      <template #reference>
+                        <div 
+                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          @click.stop
+                        >
+                          <el-icon size="20"><Delete /></el-icon>
+                        </div>
+                      </template>
+                    </el-popconfirm>
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
@@ -151,10 +193,31 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                    <div 
+                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      @click.stop="openEditModal(prop, 'prop')"
+                    >
                       <el-icon size="20"><Edit /></el-icon>
                     </div>
+                    <el-popconfirm
+                      width="180"
+                      confirm-button-text="确认"
+                      cancel-button-text="取消"
+                      confirm-button-type="danger"
+                      :title="`确认删除道具 ${prop.name}？`"
+                      popper-class="modern-popconfirm-c-end"
+                      @confirm="executeDeleteAsset(prop, 'prop')"
+                    >
+                      <template #reference>
+                        <div 
+                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          @click.stop
+                        >
+                          <el-icon size="20"><Delete /></el-icon>
+                        </div>
+                      </template>
+                    </el-popconfirm>
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
@@ -281,8 +344,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 
@@ -384,6 +447,23 @@ const saveAsset = (data: any) => {
   editModalVisible.value = false;
 };
 
+const executeDeleteAsset = (asset: any, type: 'character' | 'scene' | 'prop') => {
+  let targetList;
+  if (type === 'character') targetList = characters.value;
+  else if (type === 'scene') targetList = scenes.value;
+  else targetList = propsList.value;
+
+  const index = targetList.findIndex((a: any) => a.id === asset.id);
+  if (index > -1) {
+    targetList.splice(index, 1);
+    ElMessage({
+      message: '删除成功',
+      type: 'success',
+      customClass: 'modern-message-success'
+    });
+  }
+};
+
 // Expose internal state for testing
 defineExpose({
   hasUnsavedChanges,
@@ -477,5 +557,83 @@ defineExpose({
 .asset-edit-modal :deep(.el-dialog__body) {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+/* Modern Popconfirm C-End Styles - Redesigned for Premium C-End Look */
+:deep(.modern-popconfirm-c-end) {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%) !important;
+  border-radius: 24px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(251, 113, 133, 0.3) !important;
+  box-shadow: 
+    0 10px 25px -5px rgba(225, 29, 72, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main) {
+  margin-bottom: 16px !important;
+  font-weight: 900 !important;
+  color: #9f1239 !important; /* rose-900 */
+  font-size: 14px !important;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main .el-popconfirm__icon) {
+  color: #f43f5e !important; /* rose-500 */
+  font-size: 18px !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary) {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  padding: 0 16px !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary:hover) {
+  transform: translateY(-1px) scale(1.05) !important;
+  box-shadow: 0 6px 15px rgba(225, 29, 72, 0.4) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default) {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(251, 113, 133, 0.2) !important;
+  color: #e11d48 !important;
+  transition: all 0.2s ease !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default:hover) {
+  background: #ffffff !important;
+  color: #be123c !important;
+  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+
+:deep(.modern-message-success) {
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  background: #10b981 !important;
+  border: none !important;
+}
+
+:deep(.modern-message-success .el-message__content) {
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+:deep(.modern-message-success .el-message__icon) {
+  color: white !important;
 }
 </style>

@@ -92,11 +92,23 @@
             <div :class="s.poster">
               <el-image :src="getPosterUrl(ep)" fit="cover">
                 <template #error>
-                  <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
-                    <el-icon :size="24"><Picture /></el-icon>
+                  <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400">
+                    <el-icon :size="32"><Picture /></el-icon>
                   </div>
                 </template>
               </el-image>
+
+              <!-- Poster Actions Overlay -->
+              <div :class="s.posterActions">
+                <button :class="s.uploadBtn" @click.stop="handleUploadCover(ep)">
+                  <span>上传封面</span>
+                </button>
+                <button :class="s.aiGenBtn" @click.stop="handleAIGenerateCover(ep)">
+                  <el-icon :size="12"><MagicStick /></el-icon>
+                  <span>AI生成</span>
+                </button>
+              </div>
+
               <!-- Duration Badge -->
               <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
                 {{ ep.duration || '01:12' }}
@@ -106,39 +118,37 @@
           </div>
 
           <div :class="s.info">
-            <div class="flex flex-col gap-1 min-w-0">
-              <h3 :class="s.epTitle" :title="ep.title">{{ ep.title }}</h3>
-              
-              <!-- Single Status Indicator -->
-              <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
-                <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
-                <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
-                <el-icon v-else-if="getSingleStatusType(ep) === 'assets'"><Box /></el-icon>
-                <el-icon v-else><Document /></el-icon>
-                <span>{{ getSingleStatusLabel(ep) }}</span>
-              </div>
+            <h3 :class="s.epTitle" :title="ep.title">{{ ep.title }}</h3>
+            
+            <!-- Single Status Indicator -->
+            <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
+              <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
+              <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
+              <el-icon v-else-if="getSingleStatusType(ep) === 'assets'"><Box /></el-icon>
+              <el-icon v-else><Document /></el-icon>
+              <span>{{ getSingleStatusLabel(ep) }}</span>
             </div>
+          </div>
 
-            <!-- Actions Logic: Two Mini Buttons Only -->
-            <div :class="s.gridActions">
-              <button 
-                :class="[s.stepBtn, s.edit]"
-                @click.stop="handleEdit(ep)"
-                title="编辑"
-              >
-                <el-icon><EditPen /></el-icon>
-                <span>编辑</span>
-              </button>
-              <button 
-                :class="[s.stepBtn, s.preview]"
-                :disabled="ep.synthesisStatus !== 'success'"
-                @click.stop="handlePreview(ep)"
-                title="预览"
-              >
-                <el-icon><VideoPlay /></el-icon>
-                <span>预览</span>
-              </button>
-            </div>
+          <!-- Actions Logic: Two Mini Buttons Only -->
+          <div :class="s.gridActions">
+            <button 
+              :class="[s.stepBtn, s.edit]"
+              @click.stop="handleEdit(ep)"
+              title="编辑"
+            >
+              <el-icon><EditPen /></el-icon>
+              <span>编辑</span>
+            </button>
+            <button 
+              :class="[s.stepBtn, s.preview]"
+              :disabled="ep.synthesisStatus !== 'success'"
+              @click.stop="handlePreview(ep)"
+              title="预览"
+            >
+              <el-icon><VideoPlay /></el-icon>
+              <span>预览</span>
+            </button>
           </div>
         </div>
       </div>
@@ -598,6 +608,20 @@ const handleSynthesis = async (ep: any) => {
 };
 
 // Actions
+const handleUploadCover = (ep: any) => {
+  ElMessage.info(`正在为第 ${ep.index} 集上传封面...`);
+  // Add real upload logic here
+};
+
+const handleAIGenerateCover = (ep: any) => {
+  ElMessage({
+    message: `正在为第 ${ep.index} 集 AI 生成封面...`,
+    icon: MagicStick,
+    customClass: 'modern-message-success'
+  });
+  // Add real AI generation logic here
+};
+
 const handleEdit = (ep: any) => {
   if (ep.scriptStatus === 'pending') {
     navigateToOutline(ep);

@@ -137,7 +137,23 @@
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <el-popconfirm
+                        width="180"
+                        confirm-button-text="确认"
+                        cancel-button-text="取消"
+                        confirm-button-type="danger"
+                        :title="`确认删除角色 ${char.name}？`"
+                        popper-class="modern-popconfirm-c-end"
+                        @confirm="executeDeleteSubject(char)"
+                      >
+                        <template #reference>
+                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
+                            <el-icon :size="16"><Delete /></el-icon>
+                          </div>
+                        </template>
+                      </el-popconfirm>
+                    </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name.split('-')[0] }}</span>
                 </div>
@@ -170,7 +186,23 @@
                       <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <el-popconfirm
+                        width="180"
+                        confirm-button-text="确认"
+                        cancel-button-text="取消"
+                        confirm-button-type="danger"
+                        :title="`确认删除场景 ${scene.name}？`"
+                        popper-class="modern-popconfirm-c-end"
+                        @confirm="executeDeleteSubject(scene)"
+                      >
+                        <template #reference>
+                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
+                            <el-icon :size="16"><Delete /></el-icon>
+                          </div>
+                        </template>
+                      </el-popconfirm>
+                    </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-emerald-600 transition-colors">{{ scene.name }}</span>
                 </div>
@@ -203,7 +235,23 @@
                       <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <el-popconfirm
+                        width="180"
+                        confirm-button-text="确认"
+                        cancel-button-text="取消"
+                        confirm-button-type="danger"
+                        :title="`确认删除道具 ${prop.name}？`"
+                        popper-class="modern-popconfirm-c-end"
+                        @confirm="executeDeleteSubject(prop)"
+                      >
+                        <template #reference>
+                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
+                            <el-icon :size="16"><Delete /></el-icon>
+                          </div>
+                        </template>
+                      </el-popconfirm>
+                    </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-amber-600 transition-colors">{{ prop.name }}</span>
                 </div>
@@ -915,7 +963,7 @@ const PillImage = Node.create({
 })
 
 import { 
-  ArrowLeft, ArrowDown, Star, MoreFilled, Plus, User, Location, 
+  ArrowLeft, ArrowRight, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
   Download, VideoPause, Microphone, Mic, Upload
@@ -1280,18 +1328,13 @@ const handleEditSubject = (subject: any) => {
   showSubjectEdit.value = true;
 };
 
-const handleDeleteSubject = (subject: any) => {
-  ElMessageBox.confirm(`确定要删除主体 "${subject.name}" 吗？项目被删除后，将不可恢复，请确认要删除吗?`, '删除主体?', {
-    confirmButtonText: '删除',
-    cancelButtonText: '取消',
-    type: 'warning',
-    customClass: 'delete-confirm-dialog',
-  })
-    .then(() => {
-      subjects.value = subjects.value.filter(s => s.id !== subject.id);
-      ElMessage.success('删除成功');
-    })
-    .catch(() => {});
+const executeDeleteSubject = (subject: any) => {
+  subjects.value = subjects.value.filter(s => s.id !== subject.id);
+  ElMessage({
+    message: '删除成功',
+    type: 'success',
+    customClass: 'modern-message-success'
+  });
 };
 
 const saveSubject = (data: any) => {
@@ -1997,5 +2040,83 @@ onMounted(() => {
 }
 .animate-in {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* Modern Popconfirm C-End Styles - Redesigned for Premium C-End Look */
+:deep(.modern-popconfirm-c-end) {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%) !important;
+  border-radius: 24px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(251, 113, 133, 0.3) !important;
+  box-shadow: 
+    0 10px 25px -5px rgba(225, 29, 72, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main) {
+  margin-bottom: 16px !important;
+  font-weight: 900 !important;
+  color: #9f1239 !important; /* rose-900 */
+  font-size: 14px !important;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__main .el-popconfirm__icon) {
+  color: #f43f5e !important; /* rose-500 */
+  font-size: 18px !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary) {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  padding: 0 16px !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--primary:hover) {
+  transform: translateY(-1px) scale(1.05) !important;
+  box-shadow: 0 6px 15px rgba(225, 29, 72, 0.4) !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default) {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  height: 34px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(251, 113, 133, 0.2) !important;
+  color: #e11d48 !important;
+  transition: all 0.2s ease !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default:hover) {
+  background: #ffffff !important;
+  color: #be123c !important;
+  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+
+:deep(.modern-message-success) {
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  background: #10b981 !important;
+  border: none !important;
+}
+
+:deep(.modern-message-success .el-message__content) {
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+:deep(.modern-message-success .el-message__icon) {
+  color: white !important;
 }
 </style>
