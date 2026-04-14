@@ -104,31 +104,71 @@
     <!-- Content Area -->
     <div class="flex-1 overflow-auto custom-scrollbar pr-2 relative z-10">
       <!-- Grid View -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
+      <div v-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 pb-10">
         <div v-for="work in filteredWorks" :key="work.id" 
-          class="bg-white dark:bg-slate-800 rounded-[32px] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1.5 transition-all duration-500 cursor-pointer flex flex-col group relative"
+          class="bg-white dark:bg-slate-800 rounded-[24px] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700/50 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1.5 transition-all duration-500 cursor-pointer flex flex-col group relative"
           @click="openWork(work)"
         >
-          <!-- Card Header/Poster Area -->
-          <div class="h-44 bg-slate-100 dark:bg-slate-900 relative overflow-hidden">
-            <!-- Animated Background Gradient if no image -->
-            <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 group-hover:scale-110 transition-transform duration-700"></div>
-            
-            <!-- Centered Icon -->
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-16 h-16 rounded-3xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-lg flex items-center justify-center text-indigo-600 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <el-icon :size="32"><VideoCamera /></el-icon>
+          <!-- Card Header/Poster Area (16:10 Aspect Ratio - Shorter) -->
+          <div class="aspect-[16/10] bg-slate-100 dark:bg-slate-900 relative overflow-hidden">
+            <!-- Image Content -->
+            <img v-if="work.cover" :src="work.cover" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <div v-else class="w-full h-full relative group-hover:scale-105 transition-transform duration-1000">
+              <!-- Default Background - Colorful & Impactful -->
+              <div class="absolute inset-0 bg-gradient-to-br transition-colors duration-500" 
+                :class="[
+                  work.id % 4 === 0 ? 'from-indigo-600 to-purple-700' : 
+                  work.id % 4 === 1 ? 'from-rose-500 to-orange-600' : 
+                  work.id % 4 === 2 ? 'from-emerald-500 to-teal-700' : 
+                  'from-blue-600 to-indigo-800'
+                ]"
+              ></div>
+              
+              <!-- Abstract Shapes for Visual Impact -->
+              <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+              <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-black/20 rounded-full blur-2xl"></div>
+              <div class="absolute inset-0 opacity-10" :style="{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }"></div>
+              
+              <!-- Centered Content for Placeholder -->
+              <div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xl border border-white/20 shadow-2xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-all duration-500">
+                  <el-icon :size="24"><VideoCamera /></el-icon>
+                </div>
+                <div class="text-white/90 text-sm font-bold line-clamp-2 leading-tight drop-shadow-md px-4">{{ work.title }}</div>
               </div>
             </div>
 
+            <!-- Glass Overlay (Refined for C-end) -->
+            <div class="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[6px] flex flex-row items-center justify-center gap-3">
+               <el-upload
+                 action="#"
+                 :auto-upload="false"
+                 :show-file-list="false"
+                 :on-change="(file) => handleCoverUpload(file, work)"
+                 accept="image/*"
+                 @click.stop
+               >
+                 <button class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white text-indigo-600 text-[12px] font-bold hover:bg-indigo-50 transition-all active:scale-95 shadow-xl whitespace-nowrap">
+                   <el-icon><Upload /></el-icon> 上传封面
+                 </button>
+               </el-upload>
+               
+               <button 
+                 class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 text-white text-[12px] font-bold hover:bg-indigo-700 hover:scale-105 transition-all active:scale-95 shadow-xl shadow-indigo-500/30 whitespace-nowrap"
+                 @click.stop="openAIGenerator(work)"
+               >
+                 <el-icon><MagicStick /></el-icon> AI 生成
+               </button>
+            </div>
+
             <!-- Status Badge (Top Left) -->
-            <div class="absolute top-4 left-4 z-20">
+            <div class="absolute top-4 left-4 z-30">
               <span 
-                class="px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase backdrop-blur-md border"
+                class="px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase backdrop-blur-md border shadow-sm"
                 :class="{
-                  'bg-indigo-500/10 text-indigo-600 border-indigo-200/50': work.status === 'in_progress',
-                  'bg-emerald-500/10 text-emerald-600 border-emerald-200/50': work.status === 'completed',
-                  'bg-slate-500/10 text-slate-500 border-slate-200/50': work.status === 'draft'
+                  'bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/30': work.status === 'in_progress',
+                  'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30': work.status === 'completed',
+                  'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30': work.status === 'draft'
                 }"
               >
                 {{ getStatusLabel(work.status) }}
@@ -136,10 +176,10 @@
             </div>
 
             <!-- More Actions (Top Right) -->
-            <div class="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
               <el-dropdown trigger="click" @command="(cmd) => handleCommand(cmd, work)">
                 <button 
-                  class="w-9 h-9 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all"
+                  class="w-10 h-10 rounded-xl bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 backdrop-blur-md border border-slate-200 dark:border-white/20 shadow-lg flex items-center justify-center text-slate-600 dark:text-white transition-all"
                   @click.stop
                 >
                   <el-icon><MoreFilled /></el-icon>
@@ -156,26 +196,32 @@
                 </template>
               </el-dropdown>
             </div>
+
+            <!-- Bottom Title Mask (Visible on Hover) -->
+            <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white/90 dark:from-black/90 via-white/40 dark:via-black/40 to-transparent pt-20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10">
+               <div class="text-slate-500 dark:text-white text-xs font-medium opacity-60 mb-1">最后更新于</div>
+               <div class="text-slate-700 dark:text-white text-xs font-bold">{{ work.updatedAt }}</div>
+            </div>
           </div>
           
           <!-- Card Content -->
-          <div class="p-6 flex flex-col flex-1">
-            <h3 class="font-black text-lg text-slate-800 dark:text-slate-100 mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors duration-300" :title="work.title">
+          <div class="p-4 flex flex-col flex-1">
+            <h3 class="font-bold text-[15px] text-slate-800 dark:text-slate-100 mb-1.5 line-clamp-1 group-hover:text-indigo-600 transition-colors duration-300" :title="work.title">
               {{ work.title }}
             </h3>
-            <p class="text-[13px] text-slate-400 dark:text-slate-500 mb-6 line-clamp-2 leading-relaxed flex-1">
-              {{ work.description || '暂无作品简介内容，快去开始创作吧，释放你的无限可能' }}
+            <p class="text-[12px] text-slate-400 dark:text-slate-500 line-clamp-2 leading-relaxed flex-1 mb-3">
+              {{ work.description || '暂无作品简介内容，快去开始创作吧' }}
             </p>
             
-            <div class="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-700/50 mt-auto">
-              <div class="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
-                <el-icon class="text-indigo-400"><Clock /></el-icon>
-                <span>{{ work.updatedAt.split(' ')[0] }}</span>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50 dark:border-slate-700/50 mt-auto">
+              <div class="flex items-center gap-2.5 text-[10px] font-bold text-slate-400">
+                <span class="flex items-center gap-1"><el-icon><View /></el-icon> 2.4k</span>
+                <span class="flex items-center gap-1"><el-icon><Star /></el-icon> 856</span>
               </div>
               
-              <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500">
-                <span class="text-[12px] font-bold text-indigo-600">立即编辑</span>
-                <el-icon class="text-indigo-600"><ArrowRight /></el-icon>
+              <div class="flex items-center gap-1 text-indigo-600 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                <span class="text-[11px] font-bold">立即编辑</span>
+                <el-icon :size="12"><ArrowRight /></el-icon>
               </div>
             </div>
           </div>
@@ -331,17 +377,84 @@
         </button>
       </div>
     </el-dialog>
+
+    <!-- AI Generator Dialog -->
+    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="ai-generator-dialog">
+      <div class="space-y-6">
+        <!-- Prompt Input -->
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-5 transition-colors focus-within:border-indigo-500/50 shadow-inner">
+           <div class="text-sm mb-3 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+             <el-icon class="text-indigo-500"><Edit /></el-icon>
+             生成描述词 (Prompt)
+           </div>
+           <el-input 
+             v-model="aiPrompt"
+             type="textarea" 
+             :rows="4"
+             placeholder="例如：古风武侠，边境战火，义军首领手持重锤，背景是燃烧的村庄..."
+             class="custom-textarea"
+           />
+           <div class="flex justify-end mt-4">
+             <el-button type="primary" :loading="isGenerating" class="!rounded-xl px-6 h-11 shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
+               <el-icon class="mr-2"><MagicStick /></el-icon> 开始生成
+             </el-button>
+           </div>
+        </div>
+
+        <!-- Result Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 min-h-[300px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-4 transition-colors">
+           <div v-if="generatedImages.length === 0 && !isGenerating" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+             <el-icon size="48" class="mb-4 opacity-20"><Picture /></el-icon>
+             <p class="font-medium opacity-60">输入描述词后点击生成</p>
+           </div>
+           
+           <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl">
+             <div class="loading-spinner mb-4"></div>
+             <p class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">AI 正在绘图...</p>
+           </div>
+
+           <div 
+             v-for="(img, idx) in generatedImages" 
+             :key="idx"
+             class="relative group cursor-pointer rounded-xl overflow-hidden border-4 transition-all aspect-[3/4] shadow-md"
+             :class="selectedImage === img ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
+             @click="selectedImage = img"
+           >
+             <img :src="img" class="w-full h-full object-cover" />
+             <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img"></div>
+             <div class="absolute top-2 right-2" v-if="selectedImage === img">
+               <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                 <el-icon :size="16"><Check /></el-icon>
+               </div>
+             </div>
+           </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+          <el-button @click="showAIDialog = false" class="!rounded-xl px-6 h-11">取消</el-button>
+          <el-button type="primary" :disabled="!selectedImage" @click="confirmAICover" class="!rounded-xl px-8 h-11 shadow-lg shadow-indigo-500/20">应用封面</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue';
+import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import type { UploadFile } from 'element-plus';
 
 const router = useRouter();
 const showDesignDialog = ref(false);
+const showAIDialog = ref(false);
+const aiPrompt = ref('');
+const isGenerating = ref(false);
+const generatedImages = ref<string[]>([]);
+const selectedImage = ref('');
+const currentWorkForAI = ref<any>(null);
 
 const searchQuery = ref('');
 const statusFilter = ref('');
@@ -352,10 +465,10 @@ const pageSize = ref(12);
 
 // Mock Data
 const works = ref([
-  { id: 1, title: '《星际迷航：觉醒》', description: '讲述人类首次踏出太阳系，与外星文明发生接触并引发一系列危机的科幻史诗。', status: 'in_progress', createdAt: '2023-10-08 08:00', updatedAt: '2023-10-12 09:30' },
-  { id: 2, title: '《末日拾荒者》', description: '废土世界中，主角依靠一个神秘的系统，在废墟中寻找生存资源并建立避难所。', status: 'draft', createdAt: '2023-10-10 11:15', updatedAt: '2023-10-10 11:15' },
-  { id: 3, title: '《重生之我在古代当首富》', description: '一个现代社畜意外穿越回古代，利用现代商业知识打造商业帝国的爆笑爽文故事。', status: 'in_progress', createdAt: '2023-10-01 10:00', updatedAt: '2023-10-05 14:30' },
-  { id: 4, title: '《冷面总裁的千金娇妻》', description: '豪门联姻背后的真情流露，从互相防备到相知相爱的都市情感短剧。', status: 'completed', createdAt: '2023-09-15 09:20', updatedAt: '2023-09-28 16:45' },
+  { id: 1, title: '《星际迷航：觉醒》', description: '讲述人类首次踏出太阳系，与外星文明发生接触并引发一系列危机的科幻史诗。', status: 'in_progress', createdAt: '2023-10-08 08:00', updatedAt: '2023-10-12 09:30', cover: '' },
+  { id: 2, title: '《末日拾荒者》', description: '废土世界中，主角依靠一个神秘的系统，在废墟中寻找生存资源并建立避难所。', status: 'draft', createdAt: '2023-10-10 11:15', updatedAt: '2023-10-10 11:15', cover: '' },
+  { id: 3, title: '《重生之我在古代当首富》', description: '一个现代社畜意外穿越回古代，利用现代商业知识打造商业帝国的爆笑爽文故事。', status: 'in_progress', createdAt: '2023-10-01 10:00', updatedAt: '2023-10-05 14:30', cover: '' },
+  { id: 4, title: '《冷面总裁的千金娇妻》', description: '豪门联姻背后的真情流露，从互相防备到相知相爱的都市情感短剧。', status: 'completed', createdAt: '2023-09-15 09:20', updatedAt: '2023-09-28 16:45', cover: '' },
 ]);
 
 const filteredWorks = computed(() => {
@@ -407,6 +520,49 @@ const deleteWork = (work: any) => {
     works.value = works.value.filter(w => w.id !== work.id);
     ElMessage.success('删除成功');
   }).catch(() => {});
+};
+
+// Cover Handlers
+const handleCoverUpload = (uploadFile: UploadFile, work: any) => {
+  if (uploadFile.raw) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      work.cover = e.target?.result as string;
+      ElMessage.success('封面上传成功');
+    };
+    reader.readAsDataURL(uploadFile.raw);
+  }
+};
+
+const openAIGenerator = (work: any) => {
+  currentWorkForAI.value = work;
+  aiPrompt.value = `${work.title}，短剧海报风格，高清，唯美`;
+  generatedImages.value = [];
+  selectedImage.value = '';
+  showAIDialog.value = true;
+};
+
+const generateCoverImages = () => {
+  if (!aiPrompt.value) return ElMessage.warning('请输入描述词');
+  isGenerating.value = true;
+  setTimeout(() => {
+    // Mock generated images
+    generatedImages.value = [
+      'https://picsum.photos/seed/' + Math.random() + '/600/800',
+      'https://picsum.photos/seed/' + Math.random() + '/600/800',
+      'https://picsum.photos/seed/' + Math.random() + '/600/800',
+      'https://picsum.photos/seed/' + Math.random() + '/600/800',
+    ];
+    isGenerating.value = false;
+  }, 2000);
+};
+
+const confirmAICover = () => {
+  if (currentWorkForAI.value && selectedImage.value) {
+    currentWorkForAI.value.cover = selectedImage.value;
+    showAIDialog.value = false;
+    ElMessage.success('封面应用成功');
+  }
 };
 </script>
 
@@ -497,5 +653,50 @@ const deleteWork = (work: any) => {
 .custom-pagination-v2 :deep(.el-pager li.is-active) {
   background: #6366f1 !important;
   color: white !important;
+}
+
+/* AI Generator Dialog */
+:deep(.ai-generator-dialog) {
+  border-radius: 24px;
+  overflow: hidden;
+  background-color: #f8fafc;
+}
+.dark :deep(.ai-generator-dialog) {
+  background-color: #0f172a;
+}
+:deep(.ai-generator-dialog .el-dialog__header) {
+  margin-right: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.dark :deep(.ai-generator-dialog .el-dialog__header) {
+  border-bottom: 1px solid #1e293b;
+}
+
+:deep(.custom-textarea .el-textarea__inner) {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+}
+.dark :deep(.custom-textarea .el-textarea__inner) {
+  color: #f1f5f9;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.1);
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

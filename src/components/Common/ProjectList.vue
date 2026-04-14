@@ -36,25 +36,19 @@
           </div>
         </div>
       </div>
-      <div v-else-if="projects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else-if="projects.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <div 
           v-for="(project, index) in projects" 
           :key="project.id" 
-          class="rounded-xl border shadow-lg hover:shadow-xl hover:border-indigo-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col animate-fade-slide-up"
+          class="rounded-2xl border shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer group relative overflow-hidden flex flex-col animate-fade-slide-up"
           :class="cardClass"
           :style="{ animationDelay: `${index * 100}ms` }"
           @click="openProject(project.id, 'outline')"
         >
           <!-- Cover Image/Placeholder -->
-          <div class="h-40 relative overflow-hidden group-hover:opacity-90 transition-opacity" :class="isLight ? 'bg-slate-100' : 'bg-slate-900'" @click.stop="openSettings(project.id)">
-            <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" @error="handleImageError($event, project)" />
-            <img v-else :src="generateDefaultCover(project.title)" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-            <div class="absolute top-2 right-2">
-              <el-tag size="small" effect="dark" :type="getStatusType(project.status)" class="!bg-opacity-80 backdrop-blur-sm shadow-sm">{{ getStatusLabel(project.status) }}</el-tag>
-            </div>
-            
-            <!-- Cover Actions Overlay -->
-            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 backdrop-blur-sm z-10">
+          <div class="aspect-[16/10] relative overflow-hidden transition-all duration-500" :class="isLight ? 'bg-slate-50' : 'bg-slate-900'" @click.stop="openSettings(project.id)">
+            <!-- Glass Overlay (Refined for C-end) -->
+            <div class="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[6px] flex flex-row items-center justify-center gap-2 px-2">
                <el-upload
                  action="#"
                  :auto-upload="false"
@@ -63,69 +57,88 @@
                  accept="image/*"
                  @click.stop
                >
-                 <el-button size="small" type="primary" plain class="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                   <el-icon class="mr-1"><Upload /></el-icon> 上传封面
-                 </el-button>
+                 <button class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-white text-indigo-600 text-[11px] font-bold hover:bg-indigo-50 transition-all active:scale-95 shadow-lg whitespace-nowrap">
+                   <el-icon><Upload /></el-icon> 上传封面
+                 </button>
                </el-upload>
                
-               <el-button size="small" type="success" plain class="!bg-emerald-500/20 !border-emerald-500/30 !text-emerald-300 hover:!bg-emerald-500/30" @click.stop="openAIGenerator(project)">
-                 <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
-               </el-button>
+               <button 
+                 class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-indigo-500/30 whitespace-nowrap"
+                 @click.stop="openAIGenerator(project)"
+               >
+                 <el-icon><MagicStick /></el-icon> AI 生成
+               </button>
+            </div>
+
+            <!-- Image Content -->
+            <img v-if="project.cover" :src="project.cover" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" @error="handleImageError($event, project)" />
+            <div v-else class="w-full h-full relative group-hover:scale-110 transition-transform duration-1000">
+              <img :src="generateDefaultCover(project.title)" class="w-full h-full object-cover" />
+              <!-- Title Overlay for default cover -->
+              <div class="absolute inset-0 flex flex-col items-center justify-center p-4 bg-black/20">
+                <div class="text-white text-sm font-bold line-clamp-2 text-center drop-shadow-lg px-4">{{ project.title }}</div>
+              </div>
+            </div>
+
+            <!-- Status Tag -->
+            <div class="absolute top-3 right-3 z-30">
+              <div :class="[
+                'px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm border',
+                getStatusStyle(project.status)
+              ]">
+                {{ getStatusLabel(project.status) }}
+              </div>
             </div>
           </div>
 
           <!-- Content -->
-          <div class="p-5 flex-1">
-            <h3 class="font-bold text-lg mb-1 line-clamp-1 group-hover:text-indigo-400 transition-colors" :class="isLight ? 'text-slate-800' : 'text-white'">{{ project.title }}</h3>
-            <p class="text-xs mb-4" :class="isLight ? 'text-slate-500' : 'text-slate-500'">更新于 {{ project.updatedAt }}</p>
-            
-            <div class="flex items-center justify-between text-xs" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-              <div class="flex items-center gap-2">
-                <el-icon><User /></el-icon> <span>{{ project.author || '我' }}</span>
-              </div>
-              <div class="flex items-center gap-3">
-                 <span class="flex items-center"><el-icon class="mr-1"><View /></el-icon> {{ project.views }}</span>
-                 <span class="flex items-center"><el-icon class="mr-1"><Star /></el-icon> {{ project.likes }}</span>
+          <div class="p-4 flex-1">
+            <h3 class="font-bold text-base mb-1.5 line-clamp-1 group-hover:text-indigo-400 transition-colors" :class="isLight ? 'text-slate-800' : 'text-white'">{{ project.title }}</h3>
+            <div class="flex items-center justify-between">
+              <p class="text-[10px]" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ project.updatedAt }} 更新</p>
+              <div class="flex items-center gap-2 text-[10px]" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+                <span class="flex items-center gap-0.5"><el-icon><View /></el-icon>{{ project.views }}</span>
+                <span class="flex items-center gap-0.5"><el-icon><Star /></el-icon>{{ project.likes }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Action Footer -->
-          <div class="p-3 border-t grid grid-cols-6 gap-1" :class="isLight ? 'bg-slate-50/80 border-slate-200' : 'bg-slate-800/80 border-slate-700'">
-            <el-tooltip content="基础设定" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openSettings(project.id)">
-                <el-icon><Setting /></el-icon>
-              </el-button>
+          <!-- Action Footer (Floating on Hover) -->
+          <div class="absolute bottom-0 left-0 right-0 p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-30 bg-gradient-to-t from-slate-900/95 to-slate-900/60 backdrop-blur-md border-t border-white/10 flex justify-around">
+            <el-tooltip content="设定" placement="top">
+              <button class="p-2 text-slate-300 hover:text-white transition-colors" @click.stop="openSettings(project.id)">
+                <el-icon :size="16"><Setting /></el-icon>
+              </button>
             </el-tooltip>
 
-            <el-tooltip content="编辑大纲" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'outline')">
-                <el-icon><EditPen /></el-icon>
-              </el-button>
+            <el-tooltip content="编辑" placement="top">
+              <button class="p-2 text-slate-300 hover:text-white transition-colors" @click.stop="openProject(project.id, 'outline')">
+                <el-icon :size="16"><EditPen /></el-icon>
+              </button>
             </el-tooltip>
 
-            <el-tooltip content="管理章节" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-indigo-400 !px-0" @click.stop="openProject(project.id, 'chapters')">
-                <el-icon><List /></el-icon>
-              </el-button>
+            <el-tooltip content="章节" placement="top">
+              <button class="p-2 text-slate-300 hover:text-white transition-colors" @click.stop="openProject(project.id, 'chapters')">
+                <el-icon :size="16"><List /></el-icon>
+              </button>
             </el-tooltip>
 
-            <el-tooltip content="对接短剧" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-green-400 !px-0" @click.stop="handleDownload(project)">
-                <el-icon><VideoCamera /></el-icon>
-              </el-button>
+            <el-tooltip content="导出" placement="top">
+              <button class="p-2 text-slate-300 hover:text-green-400 transition-colors" @click.stop="handleDownload(project)">
+                <el-icon :size="16"><VideoCamera /></el-icon>
+              </button>
             </el-tooltip>
 
-            <el-tooltip content="克隆项目" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-blue-400 !px-0" @click.stop="handleClone(project)">
-                <el-icon><CopyDocument /></el-icon>
-              </el-button>
+            <el-tooltip content="克隆" placement="top">
+              <button class="p-2 text-slate-300 hover:text-blue-400 transition-colors" @click.stop="handleClone(project)">
+                <el-icon :size="16"><CopyDocument /></el-icon>
+              </button>
             </el-tooltip>
 
-            <el-tooltip content="删除项目" placement="top">
-              <el-button text class="!text-slate-400 hover:!text-red-500 !px-0" @click.stop="deleteProject(project.id)">
-                <el-icon><Delete /></el-icon>
-              </el-button>
+            <el-tooltip content="删除" placement="top">
+              <button class="p-2 text-slate-300 hover:text-red-500 transition-colors" @click.stop="deleteProject(project.id)">
+                <el-icon :size="16"><Delete /></el-icon>
+              </button>
             </el-tooltip>
           </div>
         </div>
@@ -279,19 +292,30 @@ setTimeout(() => {
 }, 800)
 
 
+const getStatusStyle = (status: string) => {
+  const map: Record<string, string> = {
+    draft: 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30',
+    outline: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30',
+    writing: 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30',
+    completed: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
+    published: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
+    archived: 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30'
+  }
+  return map[status] || 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30'
+}
+
 const generateDefaultCover = (title: string, variant: number = 0) => {
   const gradients = [
-    ['#4f46e5', '#0ea5e9'], // Indigo to Sky
-    ['#db2777', '#9333ea'], // Pink to Purple
-    ['#059669', '#10b981'], // Emerald
-    ['#d97706', '#f59e0b'], // Amber
-    ['#2563eb', '#3b82f6'], // Blue
-    ['#ef4444', '#f97316'], // Red to Orange
-    ['#8b5cf6', '#6366f1'], // Violet to Indigo
-    ['#10b981', '#3b82f6']  // Emerald to Blue
+    ['#4f46e5', '#7c3aed'], // Indigo to Violet
+    ['#f43f5e', '#fb923c'], // Rose to Orange
+    ['#10b981', '#06b6d4'], // Emerald to Cyan
+    ['#3b82f6', '#2563eb'], // Blue
+    ['#ec4899', '#8b5cf6'], // Pink to Purple
+    ['#f59e0b', '#ef4444'], // Amber to Red
+    ['#06b6d4', '#3b82f6'], // Cyan to Blue
+    ['#8b5cf6', '#d946ef']  // Purple to Fuchsia
   ]
   
-  // Deterministic selection based on title hash
   let hash = variant;
   for (let i = 0; i < title.length; i++) {
     hash = title.charCodeAt(i) + ((hash << 5) - hash);
@@ -300,18 +324,20 @@ const generateDefaultCover = (title: string, variant: number = 0) => {
   const [c1, c2] = gradients[colorIndex];
   
   const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+  <svg xmlns="http://www.w3.org/2000/svg" width="600" height="375" viewBox="0 0 600 375">
     <defs>
       <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="${c1}" />
         <stop offset="100%" stop-color="${c2}" />
       </linearGradient>
+      <filter id="f" x="0" y="0" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
+      </filter>
     </defs>
     <rect width="100%" height="100%" fill="url(#g)" />
-    <rect x="60" y="60" width="480" height="780" rx="30" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
-    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3)">
-      ${title.length > 6 ? title.substring(0, 6) + '...' : title}
-    </text>
+    <circle cx="500" cy="50" r="150" fill="white" fill-opacity="0.1" filter="url(#f)" />
+    <circle cx="50" cy="300" r="100" fill="black" fill-opacity="0.1" filter="url(#f)" />
+    <rect x="20" y="20" width="560" height="335" rx="15" fill="none" stroke="white" stroke-opacity="0.1" stroke-width="1" />
   </svg>`
   
   return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg.trim().replace(/\s+/g, ' '))
