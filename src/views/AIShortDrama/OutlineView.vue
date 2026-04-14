@@ -65,20 +65,33 @@
             </div>
             
             <template v-else-if="form">
-              <div class="flex items-center justify-between mb-2 p-3 bg-gradient-to-r from-slate-50/80 to-indigo-50/50 dark:from-slate-900/50 dark:to-indigo-900/30 rounded-2xl border border-white dark:border-slate-700 shadow-sm">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-2 h-6 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/20"></div>
-                  <div class="flex flex-col">
-                    <span class="text-[14px] font-black text-slate-800 dark:text-white leading-none">分集列表</span>
-                    <span class="text-[9px] text-indigo-500 dark:text-indigo-400 font-black uppercase tracking-widest mt-1 opacity-70">Total {{ form.episodesData.length }} Episodes</span>
+              <!-- Streamlined Header: Stats & Add Button in One Row -->
+              <div class="mb-4 flex items-center justify-between p-2.5 bg-slate-50/50 dark:bg-slate-900/30 rounded-[20px] border border-slate-100 dark:border-slate-800/50 shadow-sm">
+                <!-- Stats Summary -->
+                <div class="flex items-center gap-4 px-2">
+                  <div class="flex flex-col items-center">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-0.5">总数</span>
+                    <span class="text-[15px] font-black text-slate-800 dark:text-white leading-none">{{ episodeStats.total }}</span>
+                  </div>
+                  <div class="w-px h-5 bg-slate-200 dark:bg-slate-700 opacity-50"></div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-tighter mb-0.5">已完</span>
+                    <span class="text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-none">{{ episodeStats.finished }}</span>
+                  </div>
+                  <div class="w-px h-5 bg-slate-200 dark:bg-slate-700 opacity-50"></div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-[9px] font-black text-amber-500 uppercase tracking-tighter mb-0.5">未完</span>
+                    <span class="text-[15px] font-black text-amber-600 dark:text-amber-400 leading-none">{{ episodeStats.unfinished }}</span>
                   </div>
                 </div>
+
+                <!-- Add Button: Compact & High Contrast -->
                 <button 
                   @click="addEpisode"
-                  class="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-[12px] font-black shadow-lg shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all group"
+                  class="h-9 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/10 active:scale-95 transition-all flex items-center gap-1.5 group"
                 >
-                  <el-icon class="group-hover:rotate-90 transition-transform duration-300"><Plus /></el-icon>
-                  <span>新增剧集</span>
+                  <el-icon class="group-hover:rotate-90 transition-transform duration-300" :size="14"><Plus /></el-icon>
+                  <span class="text-[12px] font-black whitespace-nowrap">新增剧集</span>
                 </button>
               </div>
 
