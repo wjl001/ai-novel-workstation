@@ -402,31 +402,60 @@
         </div>
 
         <!-- Result Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 min-h-[300px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-4 transition-colors">
-           <div v-if="generatedImages.length === 0 && !isGenerating" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-             <el-icon size="48" class="mb-4 opacity-20"><Picture /></el-icon>
-             <p class="font-medium opacity-60">输入描述词后点击生成</p>
-           </div>
-           
-           <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl">
-             <div class="loading-spinner mb-4"></div>
-             <p class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">AI 正在绘图...</p>
+        <div class="space-y-4">
+           <!-- Gallery Tabs -->
+           <div class="flex items-center gap-4 mb-2">
+             <div class="text-sm font-bold text-slate-700 dark:text-slate-300">可选封面素材</div>
+             <div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
            </div>
 
-           <div 
-             v-for="(img, idx) in generatedImages" 
-             :key="idx"
-             class="relative group cursor-pointer rounded-xl overflow-hidden border-4 transition-all aspect-[3/4] shadow-md"
-             :class="selectedImage === img ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
-             @click="selectedImage = img"
-           >
-             <img :src="img" class="w-full h-full object-cover" />
-             <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img"></div>
-             <div class="absolute top-2 right-2" v-if="selectedImage === img">
-               <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
-                 <el-icon :size="16"><Check /></el-icon>
-               </div>
-             </div>
+           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 min-h-[200px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-4 transition-colors">
+              <!-- Default Gallery (Always shown initially or when not generating) -->
+              <template v-if="generatedImages.length === 0 && !isGenerating">
+                <div 
+                  v-for="(img, idx) in defaultCovers" 
+                  :key="'default-' + idx"
+                  class="relative group cursor-pointer rounded-xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-md"
+                  :class="selectedImage === img ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
+                  @click="selectedImage = img"
+                >
+                  <img :src="img" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img"></div>
+                  <div class="absolute top-2 right-2" v-if="selectedImage === img">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                      <el-icon :size="16"><Check /></el-icon>
+                    </div>
+                  </div>
+                  <!-- Label for default -->
+                  <div class="absolute bottom-0 inset-x-0 p-1 bg-black/40 backdrop-blur-sm text-[10px] text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">推荐素材</div>
+                </div>
+              </template>
+              
+              <!-- AI Generated Image (Single Mode) -->
+              <template v-else-if="generatedImages.length > 0">
+                <div class="col-span-full flex justify-center py-2">
+                  <div 
+                    class="relative group cursor-pointer rounded-2xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-2xl w-full max-w-[480px]"
+                    :class="selectedImage === generatedImages[0] ? 'border-indigo-500 scale-[1.02]' : 'border-transparent'"
+                    @click="selectedImage = generatedImages[0]"
+                  >
+                    <img :src="generatedImages[0]" class="w-full h-full object-cover" />
+                    <div class="absolute top-4 right-4">
+                      <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                        <el-icon :size="20"><Check /></el-icon>
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 p-3 bg-indigo-600/80 backdrop-blur-md text-sm text-white text-center font-bold">
+                      AI 已为您生成专属封面
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl">
+                <div class="loading-spinner mb-4"></div>
+                <p class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">AI 正在绘图...</p>
+              </div>
            </div>
         </div>
       </div>
@@ -455,6 +484,18 @@ const isGenerating = ref(false);
 const generatedImages = ref<string[]>([]);
 const selectedImage = ref('');
 const currentWorkForAI = ref<any>(null);
+
+// Default cover gallery
+const defaultCovers = [
+  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=600&h=375&auto=format&fit=crop', // Sci-fi
+  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=600&h=375&auto=format&fit=crop', // Ancient
+  'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&h=375&auto=format&fit=crop', // Movie
+  'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&h=375&auto=format&fit=crop', // Forest/Mystery
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&h=375&auto=format&fit=crop', // Cyberpunk
+  'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&h=375&auto=format&fit=crop', // Cinema
+  'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600&h=375&auto=format&fit=crop', // City Night
+  'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&h=375&auto=format&fit=crop'  // Vintage
+];
 
 const searchQuery = ref('');
 const statusFilter = ref('');
@@ -545,14 +586,12 @@ const openAIGenerator = (work: any) => {
 const generateCoverImages = () => {
   if (!aiPrompt.value) return ElMessage.warning('请输入描述词');
   isGenerating.value = true;
+  generatedImages.value = [];
   setTimeout(() => {
-    // Mock generated images
-    generatedImages.value = [
-      'https://picsum.photos/seed/' + Math.random() + '/600/800',
-      'https://picsum.photos/seed/' + Math.random() + '/600/800',
-      'https://picsum.photos/seed/' + Math.random() + '/600/800',
-      'https://picsum.photos/seed/' + Math.random() + '/600/800',
-    ];
+    // Generate only ONE image as requested
+    const newImg = 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=1200&h=750&auto=format&fit=crop';
+    generatedImages.value = [newImg];
+    selectedImage.value = newImg; // Auto-select the only generated image
     isGenerating.value = false;
   }, 2000);
 };
