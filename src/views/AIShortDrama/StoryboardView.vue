@@ -119,7 +119,7 @@
                     <el-icon :size="14"><User /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">角色形象</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">角色管理</span>
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredCharacters.length }})</span>
                   </div>
                 </div>
@@ -152,7 +152,7 @@
                     <el-icon :size="14"><Location /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">拍摄场景</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">场景管理</span>
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredScenes.length }})</span>
                   </div>
                 </div>
@@ -185,7 +185,7 @@
                     <el-icon :size="14"><Box /></el-icon>
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">道具物品</span>
+                    <span class="text-[12px] font-black text-slate-800 dark:text-white leading-tight">道具管理</span>
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">({{ filteredProps.length }})</span>
                   </div>
                 </div>
