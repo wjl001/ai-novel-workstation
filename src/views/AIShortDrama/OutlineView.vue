@@ -186,20 +186,93 @@
             </template>
           </div>
 
-          <!-- Sidebar Pagination Footer (Fixed at bottom) -->
-          <div v-if="form && episodeRangeOptions.length > 1" class="shrink-0 p-4 border-t border-slate-100 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md">
-            <div class="flex flex-wrap items-center justify-center gap-2 p-3 bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-dashed border-indigo-200 dark:border-indigo-800/50 shadow-inner">
-              <button 
-                v-for="opt in episodeRangeOptions" 
-                :key="opt.value"
-                @click="episodeRange = opt.value"
-                class="px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-300 border shadow-sm"
-                :class="episodeRange === opt.value 
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent shadow-indigo-500/20 scale-105' 
-                  : 'bg-white dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-700 hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md'"
-              >
-                {{ opt.label }}
-              </button>
+          <!-- Sidebar Pagination Footer (Enhanced for 100+ episodes) -->
+          <div v-if="form && (episodeRangeOptions.length > 1 || form.episodesData.length > 50)" class="shrink-0 border-t border-slate-100 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl relative">
+            <!-- Decorative indicator for scrollable area -->
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-indigo-50 dark:bg-indigo-900/50 border border-indigo-100 dark:border-indigo-800 rounded-full text-[9px] font-black text-indigo-500 uppercase tracking-widest shadow-sm z-10">
+              剧集导航
+            </div>
+
+            <div class="p-4 pt-6 flex flex-col gap-3">
+              <!-- Scrollable Range Tabs -->
+              <div class="relative flex items-center gap-2 group/nav">
+                <div class="flex-1 overflow-x-auto custom-scrollbar-hide flex items-center gap-2 pb-1 scroll-smooth" ref="rangeTabsRef">
+                  <button 
+                    v-for="opt in episodeRangeOptions" 
+                    :key="opt.value"
+                    @click="episodeRange = opt.value"
+                    class="shrink-0 px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-500 border relative overflow-hidden group/tab"
+                    :class="episodeRange === opt.value 
+                      ? 'bg-indigo-600 text-white border-transparent shadow-lg shadow-indigo-500/20 scale-105' 
+                      : 'bg-slate-50 dark:bg-slate-900/50 text-slate-500 border-slate-100 dark:border-slate-800 hover:border-indigo-300 hover:text-indigo-600'"
+                  >
+                    <span class="relative z-10">{{ opt.label }}</span>
+                    <div v-if="episodeRange === opt.value" class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer"></div>
+                  </button>
+                </div>
+
+                <!-- Quick Jump Button -->
+                <el-popover
+                  placement="top"
+                  :width="280"
+                  trigger="click"
+                  popper-class="episode-jump-popover"
+                >
+                  <template #reference>
+                    <button class="w-10 h-10 shrink-0 rounded-xl bg-white dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-indigo-600 hover:border-indigo-300 hover:shadow-md transition-all flex items-center justify-center group/jump">
+                      <el-icon :size="18" class="group-hover/jump:rotate-12 transition-transform"><Search /></el-icon>
+                    </button>
+                  </template>
+                  
+                  <div class="p-4 flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[12px] font-black text-slate-800 dark:text-white uppercase tracking-widest">快速跳转</span>
+                      <span class="text-[10px] text-slate-400">共 {{ form.episodesData.length }} 集</span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                      <el-input-number 
+                        v-model="jumpToEpisodeInput" 
+                        :min="1" 
+                        :max="form.episodesData.length" 
+                        size="small"
+                        class="flex-1"
+                        placeholder="集数"
+                      />
+                      <button 
+                        @click="handleQuickJump"
+                        class="px-4 bg-indigo-600 text-white rounded-lg text-[12px] font-black hover:bg-indigo-700 transition-colors"
+                      >
+                        跳转
+                      </button>
+                    </div>
+
+                    <div class="grid grid-cols-5 gap-1.5 max-h-[200px] overflow-y-auto custom-scrollbar p-1">
+                      <button 
+                        v-for="(_, idx) in form.episodesData" 
+                        :key="idx"
+                        @click="quickSelectEpisode(idx)"
+                        class="aspect-square flex items-center justify-center rounded-lg text-[10px] font-black transition-all border"
+                        :class="currentEpisodeIndex === idx 
+                          ? 'bg-indigo-600 text-white border-transparent' 
+                          : 'bg-slate-50 dark:bg-slate-900/50 text-slate-400 border-slate-100 dark:border-slate-800 hover:border-indigo-300 hover:text-indigo-600'"
+                      >
+                        {{ idx + 1 }}
+                      </button>
+                    </div>
+                  </div>
+                </el-popover>
+              </div>
+
+              <!-- Page Indicator Dot Line -->
+              <div v-if="episodeRangeOptions.length > 1" class="flex justify-center gap-1.5">
+                <div 
+                  v-for="opt in episodeRangeOptions" 
+                  :key="opt.value"
+                  class="h-1 rounded-full transition-all duration-500"
+                  :class="episodeRange === opt.value ? 'w-6 bg-indigo-500' : 'w-1.5 bg-slate-200 dark:bg-slate-700'"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
@@ -457,7 +530,31 @@
 
               <!-- Shared Chat logs -->
               <transition-group name="chat">
-                <!-- AI Proposal / Comparison Card -->
+                <!-- Chat History Messages -->
+                <div 
+                  v-for="msg in chatMessages" 
+                  :key="msg.id"
+                  class="flex flex-col gap-2"
+                  :class="msg.role === 'ai' ? 'items-start' : 'items-end'"
+                >
+                  <div class="flex items-center gap-2 px-1" :class="msg.role === 'ai' ? 'flex-row' : 'flex-row-reverse'">
+                    <div class="w-5 h-5 rounded-md flex items-center justify-center" :class="msg.role === 'ai' ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'">
+                      <el-icon :size="12"><component :is="msg.role === 'ai' ? MagicStick : User" /></el-icon>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ msg.role === 'ai' ? 'AI 助手' : '你' }}</span>
+                  </div>
+                  <div 
+                    class="p-4 rounded-2xl text-[13px] leading-relaxed max-w-[90%] break-words shadow-sm border transition-all whitespace-pre-wrap"
+                    :class="msg.role === 'ai' 
+                      ? 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-100 dark:border-slate-700/50 rounded-tl-none' 
+                      : 'bg-indigo-600 text-white border-indigo-500 rounded-tr-none shadow-indigo-500/10'"
+                  >
+                    {{ msg.content }}
+                    <span v-if="msg.isGenerating" class="inline-block w-1 h-4 bg-indigo-300 animate-pulse ml-1 align-middle"></span>
+                  </div>
+                </div>
+
+                <!-- AI Proposal / Comparison Card (Now below historical messages) -->
                 <div v-if="aiProposal.isActive" key="ai-proposal" class="flex flex-col gap-3 animate-slide-up">
                   <div class="flex items-center gap-2 px-1">
                     <div class="w-5 h-5 rounded-md bg-indigo-600 flex items-center justify-center text-white">
@@ -512,48 +609,11 @@
                     </div>
                   </div>
                 </div>
-
-                <div 
-                  v-for="msg in chatMessages" 
-                  :key="msg.id"
-                  class="flex flex-col gap-2"
-                  :class="msg.role === 'ai' ? 'items-start' : 'items-end'"
-                >
-                  <div class="flex items-center gap-2 px-1" :class="msg.role === 'ai' ? 'flex-row' : 'flex-row-reverse'">
-                    <div class="w-5 h-5 rounded-md flex items-center justify-center" :class="msg.role === 'ai' ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'">
-                      <el-icon :size="12"><component :is="msg.role === 'ai' ? MagicStick : User" /></el-icon>
-                    </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ msg.role === 'ai' ? 'AI 助手' : '你' }}</span>
-                  </div>
-                  <div 
-                    class="p-4 rounded-2xl text-[13px] leading-relaxed max-w-[90%] break-words shadow-sm border transition-all"
-                    :class="msg.role === 'ai' 
-                      ? 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-100 dark:border-slate-700/50 rounded-tl-none' 
-                      : 'bg-indigo-600 text-white border-indigo-500 rounded-tr-none shadow-indigo-500/10'"
-                  >
-                    {{ msg.content }}
-                    <span v-if="msg.isGenerating" class="inline-block w-1 h-4 bg-indigo-300 animate-pulse ml-1 align-middle"></span>
-                  </div>
-                </div>
               </transition-group>
             </div>
             
             <!-- Chat Input Area -->
-            <div class="mt-auto shrink-0 p-5 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700/50">
-              <!-- AI Action Buttons -->
-              <div class="grid grid-cols-4 gap-2 mb-4">
-                <div v-for="action in [{n:'续写', i:Edit}, {n:'润色', i:MagicStick}, {n:'扩写', i:DocumentAdd}, {n:'改写', i:Refresh}]" 
-                     :key="action.n"
-                     @click="applyAIAction(action.n)"
-                     class="flex flex-col items-center gap-1.5 cursor-pointer group/item"
-                >
-                  <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover/item:bg-indigo-600 group-hover/item:text-white transition-all duration-300 shadow-sm">
-                    <el-icon :size="18"><component :is="action.i" /></el-icon>
-                  </div>
-                  <span class="text-[11px] font-black text-slate-500 group-hover/item:text-indigo-600 transition-colors">{{ action.n }}</span>
-                </div>
-              </div>
-
+            <div class="mt-auto shrink-0 p-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700/50">
               <!-- Quoted Content Block -->
               <transition name="fade">
                 <div v-if="quotedText" class="mb-4 p-3 bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl relative group/quote">
@@ -573,7 +633,7 @@
                 </div>
               </transition>
 
-              <div class="relative group/input">
+              <div class="relative group/input mb-3">
                 <el-input 
                   v-model="aiPromptInput" 
                   placeholder="告诉我你的想法..." 
@@ -590,10 +650,25 @@
                   </template>
                 </el-input>
               </div>
-              <div class="flex flex-wrap items-center justify-center gap-2 mt-4 py-1">
-                <button v-for="tag in ['优化对话', '增加冲突', '情感渲染', '五感填充', '内容升华', '增加反差']" :key="tag" 
+
+              <!-- AI Action Buttons - Moved and Resized -->
+              <div class="grid grid-cols-4 gap-2 mb-3">
+                <div v-for="action in [{n:'续写', i:Edit}, {n:'润色', i:MagicStick}, {n:'扩写', i:DocumentAdd}, {n:'改写', i:Refresh}]" 
+                     :key="action.n"
+                     @click="applyAIAction(action.n)"
+                     class="flex flex-col items-center gap-1 cursor-pointer group/item"
+                >
+                  <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-400 group-hover/item:bg-indigo-600 group-hover/item:text-white transition-all duration-300 shadow-sm">
+                    <el-icon :size="16"><component :is="action.i" /></el-icon>
+                  </div>
+                  <span class="text-[10px] font-black text-slate-500 group-hover/item:text-indigo-600 transition-colors">{{ action.n }}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-center gap-2 py-1">
+                <button v-for="tag in ['增加冲突', '情感渲染', '增加反差', '五感填充']" :key="tag" 
                         @click="applyAIAction(tag)"
-                        class="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-700 text-[11px] font-black text-slate-500 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/30 transition-all border border-slate-100 dark:border-slate-600 shadow-sm hover:shadow-md">
+                        class="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-700 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/30 transition-all border border-slate-100 dark:border-slate-600 shadow-sm hover:shadow-md">
                   {{ tag }}
                 </button>
               </div>
@@ -759,7 +834,8 @@ import {
   ArrowLeft, ArrowRight, Document, Setting, ArrowDown, 
   Expand, Fold, VideoPause, VideoPlay, User, 
   RefreshLeft, RefreshRight, DocumentAdd, Top, InfoFilled,
-  Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer
+  Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer,
+  Search
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
@@ -854,6 +930,32 @@ const isRightPanelVisible = ref(true);
 const leftPanelWidth = ref(320);
 const isEditingLocked = ref(true);
 const showInstructionsDialog = ref(false);
+const jumpToEpisodeInput = ref(1);
+const rangeTabsRef = ref<HTMLElement | null>(null);
+
+const handleQuickJump = () => {
+  const targetIdx = jumpToEpisodeInput.value - 1;
+  quickSelectEpisode(targetIdx);
+};
+
+const quickSelectEpisode = (index: number) => {
+  // Calculate which range this episode belongs to
+  const rangeStart = Math.floor(index / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
+  episodeRange.value = rangeStart;
+  
+  // Select the episode
+  selectEpisode(index);
+  
+  // Auto-scroll the range tabs to show the active range
+  nextTick(() => {
+    if (rangeTabsRef.value) {
+      const activeTab = rangeTabsRef.value.querySelector('.bg-indigo-600');
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+  });
+};
 
 const aiInstructions = [
   { 
@@ -1277,16 +1379,61 @@ const applyAIAction = (actionName: string) => {
 const acceptAIProposal = () => {
   if (tiptapEditor.value && aiProposal.isActive) {
     const { from, to } = aiProposal.selection;
+    
+    // 移除提示性前缀，仅保留正文（处理全角和半角冒号）
+    let contentToInsert = aiProposal.modified;
+    
+    // 查找最后一个冒号，通常提示语以冒号结尾
+    const separatorIdx = contentToInsert.lastIndexOf('：');
+    const halfSeparatorIdx = contentToInsert.lastIndexOf(':');
+    const idx = Math.max(separatorIdx, halfSeparatorIdx);
+    
+    if (idx !== -1 && idx < contentToInsert.length * 0.4) {
+      contentToInsert = contentToInsert.substring(idx + 1).trim();
+    }
+    
+    // 将该次 AI 建议作为正式对话记录保存到历史
+    chatMessages.value.push({
+      id: Date.now().toString(),
+      role: 'ai',
+      content: `【已采纳建议】\n${aiProposal.modified}`
+    });
+
     // Replace selected range with modified content
-    tiptapEditor.value.commands.insertContentAt({ from, to }, aiProposal.modified);
+    tiptapEditor.value.commands.insertContentAt({ from, to }, contentToInsert);
     aiProposal.isActive = false;
+    
+    // 滚动聊天区域到底部
+    nextTick(() => {
+      if (rightPanelChatRef.value) {
+        rightPanelChatRef.value.scrollTop = rightPanelChatRef.value.scrollHeight;
+      }
+    });
+    
     ElMessage.success('已应用 AI 建议到剧本');
   }
 };
 
 const rejectAIProposal = () => {
-  aiProposal.isActive = false;
-  ElMessage.info('已放弃 AI 建议');
+  if (aiProposal.isActive) {
+    // 将该次 AI 建议作为已放弃记录保存到历史
+    chatMessages.value.push({
+      id: Date.now().toString(),
+      role: 'ai',
+      content: `【已放弃建议】\n${aiProposal.modified}`
+    });
+    
+    aiProposal.isActive = false;
+    
+    // 滚动聊天区域到底部
+    nextTick(() => {
+      if (rightPanelChatRef.value) {
+        rightPanelChatRef.value.scrollTop = rightPanelChatRef.value.scrollHeight;
+      }
+    });
+    
+    ElMessage.info('已放弃 AI 建议');
+  }
 };
 
 const openContextMenu = (e: MouseEvent) => {
@@ -1710,6 +1857,30 @@ const generateScriptBody = () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.4);
+}
+
+.custom-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.episode-jump-popover {
+  border-radius: 20px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 1px solid rgba(99, 102, 241, 0.1) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Animations */
