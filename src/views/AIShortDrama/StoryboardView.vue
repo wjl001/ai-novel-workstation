@@ -462,9 +462,15 @@
                     @timeupdate="onCenterVideoTimeUpdate"
                   ></video>
                 </div>
-                <div v-else class="flex flex-col items-center gap-4 text-slate-700 dark:text-slate-600">
-                  <el-icon :size="64"><Picture /></el-icon>
-                  <span class="text-[14px] font-black uppercase tracking-widest">未生成分镜视频</span>
+                <div v-else class="flex flex-col items-center gap-6 text-slate-400">
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-indigo-500/20 rounded-full blur-2xl animate-pulse"></div>
+                    <el-icon :size="80" class="relative z-10"><Film /></el-icon>
+                  </div>
+                  <div class="flex flex-col items-center gap-2 text-center">
+                    <span class="text-[16px] font-black text-slate-300 tracking-widest uppercase">分镜视频待生成</span>
+                    <p class="text-[12px] text-slate-500 font-medium">请点击下方时间轴上的图标开始生成</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -472,7 +478,7 @@
         </section>
 
         <!-- Bottom: Timeline Area -->
-        <div class="h-[110px] bg-[#F5F3FF] dark:bg-slate-900/50 backdrop-blur-xl rounded-[32px] shadow-xl shadow-purple-100 dark:shadow-none border border-purple-100 dark:border-slate-800 p-3.5 flex flex-col gap-2 shrink-0 transition-all duration-500">
+        <div class="h-[140px] bg-[#F5F3FF] dark:bg-slate-900/50 backdrop-blur-xl rounded-[32px] shadow-xl shadow-purple-100 dark:shadow-none border border-purple-100 dark:border-slate-800 p-3.5 flex flex-col gap-2 shrink-0 transition-all duration-500">
           <div class="flex items-center justify-between shrink-0 pl-1 pr-1">
             <div class="flex items-center gap-3">
               <div 
@@ -521,7 +527,7 @@
           <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
             <transition-group name="list">
               <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-                class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
+                class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
                 :class="[
                   (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
                     ? 'border-purple-500 ring-4 ring-purple-500/10' 
@@ -563,20 +569,30 @@
                 </div>
 
                 <div class="flex items-center justify-center w-full h-full relative z-10">
-                  <div v-if="scene.status === 'generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+                  <div v-if="scene.status === 'script_generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
                     <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
-                    <span class="text-[8px] font-black text-purple-600 uppercase tracking-widest animate-pulse">生成中</span>
+                    <span class="text-[9px] font-black text-purple-600 uppercase tracking-widest animate-pulse text-center px-1">分镜脚本生成</span>
+                  </div>
+                  <div v-else-if="scene.status === 'generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+                    <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
+                    <span class="text-[8px] font-black text-purple-600 uppercase tracking-widest animate-pulse">视频生成中</span>
                   </div>
                   <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
                     <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
                   </div>
-                  <el-icon v-else :size="18" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
+                  <div 
+                    v-else 
+                    class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-purple-600 transition-all shadow-lg border border-white/30"
+                    @click.stop="handleGenerateSingleScene(idx)"
+                  >
+                    <el-icon :size="18"><MagicStick /></el-icon>
+                  </div>
                 </div>
               </div>
             </transition-group>
             
             <button 
-              class="flex-shrink-0 w-10 h-10 rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
+              class="flex-shrink-0 w-[40px] h-[95px] rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
               @click="addTimelineScene"
             >
               <el-icon :size="18" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
@@ -1722,6 +1738,8 @@ const handleGenerateSingleScene = (idx: number) => {
         clearInterval(interval);
         timelineScenes.value[idx].status = 'success';
         timelineScenes.value[idx].video = '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4';
+        // 同时设置预览图，确保时间轴能看到画面
+        timelineScenes.value[idx].image = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600';
         ElMessage.success(`分镜 ${idx + 1} 生成成功`);
       }
     }, 100);
@@ -1888,72 +1906,67 @@ const startStoryboardSequentialGeneration = async () => {
   // Clear existing scenes
   timelineScenes.value = [];
 
-  // Phase 2: Sequential Scene Generation (Per-item loading)
-  for (let i = 0; i < sceneData.length; i++) {
-    currentGeneratingStoryboardIndex.value = i;
-    
-    // Add new scene with loading state
-    const newScene = {
-      ...sceneData[i],
-      status: 'generating',
-      image: '',
-      video: '',
-      script: '' // Start with empty script for streaming effect
-    };
-    timelineScenes.value.push(newScene);
-    
-    // Auto-select the first scene to show it in the editor/player immediately
-    if (i === 0) {
-      currentSceneIdx.value = 0;
-    }
-    
-    // Mock generation delay and streaming text effect
-    const fullScript = sceneData[i].script;
-    
-    // Custom logic to handle HTML tags during streaming
-    // We want to avoid breaking tags like <span ...> or <img> during the stream
-    let currentHtml = '';
-    let j = 0;
-    while (j < fullScript.length) {
-      if (fullScript[j] === '<') {
-        // Find the end of the tag
-        const endIdx = fullScript.indexOf('>', j);
-        if (endIdx !== -1) {
-          currentHtml += fullScript.slice(j, endIdx + 1);
-          j = endIdx + 1;
+    // Phase 2: Sequential Scene Generation (Per-item loading)
+    for (let i = 0; i < sceneData.length; i++) {
+      currentGeneratingStoryboardIndex.value = i;
+      
+      // Add new scene with loading state
+      const newScene = {
+        ...sceneData[i],
+        status: 'script_generating', // Use script_generating while text is being made
+        image: '',
+        video: '',
+        script: '' // Start with empty script for streaming effect
+      };
+      timelineScenes.value.push(newScene);
+      
+      // Auto-select the first scene to show it in the editor/player immediately
+      if (i === 0) {
+        currentSceneIdx.value = 0;
+      }
+      
+      // Mock generation delay and streaming text effect
+      const fullScript = sceneData[i].script;
+      
+      // Custom logic to handle HTML tags during streaming
+      // We want to avoid breaking tags like <span ...> or <img> during the stream
+      let currentHtml = '';
+      let j = 0;
+      while (j < fullScript.length) {
+        if (fullScript[j] === '<') {
+          // Find the end of the tag
+          const endIdx = fullScript.indexOf('>', j);
+          if (endIdx !== -1) {
+            currentHtml += fullScript.slice(j, endIdx + 1);
+            j = endIdx + 1;
+          } else {
+            currentHtml += fullScript[j];
+            j++;
+          }
         } else {
-          currentHtml += fullScript[j];
-          j++;
+          // Output a small chunk of text
+          const chunkSize = Math.floor(Math.random() * 3) + 1; // 1-3 chars at a time for natural typing
+          currentHtml += fullScript.slice(j, j + chunkSize);
+          j += chunkSize;
+          await new Promise(resolve => setTimeout(resolve, 20)); // typing delay
         }
-      } else {
-        // Output a small chunk of text
-        const chunkSize = Math.floor(Math.random() * 3) + 1; // 1-3 chars at a time for natural typing
-        currentHtml += fullScript.slice(j, j + chunkSize);
-        j += chunkSize;
-        await new Promise(resolve => setTimeout(resolve, 20)); // typing delay
+        
+        timelineScenes.value[i].script = currentHtml;
+        
+        // Update editor content in real-time if this is the currently viewed scene
+        if (i === currentSceneIdx.value && !isEditingScript.value) {
+          editor.value?.commands.setContent(timelineScenes.value[i].script);
+        }
       }
       
-      timelineScenes.value[i].script = currentHtml;
-      
-      // Update editor content in real-time if this is the currently viewed scene
-      if (i === currentSceneIdx.value && !isEditingScript.value) {
-        editor.value?.commands.setContent(timelineScenes.value[i].script);
-      }
+      // Only set status to pending after script is done (video stays null)
+      timelineScenes.value[i].status = 'pending';
     }
-    
-    // Mock video generation delay after text is done
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Update scene with success media
-    timelineScenes.value[i].image = sceneData[i].targetImage;
-    timelineScenes.value[i].video = sceneData[i].targetVideo;
-    timelineScenes.value[i].status = 'success';
-  }
 
-  isSequentiallyGeneratingStoryboard.value = false;
-  currentGeneratingStoryboardIndex.value = -1;
-  ElMessage.success('分镜脚本与视频生成完毕');
-};
+    isSequentiallyGeneratingStoryboard.value = false;
+    currentGeneratingStoryboardIndex.value = -1;
+    ElMessage.success('分镜脚本生成完毕，点击“生成视频”开始制作画面');
+  };
 </script>
 
 <style scoped>

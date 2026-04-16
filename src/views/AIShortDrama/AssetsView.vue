@@ -294,7 +294,7 @@
     <div class="flex justify-end items-center p-6 border-t border-slate-100 bg-white shrink-0">
       <el-tooltip
         :disabled="isAssetsComplete"
-        content="请先完成主体设置"
+        :content="incompleteMessage"
         placement="top"
       >
         <span class="inline-block">
@@ -424,7 +424,37 @@ const confirmVisible = ref(false);
 const hasUnsavedChanges = ref(false); // For demo, let's say true if we edited anything
 
 const isAssetsComplete = computed(() => {
-  return characters.value.length > 0 && scenes.value.length > 0;
+  const hasBasicAssets = characters.value.length > 0 && scenes.value.length > 0;
+  const isGenerating = isGeneratingAssetsText.value || generatingAssetImages.size > 0;
+  
+  // Check if any asset is missing a description or image (or has a failed image)
+  const allAssets = [...characters.value, ...scenes.value, ...propsList.value];
+  const hasIncompleteAssets = allAssets.some(asset => {
+    // Check for empty name or description
+    if (!asset.name || !asset.description) return true;
+    // Check for empty image or failed image
+    if (!asset.image || asset.image === 'FAILED') return true;
+    return false;
+  });
+
+  return hasBasicAssets && !isGenerating && !hasIncompleteAssets;
+});
+
+const incompleteMessage = computed(() => {
+  if (isGeneratingAssetsText.value) return '正在生成主体文字信息...';
+  if (generatingAssetImages.size > 0) return '正在生成主体图片...';
+  if (characters.value.length === 0 || scenes.value.length === 0) return '请至少添加一个角色和一个场景';
+  
+  const allAssets = [...characters.value, ...scenes.value, ...propsList.value];
+  
+  // Check specifically for what's missing
+  const missingText = allAssets.find(asset => !asset.name || !asset.description);
+  if (missingText) return `请完善主体 ${missingText.name || '未命名'} 的描述信息`;
+  
+  const missingImage = allAssets.find(asset => !asset.image || asset.image === 'FAILED');
+  if (missingImage) return `请为 ${missingImage.name} 生成或上传一张图片`;
+
+  return '请先完成主体设置';
 });
 
 const handleNextStep = () => {

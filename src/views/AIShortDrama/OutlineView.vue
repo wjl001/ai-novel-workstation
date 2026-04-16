@@ -554,7 +554,7 @@
 
           <button 
             @click="goToSubjectSettings"
-            :disabled="isSavingScript || !editorTextContent"
+            :disabled="isSavingScript || !editorTextContent || isGenerating"
             class="h-11 px-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl text-[14px] font-black shadow-xl shadow-indigo-500/30 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
           >
             <el-icon v-if="isSavingScript" class="is-loading"><Loading /></el-icon>
@@ -900,6 +900,18 @@
         </button>
       </div>
     </el-dialog>
+
+    <!-- Central Custom Warning Overlay -->
+    <transition name="toast-bounce">
+      <div v-if="customWarning.visible" class="fixed inset-0 z-[9999] pointer-events-none flex items-start justify-center pt-[15vh] bg-slate-900/10 dark:bg-slate-900/40 backdrop-blur-[2px]">
+        <div class="px-8 py-5 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 dark:from-orange-900/80 dark:via-amber-900/80 dark:to-orange-900/80 border border-orange-200/60 dark:border-orange-500/30 rounded-2xl shadow-[0_20px_50px_-12px_rgba(245,158,11,0.3)] flex items-center gap-4 transform transition-all pointer-events-auto">
+          <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-500 shrink-0 shadow-inner">
+            <el-icon size="24"><WarningFilled /></el-icon>
+          </div>
+          <span class="text-orange-600 dark:text-orange-400 font-black text-[15px] tracking-wide">{{ customWarning.message }}</span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -913,7 +925,7 @@ import {
   Expand, Fold, VideoPause, VideoPlay, User, 
   RefreshLeft, RefreshRight, DocumentAdd, Top, InfoFilled,
   Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer,
-  Search
+  Search, WarningFilled
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
@@ -1181,6 +1193,22 @@ const aiProposal = reactive({
   isGenerating: false
 });
 
+// Custom Central Warning State
+const customWarning = reactive({
+  visible: false,
+  message: ''
+});
+
+let warningTimer: any = null;
+const showCustomWarning = (msg: string) => {
+  customWarning.message = msg;
+  customWarning.visible = true;
+  if (warningTimer) clearTimeout(warningTimer);
+  warningTimer = setTimeout(() => {
+    customWarning.visible = false;
+  }, 3500);
+};
+
 // Design Dialog State
 const showDesignDialog = ref(false);
 
@@ -1406,8 +1434,12 @@ const saveScriptContent = () => {
 };
 
 const goToSubjectSettings = async () => {
+  if (isGeneratingOutline.value || isSequentiallyGenerating.value) {
+    showCustomWarning('当前剧本的大纲概要正在生成中，预计30秒左右');
+    return;
+  }
   if (!editorTextContent.value) {
-    ElMessage.warning('请先生成或编写剧本内容，再进行后续设置');
+    showCustomWarning('请先生成或编写剧本内容，再进行后续设置');
     return;
   }
   isSavingScript.value = true;
@@ -2461,5 +2493,22 @@ const generateScriptBody = () => {
 .fade-scale-leave-to {
   opacity: 0;
   transform: scale(1.1);
+}
+
+/* Custom Warning Animation */
+.toast-bounce-enter-active {
+  animation: toast-bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.toast-bounce-leave-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+.toast-bounce-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+@keyframes toast-bounce-in {
+  0% { opacity: 0; transform: scale(0.85) translateY(-20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 </style>
