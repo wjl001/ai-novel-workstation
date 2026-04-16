@@ -196,7 +196,11 @@
             <div class="p-4 pt-6 flex flex-col gap-3">
               <!-- Scrollable Range Tabs -->
               <div class="relative flex items-center gap-2 group/nav">
-                <div class="flex-1 overflow-x-auto custom-scrollbar-hide flex items-center gap-2 pb-1 scroll-smooth" ref="rangeTabsRef">
+                <div 
+                   class="flex-1 overflow-x-auto custom-scrollbar-hide flex items-center gap-2 pb-1 scroll-smooth cursor-grab active:cursor-grabbing select-none" 
+                   ref="rangeTabsRef"
+                   @mousedown="startDragTabs"
+                 >
                   <button 
                     v-for="opt in episodeRangeOptions" 
                     :key="opt.value"
@@ -264,15 +268,28 @@
                 </el-popover>
               </div>
 
-              <!-- Page Indicator Dot Line -->
-              <div v-if="episodeRangeOptions.length > 1" class="flex justify-center gap-1.5">
-                <div 
-                  v-for="opt in episodeRangeOptions" 
-                  :key="opt.value"
-                  class="h-1 rounded-full transition-all duration-500"
-                  :class="episodeRange === opt.value ? 'w-6 bg-indigo-500' : 'w-1.5 bg-slate-200 dark:bg-slate-700'"
-                ></div>
-              </div>
+              <!-- Page Indicator Dot Line (Clickable & Larger) -->
+               <div v-if="episodeRangeOptions.length > 1" class="flex justify-center items-center gap-2.5 py-1">
+                 <button 
+                   v-for="opt in episodeRangeOptions" 
+                   :key="opt.value"
+                   @click="quickSelectRange(opt.value)"
+                   class="group/dot relative p-1 transition-all duration-300"
+                   :title="opt.label"
+                 >
+                   <div 
+                     class="h-2 rounded-full transition-all duration-500"
+                     :class="episodeRange === opt.value 
+                       ? 'w-8 bg-indigo-500 shadow-sm shadow-indigo-500/30' 
+                       : 'w-2 bg-slate-200 dark:bg-slate-700 group-hover/dot:bg-indigo-300 group-hover/dot:scale-110'"
+                   ></div>
+                   
+                   <!-- Tooltip on hover -->
+                   <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded-md opacity-0 group-hover/dot:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                     {{ opt.label }}
+                   </div>
+                 </button>
+               </div>
             </div>
           </div>
         </div>
@@ -933,6 +950,41 @@ const showInstructionsDialog = ref(false);
 const jumpToEpisodeInput = ref(1);
 const rangeTabsRef = ref<HTMLElement | null>(null);
 
+// Drag to scroll logic for episode range tabs
+let isDraggingTabs = false;
+let startXTabs = 0;
+let scrollLeftTabs = 0;
+
+const startDragTabs = (e: MouseEvent) => {
+  if (!rangeTabsRef.value) return;
+  isDraggingTabs = true;
+  startXTabs = e.pageX - rangeTabsRef.value.offsetLeft;
+  scrollLeftTabs = rangeTabsRef.value.scrollLeft;
+  
+  // Temporarily disable smooth scroll for direct drag response
+  rangeTabsRef.value.style.scrollBehavior = 'auto';
+  
+  document.addEventListener('mousemove', onDragTabs);
+  document.addEventListener('mouseup', stopDragTabs);
+};
+
+const onDragTabs = (e: MouseEvent) => {
+  if (!isDraggingTabs || !rangeTabsRef.value) return;
+  e.preventDefault();
+  const x = e.pageX - rangeTabsRef.value.offsetLeft;
+  const walk = (x - startXTabs) * 1.5; // multiplier for speed
+  rangeTabsRef.value.scrollLeft = scrollLeftTabs - walk;
+};
+
+const stopDragTabs = () => {
+  isDraggingTabs = false;
+  if (rangeTabsRef.value) {
+    rangeTabsRef.value.style.scrollBehavior = 'smooth';
+  }
+  document.removeEventListener('mousemove', onDragTabs);
+  document.removeEventListener('mouseup', stopDragTabs);
+};
+
 const handleQuickJump = () => {
   const targetIdx = jumpToEpisodeInput.value - 1;
   quickSelectEpisode(targetIdx);
@@ -941,17 +993,31 @@ const handleQuickJump = () => {
 const quickSelectEpisode = (index: number) => {
   // Calculate which range this episode belongs to
   const rangeStart = Math.floor(index / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
-  episodeRange.value = rangeStart;
+  quickSelectRange(rangeStart);
   
   // Select the episode
   selectEpisode(index);
+};
+
+const quickSelectRange = (rangeStart: number) => {
+  episodeRange.value = rangeStart;
   
-  // Auto-scroll the range tabs to show the active range
+  // Auto-scroll the range tabs to center the active range
   nextTick(() => {
     if (rangeTabsRef.value) {
-      const activeTab = rangeTabsRef.value.querySelector('.bg-indigo-600');
+      const activeTab = rangeTabsRef.value.querySelector('.bg-indigo-600') as HTMLElement;
       if (activeTab) {
-        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        const containerWidth = rangeTabsRef.value.offsetWidth;
+        const tabWidth = activeTab.offsetWidth;
+        const tabLeft = activeTab.offsetLeft;
+        
+        // Calculate the scroll position to center the active tab
+        const scrollTo = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+        
+        rangeTabsRef.value.scrollTo({
+          left: scrollTo,
+          behavior: 'smooth'
+        });
       }
     }
   });
@@ -1465,7 +1531,7 @@ const quoteSelectedText = () => {
 // --- Mock API for Prefilling Info ---
 const fetchAutoPrefillInfo = () => {
   return new Promise((resolve) => {
-    const episodes = Array.from({ length: 30 }, (_, i) => ({
+    const episodes = Array.from({ length: 100 }, (_, i) => ({
       id: `p${i + 1}`,
       title: `第${i + 1}集`,
       summary: i === 0 
@@ -1487,7 +1553,7 @@ const fetchAutoPrefillInfo = () => {
         scriptType: 'short_drama',
         genre: '都市情感',
         targetAudience: '女性向',
-        episodesCount: 30,
+        episodesCount: 100,
         expectedDuration: 120,
         synopsis: '沈念安本以为订婚是幸福的开始，却在订婚宴上遭遇妹妹沈薇薇怀了未婚夫顾承泽孩子的重击。随后被沈家父母以养女身份驱逐，甚至工作室也被查封。在大雨中，神秘人周助理和他的先生出现在她面前，开启了她的逆袭之路。',
         background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',
