@@ -1,6 +1,56 @@
 <template>
   <div class="flex h-full w-full overflow-hidden p-4 lg:p-6 gap-4 lg:gap-6 text-[#1f2329] bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-slate-900 dark:to-slate-800 relative transition-all duration-500" :class="{'is-left-collapsed': isLeftCollapsed, 'is-right-collapsed': !isRightPanelVisible}">
     
+    <!-- Full Screen Loading Overlay for Generation -->
+    <teleport to="body">
+      <transition name="fade-scale">
+        <div v-if="isGeneratingOutline" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
+          <!-- Animated Background Particles -->
+          <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div v-for="i in 15" :key="i" 
+                 class="absolute w-1 h-1 bg-indigo-500/20 rounded-full animate-float"
+                 :style="{ 
+                   left: Math.random() * 100 + '%', 
+                   top: Math.random() * 100 + '%', 
+                   animationDelay: Math.random() * 5 + 's',
+                   animationDuration: (Math.random() * 10 + 10) + 's'
+                 }"></div>
+          </div>
+
+          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
+            <!-- Central Icon with Pulsing Effect -->
+            <div class="relative">
+              <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
+              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20 rotate-6 animate-float-slow">
+                <el-icon :size="40" class="animate-bounce-subtle"><MagicStick /></el-icon>
+              </div>
+            </div>
+
+            <!-- Progress Info -->
+            <div class="w-full flex flex-col items-center gap-5">
+              <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 剧本构思中</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">正在编织第 <span class="text-indigo-600 dark:text-indigo-400 font-black text-lg">{{ currentGeneratingIndex + 1 }}</span> 集 / 共 {{ totalEpisodesToGenerate }} 集</p>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+                <div 
+                  class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out relative"
+                  :style="{ width: generationProgress + '%' }"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Creative Engine Processing...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </teleport>
     <!-- Decorative background elements -->
     <div class="absolute -top-20 -right-20 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none"></div>
@@ -102,9 +152,12 @@
                     v-for="(ep, relIdx) in displayedEpisodes" 
                     :key="ep.id"
                     class="episode-card relative group cursor-pointer transition-all duration-500 rounded-2xl overflow-hidden border-2"
-                    :class="isCurrentEpisode(ep.id, episodeRange + relIdx)
-                      ? 'active-card border-indigo-500/50 bg-gradient-to-br from-indigo-50/90 to-purple-50/90 dark:from-indigo-900/30 dark:to-purple-900/30 shadow-xl shadow-indigo-500/10'
-                      : 'inactive-card border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/40 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-lg hover:-translate-y-0.5'"
+                    :class="[
+                      isCurrentEpisode(ep.id, episodeRange + relIdx)
+                        ? 'active-card border-indigo-500/50 bg-gradient-to-br from-indigo-50/90 to-purple-50/90 dark:from-indigo-900/30 dark:to-purple-900/30 shadow-xl shadow-indigo-500/10'
+                        : 'inactive-card border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/40 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-lg hover:-translate-y-0.5',
+                      isSequentiallyGenerating && (episodeRange + relIdx) === currentGeneratingIndex ? 'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-slate-900' : ''
+                    ]"
                     @click="selectEpisode(episodeRange + relIdx)"
                     draggable="true"
                     @dragstart="onDragStartEpisode($event, episodeRange + relIdx)"
@@ -114,6 +167,14 @@
                     <!-- Active Glowing Border Effect -->
                     <div v-if="isCurrentEpisode(ep.id, episodeRange + relIdx)" class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 opacity-40 animate-pulse-slow"></div>
                     
+                    <!-- Loading Overlay for current generating episode -->
+                    <div v-if="isSequentiallyGenerating && (episodeRange + relIdx) === currentGeneratingIndex" class="absolute inset-0 z-20 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex items-center justify-center">
+                      <div class="flex flex-col items-center gap-1">
+                        <el-icon class="is-loading text-indigo-600" :size="20"><Loading /></el-icon>
+                        <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">正在生成...</span>
+                      </div>
+                    </div>
+
                     <div class="relative z-10 p-3 flex flex-col gap-2">
                       <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
@@ -238,7 +299,7 @@
                       <el-input-number 
                         v-model="jumpToEpisodeInput" 
                         :min="1" 
-                        :max="form.episodesData.length" 
+                        :max="Math.max(1, form.episodesData.length)" 
                         size="small"
                         class="flex-1"
                         placeholder="集数"
@@ -889,6 +950,11 @@ const dramaStore = useDramaStore();
 
 // State
 const isInfoLoading = ref(true);
+const isGeneratingOutline = ref(false);
+const isSequentiallyGenerating = ref(false);
+const currentGeneratingIndex = ref(-1);
+const generationProgress = ref(0);
+const totalEpisodesToGenerate = ref(100);
 const isGenerating = ref(false);
 const isPaused = ref(false);
 const isSavingScript = ref(false);
@@ -906,8 +972,8 @@ const displayedEpisodes = computed(() => {
 });
 
 const episodeRangeOptions = computed(() => {
-  if (!form.value?.episodesData) return [];
-  const total = form.value.episodesData.length;
+  if (!form.value) return [];
+  const total = (isGeneratingOutline.value || isSequentiallyGenerating.value) ? totalEpisodesToGenerate.value : (form.value.episodesData?.length || 0);
   const options = [];
   for (let i = 0; i < total; i += EPISODES_PER_PAGE) {
     const end = Math.min(i + EPISODES_PER_PAGE, total);
@@ -920,18 +986,23 @@ const episodeRangeOptions = computed(() => {
 });
 
 const episodeStats = computed(() => {
-  if (!form.value || !form.value.episodesData) {
+  if (!form.value) {
     return { total: 0, finished: 0, unfinished: 0, percentage: 0 };
   }
-  const total = form.value.episodesData.length;
+  
+  const total = (isGeneratingOutline.value || isSequentiallyGenerating.value) ? totalEpisodesToGenerate.value : (form.value.episodesData?.length || 0);
   let finished = 0;
-  for (const ep of form.value.episodesData) {
-    const content = ep.content || '';
-    const cleanContent = content.replace(/<p><\/p>|<p>------------------<\/p>|<br>|[\s\n\t\r]/g, '').trim();
-    if (cleanContent.length > 0) {
-      finished++;
+  
+  if (form.value.episodesData) {
+    for (const ep of form.value.episodesData) {
+      const content = ep.content || '';
+      const cleanContent = content.replace(/<p><\/p>|<p>------------------<\/p>|<br>|[\s\n\t\r]/g, '').trim();
+      if (cleanContent.length > 0) {
+        finished++;
+      }
     }
   }
+  
   const unfinished = total - finished;
   const percentage = total === 0 ? 0 : Math.round((finished / total) * 100);
   return { total, finished, unfinished, percentage };
@@ -1628,14 +1699,61 @@ onMounted(async () => {
       // After loading, update the editor content
       loadContentFromStore();
     } else {
-      const data: any = await fetchAutoPrefillInfo();
-      if (data) {
-        form.value = JSON.parse(JSON.stringify(data));
-        // Initially update Pinia store
-        dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
-        // After loading mock data, update the editor content
-        loadContentFromStore();
-      }
+      // Start Sequential Generation
+       isGeneratingOutline.value = true;
+       const initialData: any = await fetchInitialDramaInfo();
+       form.value = JSON.parse(JSON.stringify(initialData));
+       totalEpisodesToGenerate.value = initialData.episodesCount;
+       
+       // Clear episodesData first to show sequential generation
+       if (form.value) {
+         form.value.episodesData = [];
+       }
+       
+       // Hide big loading after initial setup
+        isGeneratingOutline.value = false;
+        isInfoLoading.value = false; // Allow the list to be visible during generation
+        isSequentiallyGenerating.value = true;
+       
+       // Generate one by one
+       for (let i = 0; i < totalEpisodesToGenerate.value; i++) {
+         currentGeneratingIndex.value = i;
+         generationProgress.value = Math.round(((i + 1) / totalEpisodesToGenerate.value) * 100);
+         
+         // Mock generation delay for each episode
+         // First few episodes are slower, then faster
+         const delay = i < 3 ? 1200 : 250;
+         await new Promise(resolve => setTimeout(resolve, delay));
+         
+         const newEpisode = {
+           id: `p${i + 1}`,
+           title: `第${i + 1}集`,
+           summary: i === 0 
+             ? '订婚宴上，沈薇薇突然闯入并宣布怀了姐夫顾承泽的孩子，全场震惊，沈念安的世界崩塌。'
+             : i === 1
+             ? '沈家父母偏袒亲生女儿沈薇薇，当众羞辱沈念安是养女并撕毁其致辞，亲情彻底决裂。'
+             : i === 2
+             ? '沈念安被保安驱逐，发现工作室被查封，在暴雨中绝望等死时遇到神秘劳斯莱斯。'
+             : `这是第 ${i + 1} 集的剧情发展，沈念安在逆袭之路上越走越稳，${i % 5 === 0 ? '遇到了新的挑战。' : '逐渐揭开了当年的真相。'}`,
+           scenes: '场景待定',
+           characters: '沈念安等',
+           content: '',
+           chatHistory: []
+         };
+         
+         if (form.value) {
+           form.value.episodesData.push(newEpisode);
+         }
+         
+         // Update Pinia store incrementally
+         dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
+       }
+       
+       isSequentiallyGenerating.value = false;
+       currentGeneratingIndex.value = -1;
+       
+       // Final load
+       loadContentFromStore();
     }
   } catch (error) {
     console.error('Error during OutlineView initialization:', error);
@@ -1643,6 +1761,25 @@ onMounted(async () => {
     isInfoLoading.value = false;
   }
 });
+
+const fetchInitialDramaInfo = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        title: '沈念安的重生',
+        scriptType: 'short_drama',
+        genre: '都市情感',
+        targetAudience: '女性向',
+        episodesCount: 100,
+        expectedDuration: 120,
+        synopsis: '沈念安本以为订婚是幸福的开始，却在订婚宴上遭遇妹妹沈薇薇怀了未婚夫顾承泽孩子的重击。随后被沈家父母以养女身份驱逐，甚至工作室也被查封。在大雨中，神秘人周助理和他的先生出现在她面前，开启了她的逆袭之路。',
+        background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',
+        fullContent: '',
+        episodesData: []
+      });
+    }, 800);
+  });
+};
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown);
@@ -2274,5 +2411,55 @@ const generateScriptBody = () => {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Sequential Generation Loading Styles */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(20px); }
+  75% { transform: translateY(10px) translateX(10px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: rotate(12deg) translateY(0); }
+  50% { transform: rotate(8deg) translateY(-10px); }
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer-fast {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-float {
+  animation: float 15s infinite ease-in-out;
+}
+
+.animate-float-slow {
+  animation: float-slow 4s infinite ease-in-out;
+}
+
+.animate-slide-up-fade {
+  animation: slide-up-fade 0.8s ease-out forwards;
+}
+
+.animate-shimmer-fast {
+  animation: shimmer-fast 1.5s infinite linear;
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
 }
 </style>

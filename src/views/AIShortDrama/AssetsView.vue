@@ -1,5 +1,44 @@
 <template>
-  <div class="h-full flex flex-col overflow-hidden relative">
+  <div class="h-full flex flex-col overflow-hidden relative bg-[#f8fafc] dark:bg-slate-900">
+    <!-- Big Loading Overlay for Assets Text Generation -->
+    <teleport to="body">
+      <transition name="fade-scale">
+        <div v-if="isGeneratingAssetsText" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
+          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
+            <!-- Central Icon -->
+            <div class="relative">
+              <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
+              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20 rotate-6 animate-float-slow">
+                <el-icon :size="40" class="animate-bounce-subtle"><MagicStick /></el-icon>
+              </div>
+            </div>
+
+            <!-- Progress Info -->
+            <div class="w-full flex flex-col items-center gap-5">
+              <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 资产规划中</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">{{ currentAssetInfo }}</p>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+                <div 
+                  class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out relative"
+                  :style="{ width: generationProgress + '%' }"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Asset Analysis Engine...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </teleport>
+
     <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative">
       <!-- Custom Header Content for Tabs -->
       <div class="absolute right-6 top-3 z-50">
@@ -35,21 +74,28 @@
                 v-for="char in characters" 
                 :key="char.id" 
                 class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                :class="generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
                 @click="openEditModal(char, 'character')"
               >
                 <div class="aspect-[3/4] bg-slate-50 relative overflow-hidden">
+                  <!-- Loading Indicator for Image Generation -->
+                  <div v-if="generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
+                    <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">形象生成中...</span>
+                  </div>
+
                   <el-image 
                     v-if="char.image" 
                     :src="char.image" 
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                  <div v-else-if="!generatingAssetImages.has(`char-${char.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-400">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- Overlay Action -->
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(char, 'character')"
@@ -108,20 +154,27 @@
                 v-for="scene in scenes" 
                 :key="scene.id" 
                 class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                :class="generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
                 @click="openEditModal(scene, 'scene')"
               >
                 <div class="aspect-video bg-slate-50 relative overflow-hidden">
+                  <!-- Loading Indicator for Image Generation -->
+                  <div v-if="generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
+                    <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">画面生成中...</span>
+                  </div>
+
                   <el-image 
                     v-if="scene.image" 
                     :src="scene.image" 
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                  <div v-else-if="!generatingAssetImages.has(`scene-${scene.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(scene, 'scene')"
@@ -180,20 +233,27 @@
                 v-for="prop in propsList" 
                 :key="prop.id" 
                 class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                :class="generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
                 @click="openEditModal(prop, 'prop')"
               >
                 <div class="aspect-square bg-slate-50 relative overflow-hidden">
+                  <!-- Loading Indicator for Image Generation -->
+                  <div v-if="generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
+                    <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">道具生成中...</span>
+                  </div>
+
                   <el-image 
                     v-if="prop.image" 
                     :src="prop.image" 
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                  <div v-else-if="!generatingAssetImages.has(`prop-${prop.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
@@ -343,8 +403,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete } from '@element-plus/icons-vue';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
@@ -352,6 +412,12 @@ import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 const router = useRouter();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
+
+// Loading States
+const isGeneratingAssetsText = ref(false);
+const generatingAssetImages = reactive<Set<string>>(new Set());
+const generationProgress = ref(0);
+const currentAssetInfo = ref('');
 
 // Navigation Logic
 const confirmVisible = ref(false);
@@ -375,20 +441,96 @@ const goToEpisodes = () => {
 };
 
 // Mock Data
-const characters = ref([
-  { id: '1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人。', prompt: '1个女孩，美丽，职业装，办公室女性，坚强独立，写实风格，8k分辨率', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: '2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。', prompt: '1个男孩，英俊，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }
-]);
+const characters = ref<any[]>([]);
+const scenes = ref<any[]>([]);
+const propsList = ref<any[]>([]);
 
-const scenes = ref([
-  { id: '1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: '2', name: '林星公寓', description: '温馨的单身公寓，布置得很有格调。', prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，写实风格，8k分辨率', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }
-]);
+onMounted(async () => {
+  // Check if we need to generate assets (mock check)
+  // If coming from script page and no assets yet, trigger generation
+  if (characters.value.length === 0) {
+    await startSequentialGeneration();
+  }
+});
 
-const propsList = ref([
-  { id: '1', name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹。', prompt: '复古胶片相机，细节质感丰富，电影级光影，8k分辨率', image: 'https://images.unsplash.com/photo-1516961642265-531546e84af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: '2', name: '定情项链', description: '一条星星形状的银质项链。', prompt: '星形纯银项链，闪耀光泽，微距摄影，8k分辨率', image: 'https://images.unsplash.com/photo-1599643478514-4a42080164c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }
-]);
+const startSequentialGeneration = async () => {
+  isGeneratingAssetsText.value = true;
+  currentAssetInfo.value = '正在解析剧本，提取核心角色与场景...';
+  
+  // Phase 1: Text Generation (Big Loading)
+  const mockAssets = {
+    characters: [
+      { id: '1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人。', prompt: '1个女孩，美丽，职业装，办公室女性，坚强独立，写实风格，8k分辨率', image: '' },
+      { id: '2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。', prompt: '1个男孩，英俊，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: '' }
+    ],
+    scenes: [
+      { id: '1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', image: '' },
+      { id: '2', name: '林星公寓', description: '温馨的单身公寓，布置得很有格调。', prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，写实风格，8k分辨率', image: '' }
+    ],
+    props: [
+      { id: '1', name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹。', prompt: '复古胶片相机，细节质感丰富，电影级光影，8k分辨率', image: '' },
+      { id: '2', name: '定情项链', description: '一条星星形状的银质项链。', prompt: '星形纯银项链，闪耀光泽，微距摄影，8k分辨率', image: '' }
+    ]
+  };
+
+  const steps = ['提取角色特征', '规划场景氛围', '锁定核心道具'];
+  for (let i = 0; i < steps.length; i++) {
+    currentAssetInfo.value = steps[i];
+    generationProgress.value = Math.round(((i + 1) / steps.length) * 100);
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+
+  // Populate text info
+  characters.value = mockAssets.characters;
+  scenes.value = mockAssets.scenes;
+  propsList.value = mockAssets.props;
+  
+  isGeneratingAssetsText.value = false;
+  
+  // Phase 2: Sequential Image Generation (Per-asset loading)
+  const allAssets = [
+    ...characters.value.map(a => ({ ...a, type: 'char' })),
+    ...scenes.value.map(a => ({ ...a, type: 'scene' })),
+    ...propsList.value.map(a => ({ ...a, type: 'prop' }))
+  ];
+
+  const mockImages: Record<string, string> = {
+    'char-1': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'char-2': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'scene-1': 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'scene-2': 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'prop-1': 'https://images.unsplash.com/photo-1516961642265-531546e84af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'prop-2': 'https://images.unsplash.com/photo-1599643478514-4a42080164c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+  };
+
+  for (const asset of allAssets) {
+    const key = `${asset.type}-${asset.id}`;
+    generatingAssetImages.add(key);
+    
+    // Switch tab automatically to show progress
+    if (asset.type === 'char') activeTab.value = 'characters';
+    else if (asset.type === 'scene') activeTab.value = 'scenes';
+    else activeTab.value = 'props';
+
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Image generation takes longer
+    
+    // Update the image
+    if (asset.type === 'char') {
+      const idx = characters.value.findIndex(c => c.id === asset.id);
+      if (idx > -1) characters.value[idx].image = mockImages[key];
+    } else if (asset.type === 'scene') {
+      const idx = scenes.value.findIndex(s => s.id === asset.id);
+      if (idx > -1) scenes.value[idx].image = mockImages[key];
+    } else {
+      const idx = propsList.value.findIndex(p => p.id === asset.id);
+      if (idx > -1) propsList.value[idx].image = mockImages[key];
+    }
+    
+    generatingAssetImages.delete(key);
+  }
+  
+  ElMessage.success('主体资产生成完毕');
+};
 
 // Modal State
 const editModalVisible = ref(false);
@@ -635,5 +777,43 @@ defineExpose({
 
 :deep(.modern-message-success .el-message__icon) {
   color: white !important;
+}
+/* Sequential Generation Loading Styles */
+@keyframes float-slow {
+  0%, 100% { transform: rotate(6deg) translateY(0); }
+  50% { transform: rotate(2deg) translateY(-10px); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer-fast {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-float-slow {
+  animation: float-slow 4s infinite ease-in-out;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite ease-in-out;
+}
+
+.animate-shimmer-fast {
+  animation: shimmer-fast 1.5s infinite linear;
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
 }
 </style>

@@ -1,5 +1,44 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative">
+    <!-- Big Loading Overlay for Storyboard Script Generation -->
+    <teleport to="body">
+      <transition name="fade-scale">
+        <div v-if="isGeneratingStoryboardText" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
+          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
+            <!-- Central Icon -->
+            <div class="relative">
+              <div class="absolute inset-0 bg-purple-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
+              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-xl shadow-purple-500/20 rotate-6 animate-float-slow">
+                <el-icon :size="40" class="animate-bounce-subtle"><Film /></el-icon>
+              </div>
+            </div>
+
+            <!-- Progress Info -->
+            <div class="w-full flex flex-col items-center gap-5">
+              <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 分镜规划中</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">{{ currentStoryboardInfo }}</p>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+                <div 
+                  class="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 transition-all duration-500 ease-out relative"
+                  :style="{ width: generationProgress + '%' }"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Storyboard Intelligence Engine...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </teleport>
+
     <!-- Decorative background elements for C-end feel -->
     <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
     <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
@@ -479,56 +518,62 @@
           </div>
 
           <!-- Timeline Items -->
-          <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5">
-            <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-              class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
-              :class="[
-                (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
-                  ? 'border-purple-500 ring-4 ring-purple-500/10' 
-                  : 'border-white dark:border-slate-700'
-              ]"
-              @click="toggleSceneSelection(idx)"
-            >
-              <div v-if="scene.image" class="absolute inset-0 w-full h-full">
-                <img :src="scene.image" class="absolute inset-0 w-full h-full object-cover" />
-                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-              </div>
-
-              <!-- Duration Badge (New Request) -->
-              <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[8px] font-black z-10">
-                {{ getSceneDuration(scene.script) }}s
-              </div>
-
-              <!-- Index Badge -->
-              <div class="absolute top-1.5 left-1.5 z-10">
-                <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
-                  :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
-                  {{ idx + 1 }}
-                </div>
-              </div>
-
-              <!-- Playback Progress Overlay -->
-              <div 
-                v-if="isSequentialPlaying && currentSceneIdx === idx"
-                class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
+          <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
+            <transition-group name="list">
+              <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
+                class="flex-shrink-0 w-[110px] h-[60px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
+                :class="[
+                  (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
+                    ? 'border-purple-500 ring-4 ring-purple-500/10' 
+                    : 'border-white dark:border-slate-700',
+                  isSequentiallyGeneratingStoryboard && idx === currentGeneratingStoryboardIndex ? 'ring-2 ring-purple-500 ring-offset-2 dark:ring-offset-slate-900' : ''
+                ]"
+                @click="toggleSceneSelection(idx)"
               >
-                <div 
-                  class="absolute bottom-0 left-0 h-1 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] transition-all duration-100 ease-linear"
-                  :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
-                ></div>
-              </div>
+                <!-- Active Glowing Border Effect -->
+                <div v-if="currentSceneIdx === idx" class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-blue-500/20 opacity-40 animate-pulse-slow z-[2]"></div>
 
-              <div class="flex items-center justify-center w-full h-full relative z-10">
-                <div v-if="scene.status === 'generating'" class="flex flex-col items-center gap-1">
-                  <div class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                  <span class="text-[8px] font-bold text-white uppercase tracking-tighter">AI生成中</span>
+                <div v-if="scene.image" class="absolute inset-0 w-full h-full z-0">
+                  <img :src="scene.image" class="absolute inset-0 w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
                 </div>
-                <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
-                  <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
+
+                <!-- Duration Badge (New Request) -->
+                <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[8px] font-black z-10">
+                  {{ getSceneDuration(scene.script) }}s
                 </div>
-                <el-icon v-else :size="18" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
+
+                <!-- Index Badge -->
+                <div class="absolute top-1.5 left-1.5 z-10">
+                  <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
+                    :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
+                    {{ idx + 1 }}
+                  </div>
+                </div>
+
+                <!-- Playback Progress Overlay -->
+                <div 
+                  v-if="isSequentialPlaying && currentSceneIdx === idx"
+                  class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
+                >
+                  <div 
+                    class="absolute bottom-0 left-0 h-1 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] transition-all duration-100 ease-linear"
+                    :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
+                  ></div>
+                </div>
+
+                <div class="flex items-center justify-center w-full h-full relative z-10">
+                  <div v-if="scene.status === 'generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+                    <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
+                    <span class="text-[8px] font-black text-purple-600 uppercase tracking-widest animate-pulse">生成中</span>
+                  </div>
+                  <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
+                    <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
+                  </div>
+                  <el-icon v-else :size="18" class="text-white/60 group-hover:text-white transition-colors"><MagicStick /></el-icon>
+                </div>
               </div>
-            </div>
+            </transition-group>
             
             <button 
               class="flex-shrink-0 w-10 h-10 rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
@@ -991,6 +1036,13 @@ const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
 
+// Loading States
+const isGeneratingStoryboardText = ref(false);
+const currentGeneratingStoryboardIndex = ref(-1);
+const generationProgress = ref(0);
+const currentStoryboardInfo = ref('');
+const isSequentiallyGeneratingStoryboard = ref(false);
+
 const centerVideoRef = ref<HTMLVideoElement | null>(null);
 const isSequentialPlaying = ref(false);
 const sequentialCurrentTime = ref(0);
@@ -1380,32 +1432,7 @@ const handleScriptInput = (e: any) => {
   currentScript.value = e.target.innerText;
 };
 
-const timelineScenes = ref([
-  { 
-    id: 'scene-1',
-    status: 'success', 
-    video: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4', 
-    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-    progress: 0,
-    modified: false,
-    script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
-生成一个由以下 3 个镜头组成的视频:<br>
-场景: <br>
-镜头过渡: 镜头平滑切换, 从司仪转向主角, 焦点始终在舞台中央, 氛围喜庆。<br><br>
-镜头1 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 中景镜头, 从舞台正下方略仰视角度拍摄, 舞台中央位置, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 手持话筒, 面带职业微笑, 他的面部朝向台下的宾客, 视线扫过全场, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 说: 「今天, 是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。」 音色: 男声, 青年音色, 音调中等, 音色明亮圆润, 声音厚度适中, 发音标准, 气息沉稳, 吐字清晰, 字正腔圆, 富有亲和力与舞台感染力。 背景是鲜花簇拥的舞台和璀璨的水晶灯。 镜头静止。<br><br>
-镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 右侧方与角色视线平齐高度拍摄。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 身着纯白礼服, 挽着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的手臂, 她仰起头, 侧脸对着镜头, 面部朝向身旁的 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span>, 视线充满爱意地聚焦于他的脸庞, 脸上洋溢着幸福的笑容, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 说: 「承泽, 我好像在做梦。」 音色: 女声, 青年音色, 音调中等偏高, 音色质感明亮、清脆, 声音清亮柔和, 发音方式干净, 气息充沛平稳, 吐字清晰, 带有一种与生俱来的温婉与真诚感。 聚光灯照在他们身上。<br><br>
-镜头3 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 过肩近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 的背后拍摄, 焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的脸上。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 低下头, 温柔地凝视着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 他的面部朝向 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 眼神专注而深情, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 说: 「念安, 这不是梦。从今天起, 你就是我唯一的未婚妻。」 音色: 男声, 青年音色, 音调中等, 音色质感干净但偏扁平, 声音不够厚重, 发音方式清晰, 但语速偏快且气息不稳, 尤其在紧张时会带有轻微的颤抖, 吐字清晰却缺乏力量感, 常在句末音量减弱, 给人一种底气不足的感觉。 镜头缓慢向前推进, 加强情感氛围。`
-  },
-  { 
-    id: 'scene-2',
-    status: 'pending', 
-    video: null,
-      image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-    progress: 0,
-    modified: false,
-    script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`
-  },
-]);
+const timelineScenes = ref<any[]>([]);
 
 const handleEditScript = () => {
   isEditingScript.value = true;
@@ -1785,7 +1812,7 @@ const deleteScene = (idx: number) => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   // Initialize mock data if store is empty
   if (episodeStore.episodes.length === 0) {
     episodeStore.setEpisodes([
@@ -1806,32 +1833,127 @@ onMounted(() => {
         scriptStatus: 'pending',
         assetsStatus: 'pending',
         storyboardStatus: 'pending'
-      },
-      {
-        id: '2',
-        index: 2,
-        title: '第 2 集：重生归来',
-        poster: 'https://picsum.photos/seed/2/200/300',
-        roleCount: 5,
-        sceneCount: 3,
-        propCount: 3,
-        storyboardCount: 12,
-        status: 'pending',
-        storyboardGenerated: false,
-        duration: '00:38',
-        gif: '',
-        synthesisStatus: 'pending',
-        scriptStatus: 'pending',
-        assetsStatus: 'pending',
-        storyboardStatus: 'pending'
       }
     ]);
+  }
+
+  // Trigger sequential generation for storyboard
+  if (timelineScenes.value.length === 0) {
+    await startStoryboardSequentialGeneration();
   }
 
   if (currentScript.value) {
     editor.value?.commands.setContent(currentScript.value);
   }
 });
+
+const startStoryboardSequentialGeneration = async () => {
+  isGeneratingStoryboardText.value = true;
+  currentStoryboardInfo.value = '正在解析资产库，规划分镜脚本...';
+  
+  // Phase 1: Text Planning (Big Loading)
+  const planningSteps = ['分析角色动态', '匹配场景构图', '设计镜头语言'];
+  for (let i = 0; i < planningSteps.length; i++) {
+    currentStoryboardInfo.value = planningSteps[i];
+    generationProgress.value = Math.round(((i + 1) / planningSteps.length) * 100);
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+
+  // Hide big loading
+  isGeneratingStoryboardText.value = false;
+  isSequentiallyGeneratingStoryboard.value = true;
+
+  // Initial storyboard data (text content)
+  const sceneData: any[] = [
+    {
+      id: 'scene-1',
+      script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
+生成一个由以下 3 个镜头组成的视频:<br>
+场景: <br>
+镜头过渡: 镜头平滑切换, 从司仪转向主角, 焦点始终在舞台中央, 氛围喜庆。<br><br>
+镜头1 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 中景镜头, 从舞台正下方略仰视角度拍摄, 舞台中央位置, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 手持话筒, 面带职业微笑, 他的面部朝向台下的宾客, 视线扫过全场, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=20&h=20&fit=crop" /> 司仪-基础形象</span> 说: 「今天, 是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。」 音色: 男声, 青年音色, 音调中等, 音色明亮圆润, 声音厚度适中, 发音标准, 气息沉稳, 吐字清晰, 字正腔圆, 富有亲和力与舞台感染力。 背景是鲜花簇拥的舞台和璀璨的水晶灯。 镜头静止。<br><br>
+镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 右侧方与角色视线平齐高度拍摄。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 身着纯白礼服, 挽着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的手臂, 她仰起头, 侧脸对着镜头, 面部朝向身旁的 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span>, 视线充满爱意地聚焦于他的脸庞, 脸上洋溢着幸福的笑容, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 说: 「承泽, 我好像在做梦。」 音色: 女声, 青年音色, 音调中等偏高, 音色质感明亮、清脆, 声音清亮柔和, 发音方式干净, 气息充沛平稳, 吐字清晰, 带有一种与生俱来的温婉与真诚感。 聚光灯照在他们身上。<br><br>
+镜头3 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 过肩近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 的背后拍摄, 焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的脸上。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 低下头, 温柔地凝视着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 他的面部朝向 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 眼神专注而深情, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 说: 「念安, 这不是梦。从今天起, 你就是我唯一的未婚妻。」 音色: 男声, 青年音色, 音调中等, 音色质感干净但偏扁平, 声音不够厚重, 发音方式清晰, 但语速偏快且气息不稳, 尤其在紧张时会带有轻微的颤抖, 吐字清晰却缺乏力量感, 常在句末音量减弱, 给人一种底气不足的感觉。 镜头缓慢向前推进, 加强情感氛围。`,
+      targetImage: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
+      targetVideo: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4'
+    },
+    {
+      id: 'scene-2',
+      script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`,
+      targetImage: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
+      targetVideo: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4'
+    }
+  ];
+
+  // Clear existing scenes
+  timelineScenes.value = [];
+
+  // Phase 2: Sequential Scene Generation (Per-item loading)
+  for (let i = 0; i < sceneData.length; i++) {
+    currentGeneratingStoryboardIndex.value = i;
+    
+    // Add new scene with loading state
+    const newScene = {
+      ...sceneData[i],
+      status: 'generating',
+      image: '',
+      video: '',
+      script: '' // Start with empty script for streaming effect
+    };
+    timelineScenes.value.push(newScene);
+    
+    // Auto-select the first scene to show it in the editor/player immediately
+    if (i === 0) {
+      currentSceneIdx.value = 0;
+    }
+    
+    // Mock generation delay and streaming text effect
+    const fullScript = sceneData[i].script;
+    
+    // Custom logic to handle HTML tags during streaming
+    // We want to avoid breaking tags like <span ...> or <img> during the stream
+    let currentHtml = '';
+    let j = 0;
+    while (j < fullScript.length) {
+      if (fullScript[j] === '<') {
+        // Find the end of the tag
+        const endIdx = fullScript.indexOf('>', j);
+        if (endIdx !== -1) {
+          currentHtml += fullScript.slice(j, endIdx + 1);
+          j = endIdx + 1;
+        } else {
+          currentHtml += fullScript[j];
+          j++;
+        }
+      } else {
+        // Output a small chunk of text
+        const chunkSize = Math.floor(Math.random() * 3) + 1; // 1-3 chars at a time for natural typing
+        currentHtml += fullScript.slice(j, j + chunkSize);
+        j += chunkSize;
+        await new Promise(resolve => setTimeout(resolve, 20)); // typing delay
+      }
+      
+      timelineScenes.value[i].script = currentHtml;
+      
+      // Update editor content in real-time if this is the currently viewed scene
+      if (i === currentSceneIdx.value && !isEditingScript.value) {
+        editor.value?.commands.setContent(timelineScenes.value[i].script);
+      }
+    }
+    
+    // Mock video generation delay after text is done
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Update scene with success media
+    timelineScenes.value[i].image = sceneData[i].targetImage;
+    timelineScenes.value[i].video = sceneData[i].targetVideo;
+    timelineScenes.value[i].status = 'success';
+  }
+
+  isSequentiallyGeneratingStoryboard.value = false;
+  currentGeneratingStoryboardIndex.value = -1;
+  ElMessage.success('分镜脚本与视频生成完毕');
+};
 </script>
 
 <style scoped>
@@ -2118,5 +2240,56 @@ onMounted(() => {
 
 :deep(.modern-message-success .el-message__icon) {
   color: white !important;
+}
+/* Sequential Generation Loading Styles */
+@keyframes float-slow {
+  0%, 100% { transform: rotate(6deg) translateY(0); }
+  50% { transform: rotate(2deg) translateY(-10px); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer-fast {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-float-slow {
+  animation: float-slow 4s infinite ease-in-out;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite ease-in-out;
+}
+
+.animate-shimmer-fast {
+  animation: shimmer-fast 1.5s infinite linear;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
 }
 </style>
