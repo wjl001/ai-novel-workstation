@@ -300,6 +300,17 @@
         </button>
       </div>
     </el-dialog>
+
+    <!-- Recovery Confirm Dialog -->
+    <ConfirmDialog
+      v-model="recoveryConfirmVisible"
+      :title="recoveryConfirmTitle"
+      :message="recoveryConfirmMessage"
+      confirm-text="继续生成"
+      cancel-text="放弃"
+      @confirm="handleRecoveryConfirm"
+      @cancel="handleRecoveryCancel"
+    />
   </div>
 </template>
 
@@ -319,6 +330,8 @@ import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
 import EpisodesEditDrawer from '@/components/episode/EpisodesEditDrawer.vue';
 import ProgressModal from '@/components/episode/ProgressModal.vue';
 
+import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+
 const router = useRouter();
 const episodeStore = useEpisodeStore();
 
@@ -326,6 +339,21 @@ const episodeStore = useEpisodeStore();
 const showDesignDialog = ref(false);
 const drawerVisible = ref(false);
 const editingEpisode = ref<any>(null);
+
+// Recovery Confirm Dialog State
+const recoveryConfirmVisible = ref(false);
+const recoveryConfirmTitle = ref('');
+const recoveryConfirmMessage = ref('');
+const handleRecoveryConfirm = () => {
+  const synthesizingEpisodes = episodes.value.filter(ep => ep.synthesisStatus === 'synthesizing');
+  synthesizingEpisodes.forEach(ep => handleSynthesis(ep));
+};
+const handleRecoveryCancel = () => {
+  const synthesizingEpisodes = episodes.value.filter(ep => ep.synthesisStatus === 'synthesizing');
+  synthesizingEpisodes.forEach(ep => {
+    episodeStore.updateEpisode(ep.id, { synthesisStatus: 'pending' });
+  });
+};
 const progressVisible = ref(false);
 const batchProgress = ref(0);
 const previewVisible = ref(false);
@@ -414,6 +442,8 @@ const getSingleStatusLabel = (ep: any) => {
 
 // Initialize mock data if empty
 onMounted(() => {
+  episodeStore.loadFromLocalStorage();
+
   if (episodes.value.length === 0) {
     episodeStore.setEpisodes([
       {
@@ -526,6 +556,14 @@ onMounted(() => {
         gif: '',
       }
     ]);
+  }
+
+  // Check for interrupted synthesis
+  const synthesizingEpisodes = episodes.value.filter(ep => ep.synthesisStatus === 'synthesizing');
+  if (synthesizingEpisodes.length > 0) {
+    recoveryConfirmTitle.value = '恢复合成';
+    recoveryConfirmMessage.value = `检测到有 ${synthesizingEpisodes.length} 集视频合成意外中断，是否恢复合成？`;
+    recoveryConfirmVisible.value = true;
   }
 });
 

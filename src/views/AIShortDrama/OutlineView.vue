@@ -912,6 +912,17 @@
         </div>
       </div>
     </transition>
+
+    <!-- Recovery Confirm Dialog -->
+    <ConfirmDialog
+      v-model="recoveryConfirmVisible"
+      :title="recoveryConfirmTitle"
+      :message="recoveryConfirmMessage"
+      confirm-text="继续生成"
+      cancel-text="放弃"
+      @confirm="handleRecoveryConfirm"
+      @cancel="handleRecoveryCancel"
+    />
   </div>
 </template>
 
@@ -957,6 +968,8 @@ interface DramaForm {
   episodesData: EpisodeData[];
 }
 
+import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+
 const router = useRouter();
 const dramaStore = useDramaStore();
 
@@ -967,6 +980,30 @@ const isSequentiallyGenerating = ref(false);
 const currentGeneratingIndex = ref(-1);
 const generationProgress = ref(0);
 const totalEpisodesToGenerate = ref(100);
+
+// Recovery Confirm Dialog State
+const recoveryConfirmVisible = ref(false);
+const recoveryConfirmTitle = ref('');
+const recoveryConfirmMessage = ref('');
+const recoveryConfirmType = ref<'outline' | 'script'>('outline');
+
+const handleRecoveryConfirm = () => {
+  if (recoveryConfirmType.value === 'outline') {
+    const { currentIndex } = dramaStore.generationStatus;
+    resumeSequentialGeneration(currentIndex + 1);
+  } else {
+    const { progress } = dramaStore.generationStatus;
+    resumeScriptGeneration(progress);
+  }
+};
+
+const handleRecoveryCancel = () => {
+  dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
+  if (recoveryConfirmType.value === 'outline') {
+    loadContentFromStore();
+  }
+};
+
 const isGenerating = ref(false);
 const isPaused = ref(false);
 const isSavingScript = ref(false);
@@ -1393,7 +1430,8 @@ const loadContentFromStore = () => {
     showEmptyPlaceholder.value = !text;
     
     if (dramaStore && typeof dramaStore.setScriptGenerated === 'function') {
-      dramaStore.setScriptGenerated(!!text);
+      const hasAnyContent = form.value.episodesData && form.value.episodesData.some((ep: any) => ep.content && ep.content.replace(/<p><\/p>/g, '').trim().length > 0);
+      dramaStore.setScriptGenerated(hasAnyContent || !!text);
     }
   } catch (error) {
     console.error('Error in loadContentFromStore:', error);
@@ -1678,6 +1716,9 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', closeContextMenu);
 
+  // Load state from localStorage first
+  dramaStore.loadFromLocalStorage();
+
   tiptapEditor.value = new Editor({
     extensions: [
       StarterKit,
@@ -1700,7 +1741,10 @@ onMounted(async () => {
       if (editorTextContent.value !== text) {
         editorTextContent.value = text;
         showEmptyPlaceholder.value = !text;
-        dramaStore.setScriptGenerated(!!text);
+        
+        const hasAnyContent = form.value?.episodesData && form.value.episodesData.some((ep: any) => ep.content && ep.content.replace(/<p><\/p>/g, '').trim().length > 0);
+        dramaStore.setScriptGenerated(hasAnyContent || !!text);
+        
         saveCurrentContentToStore();
       }
     },
@@ -1721,8 +1765,34 @@ onMounted(async () => {
 
   isInfoLoading.value = true;
   try {
-    // Load from Pinia store if available (survives route changes but not refresh)
-    if (dramaStore.outlineData) {
+    // Check for interrupted generation
+    if (dramaStore.generationStatus.isGenerating && dramaStore.generationStatus.type === 'outline') {
+      const { currentIndex, totalCount, progress } = dramaStore.generationStatus;
+      
+      // If we have some data, restore it and potentially resume
+      if (dramaStore.outlineData) {
+        form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+        totalEpisodesToGenerate.value = totalCount;
+        currentGeneratingIndex.value = currentIndex;
+        generationProgress.value = progress;
+        
+        recoveryConfirmTitle.value = '恢复生成';
+        recoveryConfirmMessage.value = `检测到上次大纲生成（第 ${currentIndex + 1}/${totalCount} 集）意外中断，是否继续生成？`;
+        recoveryConfirmType.value = 'outline';
+        recoveryConfirmVisible.value = true;
+      }
+    } else if (dramaStore.generationStatus.isGenerating && dramaStore.generationStatus.type === 'script') {
+      const { progress } = dramaStore.generationStatus;
+      if (dramaStore.outlineData) {
+        form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+        loadContentFromStore();
+        
+        recoveryConfirmTitle.value = '恢复生成';
+        recoveryConfirmMessage.value = `检测到剧本正文生成中断（进度 ${progress}%），是否继续生成？`;
+        recoveryConfirmType.value = 'script';
+        recoveryConfirmVisible.value = true;
+      }
+    } else if (dramaStore.outlineData) {
       form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
       // Sync current chat messages with initial currentEpisodeIndex
       if (form.value && form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
@@ -1731,7 +1801,7 @@ onMounted(async () => {
       // After loading, update the editor content
       loadContentFromStore();
     } else {
-      // Start Sequential Generation
+      // Start New Sequential Generation
        isGeneratingOutline.value = true;
        const initialData: any = await fetchInitialDramaInfo();
        form.value = JSON.parse(JSON.stringify(initialData));
@@ -1747,13 +1817,27 @@ onMounted(async () => {
         isInfoLoading.value = false; // Allow the list to be visible during generation
         isSequentiallyGenerating.value = true;
        
+        // Update generation status in store
+        dramaStore.setGenerationStatus({
+          isGenerating: true,
+          type: 'outline',
+          totalCount: totalEpisodesToGenerate.value,
+          currentIndex: 0,
+          progress: 0
+        });
+
        // Generate one by one
        for (let i = 0; i < totalEpisodesToGenerate.value; i++) {
          currentGeneratingIndex.value = i;
          generationProgress.value = Math.round(((i + 1) / totalEpisodesToGenerate.value) * 100);
          
+         // Update generation status in store
+         dramaStore.setGenerationStatus({
+           currentIndex: i,
+           progress: generationProgress.value
+         });
+
          // Mock generation delay for each episode
-         // First few episodes are slower, then faster
          const delay = i < 3 ? 1200 : 250;
          await new Promise(resolve => setTimeout(resolve, delay));
          
@@ -1783,6 +1867,7 @@ onMounted(async () => {
        
        isSequentiallyGenerating.value = false;
        currentGeneratingIndex.value = -1;
+       dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
        
        // Final load
        loadContentFromStore();
@@ -1793,6 +1878,45 @@ onMounted(async () => {
     isInfoLoading.value = false;
   }
 });
+
+const resumeSequentialGeneration = async (startIndex: number) => {
+  if (!form.value) return;
+  
+  isSequentiallyGenerating.value = true;
+  isInfoLoading.value = false;
+
+  for (let i = startIndex; i < totalEpisodesToGenerate.value; i++) {
+    currentGeneratingIndex.value = i;
+    generationProgress.value = Math.round(((i + 1) / totalEpisodesToGenerate.value) * 100);
+    
+    // Update generation status in store
+    dramaStore.setGenerationStatus({
+      currentIndex: i,
+      progress: generationProgress.value
+    });
+
+    const delay = i < startIndex + 3 ? 1200 : 250;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    const newEpisode = {
+      id: `p${i + 1}`,
+      title: `第${i + 1}集`,
+      summary: `这是第 ${i + 1} 集的剧情发展（恢复生成），沈念安在逆袭之路上越走越稳...`,
+      scenes: '场景待定',
+      characters: '沈念安等',
+      content: '',
+      chatHistory: []
+    };
+    
+    form.value.episodesData.push(newEpisode);
+    dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
+  }
+  
+  isSequentiallyGenerating.value = false;
+  currentGeneratingIndex.value = -1;
+  dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
+  loadContentFromStore();
+};
 
 const fetchInitialDramaInfo = () => {
   return new Promise((resolve) => {
@@ -1977,6 +2101,15 @@ const generateScriptBody = () => {
   isGenerating.value = true;
   isPaused.value = false;
   
+  // Update generation status in store
+  dramaStore.setGenerationStatus({
+    isGenerating: true,
+    type: 'script',
+    currentIndex: currentEpisodeIndex.value,
+    totalCount: form.value?.episodesData.length || 0,
+    progress: 0
+  });
+
   let i = 0;
   let mockText = '';
 
@@ -2003,9 +2136,54 @@ const generateScriptBody = () => {
     const chars = mockText.substring(i, i + 8);
     tiptapEditor.value?.commands.insertContent(chars.replace(/\n/g, '<br>'));
     i += 8;
+
+    // Update progress in store
+    const progress = Math.round((i / mockText.length) * 100);
+    dramaStore.setGenerationStatus({ progress });
+
     if (i >= mockText.length) {
       clearInterval(interval);
       isGenerating.value = false;
+      dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
+      ElMessage.success('剧本生成完毕');
+    }
+  }, 40);
+};
+
+const resumeScriptGeneration = (startProgress: number) => {
+  isGenerating.value = true;
+  isPaused.value = false;
+  
+  let mockText = '';
+  const EPISODE_SCRIPTS: Record<number, string> = {
+    0: `第1集 \n 1-1 日 内 豪华酒店宴会厅 \n 人物：沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 宾客若干, 司仪 \n △宴会厅内鲜花簇拥，水晶灯璀璨夺目，宾客们衣着华丽，举杯交谈。 \n △舞台中央，司仪手持话筒，面带微笑。 \n 司仪：今天，是沈家千金沈念安小姐与顾家少爷顾承泽先生的订婚之喜。 \n △聚光灯下，沈念安身着一袭纯白礼服，挽着顾承泽的手臂，脸上洋溢着幸福的笑容。 \n 沈念安（含情脉脉）：承泽，我好像在做梦。 \n 顾承泽（温柔凝视）：念安，这不是梦。从今天起，你就是我唯一的未婚妻。 \n △台下，沈父沈母满面春风地接受着宾客的祝贺。 \n 宾客甲：沈总，沈夫人，恭喜啊！念安真是越来越出色了！ \n 沈母（得意）：这孩子，从小就懂事，是我们沈家的骄傲。 \n △沈念安看着台下为她祝福的亲友，眼眶微湿，充满了对未来的憧憬。 \n 沈念安OS：二十年了，我终于要嫁给最爱的人，拥有自己的家了。 \n △突然，宴会厅的大门被人猛地推开，发出一声巨响。 \n △音乐戛而止，所有人的目光都被吸引过去。 \n △沈薇薇衣衫不整，头发凌乱地冲了进来，妆容哭花了，看起来狼狈不堪. \n 沈薇薇（凄厉哭喊）：承泽哥！ \n △宾客们纷纷避让，窃窃虚语。 \n 宾客乙：那不是沈家的小女儿沈薇薇吗？她这是怎么了？ \n 宾客丙：看样子是来砸场子的啊！ \n △沈念安脸上的笑容僵住。 \n 沈念安（错愕）：薇薇？ \n △沈母和沈父脸色大变，立刻上前试图阻拦。 \n 沈母（厉声）：沈薇薇！你疯了吗！滚出去！ \n 沈父：保安！保安在哪里！ \n △沈薇薇不管不顾，一把推开父母，跌跌撞撞地冲向舞台。 \n △她扑到顾承泽面前，死死抓住他的手臂。 \n 沈薇薇（泣不成声）：承泽哥…… \n 顾承泽（慌乱，试图推开她）：薇薇，你冷静点！有什么事我们回家再说！ \n 沈薇薇（抬头，泪眼婆娑地看着沈念安）：姐姐，对不起…… \n △沈薇薇一手抚上自己的小腹，声音颤抖却清晰地传遍整个宴会厅。 \n 沈薇薇（哭着宣布）：我……我怀了承泽哥的孩子！ \n △话音落下，全场瞬间陷入一片死寂。 \n △宾客们倒吸一个凉气，现场瞬间炸开了锅。 \n 宾客甲：天合！我没听错吧？妹妹怀了姐夫的孩子？ \n 宾客乙：这……这简直是豪门丑闻啊！ \n △沈念安如遭雷击，浑身冰冷，大脑一片空白。她难以置信地看着顾承泽，又看看哭倒在他怀里的妹妹。 \n 沈念安（声音发颤）：承泽……她说的，是真的吗？ \n △顾承泽眼神躲闪，嘴唇翕动，却一个字都说不出来。 \n △沈薇薇见状，哭得更凶了。 \n 沈薇薇（紧紧抱着顾承澤）：承泽哥，你告诉姐姐，我们是真心相爱的！你快告诉她啊！ \n △特写镜头，沈念安脸上的笑容彻底凝固，眼中所有的光芒瞬间熄灭，世界在眼前崩塌。`,
+    1: `第2集 \n 2-1 日 内 豪华酒店宴会厅 \n 人物：沈念安, 顾承泽, 沈薇薇, 沈母, 沈父, 宾客若干 \n △聚光灯下，沈念安脸色煞白，身体微微颤抖，紧紧盯着顾承泽。 \n △全场的宾客都在窃窃虚语，指指点点。 \n 宾客甲：这下有好戏看了，未婚夫搞大了小姨子的肚子。 \n 宾客乙：沈家这脸可丢大了。 \n 沈念安（声音颤抖）：承泽，你说话啊！她说的……是不是真的？ \n △顾承泽的眼神躲闪，不敢直视沈念安，愧疚地低下了头。 \n △这无声的沉默，像一把最锋利的刀，狠狠刺进沈念安的心脏。 \n 沈念安（绝望地后退一步）：所以……是真的。 \n △沈薇薇见状，哭着抱紧顾承泽。 \n 沈薇薇（抽泣）：姐姐，你不要怪承泽哥，都是我的错！我们是真心相爱的…… \n △沈母和沈父脸色铁青，快步冲上舞台。 \n △沈念安以为他们是来安慰自己的，眼中燃起一丝希望. \n 沈念安（哽咽）：妈…… \n △沈母却看也不看她，径直走到她面前，扬手就想打她。 \n △顾承泽下意识地挡了一下。 \n 顾承泽：阿姨，别…… \n 沈母（怒不可遏，指着沈念安的鼻子）：你还有脸哭！你这个白眼狼！ \n 沈念安（难以置信）：妈，你说什么？ \n 沈母（尖声）：我们沈家养了你二十年，好吃好喝地供着你，你就是这么回报我们的？占着薇薇的位置不说，现在还想毁了薇薇的幸福！ \n 沈父（附和，满脸嫌恶）：念安，你怎么这么不懂事！薇薇才是我们的亲生女儿！你一个养女，有什么资格跟她争！ \n 沈念安（心如刀绞）：爸，妈……我也是你们的女儿啊！ \n 沈母（冷笑）：女儿？你配吗？你不过是我们沈家养的一条狗！现在竟然还想鸠占窃巢！ \n △沈念安踉跄着，手里紧紧攥着为订婚准备的致辞稿，那是她熬了好几个通宵，写满了对未来憧憬的文字。 \n △沈母的视线落在稿纸上，眼中闪过一丝狠毒。 \n △她一把抢过沈念安手中的致辞稿。 \n 沈念安（惊慌）：妈，你干什么！还给我！ \n △沈母看也不看，当着所有人的面，将稿纸“撕拉”一声撕成两半，然后疯狂地撕扯，直到变成一堆碎片。 \n 沈母（咬牙切齿）：你的幸福？你的未来？你也配！ \n △沈母扬起手，将满手的纸屑，狠狠地砸在沈念安的脸上，身上。 \n △纸屑纷飞，像一场绝望的雪，将沈念安彻底淹没。 \n 沈母（指着她，对众人宣布）：我们沈家，没有你这种不知感恩、丢人现眼的东西！`,
+    2: `第3集 \n 3-1 夜 内 豪华酒店宴会厅 \n 人物：沈念安, 沈母, 顾承泽, 沈薇薇, 沈父, 保安2名, 宾客若干 \n △沈母指着沈念安，脸上满是鄙夷和厌恶。 \n 沈母（对保安厉声）：还愣着干什么！把这个丢人现眼的东西给我扔出去！ \n △两名保安立刻上前，一左一右架住沈念安的胳膊。 \n 沈念安（挣扎，难以置信地看向沈父）：爸！ \n △沈父眼神躲闪，转过头去，不敢看她。 \n 沈念安（心碎地望向顾承泽）：承泽……救我…… \n △顾承泽嘴唇动了动，最终只是痛苦地闭上眼. \n 顾承泽（低声）：念安，对不起。 \n △沈薇薇靠在顾承泽怀里，嘴角勾起一抹得意的冷笑，眼中却还挂着泪。 \n 沈薇薇（抽泣）：姐姐，你别怪我们，要怪就怪你……不该占着不属于你的东西。 \n 沈念安（绝望大笑）：不属于我的？哈哈哈哈…… \n △保安不再迟疑，用力拖拽着沈念安往外走. \n △沈念安的挣扎在他们看来微不足道。 \n △“撕拉”一声，她身上华美的纯白礼服，在粗暴的拉扯中被撕开一道长长的口子。 \n △宾客们纷纷避让，对着她指指点点，满是嘲讽和看戏的目光。 \n 宾客甲：真是活该，一个养女还真把自己当凤凰了。 \n 宾客乙：这下好了，被赶出去了吧，一无所有。 \n △沈念安被拖过长长的走廊，像一件被丢弃的垃圾，最后被狠狠地推出了酒店大门。 \n \n 3-2 夜 外 沈家大门/街道（大雨） \n 人物：沈念安 \n △沈念安被保安粗暴地推倒在地，摔在冰冷的石阶上。 \n △身后，沈家大门“砰”的一声，决绝地关上了。 \n △天空突然划过一道闪电，紧接着，倾盆大雨瞬间落下. \n △冰冷的雨水疯狂地浇在她身上，撕裂的礼服紧紧贴着皮肤，狼狈不堪。 \n △她赤着脚，麻木地从地上站起来，雨水混合着泪水，模糊了她的视线。 \n △她漫无目的地走在空无一人的街道上，身无分文，无处可去. \n △一辆跑车飞驰而过，溅起一大片污水，将她淋得更加透彻。 \n 沈念安OS：二十年的家，二十年的爱人，原来都是假的. \n △她踉踉跄跄地走着，心中只剩下一个念头，一个最后的避风港。 \n △她来到一栋小楼前，抬头看去，牌子上写着“念安设计工作室”。 \n △这是 she 亲手创立，倾注了所有心血的地方。 \n △她颤抖着手，想从破碎的礼服口袋里找钥匙，却摸了个空。 \n △她的目光落在工作室的大门上，瞳孔骤然紧缩。 \n △门上，一张白色的封条赫然在目，上面“沈氏集团查封”的字样，在雨中显得格外刺眼。 \n 沈念安（喃喃自语）：连这里……也被收走了吗…… \n △她伸出手，轻轻触摸着那冰冷的封条，仿佛那是压垮她的最后一根稻草。 \n 沈念安再也支撑不住，沿着墙壁缓缓滑落在地。 \n △她蜷缩在角落里，任由雨水冲刷，眼神空洞，仿佛失去了所有灵魂。 \n △就在这时，一辆黑色的劳斯莱斯悄无悄无声息地停在她面前. \n △车窗缓缓降下，露出一张轮廓分明的侧脸。 \n 周助理VO（恭敬）：先生，就是她。 \n △沈念安缓缓抬头，看向车内，一道深邃的目光穿透雨幕，落在她身上。`
+  };
+
+  if (editMode.value === 'full') {
+    form.value?.episodesData.forEach((_, idx) => {
+      mockText += (EPISODE_SCRIPTS[idx] || `基于您的灵感：${dramaStore.expandedPrompt.substring(0, 30)}... \n 第 ${idx + 1} 集内容正在智能创作中...`) + '\n\n' + SEPARATOR.replace(/<p>|<\/p>/g, '') + '\n\n';
+    });
+  } else {
+    mockText = EPISODE_SCRIPTS[currentEpisodeIndex.value] || `基于您的灵感：${dramaStore.expandedPrompt.substring(0, 30)}... \n 第 ${currentEpisodeIndex.value + 1} 集剧本正文正在智能创作中...`;
+  }
+
+  let i = Math.floor((startProgress / 100) * mockText.length);
+  
+  const interval = setInterval(() => {
+    if (isPaused.value) return;
+    const chars = mockText.substring(i, i + 8);
+    tiptapEditor.value?.commands.insertContent(chars.replace(/\n/g, '<br>'));
+    i += 8;
+    
+    const progress = Math.round((i / mockText.length) * 100);
+    dramaStore.setGenerationStatus({ progress });
+
+    if (i >= mockText.length) {
+      clearInterval(interval);
+      isGenerating.value = false;
+      dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
       ElMessage.success('剧本生成完毕');
     }
   }, 40);

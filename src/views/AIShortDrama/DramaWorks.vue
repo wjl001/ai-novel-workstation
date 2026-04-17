@@ -466,11 +466,22 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Delete Confirm Dialog -->
+    <ConfirmDialog
+      v-model="deleteConfirmVisible"
+      :title="deleteConfirmTitle"
+      :message="deleteConfirmMessage"
+      confirm-text="确认删除"
+      cancel-text="取消"
+      @confirm="handleConfirmDelete"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import { useRouter } from 'vue-router';
 import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -501,6 +512,19 @@ const searchQuery = ref('');
 const statusFilter = ref('');
 const sortBy = ref('updated_desc');
 const viewMode = ref('grid');
+
+// Delete Confirm Dialog State
+const deleteConfirmVisible = ref(false);
+const deleteConfirmTitle = ref('');
+const deleteConfirmMessage = ref('');
+const workToDelete = ref<any>(null);
+
+const handleConfirmDelete = () => {
+  if (workToDelete.value) {
+    works.value = works.value.filter(w => w.id !== workToDelete.value.id);
+    ElMessage.success('删除成功');
+  }
+};
 const currentPage = ref(1);
 const pageSize = ref(12);
 
@@ -551,16 +575,10 @@ const handleCommand = (command: string, work: any) => {
 };
 
 const deleteWork = (work: any) => {
-  ElMessageBox.confirm(`确定要删除作品《${work.title}》吗？此操作不可恢复。`, '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-    confirmButtonClass: 'rounded-full px-8 bg-red-500 border-red-500',
-    cancelButtonClass: 'rounded-full px-8'
-  }).then(() => {
-    works.value = works.value.filter(w => w.id !== work.id);
-    ElMessage.success('删除成功');
-  }).catch(() => {});
+  workToDelete.value = work;
+  deleteConfirmTitle.value = '删除作品';
+  deleteConfirmMessage.value = `确定要删除作品《${work.title}》吗？此操作不可恢复。`;
+  deleteConfirmVisible.value = true;
 };
 
 // Cover Handlers

@@ -241,6 +241,16 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Delete Confirm Dialog -->
+    <ConfirmDialog
+      v-model="deleteConfirmVisible"
+      :title="deleteConfirmTitle"
+      :message="deleteConfirmMessage"
+      confirm-text="确认删除"
+      cancel-text="取消"
+      @confirm="handleConfirmDelete"
+    />
   </div>
 </template>
 
@@ -271,6 +281,8 @@ const defaultCovers = [
   'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&h=375&auto=format&fit=crop'  // Vintage
 ]
 
+import ConfirmDialog from './ConfirmDialog.vue';
+
 const props = defineProps<{
   title: string
   description: string
@@ -292,6 +304,19 @@ const cardClass = computed(() => {
   if (theme.value === 'dreamy') return 'bg-white/60 border-white/50 hover:shadow-xl hover:bg-white/80 backdrop-blur-sm'
   return isLight.value ? 'bg-white border-slate-200 hover:shadow-xl' : 'bg-slate-800 border-slate-700 hover:shadow-indigo-500/10 hover:border-indigo-500/30'
 })
+
+// Delete Confirm Dialog State
+const deleteConfirmVisible = ref(false)
+const deleteConfirmTitle = ref('')
+const deleteConfirmMessage = ref('')
+const projectIdToDelete = ref<number | null>(null)
+
+const handleConfirmDelete = () => {
+  if (projectIdToDelete.value !== null) {
+    projects.value = projects.value.filter(p => p.id !== projectIdToDelete.value)
+    ElMessage.success('项目已删除')
+  }
+}
 
 // Mock Data
 const projects = ref<any[]>([])
@@ -485,21 +510,10 @@ const handleClone = (project: any) => {
 }
 
 const deleteProject = (id: number) => {
-  ElMessageBox.confirm(
-    '确定要删除这个项目吗？此操作无法撤销。',
-    '警告',
-    {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
-      type: 'warning',
-      customClass: 'dark-message-box'
-    }
-  )
-    .then(() => {
-      projects.value = projects.value.filter(p => p.id !== id)
-      ElMessage.success('项目已删除')
-    })
-    .catch(() => {})
+  projectIdToDelete.value = id;
+  deleteConfirmTitle.value = '删除项目';
+  deleteConfirmMessage.value = '确定要删除这个项目吗？此操作无法撤销。';
+  deleteConfirmVisible.value = true;
 }
 </script>
 

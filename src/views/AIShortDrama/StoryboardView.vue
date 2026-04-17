@@ -945,6 +945,17 @@
         </button>
       </div>
     </el-dialog>
+
+    <!-- Recovery Confirm Dialog -->
+    <ConfirmDialog
+      v-model="recoveryConfirmVisible"
+      :title="recoveryConfirmTitle"
+      :message="recoveryConfirmMessage"
+      confirm-text="继续生成"
+      cancel-text="放弃"
+      @confirm="handleRecoveryConfirm"
+      @cancel="handleRecoveryCancel"
+    />
   </div>
 </template>
 
@@ -1035,6 +1046,8 @@ import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
 
 const route = useRoute();
+import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+
 const router = useRouter();
 const episodeStore = useEpisodeStore();
 
@@ -1056,6 +1069,17 @@ const showDesignDialog = ref(false);
 const isGeneratingStoryboardText = ref(false);
 const currentGeneratingStoryboardIndex = ref(-1);
 const generationProgress = ref(0);
+
+// Recovery Confirm Dialog State
+const recoveryConfirmVisible = ref(false);
+const recoveryConfirmTitle = ref('');
+const recoveryConfirmMessage = ref('');
+const handleRecoveryConfirm = () => {
+  startStoryboardSequentialGeneration();
+};
+const handleRecoveryCancel = () => {
+  episodeStore.setGenerationStatus({ isGenerating: false, type: '' });
+};
 const currentStoryboardInfo = ref('');
 const isSequentiallyGeneratingStoryboard = ref(false);
 
@@ -1831,6 +1855,9 @@ const deleteScene = (idx: number) => {
 };
 
 onMounted(async () => {
+  // Load state from localStorage first
+  episodeStore.loadFromLocalStorage();
+
   // Initialize mock data if store is empty
   if (episodeStore.episodes.length === 0) {
     episodeStore.setEpisodes([
@@ -1855,8 +1882,13 @@ onMounted(async () => {
     ]);
   }
 
-  // Trigger sequential generation for storyboard
-  if (timelineScenes.value.length === 0) {
+  // Check for interrupted generation
+  if (episodeStore.generationStatus.isGenerating && episodeStore.generationStatus.type === 'storyboard') {
+    recoveryConfirmTitle.value = '恢复生成';
+    recoveryConfirmMessage.value = `检测到分镜脚本生成意外中断，是否恢复生成？`;
+    recoveryConfirmVisible.value = true;
+  } else if (timelineScenes.value.length === 0) {
+    // Trigger sequential generation for storyboard
     await startStoryboardSequentialGeneration();
   }
 
@@ -1881,8 +1913,18 @@ const startStoryboardSequentialGeneration = async () => {
   isGeneratingStoryboardText.value = false;
   isSequentiallyGeneratingStoryboard.value = true;
 
+  // Update store
+  episodeStore.setGenerationStatus({
+    isGenerating: true,
+    type: 'storyboard',
+    totalCount: 2, // Mocking 2 scenes
+    currentIndex: 0,
+    progress: 0
+  });
+
   // Initial storyboard data (text content)
   const sceneData: any[] = [
+    // ... same scene data ...
     {
       id: 'scene-1',
       script: `画面风格和类型: 真人写实, 电影风格, 暖色调, 都市女频<br>
@@ -1961,10 +2003,17 @@ const startStoryboardSequentialGeneration = async () => {
       
       // Only set status to pending after script is done (video stays null)
       timelineScenes.value[i].status = 'pending';
+      
+      // Update store progress
+      episodeStore.setGenerationStatus({
+        currentIndex: i,
+        progress: Math.round(((i + 1) / sceneData.length) * 100)
+      });
     }
 
     isSequentiallyGeneratingStoryboard.value = false;
     currentGeneratingStoryboardIndex.value = -1;
+    episodeStore.setGenerationStatus({ isGenerating: false, type: '' });
     ElMessage.success('分镜脚本生成完毕，点击“生成视频”开始制作画面');
   };
 </script>

@@ -70,7 +70,7 @@
         <!-- Step 3 -->
         <div 
           class="flex items-center gap-4 group py-0.5"
-          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
+          :class="isAssetsGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
           @click="goToStep(2, '/ai-short-drama-creator/storyboard')"
         >
           <div 
@@ -185,6 +185,7 @@ const activeStep = computed(() => {
 });
 
 const isScriptGenerated = computed(() => dramaStore.isScriptGenerated);
+const isAssetsGenerated = computed(() => dramaStore.isAssetsGenerated);
 
 const goToStep = (step: number, path: string) => {
   if (step === 0) {
@@ -193,8 +194,13 @@ const goToStep = (step: number, path: string) => {
   }
   
   // 如果没有生成剧本，且不是当前步骤（防止刷新状态没同步时的误判，虽然有 store 应该没问题）
-  if (!isScriptGenerated.value && step > 0) {
+  if (!isScriptGenerated.value && step === 1) {
     ElMessage.warning('请先生成剧本正文内容，再进行后续设置');
+    return;
+  }
+
+  if (!isAssetsGenerated.value && step === 2) {
+    ElMessage.warning('请先完成主体设置，再进行分镜视频创作');
     return;
   }
   

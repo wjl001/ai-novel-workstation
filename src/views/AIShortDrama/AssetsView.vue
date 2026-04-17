@@ -403,13 +403,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
+import { useDramaStore } from '../../store/drama';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 
 const router = useRouter();
+const dramaStore = useDramaStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 
@@ -439,6 +441,12 @@ const isAssetsComplete = computed(() => {
 
   return hasBasicAssets && !isGenerating && !hasIncompleteAssets;
 });
+
+watch(isAssetsComplete, (newVal) => {
+  if (dramaStore && typeof dramaStore.setAssetsGenerated === 'function') {
+    dramaStore.setAssetsGenerated(newVal);
+  }
+}, { immediate: true });
 
 const incompleteMessage = computed(() => {
   if (isGeneratingAssetsText.value) return '正在生成主体文字信息...';

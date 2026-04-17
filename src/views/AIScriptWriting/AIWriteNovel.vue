@@ -615,11 +615,21 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Global Confirm Dialog -->
+    <ConfirmDialog
+      v-model="confirmVisible"
+      :title="confirmTitle"
+      :message="confirmMessage"
+      @confirm="confirmAction"
+      @cancel="cancelAction"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, inject, watch } from 'vue'
+import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import { useRouter, useRoute } from 'vue-router'
 import ProjectList from '@/components/Common/ProjectList.vue'
 import StepIndicator from '@/components/StepIndicator.vue'
@@ -640,6 +650,14 @@ const router = useRouter()
 const route = useRoute()
 const loreStore = useLoreStore()
 const isCreating = ref(false)
+
+// Confirm Dialog State
+const confirmVisible = ref(false)
+const confirmTitle = ref('')
+const confirmMessage = ref('')
+const confirmAction = ref<() => void>(() => {})
+const cancelAction = ref<() => void>(() => {})
+
 const ruleFormRef = ref<FormInstance>()
 const activeCollapse = ref(['characterInfo', 'synopsis', 'requirements']) // Default open
 
@@ -1053,11 +1071,9 @@ const autoFillAll = async () => {
 
 const handleSmartGenerate = (command: string) => {
   if (command === 'scratch') {
-    ElMessageBox.confirm('这将清空当前所有内容并重新生成，确定吗？', '警告', {
-      confirmButtonText: '确定重写',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
+    confirmTitle.value = '警告';
+    confirmMessage.value = '这将清空当前所有内容并重新生成，确定吗？';
+    confirmAction.value = () => {
       // Clear form except settings
       form.title = ''
       form.worldView = ''
@@ -1067,7 +1083,8 @@ const handleSmartGenerate = (command: string) => {
       form.synopsis = ''
       form.requirements = ''
       autoFillAll()
-    })
+    };
+    confirmVisible.value = true;
   } else if (command === 'complete') {
      autoFillAll()
   }
@@ -1090,45 +1107,19 @@ const createWork = async () => {
     if (valid) {
       // Check for empty requirements with filled plot
       if (!form.requirements && form.mainPlot) {
-         ElNotification({
-           title: '温馨提示',
-           message: '是否要补充一些特殊的创作要求以获得更精准的结果？',
-           type: 'warning',
-           duration: 5000,
-           position: 'bottom-right'
-         })
-         // We still proceed after a short delay or let user decide? 
-         // The prompt says "pop up a gentle Toast prompt". Usually this implies blocking or non-blocking.
-         // "Before Start Creation button triggers" implies we might want to pause.
-         // But "Toast" is usually non-blocking. 
-         // Let's use MessageBox for a decision or just a notification and proceed?
-         // "弹出一个温和的 Toast 提示" -> usually just notification.
-         // But if we want to give them a chance to edit, we should probably pause?
-         // Let's ask via confirm, but make it look gentle.
-         // Actually, let's just use ElMessageBox.confirm for "Gentle prompt"
-         
-         ElMessageBox.confirm(
-            '您填写了主线剧情但未指定创作要求。补充“创作要求”（如：文风、伏笔、避雷）能让 AI 生成更精准。是否现在补充？',
-            '创作建议',
-            {
-              confirmButtonText: '去补充',
-              cancelButtonText: '直接开始',
-              type: 'info',
-              distinguishCancelAndClose: true
-            }
-          )
-          .then(() => {
+         confirmTitle.value = '创作建议';
+         confirmMessage.value = '您填写了主线剧情但未指定创作要求。补充“创作要求”（如：文风、伏笔、避雷）能让 AI 生成更精准。是否现在补充？';
+         confirmAction.value = () => {
              // User wants to edit
              const el = document.getElementById('section-requirements')
              if (el) el.scrollIntoView({ behavior: 'smooth' })
              if (!activeCollapse.value.includes('requirements')) activeCollapse.value.push('requirements')
-          })
-          .catch((action) => {
-            if (action === 'cancel') {
-               proceedCreation()
-            }
-          })
-          return
+         };
+         cancelAction.value = () => {
+             proceedCreation()
+         };
+         confirmVisible.value = true;
+         return
       }
 
       proceedCreation()

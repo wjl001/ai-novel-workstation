@@ -67,13 +67,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, watch, computed, onErrorCaptured } from 'vue'
+import { ref, provide, watch, computed, onErrorCaptured, onMounted } from 'vue'
 import { EditPen, VideoPlay, VideoCameraFilled, Picture, MagicStick, Refresh, 
 HomeFilled } from '@element-plus/icons-vue'
+import { useDramaStore } from '@/store/drama'
+import { useEpisodeStore } from '@/store/episode'
 
 const currentTheme = ref('dreamy')
 const isLight = ref(true)
 const runtimeError = ref<string | null>(null)
+
+const dramaStore = useDramaStore()
+const episodeStore = useEpisodeStore()
+
+onMounted(() => {
+  // Save state before window closes or refreshes
+  window.addEventListener('beforeunload', () => {
+    dramaStore.saveToLocalStorage()
+    episodeStore.saveToLocalStorage()
+  })
+})
 
 const mainBgClass = computed(() => {
   if (currentTheme.value === 'dreamy') {
