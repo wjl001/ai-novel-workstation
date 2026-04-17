@@ -248,7 +248,7 @@
           </div>
 
           <!-- Sidebar Pagination Footer (Enhanced for 100+ episodes) -->
-          <div v-if="form && (episodeRangeOptions.length > 1 || form.episodesData.length > 50)" class="shrink-0 border-t border-slate-100 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl relative">
+          <div v-if="form && (episodeRangeOptions.length > 1 || (form.episodesData && form.episodesData.length > 50))" class="shrink-0 border-t border-slate-100 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl relative">
             <!-- Decorative indicator for scrollable area -->
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-indigo-50 dark:bg-indigo-900/50 border border-indigo-100 dark:border-indigo-800 rounded-full text-[9px] font-black text-indigo-500 uppercase tracking-widest shadow-sm z-10">
               剧集导航
@@ -292,14 +292,14 @@
                   <div class="p-4 flex flex-col gap-4">
                     <div class="flex items-center justify-between">
                       <span class="text-[12px] font-black text-slate-800 dark:text-white uppercase tracking-widest">快速跳转</span>
-                      <span class="text-[10px] text-slate-400">共 {{ form.episodesData.length }} 集</span>
+                      <span class="text-[10px] text-slate-400">共 {{ form.episodesData?.length || 0 }} 集</span>
                     </div>
                     
                     <div class="flex gap-2">
                       <el-input-number 
                         v-model="jumpToEpisodeInput" 
                         :min="1" 
-                        :max="Math.max(1, form.episodesData.length)" 
+                        :max="Math.max(1, form.episodesData?.length || 0)" 
                         size="small"
                         class="flex-1"
                         placeholder="集数"
@@ -314,7 +314,7 @@
 
                     <div class="grid grid-cols-5 gap-1.5 max-h-[200px] overflow-y-auto custom-scrollbar p-1">
                       <button 
-                        v-for="(_, idx) in form.episodesData" 
+                        v-for="(_, idx) in (form.episodesData || [])" 
                         :key="idx"
                         @click="quickSelectEpisode(idx)"
                         class="aspect-square flex items-center justify-center rounded-lg text-[10px] font-black transition-all border"
@@ -1302,7 +1302,7 @@ const selectEpisode = async (index: number | string) => {
     }
     
     const targetIndex = Number(index);
-    if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= form.value.episodesData.length) {
+    if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= (form.value?.episodesData?.length || 0)) {
       console.warn('Invalid target index:', index);
       return;
     }
@@ -2035,6 +2035,7 @@ const startResizeLeftPanel = (e: MouseEvent) => {
 
 const addEpisode = () => {
   if (!form.value) return;
+  if (!form.value.episodesData) form.value.episodesData = [];
   form.value.episodesData.push({ 
     id: Date.now().toString(), 
     summary: '', 
@@ -2106,7 +2107,7 @@ const generateScriptBody = () => {
     isGenerating: true,
     type: 'script',
     currentIndex: currentEpisodeIndex.value,
-    totalCount: form.value?.episodesData.length || 0,
+    totalCount: form.value?.episodesData?.length || 0,
     progress: 0
   });
 

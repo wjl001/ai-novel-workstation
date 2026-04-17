@@ -415,6 +415,11 @@ const dramaStore = useDramaStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 
+// Asset Lists
+const characters = ref<any[]>([]);
+const scenes = ref<any[]>([]);
+const propsList = ref<any[]>([]);
+
 // Loading States
 const isGeneratingAssetsText = ref(false);
 const generatingAssetImages = reactive<Set<string>>(new Set());
@@ -426,11 +431,11 @@ const confirmVisible = ref(false);
 const hasUnsavedChanges = ref(false); // For demo, let's say true if we edited anything
 
 const isAssetsComplete = computed(() => {
-  const hasBasicAssets = characters.value.length > 0 && scenes.value.length > 0;
+  const hasBasicAssets = (characters.value?.length || 0) > 0 && (scenes.value?.length || 0) > 0;
   const isGenerating = isGeneratingAssetsText.value || generatingAssetImages.size > 0;
   
   // Check if any asset is missing a description or image (or has a failed image)
-  const allAssets = [...characters.value, ...scenes.value, ...propsList.value];
+  const allAssets = [...(characters.value || []), ...(scenes.value || []), ...(propsList.value || [])];
   const hasIncompleteAssets = allAssets.some(asset => {
     // Check for empty name or description
     if (!asset.name || !asset.description) return true;
@@ -451,9 +456,9 @@ watch(isAssetsComplete, (newVal) => {
 const incompleteMessage = computed(() => {
   if (isGeneratingAssetsText.value) return '正在生成主体文字信息...';
   if (generatingAssetImages.size > 0) return '正在生成主体图片...';
-  if (characters.value.length === 0 || scenes.value.length === 0) return '请至少添加一个角色和一个场景';
+  if ((characters.value?.length || 0) === 0 || (scenes.value?.length || 0) === 0) return '请至少添加一个角色和一个场景';
   
-  const allAssets = [...characters.value, ...scenes.value, ...propsList.value];
+  const allAssets = [...(characters.value || []), ...(scenes.value || []), ...(propsList.value || [])];
   
   // Check specifically for what's missing
   const missingText = allAssets.find(asset => !asset.name || !asset.description);
@@ -478,15 +483,10 @@ const goToEpisodes = () => {
   router.push('/ai-short-drama-creator/storyboard');
 };
 
-// Mock Data
-const characters = ref<any[]>([]);
-const scenes = ref<any[]>([]);
-const propsList = ref<any[]>([]);
-
 onMounted(async () => {
   // Check if we need to generate assets (mock check)
   // If coming from script page and no assets yet, trigger generation
-  if (characters.value.length === 0) {
+  if ((characters.value?.length || 0) === 0) {
     await startSequentialGeneration();
   }
 });
