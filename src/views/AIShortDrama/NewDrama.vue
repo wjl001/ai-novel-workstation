@@ -549,7 +549,6 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
-
 // 导入产品设计图片以确保被 Vite 编译进源代码
 import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
 
@@ -562,6 +561,8 @@ const showDesignDialog = ref(false);
 const showHotTopicDialog = ref(false);
 const currentStep = ref(1);
 const selectedTopic = ref<any>(null);
+
+const designImageUrl = (fileName: string) => `${import.meta.env.BASE_URL}images/design/${fileName}`;
 
 // --- State Management ---
 const activeTab = ref('ai'); 

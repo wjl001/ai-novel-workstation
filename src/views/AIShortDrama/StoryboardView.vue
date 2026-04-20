@@ -409,7 +409,7 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
+                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md" v-if="false">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
@@ -603,12 +603,12 @@
               </div>
             </transition-group>
             
-            <button 
+            <!-- <button 
               class="flex-shrink-0 w-[40px] h-[95px] rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
               @click="addTimelineScene"
             >
               <el-icon :size="18" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
-            </button>
+            </button> -->
           </div>
         </div>
       </div>

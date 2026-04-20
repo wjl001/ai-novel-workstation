@@ -755,56 +755,62 @@
     </div>
 
     <!-- Product Design Dialog -->
-    <ProductDesignDialog
-      v-model="showDesignDialog"
-      id="short-drama-outline"
-      :default-content="{
-        title: '剧本创作引擎',
-        location: '确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。',
-        layout: [
-          '**左侧 (剧集大纲)：** 包含剧本统计、分集列表（支持拖拽排序、状态实时显示）。',
-          '**中栏 (编辑器)：** 核心创作区，支持 AI 辅助撰写及手动精修。',
-          '**右侧 (AI 助手)：** 提供指令说明、对话历史、优化建议预览及采纳功能。'
-        ],
-        interactions: [
-          {
-            text: '**全集大纲生成 (自动化流)：** \n - **流程：** 进入页面后 AI 自动触发分集规划 -> 按照 1-100 集的顺序流式生成剧情摘要 -> 实时渲染至左侧列表。 \n - **状态：** 正在生成的剧集卡片会显示“正在生成...”遮罩及 Loading 动画。',
-            image: ''
-          },
-          {
-            text: '**中断与恢复 (异常处理)：** \n - **场景：** 用户生成中途刷新页面、关闭浏览器或网络闪断导致连接丢失。 \n - **处理：** 系统自动检测 `dramaStore` 中的生成状态标识。再次进入时会弹出**“发现未完成的任务，是否继续生成？”**确认框。用户点击“继续”后，AI 将从最后一条成功生成的剧集断点处自动恢复。',
-            image: imgOutlineRecovery
-          },
-          {
-            text: '**单集重生成 (补偿机制)：** \n - **流程：** 若某集 AI 生成内容不理想，用户可点击该集卡片的操作按钮触发“单集重生成”。 \n - **异常：** 若 AI 接口报错导致单集内容为空，系统将卡片标记为“生成失败”状态，并提供重试入口。',
-            image: ''
-          },
-          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能，以保证故事结构的完整性。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。 \n - **编辑锁定：** 一旦完成“主体设置”且生成了“分镜视频”，剧本正文将自动锁定为只读状态，不可再编辑，以确保后续视觉资产的一致性。',
-          '**流程环节：** 本页面是创作流的 **Step 1 (内容产出)**。它是后续所有视觉环节的“剧本蓝图”，其内容的丰富度直接决定了分镜拆解的准确性。'
-        ]
-      }"
-    />
+    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 大纲与故事结构设计台" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 剧本创作引擎</h4>
+          </div>
+          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </template>
+      
+      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div class="prose dark:prose-invert max-w-none">
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。</p>
 
-    <!-- Script Editor Product Design Dialog -->
-    <ProductDesignDialog
-      v-model="showScriptDesignDialog"
-      id="short-drama-script-editor"
-      :default-content="{
-        title: '剧本正文编辑引擎',
-        location: '负责单集剧本的深度创作与优化。通过 AI 辅助指令和手动精修，将剧情摘要转化为具体的台词、动作描写。',
-        layout: [
-          '**顶部工具栏：** 显示当前集数、保存状态及设计说明入口。',
-          '**编辑区域：** 采用 Tiptap 富文本引擎，支持 AI 划词优化与气泡菜单。',
-          '**底部操作栏：** 提供字数统计、撤销重做、重写建议及前往主体设置的入口。'
-        ],
-        interactions: [
-          '**编辑锁定逻辑：** \n - **触发条件：** 当系统检测到“主体设置”已完成且“分镜视频”已经开始生成（或已生成）时。 \n - **动作：** 剧本正文区域将自动进入 **只读模式**。这确保了后续生成的视觉资产与剧本内容的一致性。',
-          '**新增 UI 提示：** \n - 在剧本编辑器上方新增了一个琥珀色的提示横幅，明确告知用户当前剧本已锁定及原因，并附带了 2.1 期的版本说明气泡。',
-          '**按钮状态同步：** \n - 当处于锁定状态时，“重写剧本”按钮将被禁用，且底部的跳转按钮文字会自动切换为“查看主体设置”。',
-          '**逻辑说明 (为何锁定)：** \n - **一致性问题：** AIGC 流程是高度线性的。主体资产（角色脸型、场景风格）是基于剧本描述提取的，而分镜视频又是基于特定台词生成的。 \n - **冲突风险：** 若在视觉资产生成后修改剧本，会导致“文字与画面对不上”（如台词改了但嘴型还是旧的，或者主角性格变了但脸还是旧的）。 \n - **Token 保护：** 锁定机制能有效防止用户因误操作导致已生成的昂贵视频资产作废。'
-        ]
-      }"
-    />
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>左侧 (设定与大纲)：</strong>基础设定（背景、梗概）与剧集分集大纲（拖拽排序、剧情摘要）。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>中栏 (剧本编辑器)：</strong>采用好莱坞标准剧本格式排版的富文本编辑器。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>右侧 (AI 助手)：</strong>悬浮侧边栏，支持对话微调、扩写、改写剧本段落。</span>
+            </li>
+          </ul>
+
+          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>划线操作/右键菜单：</strong>选中编辑器内某段文本，点击“引用至 AI 助手”，AI 根据情绪重写台词。</span>
+            </li>
+            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
+              <span class="text-slate-600 dark:text-slate-300"><strong>卡片拖拽：</strong>左侧分集大纲支持拖拽重新排序，增删单集。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
+          我已了解
+        </button>
+      </div>
+    </el-dialog>
 
     <!-- AI Feature Instructions Dialog -->
     <el-dialog 
@@ -951,10 +957,6 @@ interface DramaForm {
 }
 
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
-import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
-
-// 导入产品设计图片以确保被 Vite 编译进源代码
-import imgOutlineRecovery from '@/assets/images/design/1776419732409-100eb67826d2cdc5.png';
 
 const router = useRouter();
 const dramaStore = useDramaStore();

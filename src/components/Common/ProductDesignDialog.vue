@@ -97,6 +97,48 @@
           </div>
         </section>
 
+        <!-- Prototype Screenshots - Strong Visual C-end Style -->
+        <section v-if="editingDesign.images && editingDesign.images.length > 0" class="space-y-12 pt-10 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-6 justify-center">
+            <div class="h-px w-16 bg-gradient-to-r from-transparent to-indigo-500/50"></div>
+            <h3 class="text-[#6366f1] dark:text-indigo-400 font-black flex items-center gap-3 text-2xl tracking-tighter">
+              <el-icon :size="24"><Picture /></el-icon>
+              界面视觉呈现
+            </h3>
+            <div class="h-px w-16 bg-gradient-l from-transparent to-indigo-500/50"></div>
+          </div>
+
+          <div class="space-y-20">
+            <div v-for="(img, idx) in editingDesign.images" :key="idx" class="group relative animate-in">
+              <!-- Top Labels - Pill Style -->
+              <div class="flex items-center justify-between mb-6 px-2">
+                <div class="flex items-center gap-2.5 px-4 py-2 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">
+                  <span class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
+                  <span class="text-[12px] font-black text-slate-500 dark:text-slate-400 tracking-[0.1em] uppercase">Visual Concept {{ idx + 1 }}</span>
+                </div>
+                <div v-if="img.caption" class="px-5 py-2 bg-indigo-50/80 dark:bg-indigo-900/40 backdrop-blur-md rounded-full border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm">
+                  <span class="text-indigo-600 dark:text-indigo-300 font-black text-[12px]">{{ img.caption }}</span>
+                </div>
+              </div>
+              
+              <!-- Main Image Card -->
+              <div class="prototype-image-card relative rounded-[48px] overflow-hidden border-[16px] border-white dark:border-slate-800 shadow-[0_40px_100px_rgba(0,0,0,0.12)] dark:shadow-[0_40px_100px_rgba(0,0,0,0.4)] transition-all duration-700 bg-white dark:bg-slate-800">
+                <img :src="normalizeDesignImageUrl(img.url)" :alt="img.caption || 'Prototype Screenshot'" class="w-full object-contain select-none transition-transform duration-1000 group-hover:scale-[1.03]" />
+                <!-- Subtle Inner Glow -->
+                <div class="absolute inset-0 pointer-events-none border border-black/[0.03] dark:border-white/[0.05] rounded-[32px]"></div>
+              </div>
+              
+              <!-- Bottom Centered Caption Pill -->
+              <div v-if="img.caption" class="mt-8 flex justify-center">
+                <div class="px-10 py-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-[30px] border border-slate-100 dark:border-slate-700 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10">
+                  <p class="text-slate-700 dark:text-slate-200 text-base font-black tracking-tight">
+                    {{ img.caption }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- Edit Mode -->
@@ -110,6 +152,47 @@
           <div class="space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">版本号</label>
             <el-input v-model="editingDesign.version" placeholder="2.1" />
+          </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="space-y-4">
+          <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">原型截图 (支持多图)</label>
+          
+          <div v-if="editingDesign.images && editingDesign.images.length > 0" class="grid grid-cols-1 gap-6">
+            <div v-for="(img, idx) in editingDesign.images" :key="idx" class="relative group border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-white dark:bg-slate-800">
+              <div class="flex gap-4">
+                <div class="w-32 h-32 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 shrink-0">
+                  <img :src="normalizeDesignImageUrl(img.url)" class="w-full h-full object-cover" />
+                </div>
+                <div class="flex-1 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">截图 {{ idx + 1 }} 说明</span>
+                    <button @click="removeImage(idx)" class="text-red-500 hover:text-red-600 p-1">
+                      <el-icon><Delete /></el-icon>
+                    </button>
+                  </div>
+                  <el-input 
+                    v-model="img.caption" 
+                    placeholder="输入此截图的说明 (例如: 侧边栏交互状态)" 
+                    size="small"
+                  />
+                  <div class="flex gap-2">
+                    <button @click="moveImage(idx, -1)" :disabled="idx === 0" class="text-xs text-slate-400 hover:text-indigo-500 disabled:opacity-30">上移</button>
+                    <button @click="moveImage(idx, 1)" :disabled="idx === editingDesign.images.length - 1" class="text-xs text-slate-400 hover:text-indigo-500 disabled:opacity-30">下移</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div 
+            class="upload-area border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 bg-white dark:bg-slate-800 hover:border-indigo-400 transition-colors cursor-pointer group"
+            @click="triggerImageUpload"
+          >
+            <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleImageChange" />
+            <el-icon :size="32" class="text-slate-300 group-hover:text-indigo-400 transition-colors"><Plus /></el-icon>
+            <p class="text-xs text-slate-400">点击上传新的原型页面截图</p>
           </div>
         </div>
 
@@ -231,6 +314,7 @@ const emit = defineEmits(['update:modelValue']);
 const store = useProductDesignStore();
 const visible = ref(props.modelValue);
 const isEditing = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
 const interactionFileInput = ref<HTMLInputElement | null>(null);
 const currentInteractionIndex = ref(-1);
 
@@ -310,7 +394,6 @@ const normalizeDesignImageUrl = (url?: string) => {
 
 const formatRichText = (text: string) => {
   if (!text) return '';
-  // Simple bold markdown replacement
   return text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-600 dark:text-indigo-400">$1</strong>');
 };
 
@@ -327,7 +410,49 @@ const uploadDesignImage = async (file: File) => {
   }
   const payload = await res.json();
   if (!payload?.url) throw new Error('Upload failed');
-  return payload.url as string;
+  
+  const baseUrl = import.meta.env.BASE_URL;
+  const rawUrl = payload.url as string;
+  if (rawUrl.startsWith(baseUrl)) return rawUrl;
+  if (rawUrl.startsWith('/')) return `${baseUrl.replace(/\/$/, '')}${rawUrl}`;
+  return `${baseUrl}${rawUrl}`;
+};
+
+// Image Upload Handlers
+const triggerImageUpload = () => {
+  fileInput.value?.click();
+};
+
+const handleImageChange = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (file) {
+    if (file.size > 2 * 1024 * 1024) {
+      ElMessage.warning('图片大小不能超过 2MB');
+      return;
+    }
+    try {
+      const url = await uploadDesignImage(file);
+      if (!editingDesign.images) editingDesign.images = [];
+      editingDesign.images.push({ url, caption: '' });
+      if (fileInput.value) fileInput.value.value = '';
+      ElMessage.success('图片上传成功');
+    } catch (err: any) {
+      ElMessage.error(err?.message || '图片上传失败');
+    }
+  }
+};
+
+const removeImage = (index: number) => {
+  editingDesign.images.splice(index, 1);
+};
+
+const moveImage = (index: number, direction: number) => {
+  const newIndex = index + direction;
+  if (newIndex >= 0 && newIndex < editingDesign.images.length) {
+    const temp = editingDesign.images[index];
+    editingDesign.images[index] = editingDesign.images[newIndex];
+    editingDesign.images[newIndex] = temp;
+  }
 };
 
 // Interaction Image Handlers
@@ -388,6 +513,10 @@ const removeInteractionPoint = (index: number) => {
   padding: 0;
 }
 
+.upload-area {
+  min-height: 200px;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -412,4 +541,12 @@ const removeInteractionPoint = (index: number) => {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.prototype-image-card {
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prototype-image-card:hover {
+  transform: translateY(-10px);
+}
 </style>
