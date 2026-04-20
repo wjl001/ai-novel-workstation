@@ -174,8 +174,8 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(char)">
-                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-indigo-400 dark:group-hover:border-indigo-500 p-1">
+                <div v-for="char in filteredCharacters" :key="char.id" class="flex flex-col gap-1.5 group cursor-default">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all p-1">
                     <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
@@ -198,7 +198,7 @@
                       </el-popconfirm>
                     </div>
                   </div>
-                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-indigo-600 transition-colors">{{ char.name.split('-')[0] }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ char.name.split('-')[0] }}</span>
                 </div>
               </div>
             </div>
@@ -224,8 +224,8 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(scene)">
-                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-emerald-400 dark:group-hover:border-emerald-500 p-1">
+                <div v-for="scene in filteredScenes" :key="scene.id" class="flex flex-col gap-1.5 group cursor-default">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all p-1">
                     <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
@@ -248,7 +248,7 @@
                       </el-popconfirm>
                     </div>
                   </div>
-                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-emerald-600 transition-colors">{{ scene.name }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ scene.name }}</span>
                 </div>
               </div>
             </div>
@@ -274,8 +274,8 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-1.5 group cursor-pointer" @click="handleEditSubject(prop)">
-                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all group-hover:shadow-xl group-hover:border-amber-400 dark:group-hover:border-amber-500 p-1">
+                <div v-for="prop in filteredProps" :key="prop.id" class="flex flex-col gap-1.5 group cursor-default">
+                  <div class="w-full aspect-square rounded-[16px] bg-white dark:bg-slate-900 border-2 border-transparent overflow-hidden relative transition-all p-1">
                     <div class="w-full h-full rounded-[12px] overflow-hidden relative">
                       <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
@@ -298,7 +298,7 @@
                       </el-popconfirm>
                     </div>
                   </div>
-                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center group-hover:text-amber-600 transition-colors">{{ prop.name }}</span>
+                  <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ prop.name }}</span>
                 </div>
               </div>
             </div>
