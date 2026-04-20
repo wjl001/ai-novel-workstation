@@ -60,22 +60,22 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
-            <button 
+            <!-- v2.1 禁用新增角色 -->
+            <!-- <button 
               @click="addAsset('character')"
               class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
             >
               <el-icon><Plus /></el-icon>
               新增角色
-            </button>
+            </button> -->
           </div>
           <div class="flex-1 pr-2">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 pb-6">
-              <div 
+                <div 
                 v-for="char in characters" 
                 :key="char.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
-                @click="openEditModal(char, 'character')"
               >
                 <div class="aspect-[3/4] bg-slate-50 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
@@ -94,8 +94,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[14px]">暂无画面</span>
                   </div>
-                  <!-- Overlay Action -->
-                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- Overlay Action - v2.1 隐藏编辑和删除 -->
+                  <!-- <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(char, 'character')"
@@ -120,7 +120,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[16px] text-slate-800 truncate">{{ char.name }}</div>
@@ -140,22 +140,22 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
-            <button 
+            <!-- v2.1 禁用新增场景 -->
+            <!-- <button 
               @click="addAsset('scene')"
               class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
             >
               <el-icon><Plus /></el-icon>
               新增场景
-            </button>
+            </button> -->
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-6">
               <div 
                 v-for="scene in scenes" 
                 :key="scene.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
-                @click="openEditModal(scene, 'scene')"
               >
                 <div class="aspect-video bg-slate-50 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
@@ -174,7 +174,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- v2.1 隐藏编辑和删除 -->
+                  <!-- <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(scene, 'scene')"
@@ -199,7 +200,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 truncate">{{ scene.name }}</div>
@@ -219,22 +220,22 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
-            <button 
+            <!-- v2.1 禁用新增道具 -->
+            <!-- <button 
               @click="addAsset('prop')"
               class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
             >
               <el-icon><Plus /></el-icon>
               新增道具
-            </button>
+            </button> -->
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-6">
               <div 
                 v-for="prop in propsList" 
                 :key="prop.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
-                @click="openEditModal(prop, 'prop')"
               >
                 <div class="aspect-square bg-slate-50 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
@@ -253,7 +254,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- v2.1 隐藏编辑和删除 -->
+                  <!-- <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
@@ -278,7 +280,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 truncate">{{ prop.name }}</div>
@@ -347,58 +349,27 @@
     />
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 视觉与听觉资产中心" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 资产中心</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">AI 创作最大的痛点是“人脸一致性”，这是解决此问题的核心页面。管理剧本中所有的角色、场景、道具，并固定其形象特征。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>Tabs 导航：</strong>分类管理【角色库】、【场景库】、【道具库】。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>卡片网格：</strong>每个主体（角色/场景）以卡片形式展示，包含基准图（Reference Image）、名字、特征描述。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>AI 捏脸/生成：</strong>点击卡片进入编辑模式，可修改 Prompt，重新生成多张备选图，并挑选一张作为全局“锁定形象 (Seed/LoRA)”。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>强制前置校验：</strong>必须至少完成一个角色和一个场景的设定，才能点击“下一步：分镜视频”。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-assets"
+      :default-content="{
+        title: '资产中心 (主体设置)',
+        location: '承接剧本创作环节，将文字描述转化为视觉资产。管理剧本中所有的角色、场景、道具，并固定其视觉特征，为后续视频生成提供基准。',
+        layout: [
+          '**分类导航：** 顶部分类管理【角色库】、【场景库】、【道具库】。',
+          '**主体卡片：** 包含基准图（Reference Image）、名称及 AI 自动提取的特征描述。',
+          '**编辑弹窗：** 核心交互区，支持精修主体信息、生成形象及上传本地资源。'
+        ],
+        interactions: [
+          '**AI 自动规划 (触发动作)：** \n - **流程：** 首次进入页面时系统自动执行。 \n - **动作：** 深度扫描全集剧本，提取角色、场景及道具信息。 \n - **产生数据：** 自动填充主体库的名称、描述及 AI 绘图提示词（Prompt）。',
+          '**编辑与删除主体 (v2.1 暂不开发)：** \n - **说明：** **2.1 版本暂不需要开发此功能**。 \n - **状态：** 编辑入口（点击卡片）及删除按钮已在界面上隐藏。 \n - **逻辑：** 当前版本采用全自动生成逻辑，用户只需确认生成结果即可进入下一步。',
+          '**形象生成与锁定 (视觉基准)：** \n - **流程：** 在弹窗中点击“AI 一键生成”。 \n - **动作：** 后台调用绘图模型，根据描述生成唯一基准图。 \n - **产生数据：** 更新主体的 `image` 字段。 \n - **异常：** 若接口超时或算力不足导致失败，系统展示“暂无画面”并提示重试。',
+          '**本地上传 (补偿机制)：** \n - **动作：** 用户点击“本地上传”覆盖 AI 生成图。 \n - **处理：** 前端即时预览并保存至 Store。**异常：** 限制文件格式为 JPG/PNG，非法格式将被系统过滤。',
+          '**校验拦截 (流程控制)：** \n - **流程：** 点击右下角“下一步”。 \n - **动作：** 系统检查所有主体（角色、场景）是否均已补全名称、描述及图片。 \n - **处理：** 若有缺失，按钮处于禁用状态，悬停显示具体缺失项提示。',
+          '**逻辑说明 (流程简化)：** \n - **灵活性：** 2.1 版本为了简化流程，暂不开放手动微调，由 AI 自动完成全链路资产初始化。 \n - **一致性风险：** **注意：** 一旦进入后续“分镜视频”环节并开始生成，资产将完全锁定，以保证视觉风格的高度统一。'
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -408,17 +379,40 @@ import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close,
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
+import { useEpisodeStore } from '../../store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
+const episodeStore = useEpisodeStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 
 // Asset Lists
-const characters = ref<any[]>([]);
-const scenes = ref<any[]>([]);
-const propsList = ref<any[]>([]);
+const characters = computed({
+  get: () => episodeStore.subjects.filter(s => s.type === 'character'),
+  set: (val) => {
+    const otherSubjects = episodeStore.subjects.filter(s => s.type !== 'character');
+    episodeStore.setSubjects([...otherSubjects, ...val]);
+  }
+});
+
+const scenes = computed({
+  get: () => episodeStore.subjects.filter(s => s.type === 'scene'),
+  set: (val) => {
+    const otherSubjects = episodeStore.subjects.filter(s => s.type !== 'scene');
+    episodeStore.setSubjects([...otherSubjects, ...val]);
+  }
+});
+
+const propsList = computed({
+  get: () => episodeStore.subjects.filter(s => s.type === 'prop'),
+  set: (val) => {
+    const otherSubjects = episodeStore.subjects.filter(s => s.type !== 'prop');
+    episodeStore.setSubjects([...otherSubjects, ...val]);
+  }
+});
 
 // Loading States
 const isGeneratingAssetsText = ref(false);
@@ -486,8 +480,32 @@ const goToEpisodes = () => {
 onMounted(async () => {
   // Check if we need to generate assets (mock check)
   // If coming from script page and no assets yet, trigger generation
-  if ((characters.value?.length || 0) === 0) {
+  // 模拟真实历史数据：如果 episodeStore 中已经有主体数据，则不再重新生成
+  if (episodeStore.subjects.length === 0) {
     await startSequentialGeneration();
+  } else {
+    // 数据修正逻辑：如果检测到旧版数字 ID 导致图片错位，进行自动修复
+    const hasOldIds = episodeStore.subjects.some(s => s.id === '1' || s.id === '2');
+    if (hasOldIds) {
+      console.log('检测到旧版数据 ID，正在执行自动修复以确保图片正确...');
+      const fixedSubjects = episodeStore.subjects.map(s => {
+        if (s.type === 'character') {
+          if (s.name === '林星') return { ...s, id: 'char-1', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&h=400&q=80' };
+          if (s.name === '陈宇') return { ...s, id: 'char-2', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80' };
+        }
+        if (s.type === 'scene') {
+          if (s.name === '公司会议室') return { ...s, id: 'scene-1', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80' };
+          if (s.name === '林星公寓') return { ...s, id: 'scene-2', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80' };
+        }
+        if (s.type === 'prop') {
+          if (s.name === '复古相机') return { ...s, id: 'prop-1', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80' };
+          if (s.name === '定情项链') return { ...s, id: 'prop-2', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80' };
+        }
+        return s;
+      });
+      episodeStore.setSubjects(fixedSubjects);
+    }
+    console.log('检测到已有主体数据，保留历史记录，跳过自动生成。');
   }
 });
 
@@ -498,16 +516,16 @@ const startSequentialGeneration = async () => {
   // Phase 1: Text Generation (Big Loading)
   const mockAssets = {
     characters: [
-      { id: '1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人。', prompt: '1个女孩，美丽，职业装，办公室女性，坚强独立，写实风格，8k分辨率', image: '' },
-      { id: '2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。', prompt: '1个男孩，英俊，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: '' }
+      { id: 'char-1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人。', prompt: '1个女孩，漂亮，头像，职业装，办公室女性，坚强独立，写实风格，8k分辨率', image: '' },
+      { id: 'char-2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。', prompt: '1个男孩，帅气，头像，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: '' }
     ],
     scenes: [
-      { id: '1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', image: '' },
-      { id: '2', name: '林星公寓', description: '温馨的单身公寓，布置得很有格调。', prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，写实风格，8k分辨率', image: '' }
+      { id: 'scene-1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', image: '' },
+      { id: 'scene-2', name: '林星公寓', description: '温馨的单身公寓，布置得很有格调。', prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，写实风格，8k分辨率', image: '' }
     ],
     props: [
-      { id: '1', name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹。', prompt: '复古胶片相机，细节质感丰富，电影级光影，8k分辨率', image: '' },
-      { id: '2', name: '定情项链', description: '一条星星形状的银质项链。', prompt: '星形纯银项链，闪耀光泽，微距摄影，8k分辨率', image: '' }
+      { id: 'prop-1', name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹。', prompt: '复古胶片相机，细节质感丰富，电影级光影，8k分辨率', image: '' },
+      { id: 'prop-2', name: '定情项链', description: '一条星星形状的银质项链。', prompt: '星形纯银项链，闪耀光泽，微距摄影，8k分辨率', image: '' }
     ]
   };
 
@@ -519,52 +537,48 @@ const startSequentialGeneration = async () => {
   }
 
   // Populate text info
-  characters.value = mockAssets.characters;
-  scenes.value = mockAssets.scenes;
-  propsList.value = mockAssets.props;
+  const allGeneratedSubjects = [
+    ...mockAssets.characters.map(c => ({ ...c, type: 'character' as const })),
+    ...mockAssets.scenes.map(s => ({ ...s, type: 'scene' as const })),
+    ...mockAssets.props.map(p => ({ ...p, type: 'prop' as const }))
+  ];
+  
+  episodeStore.setSubjects(allGeneratedSubjects);
   
   isGeneratingAssetsText.value = false;
   
   // Phase 2: Sequential Image Generation (Per-asset loading)
   const allAssets = [
-    ...characters.value.map(a => ({ ...a, type: 'char' })),
+    ...characters.value.map(a => ({ ...a, type: 'character' })),
     ...scenes.value.map(a => ({ ...a, type: 'scene' })),
     ...propsList.value.map(a => ({ ...a, type: 'prop' }))
   ];
 
   const mockImages: Record<string, string> = {
-    'char-1': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'char-2': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'scene-1': 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'scene-2': 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'prop-1': 'https://images.unsplash.com/photo-1516961642265-531546e84af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'prop-2': 'https://images.unsplash.com/photo-1599643478514-4a42080164c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    'char-1': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&h=400&q=80',
+    'char-2': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80',
+    'scene-1': 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+    'scene-2': 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80',
+    'prop-1': 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80',
+    'prop-2': 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80'
   };
 
   for (const asset of allAssets) {
-    const key = `${asset.type}-${asset.id}`;
-    generatingAssetImages.add(key);
+    const key = asset.id;
+    const loadingKey = `${asset.type.substring(0, 4)}-${asset.id}`;
+    generatingAssetImages.add(loadingKey);
     
     // Switch tab automatically to show progress
-    if (asset.type === 'char') activeTab.value = 'characters';
+    if (asset.type === 'character') activeTab.value = 'characters';
     else if (asset.type === 'scene') activeTab.value = 'scenes';
     else activeTab.value = 'props';
 
     await new Promise(resolve => setTimeout(resolve, 1500)); // Image generation takes longer
     
-    // Update the image
-    if (asset.type === 'char') {
-      const idx = characters.value.findIndex(c => c.id === asset.id);
-      if (idx > -1) characters.value[idx].image = mockImages[key];
-    } else if (asset.type === 'scene') {
-      const idx = scenes.value.findIndex(s => s.id === asset.id);
-      if (idx > -1) scenes.value[idx].image = mockImages[key];
-    } else {
-      const idx = propsList.value.findIndex(p => p.id === asset.id);
-      if (idx > -1) propsList.value[idx].image = mockImages[key];
-    }
+    // Update the image in store
+    episodeStore.updateSubject(asset.id, { image: mockImages[key] });
     
-    generatingAssetImages.delete(key);
+    generatingAssetImages.delete(loadingKey);
   }
   
   ElMessage.success('主体资产生成完毕');
@@ -611,16 +625,11 @@ const saveAsset = (data: any) => {
     return;
   }
   
-  let targetList;
-  if (data.type === 'character') targetList = characters.value;
-  else if (data.type === 'scene') targetList = scenes.value;
-  else targetList = propsList.value;
-
-  const index = targetList.findIndex((a: any) => a.id === data.id);
+  const index = episodeStore.subjects.findIndex((s: any) => s.id === data.id);
   if (index > -1) {
-    targetList[index] = data;
+    episodeStore.updateSubject(data.id, data);
   } else {
-    targetList.push(data);
+    episodeStore.addSubject(data);
   }
   
   ElMessage.success('保存成功');
@@ -628,20 +637,12 @@ const saveAsset = (data: any) => {
 };
 
 const executeDeleteAsset = (asset: any, type: 'character' | 'scene' | 'prop') => {
-  let targetList;
-  if (type === 'character') targetList = characters.value;
-  else if (type === 'scene') targetList = scenes.value;
-  else targetList = propsList.value;
-
-  const index = targetList.findIndex((a: any) => a.id === asset.id);
-  if (index > -1) {
-    targetList.splice(index, 1);
-    ElMessage({
-      message: '删除成功',
-      type: 'success',
-      customClass: 'modern-message-success'
-    });
-  }
+  episodeStore.deleteSubject(asset.id);
+  ElMessage({
+    message: '删除成功',
+    type: 'success',
+    customClass: 'modern-message-success'
+  });
 };
 
 // Expose internal state for testing

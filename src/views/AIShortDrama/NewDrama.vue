@@ -483,54 +483,30 @@
     </el-dialog>
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 新建短剧" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 新建短剧</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">项目初始化页面，决定内容生成的输入源（灵感/现有剧本）。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>模式 A：一句话灵感生成</strong>（输入文本框：“霸道总裁爱上我，但我是来复仇的”）。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>模式 B：导入小说/剧本</strong>（支持上传 txt/docx/pdf 文件）。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300">用户选择模式 A 或 B 并输入内容后，点击“生成大纲”按钮。按钮呈现 Loading 状态，页面平滑过渡到 OutlineView。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-new"
+      :default-content="{
+        title: '新建短剧',
+        location: '系统创作入口，支持“AI灵感生成”与“外部剧本导入”双模式切换，决定后续生成的所有核心输入源。',
+        layout: [
+          '**Tab 切换区：** 顶部提供“AI 灵感生成”与“导入已有剧本”两个模式，支持动态组件切换。',
+          '**灵感输入区：** 中央大型 TextArea 容器，支持多行输入。底部状态栏包含字数实时统计、清空与 AI 润色功能。',
+          '**题材灵感区：** 提供热门题材标签云，点击可触发高级配置弹窗（HotTopicDialog）。',
+          '**近期作品区：** 采用 Grid 布局展示最近 4 个项目的多图预览及创作进度。'
+        ],
+        interactions: [
+          {
+            text: '**立即创作 (核心动作)：** \n - **流程：** 用户输入灵感 -> 点击按钮 -> 系统启动 AI 扩展引擎 -> 自动构建完整的“故事设定、主角人设、核心冲突及结局预览” -> 数据持久化至 Store -> 自动重定向至大纲工作台。 \n - **状态：** 按钮点击后立即进入 Loading 状态，防止多次点击导致重复扣费或生成。',
+            image: imgNewDramaCreate
+          },
+          '**灵感导入 (外部源)：** \n - **流程：** 选择文件 -> 上传至服务器 -> AI 进行语义解析 -> 提取核心人设与情节 -> 跳转至大纲。 \n - **异常：** 若文件加密、格式不符（非 docx/pdf/txt）或超过 20MB，系统将弹出错误提示并终止流程。',
+          '**异常处理：** \n - **空内容校验：** 灵感输入为空时点击按钮，触发 `ElMessage.warning` 拦截并高亮输入框。 \n - **网络超时：** 若 AI 扩展接口无响应，系统会重置按钮状态并提示“生成超时，请稍后重试”。',
+          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
+          '**流程环节：** 本页面是全流程的 **Step 0 (初始化)**。在此确定的 Expanded Prompt 是后续所有环节（大纲、资产、分镜）的基因，确保了长内容生成的连贯性。'
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -568,9 +544,14 @@ import {
   Link,
   Warning,
   GoldMedal,
-  QuestionFilled
+  QuestionFilled,
+  Loading
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+
+// 导入产品设计图片以确保被 Vite 编译进源代码
+import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
 
 import { useDramaStore } from '../../store/drama';
 

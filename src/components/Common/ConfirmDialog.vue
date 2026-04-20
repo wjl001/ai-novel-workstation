@@ -37,6 +37,7 @@
         </button>
         
         <button 
+          v-if="showCancel"
           @click="handleCancel"
           class="w-full py-3 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl font-bold text-[13px] transition-all hover:text-slate-700 dark:hover:text-slate-200 border border-slate-100 dark:border-slate-700/50"
         >
@@ -58,6 +59,7 @@ interface Props {
   confirmText?: string;
   cancelText?: string;
   icon?: any;
+  showCancel?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -66,7 +68,8 @@ const props = withDefaults(defineProps<Props>(), {
   message: '确认执行此操作吗？',
   confirmText: '确认',
   cancelText: '取消',
-  icon: WarningFilled
+  icon: WarningFilled,
+  showCancel: true
 });
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);

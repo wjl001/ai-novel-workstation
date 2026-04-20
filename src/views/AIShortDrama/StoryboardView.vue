@@ -86,7 +86,7 @@
       </div>
       
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
+        <div v-if="false" class="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
           <el-icon class="text-indigo-500"><Menu /></el-icon>
           <el-select v-model="synthesisModel" size="small" class="w-36 !border-none custom-select-transparent">
             <el-option label="Seedance 2.0 • Fast" value="seedance-fast" />
@@ -95,6 +95,7 @@
         </div>
         
         <button 
+          v-if="false"
           @click="handleExport"
           class="h-9 px-4 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
           :disabled="!timelineScenes[currentSceneIdx]?.video"
@@ -103,6 +104,7 @@
         </button>
 
         <button 
+          v-if="false"
           @click="showBgmConfig = true"
           :disabled="!isAllScenesGenerated"
           class="h-9 px-4 rounded-full text-[13px] font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/10 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
@@ -142,6 +144,7 @@
           <div class="p-4 border-b border-indigo-100 dark:border-slate-700 flex justify-between items-center shrink-0">
             <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">主体库</span>
             <button 
+              v-if="false"
               @click="showLibraryModal = true"
               class="w-7 h-7 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center justify-center shadow-lg shadow-indigo-200"
             >
@@ -163,6 +166,7 @@
                   </div>
                 </div>
                 <button 
+                  v-if="false"
                   @click="handleAddSubject('character')"
                   class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
                 >
@@ -176,7 +180,7 @@
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <el-popconfirm
                         width="180"
                         confirm-button-text="确认"
@@ -212,6 +216,7 @@
                   </div>
                 </div>
                 <button 
+                  v-if="false"
                   @click="handleAddSubject('scene')"
                   class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
                 >
@@ -225,7 +230,7 @@
                       <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <el-popconfirm
                         width="180"
                         confirm-button-text="确认"
@@ -261,6 +266,7 @@
                   </div>
                 </div>
                 <button 
+                  v-if="false"
                   @click="handleAddSubject('prop')"
                   class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
                 >
@@ -274,7 +280,7 @@
                       <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <el-popconfirm
                         width="180"
                         confirm-button-text="确认"
@@ -495,7 +501,7 @@
               </span>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2" v-if="false">
               <el-checkbox
                 v-if="isMultiSelectMode"
                 v-model="isAllSelected"
@@ -550,10 +556,16 @@
                 </div>
 
                 <!-- Index Badge -->
-                <div class="absolute top-1.5 left-1.5 z-10">
+                <div class="absolute top-1.5 left-1.5 z-10 flex items-center gap-1">
                   <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
                     :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
                     {{ idx + 1 }}
+                  </div>
+                  <div 
+                    class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-90"
+                    @click.stop="deleteScene(idx)"
+                  >
+                    <el-icon :size="10"><Delete /></el-icon>
                   </div>
                 </div>
 
@@ -675,8 +687,8 @@
             </div>
 
             <!-- Export Options Panel (Redesigned for C-end users) -->
-            <div class="bg-white px-10 py-8 flex items-center justify-between border-t border-slate-50 shrink-0 z-40 h-[140px]">
-              <div class="flex items-center gap-16">
+            <div class="bg-white px-10 py-8 flex items-center justify-end border-t border-slate-50 shrink-0 z-40 h-[140px]">
+              <div class="flex items-center gap-16" v-if="false">
                 <!-- Watermark Selector -->
                 <div class="flex flex-col gap-3">
                   <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">水印设置</span>
@@ -889,62 +901,27 @@
         />
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 分镜与关键帧工作台" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 分镜工作台</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">将文字剧本转化为可视觉化的画面（分镜/关键帧），这是最终成片前的“草图”。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>左侧主体库：</strong>快速查阅和插入角色、场景、道具。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>中间编辑区：</strong>每个镜头包含剧本原文、AI生成的Prompt、分镜图。支持富文本“@”唤出主体库引用。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>底部时间轴：</strong>展示整集所有分镜视频的队列，支持多选、批量生成、播放。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>“@” 引用交互：</strong>在编辑框输入“@”弹出下拉菜单，快速关联锁定过的主体，确保AI绘图时加载对应的 Seed/LoRA。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>合成全集：</strong>当底部时间轴所有分镜都生成成功后，点击右上角合成全集，进入多模态合成阶段（I2V, Wav2Lip）。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-storyboard"
+      :default-content="{
+        title: '分镜工作台',
+        location: '将文字剧本转化为可视化的画面（分镜/关键帧），这是最终成片前的“草图”。',
+        layout: [
+          '**左侧主体库：** 快速查阅和插入角色、场景、道具，确保画面视觉一致性。',
+          '**中间编辑区：** 核心创作区。左侧为分镜脚本编辑，支持“@”引用主体；右侧为 AI 生成视频预览。',
+          '**底部时间轴：** 分镜队列管理。展示缩略图、时长、状态，并支持多选批量操作。'
+        ],
+        interactions: [
+          '**AI 分镜拆解 (核心流)：** \n - **流程：** 进入本集后，系统扫描文字剧本。**动作：** 自动将其拆分为若干个 3-10 秒的视觉分镜，并为每个分镜自动撰写绘图 Prompt。',
+          '**重新生成 (触发动作)：** \n - **场景：** 对当前分镜画面不满意。**动作：** 修改 Prompt 后点击“重新生成”。**异常：** 若内容涉及合规性问题，按钮报错并提示“Prompt 含有敏感词汇”。',
+          '**批量任务 (效率工具)：** \n - **流程：** 勾选多个分镜卡片 -> 点击“批量生成”。**动作：** 系统将任务加入 GPU 渲染队列，卡片显示进度百分比。**异常：** 若队列过长，提示“服务器繁忙，预计等待 X 分钟”。',
+          '**合成预览 (关键节点)：** \n - **流程：** 点击“合成全集”。**动作：** 系统检查所有分镜是否均已生成。**异常：** 若存在空缺，弹出气泡提示“分镜 X 尚未生成，无法合成”。',
+          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
+          '**流程环节：** 本页面是创作流的 **Step 3 (画面生成)**。它是从“静态资产”向“动态视频”跨越的最关键步骤。'
+        ]
+      }"
+    />
 
     <!-- Recovery Confirm Dialog -->
     <ConfirmDialog
@@ -953,6 +930,7 @@
       :message="recoveryConfirmMessage"
       confirm-text="继续生成"
       cancel-text="放弃"
+      :show-cancel="false"
       @confirm="handleRecoveryConfirm"
       @cancel="handleRecoveryCancel"
     />
@@ -1047,6 +1025,7 @@ import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.v
 
 const route = useRoute();
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 
 const router = useRouter();
 const episodeStore = useEpisodeStore();
@@ -1680,9 +1659,8 @@ const duration = ref(0);
 const isSynthesisCompleted = ref(false);
 const fullSynthesisVideoUrl = ref('');
 const synthesisVideoCandidates = [
-  '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4',
-  '/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4',
-  'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+  '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4',
+  '/assets/video_c2e5d372661c95731e129f2eb4d56054.mp4'
 ];
 const synthesisVideoCandidateIndex = ref(0);
 const exportConfig = reactive({
@@ -1761,7 +1739,7 @@ const handleGenerateSingleScene = (idx: number) => {
       if (timelineScenes.value[idx].progress >= 100) {
         clearInterval(interval);
         timelineScenes.value[idx].status = 'success';
-        timelineScenes.value[idx].video = '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4';
+        timelineScenes.value[idx].video = '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4';
         // 同时设置预览图，确保时间轴能看到画面
         timelineScenes.value[idx].image = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600';
         ElMessage.success(`分镜 ${idx + 1} 生成成功`);
@@ -1806,12 +1784,11 @@ const isAllScenesGenerated = computed(() => {
 });
 
 const canSynthesizeAll = computed(() => {
-  return isAllScenesGenerated.value && bgmConfig.confirmed;
+  return isAllScenesGenerated.value;
 });
 
 const synthesisTooltip = computed(() => {
   if (!isAllScenesGenerated.value) return '请先生成所有分镜视频';
-  if (!bgmConfig.confirmed) return '请先配置背景音乐';
   return '';
 });
 
@@ -1935,13 +1912,13 @@ const startStoryboardSequentialGeneration = async () => {
 镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 右侧方与角色视线平齐高度拍摄。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 身着纯白礼服, 挽着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的手臂, 她仰起头, 侧脸对着镜头, 面部朝向身旁的 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span>, 视线充满爱意地聚焦于他的脸庞, 脸上洋溢着幸福的笑容, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 说: 「承泽, 我好像在做梦。」 音色: 女声, 青年音色, 音调中等偏高, 音色质感明亮、清脆, 声音清亮柔和, 发音方式干净, 气息充沛平稳, 吐字清晰, 带有一种与生俱来的温婉与真诚感。 聚光灯照在他们身上。<br><br>
 镜头3 <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 过肩近景, 从 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 的背后拍摄, 焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 的脸上。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 低下头, 温柔地凝视着 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 他的面部朝向 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span>, 眼神专注而深情, <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 说: 「念安, 这不是梦。从今天起, 你就是我唯一的未婚妻。」 音色: 男声, 青年音色, 音调中等, 音色质感干净但偏扁平, 声音不够厚重, 发音方式清晰, 但语速偏快且气息不稳, 尤其在紧张时会带有轻微的颤抖, 吐字清晰却缺乏力量感, 常在句末音量减弱, 给人一种底气不足的感觉。 镜头缓慢向前推进, 加强情感氛围。`,
       targetImage: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-      targetVideo: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4'
+      targetVideo: '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4'
     },
     {
       id: 'scene-2',
       script: `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 4.0s</span> : 时间: 日，场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>，镜头: 近景，从宾客的过肩视角拍摄，焦点在 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 身上。她脸上带着得意的笑容，面部朝向面前的宾客，视线看着对方，<span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈母-基础形象-基础形象</span> 说: 「这孩子，从小就懂事，是我们沈家的骄傲。」音色: 女声，中年音色，音调中偏高，音色质感清亮、干脆，但缺乏暖意，声音偏薄，发音方式精准，气息平稳，吐字清晰，语速不快，但字与字之间没有犹豫，带有一种习惯于发号施令的、不容置疑的权威感。<br><br><span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 沈父-基础形象-基础形象</span> 在旁边微笑着点头附和。`,
       targetImage: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
-      targetVideo: '/dist/assets/video_ad7d18db73187a9e4ede04391370a29c.mp4'
+      targetVideo: '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4'
     }
   ];
 

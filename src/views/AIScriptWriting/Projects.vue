@@ -89,47 +89,34 @@
       </template>
     </el-dialog>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
+    <!-- Product Design Dialog -->
+    <ProductDesignDialog
       v-model="showPrototypeHelp"
-      title="💡 作品列表交互原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 项目卡片交互</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            卡片式管理所有剧本项目。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>悬停动效：</strong> 鼠标移入卡片时，封面图片会轻微放大，同时浮现操作遮罩层。</li>
-            <li><strong>快速编辑：</strong> 点击遮罩层上的 <el-icon><Edit /></el-icon> 按钮或直接点击卡片可进入编辑器。</li>
-            <li><strong>智能封面：</strong> 点击遮罩层上的 <el-icon><MagicStick /></el-icon> 按钮可呼出AI封面生成器。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. AI 封面生成器</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            为剧本自动生成具有吸引力的封面图。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>弹窗内可自定义 Prompt 描述词。</li>
-            <li>点击生成后，系统模拟AI作画过程，分批次展示多张变体封面（轮播图形式）。</li>
-            <li>选中喜欢的封面后，将自动应用并更新到对应的项目卡片上。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
+      id="script-projects"
+      :default-content="{
+        title: '作品列表交互原型说明',
+        location: '剧本项目管理中心，用于展示和快速进入所有已创建的剧本作品。',
+        layout: [
+          '**项目卡片：** 卡片式展示剧本标题、字数、更新时间等核心信息。',
+          '**智能封面：** 支持 AI 封面生成器为剧本快速创建视觉形象。',
+          '**快捷入口：** 悬停卡片可快速进入编辑或封面重绘。'
+        ],
+        interactions: [
+          '**悬停动效：** 鼠标移入卡片时，封面图片会轻微放大，同时浮现操作遮罩层。',
+          '**AI 封面生成：** 弹窗内自定义 Prompt 后，系统模拟 AI 作画过程展示变体封面，选中后自动应用。',
+          '**快速编辑：** 点击遮罩层上的“编辑”图标直接进入剧本编辑器。'
+        ]
+      }"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus, Picture, Edit, MagicStick, InfoFilled } from '@element-plus/icons-vue'
+import { Plus, Picture, Edit, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
 const showPrototypeHelp = ref(false)

@@ -290,48 +290,25 @@
       </main>
     </div>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
+    <!-- Product Design Dialog -->
+    <ProductDesignDialog
       v-model="showPrototypeHelp"
-      title="💡 大纲生成与管理原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 剧集大纲预览 (步骤1)</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            AI 根据基础设定自动生成的多集大纲。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>卡片化展示：</strong> 每集大纲包含标题和摘要，可直接在输入框中进行修改。</li>
-            <li><strong>六维设定矩阵：</strong> 每集标题下方提供场景、角色、道具等 6 个维度的细化设定入口。</li>
-            <li><strong>悬停交互：</strong> 鼠标悬停在某集上，右侧会显示刷新（单集重生成）、查看详情和删除按钮。摘要下方会显示插入新集按钮。</li>
-            <li><strong>全局控制：</strong> 底部吸底操作栏提供全局重新生成和确认大纲（进入下一步）的功能。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 大纲列表管理 (步骤2)</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            进入内容创作阶段的核心调度台。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>顶部数据栏：</strong> 显示总集数、已完成集数，并提供"批量短剧转换"入口。</li>
-            <li><strong>单集创作操作：</strong> 列表右侧提供三种创作模式："AI撰写"（直接生成正文）、"手写"（跳转至编辑器）、"对接短剧"（将单集内容发送至短剧生成台）。</li>
-            <li><strong>状态管理：</strong> 左侧复选框支持多选，右侧标签实时显示当前集的内容状态（待设定/待撰写/已完成）。</li>
-          </ul>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 高级扩展功能</h4>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>封面重绘：</strong> 悬停在左上角作品封面上，可点击重绘或上传自定义封面。</li>
-            <li><strong>作品设置：</strong> 点击标题下方的"作品设置"可呼出抽屉，随时调整全局基础设定。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
+      id="novel-generator"
+      :default-content="{
+        title: '大纲生成与管理原型说明',
+        location: '进入内容创作阶段的核心调度台，用于管理 AI 生成的剧集大纲。',
+        layout: [
+          '**剧集大纲预览 (步骤1)：** AI 根据基础设定自动生成的多集大纲。包含卡片化展示和六维设定矩阵。',
+          '**大纲列表管理 (步骤2)：** 进入内容创作阶段的核心调度台。包含顶部数据栏和单集创作操作。',
+          '**高级扩展功能：** 封面重绘和作品设置入口。'
+        ],
+        interactions: [
+          '**卡片化展示：** 每集大纲包含标题和摘要，可直接在输入框中进行修改。',
+          '**单集创作操作：** 列表右侧提供“AI撰写”（直接生成正文）、“手写”（跳转至编辑器）、“对接短剧”三种模式。',
+          '**进度管理：** 顶部数据栏实时显示总集数和已完成集数。'
+        ]
+      }"
+    />
 
     <!-- Chapter Detail Dialog -->
     <el-dialog v-model="showDetailDialog" title="剧集详情" width="600px" :class="isLight ? '' : 'dark-dialog'">
@@ -451,6 +428,7 @@ import {
 import { ElMessage } from 'element-plus'
 import { useLoreStore, type Chapter } from '@/stores/useLoreStore'
 import StepIndicator from '@/components/StepIndicator.vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))

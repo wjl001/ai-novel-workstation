@@ -54,7 +54,7 @@
       <div class="flex items-center gap-4 flex-1 min-w-[300px]">
         <el-input 
           v-model="searchQuery" 
-          placeholder="搜索作品标题..." 
+          placeholder="搜索作品标题/描述" 
           class="custom-search-input-v2 !w-72"
           clearable
         >
@@ -321,62 +321,28 @@
     </div>
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 作品库管理" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 作品库</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">创作者的主页，管理所有历史短剧项目。承载了项目状态流转和全局操作的入口。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>顶部：</strong>搜索框（按剧名、标签搜索）、状态筛选项（草稿、生成中、已完成）。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>主体区域：</strong>卡片式网格布局（Grid）。每个卡片代表一部短剧，封面为 AI 生成的海报或第一帧。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>卡片内容：</strong>封面图、剧名、集数、更新时间、当前进度标签、操作按钮（...菜单：复制项目、删除、导出）。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>Hover效果：</strong>鼠标悬停在短剧卡片上，封面图自动静音播放预告片或精彩片段（如果有成片）。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>进度直达：</strong>点击卡片，直接进入该项目最后一次编辑的节点页面（如直接跳到分镜台）。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-works"
+      :default-content="{
+        title: '作品库管理',
+        location: '创作者的个人主页，用于集中管理所有历史短剧项目，并提供项目状态监控与全局操作。',
+        layout: [
+          '**顶部工具栏：** 集成全局搜索（标题搜索）、状态过滤（草稿/进行中/完成）及网格/列表视图切换。',
+          '**网格视图 (Grid)：** 以 16:10 的卡片展示项目，包含封面、状态标签、简介及最后更新时间。',
+          '**列表视图 (List)：** 适合快速浏览大量项目，展示作品名称、状态、最后修改时间及操作按钮。',
+          '**AI 封面生成器：** 独立弹窗交互。支持输入 Prompt 描述词，为作品生成具有视觉冲击力的专属海报。'
+        ],
+        interactions: [
+          '**打开作品 (触发动作)：** 点击项目卡片或列表行。**动作：** 执行 `router.push`。**流程：** 系统加载该项目的所有章节数据，并平滑跳转至剧集规划页（EpisodesView）。',
+          '**AI 封面生成 (触发动作)：** 悬停卡片点击“AI 生成”。**动作：** 弹出生成工坊。**流程：** 用户输入 Prompt -> 后端调用绘图模型渲染预览图 -> 用户选中并应用。',
+          '**作品删除 (触发动作)：** 点击操作菜单中的“删除”。**动作：** 弹出二次确认框（ConfirmDialog）。**异常：** 删除操作不可逆，点击确认后该作品的所有剧本、分镜及视频数据将永久从服务器移除。',
+          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
+          '**异常逻辑：** \n - **搜索缺省：** 若搜索无匹配结果，展示“暂无作品”占位图，并引导用户点击“立即开始创作”。\n - **封面加载失败：** 若项目封面链接失效，卡片将自动切换为基于作品 ID 生成的唯一渐变色占位背景。',
+          '**流程环节：** 本页面是创作流的 **管理中枢**。它是用户进入具体创作工作流之前的预览、筛选与历史任务恢复环节。'
+        ]
+      }"
+    />
 
     <!-- AI Generator Dialog -->
     <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="ai-generator-dialog">
@@ -483,9 +449,10 @@
 import { ref, computed } from 'vue';
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star } from '@element-plus/icons-vue';
+import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star, Check } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { UploadFile } from 'element-plus';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 
 const router = useRouter();
 const showDesignDialog = ref(false);

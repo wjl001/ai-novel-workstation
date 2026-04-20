@@ -424,51 +424,26 @@
       </div>
     </div>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
+    <!-- Product Design Dialog -->
+    <ProductDesignDialog
       v-model="showPrototypeHelp"
-      title="💡 基础设定原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 左侧参数配置面板</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            核心剧本方向控制中枢。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>题材设定：</strong> 支持点击弹出大型题材选择弹窗，进行精细化分类选择。</li>
-            <li><strong>风格倾向：</strong> 提供单选模式的直观按钮，点击"更多"可搜索或自定义风格。</li>
-            <li><strong>深度记忆引擎：</strong> Pro版独有功能开关，展示AI长篇连贯性技术能力。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 右侧核心内容生成区</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            灵活的人机共创卡片组。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>每个模块卡片（世界观、金手指、作品简介等）右上角均有独立的 <strong>"AI 生成"</strong> 按钮。</li>
-            <li>所有输入框支持手动精修，右下角带有实时字数统计。</li>
-            <li>作品名称旁边有"换个名字"刷新按钮，提供即时灵感。</li>
-          </ul>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 底部悬浮操作区</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            控制整体工作流的流转。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>基于设定补全：</strong> 点击后仅填充页面上尚未填写内容的模块。</li>
-            <li><strong>从零生成全部：</strong> 危险操作，将覆盖用户当前在右侧的所有手写内容。</li>
-            <li><strong>开始创作：</strong> 将当前所有参数和内容传递至下一个"大纲生成"环节。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
+      id="ai-write-novel"
+      :default-content="{
+        title: '基础设定原型说明',
+        location: '剧本创作的第一步，用于定义故事的核心参数和世界观设定。',
+        layout: [
+          '**左侧参数配置面板：** 核心剧本方向控制中枢。包含题材设定、风格倾向和深度记忆引擎开关。',
+          '**右侧核心内容生成区：** 灵活的人机共创卡片组。包含世界观设定、核心金手指、角色档案、作品简介等。',
+          '**底部悬浮操作区：** 控制整体工作流的流转。提供基于设定补全、从零生成全部和开始创作按钮。'
+        ],
+        interactions: [
+          '**开始创作 (触发动作)：** \n - **流程：** 点击后系统执行 `createWork` 逻辑。**动作：** 验证必填项 -> 持久化作品基础设定 -> 自动跳转至大纲管理页（NovelGenerator）。 \n - **状态：** 按钮点击后立即进入 Loading 状态，防止重复创建。',
+          '**智能补全 (触发动作)：** \n - **流程：** 点击“基于设定补全”。**动作：** AI 扫描当前已填写的字段，仅对空白项进行联想生成。**异常：** 若左侧参数（如题材）未选，提示“请先选择题材以辅助补全”。',
+          '**异常处理：** \n - **校验拦截：** 若世界观、简介等关键字段为空点击“开始创作”，对应卡片将产生红色震动动效，并弹出“请完善核心设定”的全局提示。 \n - **网络中断：** 若生成过程中断，已填写的文字会自动保存在本地 LocalStorage 中，确保用户心血不丢失。',
+          '**流程环节：** 本页面是文生文流程的 **Step 0 (初始化)**。在此确定的世界观和金手指是后续所有章节 AI 生成的“逻辑底座”，具有最高优先级。'
+        ]
+      }"
+    />
 
     <!-- Genre Dialog -->
     <el-dialog v-model="showGenreDialog" title="选择题材" width="600px" append-to-body :class="isLight ? '' : 'dark-dialog'">
