@@ -487,50 +487,28 @@
       </template>
     </el-dialog>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
+    <!-- Prototype Explanation Dialog -->
+    <ProductDesignDialog
       v-model="showPrototypeHelp"
-      title="💡 剧本编辑器交互原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 沉浸式编辑器</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            提供专注的文字创作体验。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>划词菜单 (Bubble Menu)：</strong> 选中文本后自动弹出，提供 AI 润色、续写、扩写和改写功能。也可以直接在输入框中输入指令。</li>
-            <li><strong>悬浮菜单 (Floating Menu)：</strong> 在空行处显示，提供快速的 AI 续写按钮。</li>
-            <li><strong>对接短剧：</strong> 顶部工具栏提供一键将当前剧本转换并发送至 AI 短剧生成工具的入口。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 左侧剧集导航</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            管理多集剧本的结构。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>可快速在不同剧集之间切换，标签会显示该集是否已撰写。</li>
-            <li>点击侧边中部的折叠按钮可以隐藏侧边栏，获得更宽广的创作视野。</li>
-          </ul>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 右侧 AI 助手</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            随时唤出的智能伴写系统。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>点击顶部工具栏的对话图标唤出，以侧边栏形式存在。</li>
-            <li>支持多模态对话，可就当前剧情走向、设定细节等向 AI 提问。</li>
-            <li>底部提供常用快捷指令按钮（如"情节建议"、"审查逻辑"）。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
+      id="script-editor"
+      :default-content="{
+        title: '剧本编辑器交互原型说明',
+        location: '提供沉浸式的创作环境，集成 AI 智能伴写、剧集结构管理及短剧转换引擎。',
+        layout: [
+          '**左侧剧集导航：** 多集列表管理，支持快速切换、折叠。状态标签实时同步“未写”或“已完成”状态。',
+          '**中央编辑器：** 基于 Tiptap 的富文本创作区。集成气泡菜单（Bubble Menu）与悬浮菜单（Floating Menu），实现所见即所得的 AI 协作。',
+          '**右侧 AI 助手：** 双模态面板。支持“对话模式”进行剧情头脑风暴，以及“优化引擎”进行口语化、节奏感重写。',
+          '**顶部工具栏：** 实时字数统计、预计阅读时长，及“对接 AI 短剧”的核心流转入口。'
+        ],
+        interactions: [
+          '**保存 (触发动作)：** 点击吸底保存按钮。**动作：** 将当前章节内容持久化至 Store 并触发本地缓存备份。**异常：** 若内容未发生变更，点击将仅提示“已是最新状态”。',
+          '**对接 AI 短剧 (触发动作)：** 点击顶部按钮。**动作：** 启动“剧本格式转换”进度条（Water Drop 动画）。**流程：** 系统分析剧本语义 -> 自动拆分为分镜格式 -> 弹出对接弹窗。**异常：** 若剧本内容为空，按钮置灰并提示“请先撰写剧本内容”。',
+          '**气泡菜单指令 (触发动作)：** 选中文本后弹出。**动作：** 点击“续写/润色/扩写”，AI 在光标处实时流式输出优化后的文本。',
+          '**AI 自动撰写 (触发动作)：** 从大纲进入时触发。**动作：** AI 根据大纲摘要自动填充正文。**流程：** 顶部显示“AI 正在撰写中”状态标签，用户可随时打断。',
+          '**流程环节：** 本页面是创作流的 **核心产出阶段**。高质量的剧本正文是后续“视频分镜拆解”与“角色形象提取”的唯一输入基准。'
+        ]
+      }"
+    />
 
     <!-- AI Feature Instructions Dialog -->
     <el-dialog 
@@ -619,6 +597,7 @@ import { useLoreStore, type Character, type Prop, type Scene } from '@/stores/us
 import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
 import AiOptimizationOverlay from '@/components/AiOptimizationOverlay.vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -766,7 +745,7 @@ const aiInstructions = [
   { 
     tag: '优化对话', 
     behavior: '调整对白，使其更符合人设、更具张力或更具口语化。', 
-    instruction: '输入角色性格补充，点击优化对话。',
+    instruction: '输入角色性格补充，直接点击发送按钮。',
     command: '“优化顾承泽的表白对话，让他显得更加深情且带有愧疚。”' 
   },
   { 
@@ -783,15 +762,9 @@ const aiInstructions = [
   },
   { 
     tag: '五感填充', 
-    behavior: '从视觉、听觉、嗅觉、味觉、触觉多维度补全细节，增强临场感。', 
+    behavior: '从视觉、听觉、嗅觉、味觉、触觉多维度补全细节，增强临场感. ', 
     instruction: '输入重点感官，点击五感填充。',
     command: '“五感填充：描写宴会厅里的香槟味、嘈杂的人声和冰冷的手心。”' 
-  },
-  { 
-    tag: '内容升华', 
-    behavior: '提炼主题思想，加入富有哲理或金句性质的总结，提升深度。', 
-    instruction: '输入核心哲理，点击内容升华。',
-    command: '“升华：在主角离开时，加入一段关于成长与告别的哲思金句。”' 
   },
   { 
     tag: '增加反差', 
@@ -807,7 +780,6 @@ const recommendedCommands = [
   { label: '情感渲染', icon: '🎨' },
   { label: '五感填充', icon: '👁️' },
   { label: '角度转换', icon: '🎭' },
-  { label: '内容升华', icon: '✨' },
   { label: '加个例子', icon: '📌' },
   { label: '增加反差', icon: '🎯' },
   { label: '强化金句', icon: '🔑' },

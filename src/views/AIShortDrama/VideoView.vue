@@ -12,7 +12,7 @@
         <span class="font-bold text-[15px] border-r border-slate-200 dark:border-slate-700 pr-4 mr-2">短剧《废物苏醒成至尊》</span>
         <span class="text-[11px] bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full text-indigo-600 font-bold mr-4">共1集</span>
         <button 
-          @click="showPrototypeHelp = true"
+          @click="showDesignDialog = true"
           class="flex items-center gap-1.5 px-3 py-1 bg-white text-indigo-600 border border-indigo-200 rounded-full text-[12px] font-bold hover:bg-indigo-50 transition-all shadow-sm"
         >
           <el-icon><InfoFilled /></el-icon>
@@ -159,106 +159,26 @@
       </div>
     </div>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
-      v-model="showPrototypeHelp"
-      title="💡 AI短剧交互原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 顶步进度条</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            明确展示了短剧视频生成的四个阶段：
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-decimal pl-4 space-y-1">
-            <li><strong>角色剧本：</strong> 确立分集对白与基本场景。</li>
-            <li><strong>提取主体：</strong> AI自动分析并锁定关键角色与视觉元素。</li>
-            <li><strong>分镜剧本：</strong> 将文字转译为具体的镜头画面描述。</li>
-            <li><strong>生成视频：</strong> 基于分镜渲染最终短剧片段。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 左侧集数导航与底部时间轴</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            提供清晰的时空维度导航。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>左侧可以快速在多集之间切换，管理整个项目的庞大内容。</li>
-            <li>底部分镜缩略图类似视频剪辑软件的时间轴，点击即可切换中间主画布的待生成镜头。</li>
-            <li>支持一键生成全局背景音乐。</li>
-          </ul>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 右侧生成控制面板</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            精准控制单一镜头的生成质量。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>画面描述：</strong> 允许用户对AI解析的提示词进行手动修改。</li>
-            <li><strong>参考主体：</strong> 用户可上传特定的图片或设定，确保人物长相和场景在各镜头间保持一致性（垫图功能）。</li>
-            <li><strong>模型选择：</strong> 提供不同风格的模型切换（如 SeedDream 高品质模型）。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
-
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 成片预览与一键发布" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 成片导出页</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">最终成品确认、导出设置和多平台分发。类似于短视频平台（如抖音/TikTok）的创作者中心预览页。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>中央 (Player)：</strong>模拟手机屏幕的竖屏播放器，带有点赞/评论UI层覆盖（可切换真实预览模式）。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>右侧面板 (Export Settings)：</strong>包含基本信息（标题、简介、Hashtags）、封面选择、导出格式（分辨率、帧率）以及分发渠道。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>实时预览：</strong>播放器支持带字幕和音效的实时渲染回放，确保最终效果无误。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>一键分发：</strong>点击“发布”，通过 API 自动推流到已授权的社交账号（抖音、快手等）。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-video"
+      :default-content="{
+        title: '成片导出与分发',
+        location: '创作流程的终点。在这里进行最终的效果确认、音视频合成以及多平台一键发布。',
+        layout: [
+          '**中央预览：** 竖屏播放器。模拟真实 App 环境（含点赞/评论 UI 遮罩），支持字幕实时渲染。',
+          '**右侧面板：** 发布参数设置。包含标题、封面、话题标签、导出格式及分发渠道勾选。'
+        ],
+        interactions: [
+          '**一键发布 (核心动作)：** \n - **流程：** 点击“立即发布”。**动作：** 系统执行最终的渲染压制（加入水印、混音）-> 自动通过 API 分发至已绑定的社交账号。 \n - **状态：** 按钮进入“正在发布...”状态，禁止中断。',
+          '**预览模式切换：** \n - **流程：** 点击播放器左下角图标。**动作：** 在“纯净视频”与“App 模拟”模式间无缝切换。',
+          '**异常处理：** \n - **渲染失败：** 若合成过程中服务器存储空间不足或连接断开，提示“渲染失败，请检查网络后重试”。 \n - **分发异常：** 若第三方平台 Token 失效，系统会拦截发布并弹出“重新授权”窗口。',
+          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
+          '**流程环节：** 本页面是全流程的 **Step 4 (后期分发)**。它是将 AIGC 内容转化为可变现资产的最后一道关卡。'
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -266,10 +186,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, ArrowRight, VideoPlay, VideoCamera, Headset, Plus, ArrowDown, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
 const activeStoryboard = ref(0)
-const showPrototypeHelp = ref(false)
 const showDesignDialog = ref(false)
 const prompt = ref('一个唯美的极简剖面，展现故事的发生场景和主要人物。画面构图提取，色彩鲜明，具有强烈的视觉冲击力')
 

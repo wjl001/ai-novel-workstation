@@ -112,54 +112,22 @@
     </div>
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 全局工作台" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 创作框架</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">整个短剧创作引擎的母版（Layout），承载全局导航、状态管理和进度指引。</p>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>顶部通栏：</strong>创作进度步进器（剧本创作 ➔ 主体设置 ➔ 分集视频），视觉上通过渐变进度条连接。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>中央工作区：</strong>承载各子路由视图（大纲、资产、分镜等），统一的卡片式内阴影容器。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>非线性跳转与校验：</strong>点击顶部的进度节点切换视图。如果未完成前置步骤（如未生成剧本），系统会拦截跳转并提示“请先生成剧本正文内容”。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-layout"
+      :default-content="{
+        title: '创作框架',
+        location: '整个短剧创作引擎的母版（Layout），承载全局导航、状态管理和进度指引。',
+        layout: [
+          '**顶部通栏：** 创作进度步进器（剧本创作 ➔ 主体设置 ➔ 分集视频），视觉上通过渐变进度条连接。',
+          '**中央工作区：** 承载各子路由视图（大纲、资产、分镜等），统一的卡片式内阴影容器。'
+        ],
+        interactions: [
+          '**非线性跳转与校验：** 点击顶部的进度节点切换视图。如果未完成前置步骤（如未生成剧本），系统会拦截跳转并提示“请先生成剧本正文内容”。',
+          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。'
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -169,6 +137,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
 import { Check, InfoFilled, Close, Document, Location, Monitor, Pointer, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 
 const route = useRoute();
 const router = useRouter();

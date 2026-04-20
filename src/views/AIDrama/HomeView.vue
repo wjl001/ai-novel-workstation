@@ -193,49 +193,28 @@
       </div>
     </div>
 
-    <!-- Prototype Explanation Drawer -->
-    <el-drawer
+    <!-- Prototype Explanation Dialog -->
+    <ProductDesignDialog
       v-model="showPrototypeHelp"
-      title="💡 首页交互原型说明"
-      direction="rtl"
-      size="400px"
-    >
-      <div class="space-y-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-2">1. 核心工具入口区</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            提供平台主打的AI创作工具的快速入口。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>点击 <strong>"AI 剧本"</strong> 卡片将跳转至 `/ai-write-novel` 路由，进入剧本创作工作流。</li>
-            <li>点击 <strong>"AI 短剧"</strong> 卡片将跳转至 `/ai-video` 路由，进入分镜及视频生成工作台。</li>
-            <li><strong>"AI 音乐"</strong> 卡片作为未来功能的占位展示，展现平台的扩展性。</li>
-          </ul>
-        </div>
-
-        <div class="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-2">2. 最近项目列表</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            展示用户历史创作内容，便于二次编辑。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li>悬停列表项时，右侧会渐显操作按钮（继续编辑/播放/更多设置）。</li>
-            <li>根据项目类型（剧本或视频），会显示不同的图标和标签颜色。</li>
-          </ul>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl">
-          <h4 class="font-bold text-yellow-700 dark:text-yellow-300 mb-2">3. 创作灵感与资讯</h4>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">
-            面向C端用户的增长与促活模块。
-          </p>
-          <ul class="text-sm text-slate-500 dark:text-slate-400 list-disc pl-4 space-y-1">
-            <li><strong>今日热榜题材：</strong> 动态展示当前流行趋势，点击"使用此模板创作"可将参数自动填入AI剧本生成器。</li>
-            <li><strong>系统公告与教程：</strong> 帮助新用户降低使用门槛，提升转化率。</li>
-          </ul>
-        </div>
-      </div>
-    </el-drawer>
+      id="home-view"
+      :default-content="{
+        title: '工作台首页',
+        location: '系统入口大厅，集成核心 AI 工具入口、个人创作数据统计及项目管理中心。',
+        layout: [
+          '**数据统计面板：** 实时展示剧本总数、已生成视频数及剩余算力点，辅助用户规划创作资源。',
+          '**核心工具卡片：** 提供“AI 剧本”与“AI 短剧”两大核心模块的快速入口，通过渐变视觉引导。',
+          '**最近项目列表：** 流式展示最近编辑的项目，支持按类型（剧本/视频）自动分类标识。',
+          '**创作灵感区：** 动态拉取当前热门题材标签，并提供“使用此模板创作”一键套用功能。'
+        ],
+        interactions: [
+          '**工具跳转 (触发动作)：** 点击卡片执行 `router.push`。**动作：** 平滑跳转至对应工作流起始页（`/ai-write-novel` 或 `/ai-video`）。',
+          '**项目快捷操作：** 鼠标悬停列表项。**动作：** 右侧渐显“继续编辑”或“预览”按钮。点击直接恢复该项目的编辑现场。',
+          '**模板套用 (触发动作)：** 点击热榜下的“使用此模板创作”。**动作：** 系统自动将该题材的 Prompt 注入新建流程，跳过手动输入环节。',
+          '**异常逻辑：** \n - **算力预警：** 若算力点（Credit）低于 100，点击卡片会弹出“余额不足”提示。\n - **列表异常：** 若接口请求超时，项目列表将展示占位符并提供“刷新”重试按钮。',
+          '**流程环节：** 本页面是创作流的 **起点 (Home)**。用户在此确定创作方向（文生文/文生视频）或继续处理历史积压任务。'
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -246,6 +225,7 @@ import {
   EditPen, VideoCamera, ArrowRight, More, Headset, Grid, 
   FolderOpened, Document, Clock, VideoPlay, MagicStick, Refresh, InfoFilled 
 } from '@element-plus/icons-vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
 const showPrototypeHelp = ref(false)
