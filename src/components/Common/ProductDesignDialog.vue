@@ -16,7 +16,7 @@
             <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">
               {{ isEditing ? '编辑产品设计' : editingDesign.title }}
             </h4>
-            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version {{ editingDesign.version || '2.1' }}</span>
+            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version 2.1</span>
           </div>
         </div>
         <div class="flex items-center gap-2">
