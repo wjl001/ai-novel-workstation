@@ -56,12 +56,29 @@ export default defineConfig({
           await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8')
         }
 
-        const productDesignsPath = path.resolve(__dirname, 'data', 'product_designs.json')
+        const productDesignDir = path.resolve(__dirname, 'data', 'product_designs')
+
+        const readAllDesigns = async () => {
+          try {
+            await fs.mkdir(productDesignDir, { recursive: true })
+            const files = await fs.readdir(productDesignDir)
+            const designs: any = {}
+            for (const file of files) {
+              if (file.endsWith('.json')) {
+                const content = await readJsonFile(path.join(productDesignDir, file))
+                Object.assign(designs, content)
+              }
+            }
+            return designs
+          } catch {
+            return {}
+          }
+        }
 
         const productDesignHandler = async (req: any, res: any, next: any) => {
           const url = req.url || ''
           if (req.method === 'GET' && (url === '/api/product-designs' || url === '/ai-short-drama-creator/api/product-designs')) {
-            const data = await readJsonFile(productDesignsPath)
+            const data = await readAllDesigns()
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify(data))
@@ -92,9 +109,25 @@ export default defineConfig({
             payload.id = id
             if (typeof payload.updatedAt !== 'number') payload.updatedAt = Date.now()
 
-            const existing = await readJsonFile(productDesignsPath)
-            existing[id] = payload
-            await writeJsonFile(productDesignsPath, existing)
+            const version = payload.version || '2.2'
+            const versionFile = path.join(productDesignDir, `${version}.json`)
+            
+            // Remove from other version files to avoid duplicates
+            const files = await fs.readdir(productDesignDir)
+            for (const file of files) {
+              if (file.endsWith('.json')) {
+                const filePath = path.join(productDesignDir, file)
+                const data = await readJsonFile(filePath)
+                if (data[id]) {
+                  delete data[id]
+                  await writeJsonFile(filePath, data)
+                }
+              }
+            }
+
+            const data = await readJsonFile(versionFile)
+            data[id] = payload
+            await writeJsonFile(versionFile, data)
 
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json')

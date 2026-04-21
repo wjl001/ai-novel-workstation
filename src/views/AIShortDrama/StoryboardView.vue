@@ -412,6 +412,7 @@
                 <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
+                      v-if="false"
                       @click="handleEditScript"
                       class="h-8 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
                     >
@@ -419,6 +420,7 @@
                       <span>编辑脚本</span>
                     </button>
                     <button 
+                      v-if="false"
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
                       class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
@@ -909,14 +911,15 @@
         location: '将文字剧本转化为可视化的画面（分镜/关键帧），这是最终成片前的“草图”。',
         layout: [
           '**左侧主体库：** 快速查阅和插入角色、场景、道具，确保画面视觉一致性。',
-          '**中间编辑区：** 核心创作区。左侧为分镜脚本编辑，支持“@”引用主体；右侧为 AI 生成视频预览。',
+          '**中间预览区：** 核心展示区。左侧为分镜脚本展示（2.1版本已禁用编辑），右侧为 AI 生成视频预览。',
           '**底部时间轴：** 分镜队列管理。展示缩略图、时长、状态，并支持多选批量操作。'
         ],
         interactions: [
           '**AI 分镜拆解 (核心流)：**',
           '**流程：** 进入本集后，系统扫描文字剧本。**动作：** 自动将其拆分为若干个 3-10 秒的视觉分镜，并为每个分镜自动撰写绘图 Prompt。',
-          '**重新生成 (触发动作)：**',
-          '**场景：** 对当前分镜画面不满意。**动作：** 修改 Prompt 后点击“重新生成”。**异常：** 若内容涉及合规性问题，按钮报错并提示“Prompt 含有敏感词汇”。',
+          '**设计变更 (2.1版本)：**',
+          '**变更 1：** 隐藏“编辑脚本”和“重新生成分镜”按钮。分镜脚本由 AI 生成后，不再开放手动编辑功能，以确保创作流的自动化与连贯性。',
+          '**变更 2：** 分镜脚本 AI 生成后，默认保持只读状态，不再自动开启编辑模式。',
           '**批量任务 (效率工具)：**',
           '**流程：** 勾选多个分镜卡片 -> 点击“批量生成”。**动作：** 系统将任务加入 GPU 渲染队列，卡片显示进度百分比。**异常：** 若队列过长，提示“服务器繁忙，预计等待 X 分钟”。',
           '**合成预览 (关键节点)：**',
@@ -926,7 +929,7 @@
           '**完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
           '**流程环节：** 本页面是创作流的 **Step 3 (画面生成)**。它是从“静态资产”向“动态视频”跨越的最关键步骤。'
         ],
-        version: '2.2'
+        version: '2.1'
       }"
     />
 
