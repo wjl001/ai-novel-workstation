@@ -166,8 +166,8 @@
         </div>
 
         <!-- Right: Preview -->
-        <div class="w-[260px] flex flex-col gap-3 shrink-0 overflow-hidden">
-          <div class="aspect-[3/4] rounded-[24px] bg-slate-50 border border-slate-100 overflow-hidden relative shadow-sm group">
+        <div class="w-[300px] flex flex-col gap-3 shrink-0 overflow-hidden">
+          <div class="aspect-video rounded-[24px] bg-slate-50 border border-slate-100 overflow-hidden relative shadow-sm group">
             <div v-if="isGeneratingImage" class="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
               <el-icon class="animate-spin text-indigo-600" size="28"><Loading /></el-icon>
               <span class="text-[12px] text-slate-500 font-black">AI 绘图中...</span>
@@ -211,7 +211,7 @@
             </button>
           </div>
 
-          <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest">推荐 3:4 · 支持 JPG/PNG</p>
+          <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest">推荐 16:9 · 支持 JPG/PNG</p>
         </div>
       </div>
     </div>
@@ -311,9 +311,9 @@ const generateImage = async () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const mockImages = {
-      character: `https://picsum.photos/400/533?random=char_${Date.now()}`,
-      scene: `https://picsum.photos/600/450?random=scene_${Date.now()}`,
-      prop: `https://picsum.photos/400/533?random=prop_${Date.now()}`
+      character: `https://picsum.photos/960/540?random=char_${Date.now()}`,
+      scene: `https://picsum.photos/960/540?random=scene_${Date.now()}`,
+      prop: `https://picsum.photos/960/540?random=prop_${Date.now()}`
     };
     
     const typeKey = (type.value || 'character') as keyof typeof mockImages;

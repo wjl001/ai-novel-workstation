@@ -66,13 +66,6 @@
         <div class="h-8 w-px bg-slate-100 dark:bg-slate-700 mx-1 hidden md:block"></div>
         
         <div class="flex gap-3">
-          <el-select v-model="statusFilter" placeholder="作品状态" class="custom-select-v2 !w-36" clearable>
-            <el-option label="全部状态" value="" />
-            <el-option label="草稿" value="draft" />
-            <el-option label="创作中" value="in_progress" />
-            <el-option label="已完成" value="completed" />
-          </el-select>
-          
           <el-select v-model="sortBy" placeholder="排序方式" class="custom-select-v2 !w-40">
             <el-option label="最近修改" value="updated_desc" />
             <el-option label="最近创建" value="created_desc" />
@@ -337,10 +330,11 @@
           '**打开作品 (触发动作)：** 点击项目卡片或列表行。**动作：** 执行 `router.push`。**流程：** 系统加载该项目的所有章节数据，并平滑跳转至剧集规划页（EpisodesView）。',
           '**AI 封面生成 (触发动作)：** 悬停卡片点击“AI 生成”。**动作：** 弹出生成工坊。**流程：** 用户输入 Prompt -> 后端调用绘图模型渲染预览图 -> 用户选中并应用。',
           '**作品删除 (触发动作)：** 点击操作菜单中的“删除”。**动作：** 弹出二次确认框（ConfirmDialog）。**异常：** 删除操作不可逆，点击确认后该作品的所有剧本、分镜及视频数据将永久从服务器移除。',
-          '**功能说明 (2.1期)：** \n - **剧集管理：** 目前版本暂不支持剧集的删除、排序及新增功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
+          '**功能说明 (2.2版本)：** \n - **剧集管理：** 2.2版本已支持在剧本操作页面新增剧集。目前版本暂不支持剧集的删除及排序功能。 \n - **完结状态：** “已完”表示该集已成功合成全集视频；“未完”表示尚未完成全集视频合成。',
           '**异常逻辑：** \n - **搜索缺省：** 若搜索无匹配结果，展示“暂无作品”占位图，并引导用户点击“立即开始创作”。\n - **封面加载失败：** 若项目封面链接失效，卡片将自动切换为基于作品 ID 生成的唯一渐变色占位背景。',
           '**流程环节：** 本页面是创作流的 **管理中枢**。它是用户进入具体创作工作流之前的预览、筛选与历史任务恢复环节。'
-        ]
+        ],
+        version: '2.2'
       }"
     />
 

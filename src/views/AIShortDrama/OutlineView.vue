@@ -134,6 +134,15 @@
                     <span class="text-[15px] font-black text-amber-600 dark:text-amber-400 leading-none">{{ episodeStats.unfinished }}</span>
                   </div>
                 </div>
+
+                <!-- Add Episode Button -->
+                <button 
+                  @click="addNewEpisode"
+                  class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-black transition-all shadow-md shadow-indigo-500/20 active:scale-95"
+                >
+                  <el-icon><Plus /></el-icon>
+                  新增剧集
+                </button>
               </div>
 
               <!-- Draggable List -->
@@ -184,7 +193,7 @@
                             v-if="isCurrentEpisode(ep.id, episodeRange + relIdx)"
                             class="px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[9px] font-black tracking-widest shadow-lg shadow-indigo-500/20 animate-bounce-subtle"
                           >
-                            NOW
+                            正在编辑
                           </div>
                         </div>
                       </div>
@@ -368,10 +377,10 @@
               </transition>
               <div class="flex items-center gap-2 mt-0.5">
                 <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-black uppercase tracking-widest">
-                  {{ editMode === 'full' ? 'Script Editing' : `Editing: ${currentEpisodeLabel}` }}
+                  {{ editMode === 'full' ? '剧本编辑' : `正在编辑: ${currentEpisodeLabel}` }}
                 </span>
                 <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Creative Mode</span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">创作模式</span>
               </div>
             </div>
           </div>
@@ -397,14 +406,14 @@
         <!-- Canvas Main Body -->
         <div class="flex-1 min-h-0 relative bg-white/40 dark:bg-slate-900/30 flex flex-col">
           
-          <!-- Locked Banner for v2.1 -->
+          <!-- Locked Banner for v2.2 -->
           <transition name="slide-down">
             <div v-if="isScriptLockedGlobal" class="z-30 px-6 py-2.5 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/50 flex items-center justify-between">
               <div class="flex items-center gap-3 text-amber-700 dark:text-amber-400">
                 <el-icon :size="16"><Lock /></el-icon>
                 <span class="text-[12px] font-black tracking-wide">由于主体设置和分镜视频已生成，剧本内容已锁定，暂不支持编辑。</span>
               </div>
-              <el-tooltip content="2.1期版本说明：为保证后续分镜与视频的一致性，主体设置完成后剧本进入只读模式。" placement="top">
+              <el-tooltip content="2.2版本说明：为保证后续分镜与视频的一致性，主体设置完成后剧本进入只读模式。" placement="top">
                 <el-icon class="text-amber-500 cursor-help" :size="14"><QuestionFilled /></el-icon>
               </el-tooltip>
             </div>
@@ -755,62 +764,47 @@
     </div>
 
     <!-- Product Design Dialog -->
-    <el-dialog v-model="showDesignDialog" title="产品设计说明 - 大纲与故事结构设计台" width="700px" class="rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden" :show-close="false">
-      <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
-              <el-icon :size="20"><Document /></el-icon>
-            </div>
-            <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">产品设计说明 - 剧本创作引擎</h4>
-          </div>
-          <button @click="close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
-            <el-icon :size="20"><Close /></el-icon>
-          </button>
-        </div>
-      </template>
-      
-      <div class="px-6 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-        <div class="prose dark:prose-invert max-w-none">
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Location /></el-icon>页面定位</h3>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。</p>
+    <ProductDesignDialog
+      v-model="showDesignDialog"
+      id="short-drama-outline"
+      :default-content="{
+        title: '剧本操作页面',
+        location: '确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。',
+        layout: [
+          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲（支持新增剧集、拖拽排序、剧情摘要）。',
+          '**中栏 (剧本编辑器)：** 采用好莱坞标准剧本格式排版的富文本编辑器。',
+          '**右侧 (AI 助手)：** 悬浮侧边栏，支持对话微调、扩写、改写剧本段落。'
+        ],
+        interactions: [
+          '**新增剧集 (2.2版本)：** 点击大纲区域的“新增剧集”按钮，可在当前剧本末尾快速添加新的剧集，方便扩展剧情。',
+          '**自由编辑正文 (2.2版本)：** 在正式生成主体信息（角色、场景、道具）之前，用户拥有对剧本正文的完全编辑权，支持手动调整每一个细节。',
+          '**引用至 AI 助手 (2.2版本)：** 选中编辑器内的文字后，可通过悬浮菜单或右键点击“引用至 AI 助手”，配合 AI 助手进行对话式润色、扩写、改写及各种智能优化。',
+          '**卡片拖拽：** 左侧分集大纲支持拖拽重新排序，灵活调整剧情走向。'
+        ],
+        version: '2.2'
+      }"
+    />
 
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Monitor /></el-icon>原型布局概要</h3>
-          <ul class="space-y-3 mb-6">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>左侧 (设定与大纲)：</strong>基础设定（背景、梗概）与剧集分集大纲（拖拽排序、剧情摘要）。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>中栏 (剧本编辑器)：</strong>采用好莱坞标准剧本格式排版的富文本编辑器。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>右侧 (AI 助手)：</strong>悬浮侧边栏，支持对话微调、扩写、改写剧本段落。</span>
-            </li>
-          </ul>
-
-          <h3 class="text-indigo-600 font-bold flex items-center gap-2 mb-4"><el-icon><Pointer /></el-icon>核心交互</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>划线操作/右键菜单：</strong>选中编辑器内某段文本，点击“引用至 AI 助手”，AI 根据情绪重写台词。</span>
-            </li>
-            <li class="flex items-start gap-2 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-50 dark:border-slate-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></span>
-              <span class="text-slate-600 dark:text-slate-300"><strong>卡片拖拽：</strong>左侧分集大纲支持拖拽重新排序，增删单集。</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-        <button @click="showDesignDialog = false" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm">
-          我已了解
-        </button>
-      </div>
-    </el-dialog>
+    <!-- Script Body Design Dialog -->
+    <ProductDesignDialog
+      v-model="showScriptDesignDialog"
+      id="short-drama-script-body"
+      :default-content="{
+        title: '剧本正文编辑',
+        location: '创作的核心区域。在这里，AI 生成的摘要被转化为详细的对白、动作和场景描写。',
+        layout: [
+          '**编辑区：** 采用好莱坞标准剧本格式的富文本编辑器，支持实时字数统计和预计时长。',
+          '**气泡菜单：** 选中文字后自动弹出，提供“引用至 AI 助手”等核心交互入口。'
+        ],
+        interactions: [
+          '**自由编辑 (2.2版本)：** 在生成主体之前，您可以自由修改剧本的每一行。',
+          '**引用优化 (2.2版本)：** 选中正文段落，点击“引用至 AI 助手”，可在右侧面板中配合 AI 进行深度打磨。',
+          '**自动保存：** 所有的编辑操作都会实时自动保存到云端。',
+          '**功能说明 (2.2版本)：** \n - **编辑锁定：** 一旦完成“主体设置”且生成了“分镜视频”，剧本正文将自动锁定为只读状态。'
+        ],
+        version: '2.2'
+      }"
+    />
 
     <!-- AI Feature Instructions Dialog -->
     <el-dialog 
@@ -957,6 +951,7 @@ interface DramaForm {
 }
 
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
@@ -1103,6 +1098,26 @@ const stopDragTabs = () => {
 const handleQuickJump = () => {
   const targetIdx = jumpToEpisodeInput.value - 1;
   quickSelectEpisode(targetIdx);
+};
+
+const addNewEpisode = () => {
+  if (!form.value || !form.value.episodesData) return;
+  
+  const newIndex = form.value.episodesData.length;
+  const newEpisode: EpisodeData = {
+    id: `new-${Date.now()}`,
+    title: `第 ${newIndex + 1} 集`,
+    summary: '',
+    content: '',
+    chatHistory: []
+  };
+  
+  form.value.episodesData.push(newEpisode);
+  
+  // Jump to the new episode
+  quickSelectEpisode(newIndex);
+  
+  ElMessage.success(`已新增第 ${newIndex + 1} 集`);
 };
 
 const quickSelectEpisode = (index: number) => {
