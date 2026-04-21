@@ -57,13 +57,14 @@
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
               </button>
-              <button 
+              <!-- 2.1 版本暂不提供新增功能 -->
+              <!-- <button 
                 @click="addAsset('character')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
                 <el-icon><Plus /></el-icon>
                 新增角色
-              </button>
+              </button> -->
             </div>
           </div>
           <div class="flex-1 pr-2">
@@ -91,8 +92,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[14px]">暂无画面</span>
                   </div>
-                  <!-- Overlay Action -->
-                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- 2.1 版本暂不提供编辑/删除功能 -->
+                  <!-- <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(char, 'character')"
@@ -117,7 +118,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[16px] text-slate-800 truncate">{{ char.name }}</div>
@@ -146,13 +147,14 @@
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
               </button>
-              <button 
+              <!-- 2.1 版本暂不提供新增功能 -->
+              <!-- <button 
                 @click="addAsset('scene')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
                 <el-icon><Plus /></el-icon>
                 新增场景
-              </button>
+              </button> -->
             </div>
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
@@ -180,8 +182,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <!-- Overlay Action -->
-                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- 2.1 版本暂不提供编辑/删除功能 -->
+                  <!-- <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(scene, 'scene')"
@@ -206,7 +208,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 truncate">{{ scene.name }}</div>
@@ -235,13 +237,14 @@
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
               </button>
-              <button 
+              <!-- 2.1 版本暂不提供新增功能 -->
+              <!-- <button 
                 @click="addAsset('prop')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
                 <el-icon><Plus /></el-icon>
                 新增道具
-              </button>
+              </button> -->
             </div>
           </div>
           <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
@@ -269,8 +272,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <!-- Overlay Action -->
-                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- 2.1 版本暂不提供编辑/删除功能 -->
+                  <!-- <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
@@ -295,7 +298,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 truncate">{{ prop.name }}</div>
@@ -373,17 +376,33 @@
         layout: [
           '**分类导航：** 顶部分类管理【角色库】、【场景库】、【道具库】。',
           '**主体卡片：** 包含基准图（Reference Image）、名称及 AI 自动提取的特征描述。',
-          '**编辑弹窗：** 核心交互区，支持精修主体信息、生成形象及上传本地资源。'
+          '**展示模式 (2.1 版本)：** 当前版本仅支持资产展示，手动操作功能将在后续版本开放。'
         ],
         interactions: [
-          '**AI 自动规划 (触发动作)：** \n - **流程：** 首次进入页面时系统自动执行。 \n - **动作：** 深度扫描全集剧本，提取角色、场景及道具信息。 \n - **产生数据：** 自动填充主体库的名称、描述及 AI 绘图提示词（Prompt）。',
-          '**主体资产管理 (v2.2 版本更新)：** \n - **新增功能：** 支持手动【新增主体】（角色、场景、道具），满足剧本外自定义资产需求。 \n - **编辑功能：** 点击主体卡片可修改名称、描述，支持 AI 润色及重新生成 16:9 基准图。 \n - **删除功能：** 支持移除冗余主体，保持项目资产精简。 \n - **视觉标准：** 全面适配短剧主流比例，主体资产图统一采用 **16:9** 展示。',
-          '**形象生成与锁定 (视觉基准)：** \n - **流程：** 在弹窗中点击“AI 一键生成”。 \n - **动作：** 后台调用绘图模型，根据描述生成唯一基准图。 \n - **产生数据：** 更新主体的 `image` 字段。 \n - **异常：** 若接口超时或算力不足导致失败，系统展示“暂无画面”并提示重试。',
-          '**本地上传 (补偿机制)：** \n - **动作：** 用户点击“本地上传”覆盖 AI 生成图。 \n - **处理：** 前端即时预览并保存至 Store。**异常：** 限制文件格式为 JPG/PNG，非法格式将被系统过滤。',
-          '**校验拦截 (流程控制)：** \n - **流程：** 点击右下角“下一步”。 \n - **动作：** 系统检查所有主体（角色、场景）是否均已补全名称、描述及图片。 \n - **处理：** 若有缺失，按钮处于禁用状态，悬停显示具体缺失项提示。',
+          '**AI 自动规划 (触发动作)：**',
+          '**流程：** 首次进入页面时系统自动执行。',
+          '**动作：** 深度扫描全集剧本，提取角色、场景及道具信息。',
+          '**产生数据：** 自动填充主体库的名称、描述及 AI 绘图提示词（Prompt）。',
+          '**主体资产管理 (2.2 版本规划)：**',
+          '**新增功能：** 支持手动【新增主体】（角色、场景、道具），满足剧本外自定义资产需求。',
+          '**编辑功能：** 点击主体卡片可修改名称、描述，支持 AI 润色及重新生成 16:9 基准图。',
+          '**删除功能：** 支持移除冗余主体，保持项目资产精简。',
+          '**视觉标准：** 全面适配短剧主流比例，主体资产图统一采用 **16:9** 展示。',
+          '**形象生成与锁定 (视觉基准)：**',
+          '**流程：** 在弹窗中点击“AI 一键生成”。',
+          '**动作：** 后台调用绘图模型，根据描述生成唯一基准图。',
+          '**产生数据：** 更新主体的 `image` 字段。',
+          '**异常：** 若接口超时或算力不足导致失败，系统展示“暂无画面”并提示重试。',
+          '**本地上传 (补偿机制)：**',
+          '**动作：** 用户点击“本地上传”覆盖 AI 生成图。',
+          '**处理：** 前端即时预览并保存至 Store。**异常：** 限制文件格式为 JPG/PNG，非法格式将被系统过滤。',
+          '**校验拦截 (流程控制)：**',
+          '**流程：** 点击右下角“下一步”。',
+          '**动作：** 系统检查所有主体（角色、场景）是否均已补全名称、描述及图片。',
+          '**处理：** 若有缺失，按钮处于禁用状态，悬停显示具体缺失项提示。',
           '**一致性风险：** **注意：** 一旦进入后续“分镜视频”环节并开始生成，资产将完全锁定，以保证视觉风格的高度统一。'
         ],
-        version: '2.2'
+        version: '2.1'
       }"
     />
   </div>

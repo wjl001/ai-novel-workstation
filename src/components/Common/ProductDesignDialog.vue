@@ -394,7 +394,10 @@ const normalizeDesignImageUrl = (url?: string) => {
 
 const formatRichText = (text: string) => {
   if (!text) return '';
-  return text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-600 dark:text-indigo-400">$1</strong>');
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-600 dark:text-indigo-400">$1</strong>')
+    .replace(/\\n/g, '<br />')
+    .replace(/\n/g, '<br />');
 };
 
 const uploadDesignImage = async (file: File) => {
