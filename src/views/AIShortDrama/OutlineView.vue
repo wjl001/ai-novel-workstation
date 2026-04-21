@@ -65,7 +65,7 @@
           @click.stop
         >
           <div 
-            v-if="!isVersion21"
+            v-if="isAIAssistantEnabled"
             @click="quoteSelectedText"
             class="flex items-center gap-3 px-4 py-3.5 hover:bg-indigo-600 hover:text-white cursor-pointer transition-all duration-300 group"
           >
@@ -440,7 +440,7 @@
                 class="flex items-center gap-1 p-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/50 dark:border-slate-700/50 overflow-hidden"
               >
                 <button 
-                  v-if="!isVersion21"
+                  v-if="isAIAssistantEnabled"
                   @click="quoteSelectedText"
                   class="flex items-center gap-2 px-4 py-2 text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 rounded-xl transition-all duration-300 group shadow-lg shadow-indigo-500/20"
                 >
@@ -555,7 +555,7 @@
 
       <!-- Right Properties Panel (AI Assistant) -->
       <div 
-        v-if="!isVersion21"
+        v-if="isAIAssistantEnabled"
         class="shrink-0 flex flex-col h-full min-h-0 transition-all duration-500 relative z-20" 
         :style="{ width: isRightPanelVisible ? '360px' : '0px', marginLeft: isRightPanelVisible ? '0px' : '0px' }"
       >
@@ -746,7 +746,7 @@
 
         <!-- Right Panel Floating Collapse Toggle (Consistent with Left) -->
         <div 
-          v-if="!isVersion21"
+          v-if="isAIAssistantEnabled"
           class="absolute -left-3.5 top-1/2 -translate-y-1/2 w-7 h-20 flex items-center justify-center cursor-pointer z-[150] group"
           @click="isRightPanelVisible = !isRightPanelVisible"
         >
@@ -909,6 +909,7 @@ import pkg from '../../../package.json';
 
 const appVersion = pkg.version;
 const isVersion21 = computed(() => appVersion.startsWith('2.1'));
+const isAIAssistantEnabled = computed(() => !isVersion21.value);
 import { 
   MagicStick, Refresh, Edit, Plus, Delete, Check, Loading, 
   ArrowLeft, ArrowRight, Document, Setting, ArrowDown, 
@@ -1051,7 +1052,7 @@ const errors = reactive<Record<string, string>>({});
 
 // UI & Panel State
 const isLeftCollapsed = ref(false);
-const isRightPanelVisible = ref(!isVersion21.value);
+const isRightPanelVisible = ref(isAIAssistantEnabled.value);
 const leftPanelWidth = ref(320);
 const isEditingLocked = ref(true);
 const showInstructionsDialog = ref(false);
