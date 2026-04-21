@@ -16,7 +16,7 @@
             <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">
               {{ isEditing ? '编辑产品设计' : editingDesign.title }}
             </h4>
-            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version 2.1</span>
+            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version {{ appVersion }}</span>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -151,7 +151,7 @@
           </div>
           <div class="space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">版本号</label>
-            <el-input v-model="editingDesign.version" placeholder="2.1" />
+            <el-input v-model="editingDesign.version" :placeholder="appVersion" />
           </div>
         </div>
 
@@ -287,13 +287,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, reactive } from 'vue';
+import { ref, watch, reactive, computed } from 'vue';
 import { 
   Document, Close, Location, Monitor, Pointer, EditPen, 
   Check, Picture, Delete, Plus, Refresh, MagicStick 
 } from '@element-plus/icons-vue';
 import { useProductDesignStore } from '@/store/productDesign';
 import { ElMessage } from 'element-plus';
+import pkg from '../../../package.json';
+
+const appVersion = pkg.version;
 
 const props = defineProps<{
   modelValue: boolean;
@@ -324,7 +327,7 @@ const editingDesign = reactive({
   layout: [] as string[],
   interactions: [] as { text: string; image?: string }[],
   images: [] as { url: string; caption: string }[],
-  version: '2.1'
+  version: appVersion
 });
 
 // Load data when dialog opens
@@ -334,7 +337,7 @@ watch(() => props.modelValue, async (newVal) => {
     await store.loadFromServer();
     const data = store.getDesign(props.id, {
       id: props.id,
-      version: '2.1',
+      version: appVersion,
       ...props.defaultContent
     });
     

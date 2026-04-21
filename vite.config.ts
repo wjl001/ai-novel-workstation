@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import fs from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
+import pkg from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -109,7 +110,7 @@ export default defineConfig({
             payload.id = id
             if (typeof payload.updatedAt !== 'number') payload.updatedAt = Date.now()
 
-            const version = payload.version || '2.1'
+            const version = payload.version || pkg.version
             const versionFile = path.join(productDesignDir, `${version}.json`)
             
             // Remove from other version files to avoid duplicates

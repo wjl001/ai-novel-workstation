@@ -136,7 +136,22 @@
                   </div>
                 </div>
 
-                      </div>
+                <div class="flex items-center gap-2">
+                  <button 
+                    v-if="isAIAssistantEnabled"
+                    class="h-9 px-4 bg-indigo-600 text-white rounded-xl text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    <el-icon><Plus /></el-icon> 新增剧集
+                  </button>
+                  <button 
+                    v-else
+                    disabled
+                    class="h-9 px-4 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-xl text-[12px] font-black flex items-center gap-2 cursor-not-allowed border border-slate-200/50 dark:border-slate-700/50"
+                  >
+                    <el-icon><Plus /></el-icon> 新增剧集(2.1版本禁用)
+                  </button>
+                </div>
+              </div>
 
               <!-- Draggable List -->
               <div class="flex flex-col gap-3 pb-6">
@@ -776,7 +791,7 @@
           '**功能限制 (2.1版本)：** 2.1版本暂不支持手动新增剧集或拖拽排序，剧集由系统自动规划。',
           '**AI 协助：** 选中编辑器内的文字后，可通过右键点击“引用至 AI 助手”，配合 AI 助手进行润色、扩写及改写。'
         ],
-        version: '2.1'
+        version: appVersion
       }"
     />
 
@@ -795,7 +810,7 @@
           '**编辑锁定 (2.1版本)：** 一旦点击“完成，去设置主体”，剧本即刻锁定为只读。',
           '**自动保存：** 所有的编辑操作都会实时自动保存到云端。'
         ],
-        version: '2.1'
+        version: appVersion
       }"
     />
 
