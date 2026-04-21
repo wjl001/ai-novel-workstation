@@ -136,16 +136,7 @@
                   </div>
                 </div>
 
-                <!-- Add Episode Button -->
-                <button 
-                  v-if="!isVersion21"
-                  @click="addNewEpisode"
-                  class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-black transition-all shadow-md shadow-indigo-500/20 active:scale-95"
-                >
-                  <el-icon><Plus /></el-icon>
-                  新增剧集
-                </button>
-              </div>
+                      </div>
 
               <!-- Draggable List -->
               <div class="flex flex-col gap-3 pb-6">
@@ -408,14 +399,14 @@
         <!-- Canvas Main Body -->
         <div class="flex-1 min-h-0 relative bg-white/40 dark:bg-slate-900/30 flex flex-col">
           
-          <!-- Locked Banner for v2.2 -->
+          <!-- Locked Banner for v2.1 -->
           <transition name="slide-down">
             <div v-if="isScriptLockedGlobal" class="z-30 px-6 py-2.5 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/50 flex items-center justify-between">
               <div class="flex items-center gap-3 text-amber-700 dark:text-amber-400">
                 <el-icon :size="16"><Lock /></el-icon>
                 <span class="text-[12px] font-black tracking-wide">由于主体设置和分镜视频已生成，剧本内容已锁定，暂不支持编辑。</span>
               </div>
-              <el-tooltip content="2.2版本说明：为保证后续分镜与视频的一致性，主体设置完成后剧本进入只读模式。" placement="top">
+              <el-tooltip content="2.1版本说明：为保证后续分镜与视频的一致性，主体设置完成后剧本进入只读模式。" placement="top">
                 <el-icon class="text-amber-500 cursor-help" :size="14"><QuestionFilled /></el-icon>
               </el-tooltip>
             </div>
@@ -776,18 +767,16 @@
         title: '剧本操作页面',
         location: '确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。',
         layout: [
-          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲（支持新增剧集、拖拽排序、剧情摘要）。',
+          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲。',
           '**中栏 (剧本编辑器)：** 采用好莱坞标准剧本格式排版的富文本编辑器。',
           '**右侧 (AI 助手)：** 悬浮侧边栏，支持对话微调、扩写、改写剧本段落。'
         ],
         interactions: [
-          '**新增剧集 (2.2版本)：** 点击大纲区域的“新增剧集”按钮，可在当前剧本末尾快速添加新的剧集，方便扩展剧情。',
-          '**自由编辑正文 (2.2版本)：** 在正式生成主体信息（角色、场景、道具）之前，用户拥有对剧本正文的完全编辑权，支持手动调整每一个细节。',
           '**剧本锁定 (2.1版本)：** 2.1版本中剧本仅支持 AI 生成或手动书写。一旦点击“完成，去设置主体”按钮，当前剧本将进入只读锁定状态，不可再编辑。',
-          '**引用至 AI 助手 (2.2版本)：** 选中编辑器内的文字后，可通过悬浮菜单或右键点击“引用至 AI 助手”，配合 AI 助手进行对话式润色、扩写、改写及各种智能优化。',
-          '**卡片拖拽：** 左侧分集大纲支持拖拽重新排序，灵活调整剧情走向。'
+          '**功能限制 (2.1版本)：** 2.1版本暂不支持手动新增剧集或拖拽排序，剧集由系统自动规划。',
+          '**AI 协助：** 选中编辑器内的文字后，可通过右键点击“引用至 AI 助手”，配合 AI 助手进行润色、扩写及改写。'
         ],
-        version: '2.2'
+        version: '2.1'
       }"
     />
 
@@ -803,14 +792,10 @@
           '**气泡菜单：** 选中文字后自动弹出，提供“引用至 AI 助手”等核心交互入口。'
         ],
         interactions: [
-          '**自由编辑 (2.2版本)：** 在生成主体之前，您可以自由修改剧本的每一行。',
-          '**引用优化 (2.2版本)：** 选中正文段落，点击“引用至 AI 助手”，可在右侧面板中配合 AI 进行深度打磨。',
-          '**自动保存：** 所有的编辑操作都会实时自动保存到云端。',
-          '**功能说明：**',
           '**编辑锁定 (2.1版本)：** 一旦点击“完成，去设置主体”，剧本即刻锁定为只读。',
-          '**编辑锁定 (2.2版本)：** 一旦完成“主体设置”且生成了“分镜视频”，剧本正文将自动锁定为只读状态。'
+          '**自动保存：** 所有的编辑操作都会实时自动保存到云端。'
         ],
-        version: '2.2'
+        version: '2.1'
       }"
     />
 
@@ -977,15 +962,11 @@ const currentGeneratingIndex = ref(-1);
 const generationProgress = ref(0);
 const totalEpisodesToGenerate = ref(100);
 
-// 全局剧本锁定逻辑：
-// 2.2版本：主体设置已完成 且 存在已生成的视频分镜时，剧本不可编辑
+// 全局剧本锁定逻辑 (2.1版本)：
 // 2.1版本：点击“去设置主体”后，剧本即进入不可编辑状态
 const isScriptLockedGlobal = computed(() => {
-  if (isVersion21.value) {
-    return dramaStore.isAssetsGenerated;
-  }
-  const hasGeneratedStoryboard = episodeStore.episodes.some(ep => ep.storyboardStatus === 'success');
-  return dramaStore.isAssetsGenerated && hasGeneratedStoryboard;
+  // 2.1 锁定规则：资产已生成（即已点击过“去设置主体”并成功保存）
+  return dramaStore.isAssetsGenerated;
 });
 
 // Recovery Confirm Dialog State
@@ -1117,6 +1098,7 @@ const handleQuickJump = () => {
   quickSelectEpisode(targetIdx);
 };
 
+/*
 const addNewEpisode = () => {
   if (!form.value || !form.value.episodesData) return;
   
@@ -1136,6 +1118,7 @@ const addNewEpisode = () => {
   
   ElMessage.success(`已新增第 ${newIndex + 1} 集`);
 };
+*/
 
 const quickSelectEpisode = (index: number) => {
   // Calculate which range this episode belongs to

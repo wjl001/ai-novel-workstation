@@ -16,7 +16,7 @@
             <h4 :id="titleId" :class="[titleClass, 'text-xl font-black text-slate-800 dark:text-white m-0']">
               {{ isEditing ? '编辑产品设计' : editingDesign.title }}
             </h4>
-            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version {{ editingDesign.version || '2.2' }}</span>
+            <span class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Version {{ editingDesign.version || '2.1' }}</span>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -151,7 +151,7 @@
           </div>
           <div class="space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">版本号</label>
-            <el-input v-model="editingDesign.version" placeholder="2.2" />
+            <el-input v-model="editingDesign.version" placeholder="2.1" />
           </div>
         </div>
 
@@ -324,7 +324,7 @@ const editingDesign = reactive({
   layout: [] as string[],
   interactions: [] as { text: string; image?: string }[],
   images: [] as { url: string; caption: string }[],
-  version: '2.2'
+  version: '2.1'
 });
 
 // Load data when dialog opens
@@ -334,8 +334,8 @@ watch(() => props.modelValue, async (newVal) => {
     await store.loadFromServer();
     const data = store.getDesign(props.id, {
       id: props.id,
-      ...props.defaultContent,
-      version: '2.2'
+      version: '2.1',
+      ...props.defaultContent
     });
     
     // Migration for reactive object if needed

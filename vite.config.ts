@@ -109,7 +109,7 @@ export default defineConfig({
             payload.id = id
             if (typeof payload.updatedAt !== 'number') payload.updatedAt = Date.now()
 
-            const version = payload.version || '2.2'
+            const version = payload.version || '2.1'
             const versionFile = path.join(productDesignDir, `${version}.json`)
             
             // Remove from other version files to avoid duplicates
