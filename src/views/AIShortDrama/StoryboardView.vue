@@ -409,7 +409,7 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md" v-if="false">
+                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
                       @click="handleEditScript"
@@ -501,7 +501,7 @@
               </span>
             </div>
             
-            <div class="flex items-center gap-2" v-if="false">
+            <div class="flex items-center gap-2">
               <el-checkbox
                 v-if="isMultiSelectMode"
                 v-model="isAllSelected"
@@ -688,7 +688,7 @@
 
             <!-- Export Options Panel (Redesigned for C-end users) -->
             <div class="bg-white px-10 py-8 flex items-center justify-end border-t border-slate-50 shrink-0 z-40 h-[140px]">
-              <div class="flex items-center gap-16" v-if="false">
+              <div class="flex items-center gap-16">
                 <!-- Watermark Selector -->
                 <div class="flex flex-col gap-3">
                   <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">水印设置</span>
