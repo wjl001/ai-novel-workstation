@@ -7,11 +7,18 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# 前端项目标准全局忽略（全套复制）
 node_modules
 dist
 dist-ssr
 *.local
-
+.pnp
+.pnp.js
+dist/
+build/
+.cache
+.vite
+.trae/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -25,5 +32,7 @@ dist-ssr
 
 # TypeScript
 *.tsbuildinfo
+
+
 
 
