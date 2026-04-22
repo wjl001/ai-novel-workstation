@@ -342,7 +342,7 @@
             <div class="flex-1 flex gap-4 px-6 pb-4 overflow-hidden mt-3">
               <!-- Left: Script Content Box -->
               <div 
-                class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden group/script-box"
+                class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
                 :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-200/50' : 'bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm'"
               >
                 <!-- Read-only View -->
@@ -411,14 +411,6 @@
                 <!-- Action Buttons Area -->
                 <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
-                    <button 
-                      v-if="currentScript"
-                      @click="handleRegenerateScript"
-                      class="h-8 px-6 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm flex items-center gap-2"
-                    >
-                      <el-icon><RefreshRight /></el-icon>
-                      <span>重新生成分镜脚本</span>
-                    </button>
                     <button 
                       v-if="false"
                       @click="handleEditScript"
@@ -1506,45 +1498,6 @@ const handleSaveScript = (data: { index: number, script: string }) => {
     timelineScenes.value[data.index].script = data.script;
     ElMessage.success('脚本更新成功');
   }
-};
-
-// 重新生成分镜脚本
-const handleRegenerateScript = () => {
-  if (currentSceneIdx.value === -1 || !timelineScenes.value[currentSceneIdx.value]) return;
-  
-  ElMessageBox.confirm(
-    '确定要重新生成当前分镜的脚本吗？这将覆盖您目前的修改。',
-    '重新生成分镜脚本',
-    {
-      confirmButtonText: '确定生成',
-      cancelButtonText: '取消',
-      type: 'warning',
-      customClass: 'modern-message-box-c-end'
-    }
-  ).then(async () => {
-    const scene = timelineScenes.value[currentSceneIdx.value];
-    scene.status = 'script_generating';
-    scene.script = '';
-    
-    // 模拟 AI 生成过程
-    const mockScript = `镜头2 <span class="mention-pill duration"><i class="timer-icon"></i> 3.5s</span>: 时间: 日, 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>, 镜头: 近景, 视角平齐。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=20&h=20&fit=crop" /> 沈念安-基础形象</span> 微微抬头，眼中带着一丝惊讶与期待。 <span class="mention-pill role"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=20&h=20&fit=crop" /> 顾承泽-基础形象</span> 正温柔地注视着她。氛围浪漫而庄重。`;
-    
-    // 模拟打字机效果
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < mockScript.length) {
-        scene.script += mockScript.charAt(i);
-        i++;
-      } else {
-        clearInterval(interval);
-        scene.status = 'success';
-        scene.modified = false;
-        ElMessage.success('分镜脚本重新生成成功');
-      }
-    }, 10);
-  }).catch(() => {
-    // Cancelled
-  });
 };
 
 const currentPreview = computed(() => timelineScenes.value[currentSceneIdx.value]?.video);
