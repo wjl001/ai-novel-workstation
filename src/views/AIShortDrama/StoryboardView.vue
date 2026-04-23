@@ -144,7 +144,6 @@
           <div class="p-4 border-b border-indigo-100 dark:border-slate-700 flex justify-between items-center shrink-0">
             <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">主体库</span>
             <button 
-              v-if="false"
               @click="showLibraryModal = true"
               class="w-7 h-7 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center justify-center shadow-lg shadow-indigo-200"
             >
@@ -166,7 +165,6 @@
                   </div>
                 </div>
                 <button 
-                  v-if="false"
                   @click="handleAddSubject('character')"
                   class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50"
                 >
@@ -180,22 +178,10 @@
                       <el-image v-if="char.image" :src="char.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><User /></el-icon>
                     </div>
-                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <el-popconfirm
-                        width="180"
-                        confirm-button-text="确认"
-                        cancel-button-text="取消"
-                        confirm-button-type="danger"
-                        :title="`确认删除角色 ${char.name}？`"
-                        popper-class="modern-popconfirm-c-end"
-                        @confirm="executeDeleteSubject(char)"
-                      >
-                        <template #reference>
-                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
-                            <el-icon :size="16"><Delete /></el-icon>
-                          </div>
-                        </template>
-                      </el-popconfirm>
+                    <div class="absolute inset-0 bg-gradient-to-t from-indigo-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-indigo-600 shadow-xl shadow-indigo-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-indigo-600 hover:text-white cursor-pointer" @click.stop="handleEditSubject(char)">
+                        <el-icon :size="16"><Edit /></el-icon>
+                      </div>
                     </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ char.name.split('-')[0] }}</span>
@@ -216,7 +202,6 @@
                   </div>
                 </div>
                 <button 
-                  v-if="false"
                   @click="handleAddSubject('scene')"
                   class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50"
                 >
@@ -230,22 +215,10 @@
                       <el-image v-if="scene.image" :src="scene.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Location /></el-icon>
                     </div>
-                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <el-popconfirm
-                        width="180"
-                        confirm-button-text="确认"
-                        cancel-button-text="取消"
-                        confirm-button-type="danger"
-                        :title="`确认删除场景 ${scene.name}？`"
-                        popper-class="modern-popconfirm-c-end"
-                        @confirm="executeDeleteSubject(scene)"
-                      >
-                        <template #reference>
-                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
-                            <el-icon :size="16"><Delete /></el-icon>
-                          </div>
-                        </template>
-                      </el-popconfirm>
+                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-emerald-600 shadow-xl shadow-emerald-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-emerald-600 hover:text-white cursor-pointer" @click.stop="handleEditSubject(scene)">
+                        <el-icon :size="16"><Edit /></el-icon>
+                      </div>
                     </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ scene.name }}</span>
@@ -266,7 +239,6 @@
                   </div>
                 </div>
                 <button 
-                  v-if="false"
                   @click="handleAddSubject('prop')"
                   class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center border border-amber-100 dark:border-amber-800/50"
                 >
@@ -280,22 +252,10 @@
                       <el-image v-if="prop.image" :src="prop.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                       <el-icon v-else :size="20" class="text-slate-200 absolute inset-0 m-auto"><Box /></el-icon>
                     </div>
-                    <div v-if="false" class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <el-popconfirm
-                        width="180"
-                        confirm-button-text="确认"
-                        cancel-button-text="取消"
-                        confirm-button-type="danger"
-                        :title="`确认删除道具 ${prop.name}？`"
-                        popper-class="modern-popconfirm-c-end"
-                        @confirm="executeDeleteSubject(prop)"
-                      >
-                        <template #reference>
-                          <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white" @click.stop>
-                            <el-icon :size="16"><Delete /></el-icon>
-                          </div>
-                        </template>
-                      </el-popconfirm>
+                    <div class="absolute inset-0 bg-gradient-to-t from-amber-600/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div class="w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-amber-600 shadow-xl shadow-amber-500/10 transform scale-0 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-amber-600 hover:text-white cursor-pointer" @click.stop="handleEditSubject(prop)">
+                        <el-icon :size="16"><Edit /></el-icon>
+                      </div>
                     </div>
                   </div>
                   <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black truncate px-1 text-center transition-colors">{{ prop.name }}</span>
@@ -412,7 +372,6 @@
                 <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
                   <template v-if="!isEditingScript">
                     <button 
-                      v-if="false"
                       @click="handleEditScript"
                       class="h-8 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
                     >
@@ -420,7 +379,6 @@
                       <span>编辑脚本</span>
                     </button>
                     <button 
-                      v-if="false"
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
                       class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
