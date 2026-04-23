@@ -164,6 +164,9 @@
              <button class="flex flex-col items-center justify-center gap-1 py-2 rounded transition-colors text-xs" :class="isLight ? 'hover:bg-slate-100 text-slate-500 hover:text-indigo-600' : 'hover:bg-slate-700 text-slate-400 hover:text-indigo-400'" @click="aiAction('rewrite')">
                <el-icon><Refresh /></el-icon> 改写
              </button>
+             <button class="flex flex-col items-center justify-center gap-1 py-2 rounded transition-colors text-xs" :class="isLight ? 'hover:bg-slate-100 text-slate-500 hover:text-indigo-600' : 'hover:bg-slate-700 text-slate-400 hover:text-indigo-400'" @click="quoteToAi">
+               <el-icon><ChatLineRound /></el-icon> 引用
+             </button>
           </div>
 
           <!-- Recommendations -->
@@ -246,6 +249,20 @@
               </div>
             </div>
             <div class="p-3 border-t" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
+              <div v-if="quotedText" class="mb-3 p-3 bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl relative group/quote">
+                <button 
+                  class="absolute -top-2 -right-2 w-5 h-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-all opacity-0 group-hover/quote:opacity-100"
+                  @click="quotedText = ''"
+                >
+                  <el-icon :size="10"><Close /></el-icon>
+                </button>
+                <div class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <span class="w-1 h-1 rounded-full bg-indigo-500"></span>已引用正文
+                </div>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 italic line-clamp-2 leading-relaxed">
+                  "{{ quotedText }}"
+                </p>
+              </div>
               <div class="relative">
                 <input 
                   v-model="chatInput" 
@@ -505,9 +522,9 @@
           '**对接 AI 短剧 (触发动作)：** 点击顶部按钮。**动作：** 启动“剧本格式转换”进度条（Water Drop 动画）。**流程：** 系统分析剧本语义 -> 自动拆分为分镜格式 -> 弹出对接弹窗。**异常：** 若剧本内容为空，按钮置灰并提示“请先撰写剧本内容”。',
           '**气泡菜单指令 (触发动作)：** 选中文本后弹出。**动作：** 点击“续写/润色/扩写”，AI 在光标处实时流式输出优化后的文本。',
           '**AI 自动撰写 (触发动作)：** 从大纲进入时触发。**动作：** AI 根据大纲摘要自动填充正文。**流程：** 顶部显示“AI 正在撰写中”状态标签，用户可随时打断。',
-          '**流程环节：** 本页面是创作流的 **核心产出阶段**。高质量的剧本正文是后续“视频分镜拆解”与“角色形象提取”的唯一输入基准。'
+          '**功能说明 (2.2版本)：** \n - **剧集管理：** 2.2版本支持手动新增剧集，赋能更灵活的创作需求。 \n - **AI 助手：** 全面开启 AI 智能助手，支持剧本正文引用与实时对话。'
         ],
-        version: '2.1'
+        version: '2.2'
       }"
     />
 
@@ -608,6 +625,7 @@ const loreStore = useLoreStore()
 const activeSidePanel = ref('chapters')
 const showLeftSidebar = ref(true)
 const showAiSidePanel = ref(true)
+const quotedText = ref('')
 const activeRightTab = ref('chat') // 'chat' or 'script'
 const showIdeaDialog = ref(false)
 const addCharacterDialog = ref(false)
@@ -1604,7 +1622,22 @@ const saveCharacter = () => {
   }
 }
 
-const aiAction = (action: string) => {
+const quoteToAi = () => {
+  if (editor.value) {
+    const { from, to } = editor.value.state.selection
+    const selectedText = editor.value.state.doc.textBetween(from, to, ' ')
+    if (selectedText.trim()) {
+      quotedText.value = selectedText.trim()
+      showAiSidePanel.value = true
+      activeRightTab.value = 'chat'
+      ElMessage.success('已引用至 AI 助手')
+    } else {
+      ElMessage.warning('请先选择一段文本')
+    }
+  }
+}
+
+const aiAction = (type: string) => {
   if (!editor.value) return
   const selection = editor.value.state.selection
   const text = editor.value.state.doc.textBetween(selection.from, selection.to, ' ')
@@ -1615,11 +1648,11 @@ const aiAction = (action: string) => {
   }
 
   let actionName = ''
-  if (action === 'polish') { actionName = '润色'; }
-  else if (action === 'rewrite') { actionName = '改写'; }
-  else if (action === 'expand') { actionName = '扩写'; }
-  else if (action === 'shorten') { actionName = '缩写'; }
-  else if (action === 'continue') { actionName = '续写'; }
+  if (type === 'polish') { actionName = '润色'; }
+  else if (type === 'rewrite') { actionName = '改写'; }
+  else if (type === 'expand') { actionName = '扩写'; }
+  else if (type === 'shorten') { actionName = '缩写'; }
+  else if (type === 'continue') { actionName = '续写'; }
   
   // Combine with manual input if exists
   const finalActionName = aiCommandInput.value.trim() 
@@ -1794,11 +1827,16 @@ const aiContinue = () => {
 }
 
 const sendChatMessage = () => {
-  if (!chatInput.value) return
+  if (!chatInput.value && !quotedText.value) return
   
   const userMsg = chatInput.value
-  chatHistory.value.push({ role: 'user', content: userMsg })
+  const fullContent = quotedText.value 
+    ? `基于引用正文："${quotedText.value}"\n我的想法是：${userMsg}`
+    : userMsg
+    
+  chatHistory.value.push({ role: 'user', content: fullContent })
   chatInput.value = ''
+  quotedText.value = ''
   isAiThinking.value = true
 
   setTimeout(() => {

@@ -138,17 +138,10 @@
 
                 <div class="flex items-center gap-2">
                   <button 
-                    v-if="isAIAssistantEnabled"
+                    @click="addNewEpisode"
                     class="h-9 px-4 bg-indigo-600 text-white rounded-xl text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                   >
                     <el-icon><Plus /></el-icon> 新增剧集
-                  </button>
-                  <button 
-                    v-else
-                    disabled
-                    class="h-9 px-4 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-xl text-[12px] font-black flex items-center gap-2 cursor-not-allowed border border-slate-200/50 dark:border-slate-700/50"
-                  >
-                    <el-icon><Plus /></el-icon> 新增剧集(2.1版本禁用)
                   </button>
                 </div>
               </div>
@@ -421,7 +414,7 @@
                 <el-icon :size="16"><Lock /></el-icon>
                 <span class="text-[12px] font-black tracking-wide">由于主体设置和分镜视频已生成，剧本内容已锁定，暂不支持编辑。</span>
               </div>
-              <el-tooltip content="2.1版本说明：为保证后续分镜与视频的一致性，主体设置完成后剧本进入只读模式。" placement="top">
+              <el-tooltip content="2.2版本说明：剧本内容已锁定，暂不支持编辑。" placement="top">
                 <el-icon class="text-amber-500 cursor-help" :size="14"><QuestionFilled /></el-icon>
               </el-tooltip>
             </div>
@@ -782,14 +775,19 @@
         title: '剧本操作页面',
         location: '确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。',
         layout: [
-          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲。',
+          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲（支持剧情摘要）。',
           '**中栏 (剧本编辑器)：** 采用好莱坞标准剧本格式排版的富文本编辑器。',
-          '**右侧 (AI 助手)：** 悬浮侧边栏，支持对话微调、扩写、改写剧本段落。'
+          '**右侧 (AI 助手)：** 2.2 版本新增悬浮侧边栏，支持对话微调、扩写、改写剧本段落。'
         ],
         interactions: [
-          '**剧本锁定 (2.1版本)：** 2.1版本中剧本仅支持 AI 生成或手动书写。一旦点击“完成，去设置主体”按钮，当前剧本将进入只读锁定状态，不可再编辑。',
-          '**功能限制 (2.1版本)：** 2.1版本暂不支持手动新增剧集或拖拽排序，剧集由系统自动规划。',
-          '**AI 协助：** 选中编辑器内的文字后，可通过右键点击“引用至 AI 助手”，配合 AI 助手进行润色、扩写及改写。'
+          {
+            text: '**功能说明 (2.2版本)：**\n - **剧集管理：** 2.2版本全面支持手动新增、编辑或删除剧集大纲，支持通过拖拽调整剧集顺序。\n - **AI 智能助手：** 2.2版本全面开启 AI 助手，支持剧本正文引用与实时对话，助力高效创作。',
+            image: ''
+          },
+          {
+            text: '**属性规格与名词解释：**\n - **剧集大纲 (episodesData)：** 整个短剧的分集规划列表，2.2版本支持用户完全自定义。\n - **快速跳转 (jumpToEpisodeInput)：** 在大量剧集（如100集）间快速定位特定集数的功能。',
+            image: ''
+          }
         ],
         version: appVersion
       }"
@@ -807,8 +805,14 @@
           '**气泡菜单：** 选中文字后自动弹出，提供“引用至 AI 助手”等核心交互入口。'
         ],
         interactions: [
-          '**编辑锁定 (2.1版本)：** 一旦点击“完成，去设置主体”，剧本即刻锁定为只读。',
-          '**自动保存：** 所有的编辑操作都会实时自动保存到云端。'
+          {
+            text: '**自由编辑 (2.2版本)：** 剧本支持持续编辑与手动新增，不再受限于 2.1 版本的锁定规则。',
+            image: ''
+          },
+          {
+            text: '**实时保存：** 所有的编辑操作都会实时自动保存到云端，确保内容安全。',
+            image: ''
+          }
         ],
         version: appVersion
       }"
@@ -923,8 +927,7 @@ import { useEpisodeStore } from '../../store/episode';
 import pkg from '../../../package.json';
 
 const appVersion = pkg.version;
-const isVersion21 = computed(() => appVersion.startsWith('2.1'));
-const isAIAssistantEnabled = computed(() => !isVersion21.value);
+const isAIAssistantEnabled = computed(() => true); // 2.2 版本默认开启 AI 助手与手动新增功能
 import { 
   MagicStick, Refresh, Edit, Plus, Delete, Check, Loading, 
   ArrowLeft, ArrowRight, Document, Setting, ArrowDown, 
@@ -978,11 +981,11 @@ const currentGeneratingIndex = ref(-1);
 const generationProgress = ref(0);
 const totalEpisodesToGenerate = ref(100);
 
-// 全局剧本锁定逻辑 (2.1版本)：
-// 2.1版本：点击“去设置主体”后，剧本即进入不可编辑状态
+// 全局剧本锁定逻辑 (2.2版本已放开)：
+// 2.2版本：支持持续编辑，不再锁定剧本
 const isScriptLockedGlobal = computed(() => {
-  // 2.1 锁定规则：资产已生成（即已点击过“去设置主体”并成功保存）
-  return dramaStore.isAssetsGenerated;
+  // return dramaStore.isAssetsGenerated; // 2.1 锁定规则
+  return false;
 });
 
 // Recovery Confirm Dialog State
@@ -1114,7 +1117,6 @@ const handleQuickJump = () => {
   quickSelectEpisode(targetIdx);
 };
 
-/*
 const addNewEpisode = () => {
   if (!form.value || !form.value.episodesData) return;
   
@@ -1134,7 +1136,6 @@ const addNewEpisode = () => {
   
   ElMessage.success(`已新增第 ${newIndex + 1} 集`);
 };
-*/
 
 const quickSelectEpisode = (index: number) => {
   // Calculate which range this episode belongs to
@@ -1508,11 +1509,6 @@ const goToSubjectSettings = async () => {
   // 模拟后端持久化 API 调用
   try {
     await new Promise(resolve => setTimeout(resolve, 800)); // 模拟网络请求
-    
-    // 2.1 版本逻辑：一旦点击去设置主体，就锁定剧本
-    if (isVersion21.value) {
-      dramaStore.isAssetsGenerated = true;
-    }
     
     ElMessage.success('剧本完全保存成功！正在前往主体设置...');
     router.push('/ai-short-drama-creator/assets');
@@ -2058,22 +2054,6 @@ const startResizeLeftPanel = (e: MouseEvent) => {
   startWidth = leftPanelWidth.value;
   document.addEventListener('mousemove', doDrag);
   document.addEventListener('mouseup', stopDrag);
-};
-
-const addEpisode = () => {
-  if (!form.value) return;
-  if (!form.value.episodesData) form.value.episodesData = [];
-  form.value.episodesData.push({ 
-    id: Date.now().toString(), 
-    summary: '', 
-    scenes: '', 
-    characters: '', 
-    content: '',
-    chatHistory: [] 
-  });
-  // Switch to the page containing the new episode
-  const total = form.value.episodesData.length;
-  episodeRange.value = Math.floor((total - 1) / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
 };
 const executeRemoveEpisode = (index: number) => {
   if (!form.value || !form.value.episodesData) return;
