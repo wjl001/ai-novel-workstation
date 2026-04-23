@@ -7,23 +7,40 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# 前端项目标准全局忽略（全套复制）
-node_modules
-dist
-dist-ssr
-*.local
-.pnp
-.pnp.js
+# ========== 核心：依赖文件夹 完整屏蔽（加斜杠！） ==========
+node_modules/
+node_modules/**/*
+
+# 依赖锁文件
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# ========== Vite 全套缓存（本次所有冒出文件的根源，全屏蔽） ==========
+.vite/
+.vite/deps/
+.vite/cache/
+
+# 打包产物
 dist/
+dist-ssr
 build/
-.cache
-.vite
+.cache/
+
+# 编辑器配置
 .trae/
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# 系统垃圾
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
@@ -33,6 +50,7 @@ build/
 # TypeScript
 *.tsbuildinfo
 
-
-
-
+# 本地临时
+*.local
+.pnp
+.pnp.js
