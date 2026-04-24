@@ -311,14 +311,42 @@
                   </div>
                 </div>
               </div>
-              <el-select v-model="configForm.protagonistSetting" class="w-full custom-select-v3" size="default">
-                <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
-                   <div class="flex items-center justify-between w-full">
-                    <span class="font-bold text-[13px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
-                    <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="14"><Check /></el-icon>
-                  </div>
-                </el-option>
-              </el-select>
+              <div class="relative">
+                <el-select v-model="configForm.protagonistSetting" @change="handleProtagonistChange" class="w-full custom-select-v3" size="default">
+                  <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+                    <div class="flex items-center justify-between w-full">
+                      <span class="font-bold text-[13px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+                      <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="14"><Check /></el-icon>
+                    </div>
+                  </el-option>
+                </el-select>
+                
+                <!-- Floating Custom Input for Protagonist -->
+                <div v-if="configForm.protagonistSetting === '自定义'" class="absolute inset-0 z-10 animate-fade-in">
+                  <el-input 
+                    v-model="configForm.customProtagonistName" 
+                    placeholder="请输入专属设定 (如: 霸道总裁)" 
+                    class="custom-input-v3 w-full !h-full"
+                    :maxlength="20"
+                  >
+                    <template #prefix>
+                      <el-icon class="text-indigo-400"><EditPen /></el-icon>
+                    </template>
+                    <template #suffix>
+                      <div class="flex items-center h-full pr-1">
+                        <div class="w-[1px] h-4 bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                        <div 
+                          class="flex items-center gap-1 cursor-pointer text-indigo-500 hover:text-indigo-600 transition-all bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg"
+                          @click="configForm.protagonistSetting = protagonistOptions[0].label"
+                        >
+                          <el-icon class="text-[12px]"><Refresh /></el-icon>
+                          <span class="text-[11px] font-medium">重选</span>
+                        </div>
+                      </div>
+                    </template>
+                  </el-input>
+                </div>
+              </div>
             </div>
 
             <!-- Video Style -->
@@ -433,7 +461,7 @@
             </div>
 
             <!-- Custom Protagonist Detail (Conditional) -->
-            <div v-if="configForm.protagonistSetting === '自定义'" class="p-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[24px] border border-white dark:border-slate-800 shadow-sm animate-fade-in flex flex-col gap-2">
+            <div v-if="isCustomProtagonist" class="p-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[24px] border border-white dark:border-slate-800 shadow-sm animate-fade-in flex flex-col gap-2">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -514,7 +542,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, reactive } from 'vue';
+import { ref, inject, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   Upload, 
@@ -550,7 +578,7 @@ import {
   QuestionFilled,
   Loading
 } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 // 导入产品设计图片以确保被 Vite 编译进源代码
 import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
@@ -588,6 +616,7 @@ const configForm = reactive({
   episodesCount: '80',
   expectedDuration: 120,
   protagonistSetting: '',
+  customProtagonistName: '',
   protagonistDesc: '',
   storySynopsis: '',
   storyBackground: '',
@@ -685,13 +714,24 @@ const recentWorks = ref([
   }
 ]);
 
-const protagonistOptions = [
+const protagonistOptions = ref([
   { label: '落魄千金', desc: '家族破产，背负巨债，却拥有一手惊人的调香/设计才华。' },
   { label: '冷面总裁', desc: '商界奇才，性格孤僻，因童年阴影不再相信爱情。' },
   { label: '平民少女', desc: '乐观坚韧，为了给母亲治病，卷入豪门恩怨。' },
   { label: '神秘杀手', desc: '隐姓埋名在都市中，执行最后一次任务。' },
-  { label: '自定义', desc: '手动输入或 AI 生成您心目中的完美主角。' }
-];
+  { label: '自定义', desc: '手动输入或 AI 生成您心目中的完美主角。', isCustom: true }
+]);
+
+const isCustomProtagonist = computed(() => {
+  const opt = protagonistOptions.value.find(o => o.label === configForm.protagonistSetting);
+  return opt?.isCustom || configForm.protagonistSetting === '自定义';
+});
+
+const handleProtagonistChange = (val: string) => {
+  if (val === '自定义') {
+    // Focus or simple logic can be added here if needed, but ElMessageBox is removed for better C-end UX.
+  }
+};
 
 const audienceOptions = ['男频', '女频', '大众'];
 
@@ -702,9 +742,7 @@ const handleAIFeature = (field: 'protagonist' | 'storySynopsis' | 'storyBackgrou
   setTimeout(() => {
     if (field === 'protagonist') {
       if (action === 'generate') {
-        configForm.protagonistDesc = '【身份】隐秘豪门的弃子，现任送餐员。',
-          '【性格】隐忍冷静，拥有超强记忆力。',
-          '【目标】查明当年母亲被害真相，拿回属于自己的继承权。';
+        configForm.protagonistDesc = '【身份】隐秘豪门的弃子，现任送餐员。\n【性格】隐忍冷静，拥有超强记忆力。\n【目标】查明当年母亲被害真相，拿回属于自己的继承权。';
       } else {
         configForm.protagonistDesc = configForm.protagonistDesc + '（已由 AI 润色，强化了冲突感与人设张力）';
       }
@@ -734,9 +772,13 @@ const finishConfig = () => {
   showHotTopicDialog.value = false;
   
   // Combine all selections into a prompt
-  const protagonist = configForm.protagonistSetting === '自定义' 
-    ? `【主角设定】${configForm.protagonistDesc}` 
-    : `【主角设定】${configForm.protagonistSetting}`;
+  const finalProtagonistName = isCustomProtagonist.value && configForm.customProtagonistName.trim()
+    ? configForm.customProtagonistName.trim()
+    : configForm.protagonistSetting;
+
+  const protagonist = isCustomProtagonist.value
+    ? `【主角设定】${finalProtagonistName} - ${configForm.protagonistDesc}` 
+    : `【主角设定】${finalProtagonistName}`;
 
   const finalPrompt = `【题材】${configForm.genre || selectedTopic.value.label}
 ${protagonist}
@@ -761,7 +803,7 @@ const selectHotTopic = (topic: any) => {
   configForm.genre = topic.label;
   
   // Auto-generate default contents when dialog opens
-  configForm.protagonistSetting = protagonistOptions[0].label;
+  configForm.protagonistSetting = protagonistOptions.value[0].label;
   configForm.targetAudience = audienceOptions[1]; // 女频
   configForm.videoStyle = '写实';
   configForm.episodesCount = '80';
@@ -1001,15 +1043,17 @@ const handleFileUpload = (file: any) => {
 }
 
 :deep(.custom-input-v3 .el-input__wrapper) {
-  border-radius: 16px;
-  background-color: #f8fafc;
+  border-radius: 20px;
+  background-color: #fff;
   border: 1px solid #e2e8f0;
-  box-shadow: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   padding: 8px 16px;
+  height: 100%;
 }
 .dark :deep(.custom-input-v3 .el-input__wrapper) {
-  background-color: #0f172a;
+  background-color: #1e293b;
   border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 :deep(.custom-textarea-v3 .el-textarea__inner) {
