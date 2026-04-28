@@ -272,8 +272,8 @@
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
-                  <!-- 2.1 版本暂不提供编辑/删除功能 -->
-                  <!-- <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <!-- 编辑/删除功能 -->
+                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
@@ -298,7 +298,7 @@
                         </div>
                       </template>
                     </el-popconfirm>
-                  </div> -->
+                  </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 truncate">{{ prop.name }}</div>

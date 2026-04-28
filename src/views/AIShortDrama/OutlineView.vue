@@ -444,17 +444,21 @@
               <bubble-menu 
                 v-if="tiptapEditor" 
                 :editor="tiptapEditor as any"
-                :tippy-options="{ duration: 100, zIndex: 9999 }"
-                class="flex items-center gap-1 p-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/50 dark:border-slate-700/50 overflow-hidden"
+                :tippy-options="{ duration: 100, zIndex: 9999, moveTransition: 'transform 0.1s ease-out' }"
+                class="flex items-center gap-1 bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-slate-200/50 dark:border-slate-700/50 overflow-hidden w-[140px] p-0"
               >
-                <button 
+                <div 
                   v-if="isAIAssistantEnabled"
                   @click="quoteSelectedText"
-                  class="flex items-center gap-2 px-4 py-2 text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 rounded-xl transition-all duration-300 group shadow-lg shadow-indigo-500/20"
+                  class="flex items-center gap-2.5 px-3 py-2 hover:bg-indigo-600 hover:text-white cursor-pointer transition-all duration-300 group w-full"
                 >
-                  <el-icon :size="14"><ChatLineSquare /></el-icon>
-                  <span class="text-[12px] font-black">引用至 AI 助手</span>
-                </button>
+                  <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-white/20 group-hover:text-white transition-all">
+                    <el-icon :size="14"><ChatLineSquare /></el-icon>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="font-bold text-[13px]">引用至 AI</span>
+                  </div>
+                </div>
               </bubble-menu>
 
               <!-- Editor Content -->
@@ -1746,9 +1750,7 @@ onMounted(async () => {
     extensions: [
       StarterKit,
       CharacterCount.configure({ limit: 50000 }),
-      BubbleMenuExtension.configure({
-        element: document.querySelector('.bubble-menu-element') as HTMLElement,
-      }),
+      BubbleMenuExtension,
       Placeholder.configure({
         placeholder: ({ node }) => {
           return editMode.value === 'full' ? '全集剧本还是一片空白' : currentEpisodeLabel.value;

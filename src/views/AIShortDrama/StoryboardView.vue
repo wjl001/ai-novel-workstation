@@ -1190,6 +1190,8 @@ const handleCustomDuration = () => {
 const selectedMentionIndex = ref(0);
 
 // TipTap Editor
+const activeMentionNodePos = ref<{from: number, to: number} | null>(null);
+
 const editor = useEditor({
   content: '',
   extensions: [
@@ -1239,6 +1241,69 @@ const editor = useEditor({
     attributes: {
       class: 'prose prose-sm focus:outline-none max-w-none w-full h-full text-[14px] text-slate-700 leading-[1.8] m-0 p-0',
     },
+    handleDOMEvents: {
+      click: (view, event) => {
+        const target = event.target as HTMLElement;
+        const pill = target.closest('.mention-pill');
+        if (pill) {
+          event.preventDefault();
+          
+          const pos = view.posAtDOM(pill, 0);
+          if (pos !== undefined && pos >= 0) {
+            try {
+              const $pos = view.state.doc.resolve(pos);
+              
+              if ($pos.parent && $pos.parent.type.name === 'mentionPill') {
+                activeMentionNodePos.value = {
+                  from: $pos.before(),
+                  to: $pos.after()
+                };
+              } else {
+                // If it resolves exactly before the node
+                const nodeAfter = $pos.nodeAfter;
+                if (nodeAfter && nodeAfter.type.name === 'mentionPill') {
+                  activeMentionNodePos.value = {
+                    from: pos,
+                    to: pos + nodeAfter.nodeSize
+                  };
+                } else {
+                  activeMentionNodePos.value = null;
+                }
+              }
+              
+              if (activeMentionNodePos.value) {
+                let tab = 'all';
+                if (pill.classList.contains('role')) tab = 'character';
+                else if (pill.classList.contains('location')) tab = 'scene';
+                else if (pill.classList.contains('prop')) tab = 'asset';
+                else if (pill.classList.contains('duration')) tab = 'duration';
+                
+                mentionActiveTab.value = tab;
+                showMentionMenu.value = true;
+                mentionSearch.value = '';
+                
+                const rect = pill.getBoundingClientRect();
+                const menuWidth = 340;
+                let left = rect.left;
+                if (left + menuWidth > window.innerWidth) {
+                  left = window.innerWidth - menuWidth - 20;
+                }
+                
+                mentionMenuStyle.value = {
+                  top: `${rect.bottom + 10}px`,
+                  left: `${Math.max(20, left)}px`
+                };
+                
+                return true;
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }
+        return false;
+      }
+    },
     handleKeyDown: (view, event) => {
       if (showMentionMenu.value) {
         if (event.key === 'ArrowDown') {
@@ -1285,16 +1350,22 @@ const insertMention = (item: any) => {
     html = ` @${item.name} `;
   }
 
-  // 获取当前光标位置，删除前面刚输入的 "@" 及其后的搜索字符
-  const { state } = editor.value;
-  const { from } = state.selection;
-  const textBefore = state.doc.textBetween(Math.max(0, from - 20), from, '\n');
-  const match = /@([^@]*)$/.exec(textBefore);
-  
-  if (match) {
-    editor.value.chain().focus().deleteRange({ from: from - match[0].length, to: from }).insertContent(html).run();
+  // 如果是通过点击 mention-pill 打开的菜单，直接替换该节点
+  if (activeMentionNodePos.value) {
+    editor.value.chain().focus().deleteRange(activeMentionNodePos.value).insertContent(html).run();
+    activeMentionNodePos.value = null;
   } else {
-    editor.value.chain().focus().insertContent(html).run();
+    // 获取当前光标位置，删除前面刚输入的 "@" 及其后的搜索字符
+    const { state } = editor.value;
+    const { from } = state.selection;
+    const textBefore = state.doc.textBetween(Math.max(0, from - 20), from, '\n');
+    const match = /@([^@]*)$/.exec(textBefore);
+    
+    if (match) {
+      editor.value.chain().focus().deleteRange({ from: from - match[0].length, to: from }).insertContent(html).run();
+    } else {
+      editor.value.chain().focus().insertContent(html).run();
+    }
   }
   
   showMentionMenu.value = false;

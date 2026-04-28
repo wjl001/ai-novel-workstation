@@ -223,7 +223,7 @@
     <el-dialog 
       v-model="showHotTopicDialog" 
       :title="undefined"
-      width="860px" 
+      width="1100px" 
       class="hot-topic-dialog-v2 overflow-hidden" 
       :show-close="false"
       destroy-on-close
@@ -296,23 +296,29 @@
             <el-input v-model="configForm.storyBackground" type="textarea" :rows="1" placeholder="例如：2077年的霓虹都市，贫富差距巨大，底层人民在赛博阴影中挣扎..." class="custom-textarea-v3 flex-1" />
           </div>
 
-          <!-- Section 2: Identity & Style -->
-          <div class="grid grid-cols-3 gap-4">
+          <!-- Section 2: Identity & Style & Specs -->
+          <div class="grid grid-cols-4 gap-4">
             <!-- Protagonist -->
-            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
+            <div class="col-span-2 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
               <div class="flex items-center gap-2 mb-3">
                 <div class="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
                   <el-icon><User /></el-icon>
                 </div>
                 <div class="flex flex-col">
                   <div class="flex items-center gap-2">
-                    <!-- <span class="text-[10px] font-black text-indigo-500">2</span> -->
                     <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">主角设定</label>
                   </div>
                 </div>
               </div>
-              <div class="relative">
-                <el-select v-model="configForm.protagonistSetting" @change="handleProtagonistChange" class="w-full custom-select-v3" size="default">
+              <div class="relative h-10">
+                <!-- Toggle between Select and Custom Input -->
+                <el-select 
+                  v-if="configForm.protagonistSetting !== '自定义'"
+                  v-model="configForm.protagonistSetting" 
+                  @change="handleProtagonistChange" 
+                  class="w-full custom-select-v3" 
+                  size="default"
+                >
                   <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                     <div class="flex items-center justify-between w-full">
                       <span class="font-bold text-[13px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
@@ -321,8 +327,8 @@
                   </el-option>
                 </el-select>
                 
-                <!-- Floating Custom Input for Protagonist -->
-                <div v-if="configForm.protagonistSetting === '自定义'" class="absolute inset-0 z-10 animate-fade-in">
+                <!-- Custom Input for Protagonist -->
+                <div v-else class="w-full h-full animate-fade-in">
                   <el-input 
                     v-model="configForm.customProtagonistName" 
                     placeholder="请输入专属设定 (如: 霸道总裁)" 
@@ -335,6 +341,14 @@
                     <template #suffix>
                       <div class="flex items-center h-full pr-1">
                         <div class="w-[1px] h-4 bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                        <div 
+                          class="flex items-center gap-1 cursor-pointer text-emerald-600 hover:text-emerald-700 transition-all bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-lg"
+                          @click="handleProtagonistConfirm"
+                        >
+                          <el-icon class="text-[12px]"><Check /></el-icon>
+                          <span class="text-[11px] font-medium">确认</span>
+                        </div>
+                        <div class="w-[1px] h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
                         <div 
                           class="flex items-center gap-1 cursor-pointer text-indigo-500 hover:text-indigo-600 transition-all bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg"
                           @click="configForm.protagonistSetting = protagonistOptions[0].label"
@@ -350,7 +364,7 @@
             </div>
 
             <!-- Video Style -->
-            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300">
+            <div class="col-span-1 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300">
               <div class="flex items-center gap-2 mb-3">
                 <div class="w-7 h-7 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/20">
                   <el-icon><Picture /></el-icon>
@@ -368,7 +382,7 @@
             </div>
 
             <!-- Audience -->
-            <div class="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-pink-500/10 hover:border-pink-500/30 transition-all duration-300">
+            <div class="col-span-1 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-pink-500/10 hover:border-pink-500/30 transition-all duration-300">
               <div class="flex items-center gap-2 mb-3">
                 <div class="w-7 h-7 rounded-lg bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-500/20">
                   <el-icon><Star /></el-icon>
@@ -384,12 +398,62 @@
                 </el-option>
               </el-select>
             </div>
+
+            <!-- Protagonist Detailed Setting (New) -->
+            <div class="col-span-2 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-6 h-6 rounded-lg bg-indigo-400 text-white flex items-center justify-center">
+                  <el-icon><Document /></el-icon>
+                </div>
+                <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">主角详细设定</label>
+              </div>
+              <el-input 
+                v-model="configForm.protagonistDesc" 
+                type="textarea" 
+                :rows="2" 
+                placeholder="在此细化主角的性格、身份背景、特殊技能等..." 
+                class="custom-textarea-v3"
+              />
+            </div>
+
+            <!-- Creation Specs -->
+            <div class="col-span-2 group bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 p-4 rounded-[20px] border border-indigo-100/50 dark:border-indigo-500/20 shadow-inner flex flex-col gap-2 transition-all duration-300">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-6 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
+                <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">创作规格 Specs</span>
+              </div>
+              
+              <div class="flex items-center gap-6">
+                <!-- Episodes -->
+                <div class="flex items-center gap-2 flex-1">
+                  <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 shrink-0">
+                    <el-icon :size="12" class="text-indigo-500"><Collection /></el-icon>
+                    <label class="text-[10px] font-bold">集数</label>
+                  </div>
+                  <div class="relative group/input flex-1">
+                    <el-input v-model="configForm.episodesCount" placeholder="80" class="custom-input-v4 !h-7" />
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-600/40">集</span>
+                  </div>
+                </div>
+
+                <!-- Duration -->
+                <div class="flex items-center gap-2 flex-1">
+                  <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 shrink-0">
+                    <el-icon :size="12" class="text-purple-500"><Clock /></el-icon>
+                    <label class="text-[10px] font-bold">时长</label>
+                  </div>
+                  <div class="relative group/input flex-1">
+                    <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v4 w-full !h-7" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Section 3: Story Setting & Synopsis -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-4">
             <!-- Setting -->
-            <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group">
+            <div class="flex flex-col gap-2 p-5 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group">
               <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
               <div class="flex items-center justify-between relative z-10">
                 <div class="flex items-center gap-2">
@@ -402,11 +466,11 @@
                 </button>
               </div>
               <p class="text-[10px] text-slate-400 font-medium -mt-1">人物关系、核心矛盾、金手指、规则</p>
-              <el-input v-model="configForm.storySetting" type="textarea" :rows="1" placeholder="例如：主角拥有一种能听见植物心声的能力..." class="custom-textarea-v3 flex-1" />
+              <el-input v-model="configForm.storySetting" type="textarea" :rows="3" placeholder="例如：主角拥有一种能听见植物心声的能力..." class="custom-textarea-v3 flex-1" />
             </div>
 
             <!-- Synopsis -->
-            <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group border-indigo-500/30">
+            <div class="flex flex-col gap-2 p-5 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group border-indigo-500/30">
               <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
               <div class="flex items-center justify-between relative z-10">
                 <div class="flex items-center gap-2">
@@ -419,72 +483,10 @@
                 </button>
               </div>
               <p class="text-[10px] text-slate-400 font-medium -mt-1">完整剧情（起承转合）</p>
-              <el-input v-model="configForm.storySynopsis" type="textarea" :rows="1" placeholder="例如：原本平凡的少年意外救下了财阀之女，从此开启了..." class="custom-textarea-v3 flex-1" />
+              <el-input v-model="configForm.storySynopsis" type="textarea" :rows="4" placeholder="例如：原本平凡的少年意外救下了财阀之女，从此开启了..." class="custom-textarea-v3 flex-1" />
             </div>
           </div>
 
-          <!-- Section 4: Technical Specs & Custom Settings -->
-          <div class="grid grid-cols-2 gap-4">
-            <!-- Creation Specs Card -->
-            <div class="bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 p-4 rounded-[24px] border border-indigo-100/50 dark:border-indigo-500/20 shadow-inner flex flex-col gap-3">
-              <div class="flex items-center gap-2">
-                <div class="w-6 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
-                <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">创作规格 Specs</span>
-              </div>
-              
-              <div class="grid grid-cols-2 gap-4">
-                <!-- Episodes -->
-                <div class="space-y-1">
-                  <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                    <el-icon :size="12" class="text-indigo-500"><Collection /></el-icon>
-                    <label class="text-[11px] font-bold">生成集数</label>
-                  </div>
-                  <div class="relative group/input">
-                    <el-input v-model="configForm.episodesCount" placeholder="如：80" class="custom-input-v4" />
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-600/40">集</span>
-                  </div>
-                </div>
-
-                <!-- Duration -->
-                <div class="space-y-1">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                      <el-icon :size="12" class="text-purple-500"><Clock /></el-icon>
-                      <label class="text-[11px] font-bold">单集时长</label>
-                    </div>
-                  </div>
-                  <div class="relative group/input">
-                    <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v4 w-full" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Custom Protagonist Detail (Conditional) -->
-            <div v-if="isCustomProtagonist" class="p-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[24px] border border-white dark:border-slate-800 shadow-sm animate-fade-in flex flex-col gap-2">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <el-icon><EditPen /></el-icon>
-                  </div>
-                  <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">主角详细设定</label>
-                </div>
-                <button @click="handleAIFeature('protagonist', 'generate')" :disabled="isGeneratingField.protagonist" class="flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all text-[11px] font-black shadow-sm border border-indigo-100 dark:border-indigo-900/30">
-                  <el-icon class="text-indigo-500" :class="{'is-loading': isGeneratingField.protagonist}"><MagicStick /></el-icon>
-                  <span>AI 生成</span>
-                </button>
-              </div>
-              <el-input v-model="configForm.protagonistDesc" type="textarea" :rows="1" placeholder="主角身份、性格、核心目标、弱点..." class="custom-textarea-v3 flex-1" />
-            </div>
-            
-            <!-- Placeholder for alignment if not custom -->
-            <div v-else class="flex items-center justify-center p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[24px] opacity-40">
-              <div class="text-center">
-                <el-icon :size="20" class="text-slate-300 mb-1"><MagicStick /></el-icon>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">自定义主角细节</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Footer: Massive CTA -->
@@ -600,7 +602,6 @@ const activeTab = ref('ai');
 const aiPrompt = ref('');
 const isGenerating = ref(false);
 const isGeneratingField = reactive<Record<string, boolean>>({
-  protagonist: false,
   storySynopsis: false,
   storyBackground: false,
   storySetting: false,
@@ -733,20 +734,23 @@ const handleProtagonistChange = (val: string) => {
   }
 };
 
+const handleProtagonistConfirm = () => {
+  if (configForm.customProtagonistName.trim()) {
+    ElMessage.success(`已确认主角设定：${configForm.customProtagonistName}`);
+    // Optional: could add more logic here to "lock" the selection if needed
+  } else {
+    ElMessage.warning('请输入主角设定名称');
+  }
+};
+
 const audienceOptions = ['男频', '女频', '大众'];
 
-const handleAIFeature = (field: 'protagonist' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
+const handleAIFeature = (field: 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
   isGeneratingField[field] = true;
   
   // Mock AI behavior
   setTimeout(() => {
-    if (field === 'protagonist') {
-      if (action === 'generate') {
-        configForm.protagonistDesc = '【身份】隐秘豪门的弃子，现任送餐员。\n【性格】隐忍冷静，拥有超强记忆力。\n【目标】查明当年母亲被害真相，拿回属于自己的继承权。';
-      } else {
-        configForm.protagonistDesc = configForm.protagonistDesc + '（已由 AI 润色，强化了冲突感与人设张力）';
-      }
-    } else if (field === 'storySynopsis') {
+    if (field === 'storySynopsis') {
       configForm.storySynopsis = configForm.storySynopsis || '在赛博朋克的未来，一个底层少年意外发现自己能连接已故天才的意识...';
       configForm.storySynopsis = configForm.storySynopsis + '（已由 AI 深度润色，增加了剧情转折的不可预测性）';
     } else if (field === 'storyBackground') {
@@ -776,9 +780,7 @@ const finishConfig = () => {
     ? configForm.customProtagonistName.trim()
     : configForm.protagonistSetting;
 
-  const protagonist = isCustomProtagonist.value
-    ? `【主角设定】${finalProtagonistName} - ${configForm.protagonistDesc}` 
-    : `【主角设定】${finalProtagonistName}`;
+  const protagonist = `【主角设定】${finalProtagonistName}`;
 
   const finalPrompt = `【题材】${configForm.genre || selectedTopic.value.label}
 ${protagonist}

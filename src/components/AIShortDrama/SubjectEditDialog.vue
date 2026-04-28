@@ -30,8 +30,10 @@
                 v-model="localSubject.name" 
                 type="text" 
                 placeholder="请输入名称"
-                class="w-full px-4 py-2.5 bg-[#f8fafc] border border-slate-100 rounded-2xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all pr-16"
+                class="w-full px-4 py-2.5 border border-slate-100 rounded-2xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all pr-16"
+                :class="isEdit ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-[#f8fafc]'"
                 maxlength="20"
+                :disabled="isEdit"
               />
               <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-slate-300 font-mono">
                 {{ localSubject.name?.length || 0 }}/20
@@ -63,8 +65,8 @@
             </div>
           </div>
 
-          <!-- Appeared Episodes (Scene & Prop Only) -->
-          <div v-if="type !== 'character'" class="flex flex-col gap-1.5">
+          <!-- Appeared Episodes (Scene & Prop Only) - Hidden as requested -->
+          <!-- <div v-if="type !== 'character'" class="flex flex-col gap-1.5">
             <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">出现集数</label>
             <el-select
               v-model="localSubject.appeared_episodes"
@@ -79,87 +81,32 @@
                 :value="item"
               />
             </el-select>
-          </div>
+          </div> -->
 
-          <!-- Voice Description (Character Only - Tab Layout) -->
+          <!-- Voice Description (Character Only) -->
           <div v-if="type === 'character'" class="flex flex-col gap-2">
             <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">角色声音设定</label>
             <div class="bg-[#f8fafc] rounded-[20px] border border-slate-100 p-1 flex flex-col min-h-[160px]">
-              <!-- Tabs Header -->
-              <div class="flex gap-1 mb-1.5">
-                <div 
-                  @click="voiceMethod = 'text'"
-                  class="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-[16px] text-[11px] font-black cursor-pointer transition-all"
-                  :class="voiceMethod === 'text' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
-                >
-                  <el-icon><ChatDotRound /></el-icon> 文字描述
-                </div>
-                <div 
-                  @click="voiceMethod = 'audio'"
-                  class="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-[16px] text-[11px] font-black cursor-pointer transition-all"
-                  :class="voiceMethod === 'audio' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'"
-                >
-                  <el-icon><Microphone /></el-icon> 上传音频
-                </div>
-              </div>
-
-              <!-- Tab Content -->
+              <!-- Content -->
               <div class="flex-1 flex flex-col p-1.5 min-h-0">
-                <transition name="fade" mode="out-in">
-                  <!-- Text Mode -->
-                  <div v-if="voiceMethod === 'text'" key="text" class="h-full flex flex-col">
-                    <div class="flex justify-end px-2 mb-1">
-                      <button 
-                        @click="polishVoice" 
-                        class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[10px] font-black transition-all disabled:opacity-50"
-                        :disabled="isPolishingVoice || !localSubject.voice_description"
-                      >
-                        <el-icon :class="{'animate-spin': isPolishingVoice}"><Refresh /></el-icon>
-                        <span>AI 润色优化</span>
-                      </button>
-                    </div>
-                    <textarea 
-                      v-model="localSubject.voice_description" 
-                      placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
-                      class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 leading-relaxed font-bold focus:outline-none px-2"
-                      @input="handleVoiceDescriptionInput"
-                    ></textarea>
-                  </div>
-
-                  <!-- Audio Mode (Centered) -->
-                  <div v-else key="audio" class="h-full flex flex-col items-center justify-center">
-                    <el-upload
-                      action="#"
-                      :auto-upload="false"
-                      :show-file-list="false"
-                      accept="audio/*"
-                      @change="handleAudioUpload"
-                      class="w-full flex justify-center"
+                <div class="h-full flex flex-col">
+                  <div class="flex justify-end px-2 mb-1">
+                    <button 
+                      @click="polishVoice" 
+                      class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[10px] font-black transition-all disabled:opacity-50"
+                      :disabled="isPolishingVoice || !localSubject.voice_description"
                     >
-                      <div class="flex flex-col items-center justify-center gap-2 py-2 group cursor-pointer text-center">
-                        <div 
-                          class="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
-                          :class="localSubject.voice_audio ? 'bg-emerald-50 text-emerald-500 shadow-emerald-100 shadow-lg border border-emerald-100' : 'bg-white text-slate-400 shadow-sm border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 group-hover:shadow-indigo-100 group-hover:shadow-xl'"
-                        >
-                          <el-icon size="24"><component :is="localSubject.voice_audio ? Headset : Upload" /></el-icon>
-                        </div>
-                        <div class="flex flex-col items-center gap-0.5">
-                          <span class="text-[12px] font-black transition-colors" :class="localSubject.voice_audio ? 'text-emerald-600' : 'text-slate-400 group-hover:text-indigo-600'">
-                            {{ localSubject.voice_audio ? '参考音频已就绪' : '点击上传参考音频' }}
-                          </span>
-                          <span v-if="!localSubject.voice_audio" class="text-[9px] text-slate-300 font-bold uppercase tracking-widest">支持 MP3 / WAV</span>
-                          <button 
-                            v-if="localSubject.voice_audio" 
-                            @click.stop="localSubject.voice_audio = ''" 
-                            class="mt-1 px-3 py-1 rounded-full bg-red-50 text-red-400 text-[10px] font-black hover:bg-red-500 hover:text-white transition-all flex items-center gap-1"
-                          >
-                            <el-icon><Delete /></el-icon> 移除音频
-                          </button>
-                        </div>
-                      </div>
-                    </el-upload>
+                      <el-icon :class="{'animate-spin': isPolishingVoice}"><Refresh /></el-icon>
+                      <span>AI 润色优化</span>
+                    </button>
                   </div>
-                </transition>
+                  <textarea 
+                    v-model="localSubject.voice_description" 
+                    placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
+                    class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 leading-relaxed font-bold focus:outline-none px-2"
+                    @input="handleVoiceDescriptionInput"
+                  ></textarea>
+                </div>
               </div>
             </div>
           </div>
@@ -239,7 +186,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { Close, MagicStick, Picture, Refresh, Upload, Loading, Microphone, Headset, ChatDotRound, Delete } from '@element-plus/icons-vue';
+import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const props = defineProps<{
@@ -269,7 +216,6 @@ const localSubject = ref<any>({
 const isGeneratingImage = ref(false);
 const isPolishingText = ref(false);
 const isPolishingVoice = ref(false);
-const voiceMethod = ref<'audio' | 'text'>('audio');
 
 const type = computed(() => localSubject.value.type);
 const title = computed(() => {
@@ -290,12 +236,6 @@ watch(() => props.subject, (newVal) => {
       image: newVal.image || '',
       appeared_episodes: newVal.appeared_episodes && newVal.appeared_episodes.length > 0 ? newVal.appeared_episodes : [1]
     };
-    // Initialize voiceMethod based on content
-    if (localSubject.value.voice_audio) {
-      voiceMethod.value = 'audio';
-    } else {
-      voiceMethod.value = 'text';
-    }
   }
 }, { immediate: true, deep: true });
 
@@ -367,20 +307,6 @@ const polishVoice = async () => {
 const handleImageUpload = (file: any) => {
   localSubject.value.image = URL.createObjectURL(file.raw);
   ElMessage.success('预览图更新成功');
-};
-
-const handleAudioUpload = (file: any) => {
-  const isAudio = file.raw.type.startsWith('audio/');
-  if (!isAudio) {
-    ElMessage.error('请上传音频文件');
-    return false;
-  }
-  
-  // Mock upload - convert to blob URL
-  localSubject.value.voice_audio = URL.createObjectURL(file.raw);
-  // Clear text description as they are mutually exclusive
-  localSubject.value.voice_description = '';
-  ElMessage.success('参考音频已上传，文字描述已清空');
 };
 
 const handleVoiceDescriptionInput = () => {
