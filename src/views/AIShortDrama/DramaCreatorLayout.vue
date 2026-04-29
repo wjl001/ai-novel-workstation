@@ -1,18 +1,19 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative ai-drama-container">
-    <!-- Header Steps -->
-    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md p-4 border-b border-slate-100 dark:border-slate-700/50 shadow-sm shrink-0 flex justify-center items-center z-20 relative transition-all duration-300">
-      <!-- Floating Back Button (C-end Design) - Moved to Header Area but outside Capsule -->
-      <div class="absolute left-8 group">
+    <!-- Teleport Header Elements -->
+    <Teleport to="#header-back-button" v-if="isMounted">
+      <div class="group mr-2">
         <button 
           @click="router.back()" 
-          class="flex items-center justify-center w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300"
+          class="flex items-center justify-center w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 active:scale-95 transition-all duration-300"
         >
-          <el-icon :size="18"><ArrowLeft /></el-icon>
+          <el-icon :size="16"><ArrowLeft /></el-icon>
         </button>
       </div>
+    </Teleport>
 
-      <div class="bg-white dark:bg-slate-900 rounded-full px-12 py-3.5 flex items-center gap-14 justify-between border border-white dark:border-slate-700 shadow-[0_12px_60px_rgba(0,0,0,0.12)] relative">
+    <Teleport to="#header-center" v-if="isMounted">
+      <div class="bg-white dark:bg-slate-900 rounded-full px-8 py-2 flex items-center gap-10 justify-between border border-white dark:border-slate-700 shadow-[0_4px_20px_rgba(0,0,0,0.08)] relative scale-90 origin-center transform">
         
         <!-- Step 1 -->
         <div 
@@ -97,7 +98,7 @@
           <span>设计说明</span>
         </button>
       </div>
-    </div>
+    </Teleport>
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative z-10">
@@ -133,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
 import { Check, InfoFilled, Close, Document, Location, Monitor, Pointer, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
@@ -144,6 +145,11 @@ const route = useRoute();
 const router = useRouter();
 const dramaStore = useDramaStore();
 const showDesignDialog = ref(false);
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 
 const activeStep = computed(() => {
   switch (route.name) {

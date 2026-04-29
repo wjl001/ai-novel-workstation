@@ -24,7 +24,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/home'
+      redirect: '/ai-short-drama-creator/new'
     },
     {
       path: '/home',

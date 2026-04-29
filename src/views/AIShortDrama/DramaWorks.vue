@@ -338,6 +338,21 @@
       }"
     />
 
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 作品管理"
+      subtitle="DramaWorks UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
+
     <!-- AI Generator Dialog -->
     <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="ai-generator-dialog">
       <div class="space-y-6">
@@ -447,9 +462,11 @@ import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete,
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { UploadFile } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
 const showDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
 const showAIDialog = ref(false);
 const aiPrompt = ref('');
 const isGenerating = ref(false);
@@ -488,6 +505,92 @@ const handleConfirmDelete = () => {
 };
 const currentPage = ref(1);
 const pageSize = ref(12);
+
+const uiDesignGroups = {
+  layout: [
+    {
+      id: 'drama-works',
+      title: '作品管理页 (DramaWorks)',
+      description: '作品库管理：顶部标题区 + 工具条（搜索/排序/视图切换）+ 网格/列表展示 + 分页 + 多种弹窗。',
+      items: [
+        { name: '页面容器', value: 'h-full flex flex-col p-6 lg:p-10', description: '整体可滚动：overflow-y-auto custom-scrollbar' },
+        { name: '页面背景', value: 'bg-[#F8FAFC] dark:bg-slate-900', description: '浅色主背景 + 深色模式' },
+        { name: '标题区间距', value: 'mb-10 gap-6', description: 'Header Section 与内容区间距' },
+        { name: '工具条容器', value: 'rounded-[28px] p-5', description: 'bg-white/80 + backdrop-blur-xl + border' },
+        { name: '搜索框宽度', value: '!w-72', description: 'el-input 搜索作品标题/描述' },
+        { name: '排序选择宽度', value: '!w-40', description: 'el-select 最近修改/创建/名称' },
+        { name: '视图切换容器', value: 'p-1 rounded-2xl', description: 'grid/list 切换按钮组' },
+        { name: '内容滚动区', value: 'flex-1 overflow-auto pr-2', description: '卡片或表格承载区' },
+        { name: '网格列数', value: '2/3/4/5/6', description: 'grid-cols-2 ... 2xl:grid-cols-6 gap-6' },
+        { name: '作品卡圆角', value: 'rounded-[24px]', description: '卡片容器与海报区域统一圆角体系' },
+        { name: '封面比例', value: 'aspect-[16/10]', description: '作品海报区域' },
+        { name: '列表容器圆角', value: 'rounded-[32px]', description: '表格外壳（玻璃感容器）' },
+        { name: '分页容器', value: 'rounded-2xl p-2', description: '居中浮层：bg-white/80 + backdrop-blur-md' },
+        { name: 'AI 生成弹窗宽度', value: 'width="700px"', description: 'AI 封面生成工坊弹层' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'drama-works-typography',
+      title: '字体与层级',
+      description: '标题、工具条、卡片与表格的字号/字重规范。',
+      items: [
+        { name: '页面标题', style: { fontSize: '30-36px', fontWeight: '900' }, description: 'text-3xl lg:text-4xl font-black（渐变文字）' },
+        { name: '副标题', style: { fontSize: '16px', fontWeight: '500' }, description: 'text-base font-medium（pl-[52px]）' },
+        { name: '工具条按钮', style: { fontSize: '14px', fontWeight: '700' }, description: '网格/列表：text-sm font-bold' },
+        { name: '卡片标题', style: { fontSize: '15px', fontWeight: '700' }, description: 'text-[15px] font-bold line-clamp-1' },
+        { name: '卡片描述', style: { fontSize: '12px', fontWeight: '400', lineHeight: '1.5' }, description: 'text-[12px] leading-relaxed line-clamp-2' },
+        { name: '状态徽标', style: { fontSize: '10px', fontWeight: '900', letterSpacing: '0.08em' }, description: 'text-[10px] font-black tracking-wider uppercase' },
+        { name: '列表行标题', style: { fontSize: '15px', fontWeight: '900' }, description: 'font-black text-[15px]' },
+        { name: '空态标题', style: { fontSize: '24px', fontWeight: '900' }, description: 'text-2xl font-black' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'drama-works-color',
+      title: '颜色规范',
+      description: '背景、主色、容器与状态色。',
+      items: [
+        { name: '页面背景', value: '#F8FAFC' },
+        { name: '主色', value: 'indigo-600（#4F46E5 近似）' },
+        { name: '工具条容器', value: 'bg-white/80 dark:bg-slate-800/80 + backdrop-blur-xl' },
+        { name: '描边/分割线', value: 'border-slate-100/200 dark:border-slate-700/50' },
+        { name: '卡片 Hover 阴影', value: 'hover:shadow-2xl hover:shadow-indigo-500/10' },
+        { name: '封面 Hover 蒙层', value: 'bg-black/40 + backdrop-blur-[6px]' },
+        { name: '状态-进行中', value: 'bg-indigo-50 text-indigo-600 border-indigo-100' },
+        { name: '状态-已完成', value: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+        { name: '状态-草稿', value: 'bg-slate-50 text-slate-500 border-slate-200' },
+        { name: '删除态', value: 'text-red-500 hover:bg-red-500 hover:text-white' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'drama-works-components',
+      title: '按钮与组件元素',
+      description: '关键交互点位与典型类名（含 hover/active/禁用态）。',
+      items: [
+        { name: '产品设计说明', tag: 'button', classes: 'h-14 px-6 bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 hover:text-indigo-600 hover:border-indigo-300', notes: ['顶部右侧入口（InfoFilled）'] },
+        { name: '新建剧本', tag: 'button', classes: 'h-14 bg-indigo-600 text-white rounded-[24px] font-black shadow-2xl shadow-indigo-500/40 hover:-translate-y-1', notes: ['顶部右侧主 CTA（Plus）'] },
+        { name: '视图切换-激活', tag: 'button', classes: 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm rounded-xl', notes: ['网格/列表切换 active 态'] },
+        { name: '作品卡容器', tag: 'div', classes: 'bg-white dark:bg-slate-800 rounded-[24px] border border-slate-100 hover:-translate-y-1.5 hover:shadow-2xl', notes: ['点击进入作品'] },
+        { name: '卡片封面操作层', tag: 'div', classes: 'opacity-0 group-hover:opacity-100 bg-black/40 backdrop-blur-[6px] rounded-[24px] flex items-center justify-center gap-3', notes: ['Hover 显示：上传封面/AI 生成'] },
+        { name: '上传封面', tag: 'button', classes: 'px-3 py-2 bg-white text-indigo-600 rounded-xl text-[12px] font-bold hover:bg-indigo-50 shadow-xl', notes: ['位于卡片封面 hover 层'] },
+        { name: 'AI 生成封面', tag: 'button', classes: 'px-3 py-2 bg-indigo-600 text-white rounded-xl text-[12px] font-bold hover:bg-indigo-700 hover:scale-105 shadow-xl shadow-indigo-500/30', notes: ['位于卡片封面 hover 层'] },
+        { name: '更多操作菜单', tag: 'button', classes: 'w-10 h-10 rounded-xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg', notes: ['卡片右上角 MoreFilled，下拉编辑/删除'] },
+        { name: '列表-编辑', tag: 'button', classes: 'w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white shadow-sm', notes: ['el-table 行操作'] },
+        { name: '列表-删除', tag: 'button', classes: 'w-10 h-10 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white shadow-sm', notes: ['el-table 行操作'] },
+        { name: '空态主按钮', tag: 'button', classes: 'h-14 px-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl shadow-2xl hover:-translate-y-1 active:scale-95', notes: ['无作品时引导创建'] },
+        { name: 'AI 工坊-开始生成', tag: 'el-button', classes: 'type=primary !rounded-xl px-6 h-11 shadow-lg shadow-indigo-500/20', notes: ['位于 AI 封面生成弹窗内'] },
+        { name: 'AI 工坊-应用封面', tag: 'el-button', classes: 'type=primary !rounded-xl px-8 h-11 shadow-lg shadow-indigo-500/20', notes: ['选中图片后可用'] },
+        { name: '删除确认弹窗', tag: 'ConfirmDialog', classes: 'v-model=deleteConfirmVisible', notes: ['确认删除作品（不可逆）'] },
+        { name: 'UI 标注入口', tag: 'button', classes: 'fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform', notes: ['页面右下角悬浮（Monitor 图标）；打开 UI 设计标注弹窗（含分类 Tabs）'] }
+      ]
+    }
+  ]
+};
 
 // Mock Data
 const works = ref([
@@ -660,6 +763,13 @@ const confirmAICover = () => {
   color: #94a3b8;
   font-weight: 600;
   font-size: 13px;
+}
+.custom-pagination-v2 {
+  --el-font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--el-font-family);
+}
+.custom-pagination-v2 :deep(*) {
+  font-family: var(--el-font-family);
 }
 .custom-pagination-v2 :deep(.el-pager li) {
   background: transparent !important;

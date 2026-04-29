@@ -89,13 +89,15 @@
       <div v-show="!isLeftCollapsed" class="flex flex-col h-full overflow-hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[28px] border border-white dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-none transition-opacity duration-500 relative" :style="{ opacity: isLeftCollapsed ? 0 : 1 }">
         
         <!-- Product Design Info Button -->
-        <button 
-          @click="showDesignDialog = true"
-          class="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-400 hover:text-indigo-600 rounded-full shadow-sm border border-slate-200/50 dark:border-slate-700/50 transition-all duration-300"
-          title="查看产品设计说明"
-        >
-          <el-icon :size="16"><InfoFilled /></el-icon>
-        </button>
+        <div class="absolute top-4 right-4 z-50 flex items-center gap-2">
+          <button 
+            @click="showDesignDialog = true"
+            class="w-8 h-8 flex items-center justify-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-400 hover:text-indigo-600 rounded-full shadow-sm border border-slate-200/50 dark:border-slate-700/50 transition-all duration-300"
+            title="查看产品设计说明"
+          >
+            <el-icon :size="16"><InfoFilled /></el-icon>
+          </button>
+        </div>
 
         <!-- Expanded State Content -->
         <div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
@@ -785,7 +787,7 @@
         ],
         interactions: [
           {
-            text: '**功能说明 (2.2版本)：**\n - **剧集管理：** 2.2版本全面支持手动新增、编辑或删除剧集大纲，支持通过拖拽调整剧集顺序。\n - **AI 智能助手：** 2.2版本全面开启 AI 助手，支持剧本正文引用与实时对话，助力高效创作。',
+            text: '**功能说明 (2.2版本)：**\n - **剧集管理：** 2.2版本全面支持手动新增剧集大纲，新增剧集大纲是在最后面新增。\n - **AI 智能助手：** 2.2版本全面开启 AI 助手，支持剧本正文引用与实时对话，助力高效创作。',
             image: ''
           },
           {
@@ -821,6 +823,21 @@
         version: appVersion
       }"
     />
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 剧本创作页"
+      subtitle="OutlineView UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
 
     <!-- AI Feature Instructions Dialog -->
     <el-dialog 
@@ -938,7 +955,7 @@ import {
   Expand, Fold, VideoPause, VideoPlay, User, 
   RefreshLeft, RefreshRight, DocumentAdd, Top, InfoFilled,
   Location, MoreFilled, ChatLineSquare, Close, Lock, Monitor, Pointer,
-  Search, WarningFilled, QuestionFilled
+  Search, WarningFilled, QuestionFilled, Crop, CircleCheck, FullScreen
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
@@ -972,6 +989,7 @@ interface DramaForm {
 
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
@@ -1274,6 +1292,105 @@ const showCustomWarning = (msg: string) => {
 // Design Dialog State
 const showDesignDialog = ref(false);
 const showScriptDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
+
+const uiDesignGroups = {
+  layout: [
+    {
+      id: 'outlineView',
+      title: '剧本创作页 (OutlineView)',
+      description: '三栏创作工作台：左侧剧集大纲 + 中栏剧本正文编辑器 + 右侧 AI 智能助手。',
+      items: [
+        { name: '页面内边距', value: 'p-4 / lg:p-6', description: '三栏整体 padding' },
+        { name: '栏间距', value: 'gap-4 / lg:gap-6', description: '左/中/右之间间距' },
+        { name: '左侧栏默认宽度', value: '320px', description: 'leftPanelWidth 默认值，可拖拽调整' },
+        { name: '右侧助手宽度', value: '360px', description: '展开时固定宽度，支持折叠' },
+        { name: '侧栏圆角', value: '28px', description: 'rounded-[28px]（左/右容器）' },
+        { name: '中栏圆角', value: '32px', description: 'rounded-[32px]（正文画布容器）' },
+        { name: '侧栏头部高度', value: 'h-16', description: '标题栏高度统一' },
+        { name: '统计条圆角', value: '20px', description: 'rounded-[20px]' },
+        { name: '剧集卡圆角', value: 'rounded-2xl', description: 'episode-card 的基础圆角' },
+        { name: '编辑卡圆角', value: '24px', description: 'rounded-[24px]（正文编辑卡）' },
+        { name: '正文滚动内边距', value: 'p-4 / lg:p-6', description: '编辑区外层滚动容器' },
+        { name: '正文内容内边距', value: 'p-6 / lg:p-10', description: 'editor-content 内部 padding' },
+        { name: '折叠把手尺寸', value: 'w-7 h-20', description: '左右侧栏浮动折叠按钮' },
+        { name: '范围 Tab 尺寸', value: 'px-4 py-2', description: 'episodeRange Tabs（剧集导航）' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'outlineView',
+      title: '剧本创作页 (OutlineView)',
+      description: '核心字号、字重与文案层级。',
+      items: [
+        { name: '页面主容器', style: { fontSize: '14px', fontWeight: '500' }, description: 'text-[#1f2329]（整体文字基色）' },
+        { name: '侧栏标题', style: { fontSize: '16px', fontWeight: '900' }, description: 'text-[16px] font-black（剧集大纲）' },
+        { name: '统计数字', style: { fontSize: '15px', fontWeight: '900' }, description: 'text-[15px] font-black（总数/已完/未完）' },
+        { name: '剧集标签', style: { fontSize: '14px', fontWeight: '900' }, description: 'text-[14px] font-black（第 N 集）' },
+        { name: '正文标题', style: { fontSize: '18px', fontWeight: '900' }, description: 'text-[18px] font-black（剧本正文）' },
+        { name: '正文状态标签', style: { fontSize: '10px', fontWeight: '900', letterSpacing: '0.12em' }, description: 'text-[10px] font-black uppercase tracking-widest' },
+        { name: '空态标题', style: { fontSize: '20px', fontWeight: '900' }, description: 'text-[20px] font-black（空白提示）' },
+        { name: '助手标题', style: { fontSize: '15px', fontWeight: '900' }, description: 'text-[15px] font-black（AI 智能助手）' },
+        { name: '对话正文', style: { fontSize: '13px', fontWeight: '500', lineHeight: '1.6' }, description: 'text-[13px] leading-relaxed（气泡内容）' },
+        { name: '标签/胶囊', style: { fontSize: '10px', fontWeight: '900', letterSpacing: '0.2em' }, description: 'text-[10px] font-black uppercase tracking-[0.2em]' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'outlineView',
+      title: '剧本创作页 (OutlineView)',
+      description: '页面背景、容器底色与状态色。',
+      items: [
+        { name: '页面背景渐变', value: 'from-[#F8FAFC] to-[#F1F5F9]' },
+        { name: '装饰光晕', value: 'bg-indigo-500/5 + bg-purple-500/5' },
+        { name: '侧栏容器', value: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl' },
+        { name: '侧栏分割线', value: 'border-slate-100 dark:border-slate-700/50' },
+        { name: '统计条底色', value: 'bg-slate-50/50 dark:bg-slate-900/30' },
+        { name: '新增剧集按钮', value: 'bg-indigo-600 text-white shadow-indigo-500/20' },
+        { name: '剧集卡-激活', value: 'border-indigo-500/50 + from-indigo-50/90 to-purple-50/90' },
+        { name: '剧集卡-未激活', value: 'bg-white dark:bg-slate-800/40 border-slate-100 hover:border-indigo-300' },
+        { name: '正文画布底色', value: 'bg-[#F0F7FF]' },
+        { name: '正文工具栏', value: 'bg-white/60 dark:bg-slate-800/50 border-blue-100/50' },
+        { name: '正文编辑卡', value: 'bg-white dark:bg-slate-900 border-blue-100' },
+        { name: '自动保存状态', value: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+        { name: '右侧助手头部渐变', value: 'from-indigo-50/50 to-purple-50/50' },
+        { name: '右侧助手背景', value: 'bg-[#F9FBFF] dark:bg-slate-900/20' },
+        { name: '对话气泡-AI', value: 'bg-white border-slate-100 rounded-tl-none' },
+        { name: '对话气泡-用户', value: 'bg-indigo-600 text-white border-indigo-500 rounded-tr-none' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'outlineView',
+      title: '剧本创作页 (OutlineView)',
+      description: '关键按钮、卡片与交互态。',
+      items: [
+        { name: '页面三栏容器', tag: 'div', classes: 'flex h-full w-full overflow-hidden p-4 lg:p-6 gap-4 lg:gap-6 bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9]', notes: ['三栏工作台基座，支持深色模式渐变'] },
+        { name: '左侧栏容器', tag: 'div', classes: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[28px] border border-white dark:border-slate-700/50 shadow-2xl', notes: ['默认宽 320px，可拖拽改变'] },
+        { name: 'UI 标注按钮', tag: 'button', classes: 'fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform', notes: ['页面右下角悬浮（Monitor 图标）；打开 UI 设计标注弹窗（含分类 Tabs）'] },
+        { name: '产品说明按钮', tag: 'button', classes: 'w-8 h-8 bg-white/80 dark:bg-slate-800/80 rounded-full border border-slate-200/50 text-slate-400 hover:text-indigo-600', notes: ['位于左侧栏右上角（InfoFilled 图标）'] },
+        { name: '新增剧集按钮', tag: 'button', classes: 'h-9 px-4 bg-indigo-600 text-white rounded-xl text-[12px] font-black shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95', notes: ['用于手动新增剧集（Plus 图标）'] },
+        { name: '剧集卡片-激活态', tag: 'div', classes: 'border-indigo-500/50 bg-gradient-to-br from-indigo-50/90 to-purple-50/90 shadow-xl shadow-indigo-500/10', notes: ['显示“正在编辑”徽标；可叠加生成中 ring'] },
+        { name: '剧集卡片-未激活态', tag: 'div', classes: 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/40 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-0.5', notes: ['Hover: 图标底色/文字变为 indigo'] },
+        { name: '剧集导航范围 Tab', tag: 'button', classes: 'px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-500 border relative overflow-hidden', notes: ['Active: bg-indigo-600 text-white border-transparent shadow-indigo-500/20 scale-105', 'Inactive: bg-slate-50 text-slate-500 border-slate-100 hover:border-indigo-300 hover:text-indigo-600'] },
+        { name: '中栏画布容器', tag: 'div', classes: 'flex-1 flex flex-col bg-[#F0F7FF] dark:bg-slate-800/80 rounded-[32px] border border-blue-100 dark:border-slate-700/50 overflow-hidden', notes: ['承载工具栏 + 编辑器卡；整体偏蓝氛围'] },
+        { name: '正文工具栏', tag: 'div', classes: 'p-4 bg-white/60 dark:bg-slate-800/50 border-b border-blue-100/50 flex items-center justify-between', notes: ['左侧标题与状态；右侧自动保存徽标'] },
+        { name: '自动保存徽标', tag: 'span', classes: 'px-4 py-1.5 rounded-full text-[12px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100', notes: ['保存中：Loading + 文案“保存中...”'] },
+        { name: '正文编辑卡', tag: 'div', classes: 'bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700/50 rounded-[24px] shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10', notes: ['内部使用 Tiptap，空态覆盖层提示'] },
+        { name: '完成去主体 (主 CTA)', tag: 'button', classes: 'h-11 px-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl text-[14px] font-black shadow-xl shadow-indigo-500/30 hover:scale-[1.03] active:scale-95 disabled:opacity-50', notes: ['位于正文区域底部操作栏'] },
+        { name: '右侧助手容器', tag: 'div', classes: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[28px] border border-white dark:border-slate-700/50 shadow-2xl', notes: ['宽 360px，支持折叠'] },
+        { name: '发送按钮', tag: 'button', classes: 'w-10 h-10 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-500/30 hover:scale-105 active:scale-95', notes: ['位于输入框 suffix，图标 Top'] },
+        { name: '对话气泡-AI', tag: 'div', classes: 'bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 text-[13px] leading-relaxed', notes: ['左对齐，带“AI 助手”标识'] },
+        { name: '对话气泡-用户', tag: 'div', classes: 'bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none border border-indigo-500 text-[13px] leading-relaxed', notes: ['右对齐'] },
+        { name: '快捷动作按钮组', tag: 'div', classes: 'grid grid-cols-4 gap-2', notes: ['动作：续写/润色/扩写/改写；图标 hover 变 indigo 底色'] },
+        { name: '折叠把手', tag: 'div', classes: 'w-7 h-20 rounded-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-indigo-100/50 dark:border-indigo-900/50 shadow-[0_4px_25px_rgba(99,102,241,0.25)]', notes: ['左右两侧一致；Hover: scale-y-110 + 背景变浅'] }
+      ]
+    }
+  ]
+};
 
 // Context Menu State
 const contextMenuVisible = ref(false);

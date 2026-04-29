@@ -110,18 +110,35 @@
         version: '2.2'
       }"
     />
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 作品管理"
+      subtitle="Projects UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-11 h-11 flex items-center justify-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-400 hover:text-indigo-600 rounded-full shadow-lg border border-slate-200/60 dark:border-slate-700/60 transition-all duration-300"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="18"><Monitor /></el-icon>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus, Picture, Edit, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
+import { Plus, Picture, Edit, MagicStick, InfoFilled, Monitor } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue'
 
 const router = useRouter()
 const showPrototypeHelp = ref(false)
+const showUIDesignSpecsDialog = ref(false)
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))
 
@@ -248,6 +265,87 @@ const selectCover = (url: string) => {
     showCoverDialog.value = false
   }
 }
+
+const uiDesignGroups = computed(() => {
+  const pageBg =
+    theme.value === 'dreamy'
+      ? 'bg-transparent'
+      : (isLight.value ? 'bg-slate-50' : 'bg-slate-900')
+
+  const cardBg =
+    theme.value === 'dreamy'
+      ? 'bg-white/60 border-white/50 hover:bg-white/80 backdrop-blur-sm'
+      : (isLight.value ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700')
+
+  return {
+    layout: [
+      {
+        id: 'script-projects',
+        title: '作品管理页 (Projects)',
+        description: '剧本作品列表：标题区 + 新建按钮 + 卡片网格 + AI 封面生成弹窗。',
+        items: [
+          { name: '页面容器', value: 'p-8 h-full overflow-y-auto', description: 'aisw-scale + transition-colors duration-300' },
+          { name: '页面背景', value: pageBg, description: '根据 theme/isLight 切换' },
+          { name: '标题区间距', value: 'mb-8', description: '标题与内容网格之间' },
+          { name: '卡片网格', value: 'grid-cols-1/2/3/4 gap-6', description: '响应式列数：sm/md/lg' },
+          { name: '作品卡圆角', value: 'rounded-2xl', description: '卡片容器圆角' },
+          { name: '封面区域高度', value: 'h-48', description: '封面/占位图容器高度' },
+          { name: '卡片内边距', value: 'p-5', description: '标题与信息区 padding' },
+          { name: '弹窗宽度', value: 'width="600px"', description: 'AI 封面生成器弹层' }
+        ]
+      }
+    ],
+    style: [
+      {
+        id: 'script-projects-typography',
+        title: '字体与层级',
+        description: '标题、按钮与卡片信息层级。',
+        items: [
+          { name: '页面标题', style: { fontSize: '30px', fontWeight: '700' }, description: 'text-3xl font-bold' },
+          { name: '主按钮', style: { fontSize: '14px', fontWeight: '600' }, description: 'el-button size=large（新建项目）' },
+          { name: '卡片标题', style: { fontSize: '18px', fontWeight: '700' }, description: 'text-lg font-bold truncate' },
+          { name: '卡片辅助信息', style: { fontSize: '12px', fontWeight: '400' }, description: 'text-xs（字数/更新时间）' },
+          { name: '封面占位', style: { fontSize: '12px', fontWeight: '400' }, description: 'text-xs + Picture 图标 48px' }
+        ]
+      }
+    ],
+    color: [
+      {
+        id: 'script-projects-color',
+        title: '颜色规范',
+        description: '背景、主色与深浅色模式差异。',
+        items: [
+          { name: '页面背景(浅色)', value: 'bg-slate-50' },
+          { name: '页面背景(深色)', value: 'bg-slate-900' },
+          { name: '主色', value: 'indigo-600（用于新建/主操作）' },
+          { name: '卡片(浅色)', value: 'bg-white border-slate-200 hover:shadow-xl' },
+          { name: '卡片(深色)', value: 'bg-slate-800 border-slate-700 hover:border-indigo-500/30' },
+          { name: '封面遮罩', value: 'bg-black/60 + backdrop-blur-sm' },
+          { name: '封面占位(浅色)', value: 'bg-slate-100 text-slate-400' },
+          { name: '封面占位(深色)', value: 'bg-slate-900 text-slate-600' },
+          { name: 'AI 生成按钮', value: 'warning：!bg-orange-500' }
+        ]
+      }
+    ],
+    button: [
+      {
+        id: 'script-projects-components',
+        title: '按钮与组件元素',
+        description: '关键交互点位与典型类名（含 hover/active）。',
+        items: [
+          { name: '原型说明入口', tag: 'el-button', classes: 'type=primary plain !rounded-xl', notes: ['标题左侧（InfoFilled）'] },
+          { name: '新建项目', tag: 'el-button', classes: 'type=primary size=large bg-indigo-600', notes: ['标题右侧主 CTA（Plus）'] },
+          { name: '作品卡容器', tag: 'div', classes: `group rounded-2xl shadow-lg border hover:-translate-y-1 transition-all ${cardBg}`, notes: ['点击卡片进入编辑器'] },
+          { name: '卡片 Hover 操作层', tag: 'div', classes: 'absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 backdrop-blur-sm flex items-center justify-center gap-3', notes: ['Hover 显示：编辑/AI 生成（阻止冒泡）'] },
+          { name: '编辑按钮', tag: 'el-button', classes: 'circle type=primary !bg-indigo-600 border-none group-hover:scale-100', notes: ['遮罩层按钮（Edit）'] },
+          { name: 'AI 生成按钮', tag: 'el-button', classes: 'circle type=warning !bg-orange-500 border-none group-hover:scale-100', notes: ['遮罩层按钮（MagicStick）'] },
+          { name: 'AI 封面弹窗', tag: 'el-dialog', classes: 'v-model=showCoverDialog width=600px', notes: ['包含 prompt 输入 + 轮播选择封面'] },
+          { name: 'UI 标注入口', tag: 'button', classes: 'fixed bottom-6 right-6 w-11 h-11 bg-white/80 dark:bg-slate-800/80 rounded-full border border-slate-200/60 text-slate-400 hover:text-indigo-600 shadow-lg', notes: ['页面右下角悬浮（Monitor 图标）；打开 UI 设计标注弹窗（含分类 Tabs）'] }
+        ]
+      }
+    ]
+  };
+})
 </script>
 
 <style scoped>

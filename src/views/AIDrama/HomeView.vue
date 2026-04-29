@@ -9,7 +9,7 @@
             <span>早上好，创作者</span>
             <span class="text-2xl">👋</span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 mt-2">今天想创作点什么？跃影为您提供全方位的 AI 创作工具。</p>
+          <p class="text-slate-500 dark:text-slate-400 mt-2">今天想创作点什么？智影为您提供全方位的 AI 创作工具。</p>
         </div>
         <div class="flex items-center gap-4">
           <el-button type="primary" plain class="!rounded-xl" @click="showPrototypeHelp = true">

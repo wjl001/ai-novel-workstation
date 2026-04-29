@@ -858,6 +858,7 @@
         <SubjectLibraryModal
           v-model="showLibraryModal"
           :subjects="subjects"
+          :current-project-name="dramaSettings.title"
           @confirm="handleLibraryConfirm"
         />
 
@@ -893,6 +894,21 @@
         version: '2.2.0'
       }"
     />
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 分镜视频页"
+      subtitle="StoryboardView UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
 
     <!-- Recovery Confirm Dialog -->
     <ConfirmDialog
@@ -987,7 +1003,7 @@ import {
   ArrowLeft, ArrowRight, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
-  Download, VideoPause, Microphone, Mic, Upload
+  Download, VideoPause, Microphone, Mic, Upload, Monitor
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -997,6 +1013,7 @@ import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.v
 const route = useRoute();
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
 const episodeStore = useEpisodeStore();
@@ -1014,6 +1031,107 @@ const isEditingScript = ref(false);
 const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
+
+const uiDesignGroups = {
+  layout: [
+    {
+      id: 'storyboardView',
+      title: '分镜视频页 (StoryboardView)',
+      description: '分镜视频工作台：顶部全局操作 + 左侧主体库 + 中间脚本编辑/预览 + 底部时间轴。',
+      items: [
+        { name: '页面主容器', value: 'h-full flex flex-col overflow-hidden', description: '背景：bg-[#F8FAFC]（暗色：dark:bg-slate-900）' },
+        { name: '顶部栏高度', value: 'h-14', description: 'header 固定高度' },
+        { name: '全屏生成遮罩', value: 'fixed inset-0 z-[10000]', description: '分镜规划中 Loading Overlay（teleport 到 body）' },
+        { name: '主工作区内边距', value: 'p-3', description: 'main 区域 padding' },
+        { name: '主工作区列间距', value: 'gap-3', description: '左侧栏与右侧工作区间距' },
+        { name: '左侧主体库宽度', value: '220px', description: '折叠时 width=0 + marginRight=-12px' },
+        { name: '左侧栏圆角', value: 'rounded-[32px]', description: '主体库容器' },
+        { name: '中间编辑区圆角', value: 'rounded-[32px]', description: '脚本+预览容器' },
+        { name: '脚本/预览卡圆角', value: 'rounded-[24px]', description: '脚本卡与预览卡统一圆角' },
+        { name: '底部时间轴高度', value: 'h-[140px]', description: 'Timeline 固定高度' },
+        { name: '时间轴卡片尺寸', value: 'w-[70px] h-[95px]', description: '单个分镜缩略卡' },
+        { name: '侧栏折叠把手尺寸', value: 'w-6 h-16', description: '左侧栏折叠按钮' },
+        { name: '合成弹窗宽度', value: 'width="850px"', description: 'Synthesis Progress Modal / 成功预览与导出面板' },
+        { name: 'BGM 弹窗宽度', value: 'width="750px"', description: '背景音乐配置弹层' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'storyboardView',
+      title: '分镜视频页 (StoryboardView)',
+      description: '字号、字重、层级与典型文案样式。',
+      items: [
+        { name: '顶部剧集标题', style: { fontSize: '15px', fontWeight: '900' }, description: 'text-[15px] font-black（下拉标题）' },
+        { name: '分镜编号徽标', style: { fontSize: '12px', fontWeight: '900', letterSpacing: '0.12em' }, description: 'text-xs uppercase tracking-widest（“分镜 N”）' },
+        { name: '脚本文字', style: { fontSize: '16px', fontWeight: '500', lineHeight: '1.8' }, description: 'text-[16px] leading-[1.8] font-medium（阅读/编辑主体）' },
+        { name: '提示辅助文案', style: { fontSize: '12px', fontWeight: '700' }, description: 'text-[12px] font-bold（输入@提示、空态提示）' },
+        { name: '时间轴计时', style: { fontSize: '11px', fontWeight: '900' }, description: 'text-[11px] font-black font-mono（00:00 / 00:15）' },
+        { name: '时间轴角标', style: { fontSize: '8px', fontWeight: '900' }, description: 'text-[8px] font-black（时长 badge）' },
+        { name: '多选按钮', style: { fontSize: '10px', fontWeight: '900' }, description: 'text-[10px] font-black（多选管理/批量生成）' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'storyboardView',
+      title: '分镜视频页 (StoryboardView)',
+      description: '背景、容器、强调色与状态色。',
+      items: [
+        { name: '页面背景', value: 'bg-[#F8FAFC] / dark:bg-slate-900' },
+        { name: '装饰光晕', value: 'indigo/purple/blue 低透明 blur' },
+        { name: '顶部栏底色', value: 'bg-white/80 dark:bg-slate-800/80 + backdrop-blur-xl' },
+        { name: '全屏生成遮罩', value: 'bg-white/40 dark:bg-slate-900/40 + backdrop-blur-md' },
+        { name: '左侧主体库', value: 'bg-indigo-50/80 dark:bg-slate-800/80 + border-indigo-100' },
+        { name: '中间编辑区底色', value: 'bg-[#F0F7FF] dark:bg-slate-800/80 + border-blue-100' },
+        { name: '预览区底色', value: 'bg-slate-900 + border-slate-800' },
+        { name: '底部时间轴底色', value: 'bg-[#F5F3FF] dark:bg-slate-900/50 + border-purple-100' },
+        { name: '主 CTA', value: 'from-indigo-600 to-purple-600 text-white shadow-indigo-500/20' },
+        { name: '强调/激活态', value: 'border-purple-500 + ring-purple-500/10' },
+        { name: '生成中遮罩', value: 'from-indigo-600/60 to-purple-600/60 + backdrop-blur-2xl' },
+        { name: '合成弹窗背景', value: 'rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900' },
+        { name: '导出主按钮', value: 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/20' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'storyboardView',
+      title: '分镜视频页 (StoryboardView)',
+      description: '关键按钮/卡片/弹层的类名与交互状态。',
+      items: [
+        { name: 'UI 标注按钮', tag: 'button', classes: 'fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform', notes: ['右下角固定悬浮（Monitor 图标）'] },
+        { name: '产品设计说明按钮', tag: 'button', classes: 'h-8 px-4 bg-slate-50 dark:bg-slate-700/50 rounded-full border border-slate-200/50 text-slate-500 hover:text-indigo-600', notes: ['位于顶部栏中间，InfoFilled 图标'] },
+        { name: '合成全集 (主 CTA)', tag: 'button', classes: 'h-9 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[13px] font-bold shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50', notes: ['顶部栏右侧；disabled：pointer-events-none'] },
+        { name: '预览全集', tag: 'button', classes: 'h-9 px-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-full text-[13px] font-bold hover:bg-indigo-100', notes: ['仅合成完成后出现'] },
+        { name: '主体库容器', tag: 'aside', classes: 'bg-indigo-50/80 dark:bg-slate-800/80 rounded-[32px] border border-indigo-100 shadow-xl overflow-hidden', notes: ['折叠时 width=0 + opacity=0'] },
+        { name: '主体库-新增按钮', tag: 'button', classes: 'w-7 h-7 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-200', notes: ['主体库标题行右侧 + 号（导入/管理）'] },
+        { name: '分类新增按钮(角色/场景/道具)', tag: 'button', classes: 'w-6 h-6 rounded-lg bg-*-50 text-*-600 hover:bg-*-600 hover:text-white border border-*-100', notes: ['按分类切换颜色：indigo / emerald / amber'] },
+        { name: '主体卡片-悬停编辑', tag: 'div', classes: 'absolute inset-0 bg-gradient-to-t from-*-600/40 opacity-0 group-hover:opacity-100', notes: ['Hover 显示编辑按钮：bg-white/90 hover:bg-*-600 hover:text-white'] },
+        { name: '左侧栏折叠把手', tag: 'div', classes: 'absolute w-6 h-16 rounded-full bg-indigo-600 shadow-[0_4px_20px_rgba(99,102,241,0.3)]', notes: ['Hover: bg-indigo-700 + scale-y-110'] },
+        { name: '脚本卡(未编辑)', tag: 'div', classes: 'bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-[24px] shadow-sm', notes: ['只读：v-html 渲染，cursor-text'] },
+        { name: '脚本卡(编辑态)', tag: 'div', classes: 'bg-white dark:bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-200/50', notes: ['编辑态高亮边框 + 更强阴影'] },
+        { name: '@ 引用弹层', tag: 'div', classes: 'fixed z-[9999] bg-white/95 dark:bg-slate-800/95 rounded-2xl border border-slate-200/50 p-2 min-w-[280px] max-w-[340px] shadow-[0_20px_50px_rgba(0,0,0,0.15)]', notes: ['Tab：active bg-white text-indigo-600；inactive text-slate-400'] },
+        { name: '编辑脚本', tag: 'button', classes: 'h-8 px-6 bg-indigo-50 text-indigo-600 border-2 border-indigo-200 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white', notes: ['按钮内图标 Hover: rotate-12'] },
+        { name: '重新生成分镜', tag: 'button', classes: 'h-8 px-8 rounded-full text-[13px] font-black', notes: ['Enabled: bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl', 'Disabled: bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-50'] },
+        { name: '预览区视频容器', tag: 'div', classes: 'flex-1 rounded-[24px] bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden', notes: ['空态：Film 大图标 + 文案；生成中遮罩覆盖'] },
+        { name: '时间轴播放按钮', tag: 'button', classes: 'w-7 h-7 rounded-full bg-purple-600 text-white shadow-lg shadow-purple-200 hover:scale-110 active:scale-95', notes: ['切换 VideoPlay/VideoPause'] },
+        { name: '多选管理按钮', tag: 'button', classes: 'h-6 px-3 bg-white dark:bg-slate-700 text-purple-600 rounded-full text-[10px] font-black border border-purple-100 hover:bg-purple-600 hover:text-white', notes: ['右上角控制区'] },
+        { name: '批量生成视频', tag: 'button', classes: 'h-6 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[10px] font-black hover:shadow-lg hover:shadow-indigo-500/20', notes: ['多选模式且选中数量>0 时出现'] },
+        { name: '全选复选框', tag: 'el-checkbox', classes: 'custom-timeline-checkbox mr-2', notes: ['多选模式出现；支持 indeterminate'] },
+        { name: '时间轴分镜卡', tag: 'div', classes: 'w-[70px] h-[95px] rounded-[14px] bg-white dark:bg-slate-900 border-2 hover:scale-105 transition-all overflow-hidden', notes: ['激活/多选：border-purple-500 ring-4 ring-purple-500/10；角标：duration badge text-[8px]'] },
+        { name: '时间轴单个生成按钮', tag: 'button', classes: 'w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-purple-600 border border-white/30', notes: ['点按 MagicStick 触发生成'] },
+        { name: '全屏生成遮罩(规划中)', tag: 'div', classes: 'fixed inset-0 z-[10000] bg-white/40 dark:bg-slate-900/40 backdrop-blur-md flex items-center justify-center', notes: ['中心卡片：rounded-[40px]；渐变图标：from-purple-600 to-indigo-600'] },
+        { name: '合成弹窗', tag: 'el-dialog', classes: 'rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden', notes: ['进度态：遮罩 + 进度条；成功态：Video Player + 导出面板'] },
+        { name: 'BGM 配置弹窗', tag: 'el-dialog', classes: 'rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden', notes: ['AI 生成 / 热门标签 / 本地上传'] },
+        { name: '主体编辑弹窗', tag: 'SubjectEditDialog', classes: 'v-model="showSubjectEdit"', notes: ['角色/场景/道具统一编辑'] },
+        { name: '主体库弹窗', tag: 'SubjectLibraryModal', classes: 'v-model="showLibraryModal"', notes: ['从主题库批量导入主体'] },
+        { name: '恢复确认弹窗', tag: 'ConfirmDialog', classes: 'v-model="recoveryConfirmVisible"', notes: ['用于断点续生成确认'] }
+      ]
+    }
+  ]
+};
 
 // Loading States
 const isGeneratingStoryboardText = ref(false);

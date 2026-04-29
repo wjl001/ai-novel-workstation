@@ -1,55 +1,35 @@
 <template>
   <el-container class="h-screen w-screen overflow-hidden transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-200'">
-    <el-header class="border-b flex items-center justify-between px-6 z-10 shadow-md transition-colors duration-300" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
+    <el-header class="border-b flex items-center justify-between px-8 z-10 shadow-sm transition-colors duration-300" :class="isLight ? 'bg-white/80 backdrop-blur-md border-slate-200' : 'bg-slate-800/80 backdrop-blur-md border-slate-700'">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">      
+        <!-- Teleport target for back button -->
+        <div id="header-back-button"></div>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 cursor-pointer" @click="router.push('/')">      
           <el-icon :size="24" class="text-white"><VideoPlay /></el-icon>
         </div>
-        <h1 class="text-xl font-bold tracking-wide hidden sm:block" :class="isLight ? 'text-slate-800' : 'text-white'">
-          跃影
-        </h1>
+        <div class="flex flex-col cursor-pointer" @click="router.push('/')">
+          <h1 class="text-lg font-black tracking-tight leading-none" :class="isLight ? 'text-slate-800' : 'text-white'">
+            智影
+          </h1>
+          <span class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] mt-1">短剧引擎</span>
+        </div>
       </div>
       
+      <!-- Teleport target for process nodes -->
+      <div id="header-center" class="flex-1 flex justify-center mx-4"></div>
+
       <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 pl-2 border-l" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
-           <el-avatar :size="32" class="!bg-indigo-600">A</el-avatar>
-           <span class="text-sm font-medium" :class="isLight ? 'text-slate-600' : 'text-slate-300'">Admin</span>
+        <div class="flex items-center gap-3">
+           <el-avatar :size="32" class="!bg-indigo-600 shadow-inner">A</el-avatar>
+           <div class="flex flex-col">
+             <span class="text-xs font-black leading-none" :class="isLight ? 'text-slate-800' : 'text-white'">Admin</span>
+             <span class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Pro Creator</span>
+           </div>
         </div>
       </div>
     </el-header>
 
     <el-container class="flex-1 overflow-hidden">
-      <el-aside width="240px" class="border-r flex flex-col transition-colors duration-300" :class="isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'">
-        <el-menu
-          router
-          :default-active="$route.path"
-          class="border-none bg-transparent flex-1 py-4"
-          :text-color="isLight ? '#475569' : '#ffffff'"
-          active-text-color="#818cf8"
-        >
-          <el-menu-item index="/home" class="menu-item-hover">
-            <el-icon><HomeFilled /></el-icon>
-            <span>首页</span>
-          </el-menu-item>
-          <el-menu-item index="/ai-write-novel" class="menu-item-hover">        
-            <el-icon><EditPen /></el-icon>
-            <span>AI 剧本</span>
-          </el-menu-item>
-          <el-menu-item index="/ai-video" class="menu-item-hover">  
-             <el-icon><VideoCameraFilled /></el-icon>
-            <span>AI 短剧</span>
-          </el-menu-item>
-          <el-menu-item index="/ai-short-drama-creator/new" class="menu-item-hover">
-            <el-icon><MagicStick /></el-icon>
-            <span>AI短剧创作</span>
-          </el-menu-item>
-        </el-menu>
-        
-        <div class="p-4 border-t" :class="isLight ? 'border-slate-200' : 'border-slate-700'">
-          <div class="text-xs text-center" :class="isLight ? 'text-slate-400' : 'text-slate-400'">Version 2.0.0 Pro</div>
-        </div>
-      </el-aside>
-
       <el-main class="p-0 relative h-full min-h-0 overflow-hidden flex flex-col transition-colors duration-500" :class="mainBgClass">
         <div v-if="runtimeError" class="absolute top-4 left-4 right-4 z-50 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-lg">
           {{ runtimeError }}
@@ -68,14 +48,15 @@
 
 <script setup lang="ts">
 import { ref, provide, watch, computed, onErrorCaptured, onMounted } from 'vue'
-import { EditPen, VideoPlay, VideoCameraFilled, Picture, MagicStick, Refresh, 
-HomeFilled } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { VideoPlay } from '@element-plus/icons-vue'
 import { useDramaStore } from '@/store/drama'
 import { useEpisodeStore } from '@/store/episode'
 
 const currentTheme = ref('dreamy')
 const isLight = ref(true)
 const runtimeError = ref<string | null>(null)
+const router = useRouter()
 
 const dramaStore = useDramaStore()
 const episodeStore = useEpisodeStore()

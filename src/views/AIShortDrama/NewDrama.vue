@@ -10,13 +10,15 @@
         <!-- Header: More compact -->
         <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
           <!-- Product Design Info Button -->
-          <button 
-            @click="showDesignDialog = true"
-            class="absolute top-0 right-0 md:right-[-40px] h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
-          >
-            <el-icon :size="12"><InfoFilled /></el-icon>
-            <span>产品设计说明</span>
-          </button>
+          <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
+            <button 
+              @click="showDesignDialog = true"
+              class="h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+            >
+              <el-icon :size="12"><InfoFilled /></el-icon>
+              <span>产品设计说明</span>
+            </button>
+          </div>
           
           <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
             <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
@@ -43,7 +45,7 @@
               :class="activeTab === 'upload' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
               @click="activeTab = 'upload'"
             >
-              <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
+              <el-icon :size="16"><Upload /></el-icon> 导入已有小说
             </button>
           </div>
 
@@ -135,10 +137,10 @@
                       <el-icon :size="20"><upload-filled /></el-icon>
                     </div>
                     <div class="el-upload__text text-slate-500 dark:text-slate-400 font-bold text-sm mb-1">
-                      将剧本文件拖到此处，或 <em class="text-indigo-600 dark:text-indigo-400 not-italic">点击上传</em>
+                      将小说文件拖到此处，或 <em class="text-indigo-600 dark:text-indigo-400 not-italic">点击上传</em>
                     </div>
                     <div class="text-slate-400 text-[11px] font-medium">
-                      支持 docx, pdf, txt 格式，不超过10万字
+                      支持 docx, pdf, txt 格式，不超过3万字
                     </div>
                   </div>
                 </el-upload>
@@ -223,294 +225,390 @@
     <el-dialog 
       v-model="showHotTopicDialog" 
       :title="undefined"
-      width="1100px" 
-      class="hot-topic-dialog-v2 overflow-hidden" 
+      width="1200px" 
+      class="hot-topic-dialog-v3 overflow-hidden rounded-[40px]" 
       :show-close="false"
       destroy-on-close
-      top="2vh"
+      top="1vh"
     >
-      <div class="relative flex flex-col bg-slate-50 dark:bg-slate-950 max-h-[96vh]">
-        <!-- Glassmorphism Background Elements -->
-        <div class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-        <div class="absolute top-1/2 -right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+      <div class="relative flex flex-col bg-[#F8FAFC] dark:bg-slate-950 max-h-[98vh] rounded-[36px] overflow-hidden border border-white/40 dark:border-slate-800/40">
+        <!-- Premium Background Elements -->
+        <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/2 -right-32 w-[400px] h-[400px] bg-purple-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute -bottom-32 left-1/4 w-[350px] h-[350px] bg-pink-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         
-        <!-- Header: Hero Style -->
-        <div class="relative px-8 pt-5 pb-3 shrink-0 overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5 dark:from-indigo-400/5 dark:to-purple-400/5"></div>
+        <!-- Header: Immersive Hero Style -->
+        <div class="relative px-10 pt-4 pb-3 shrink-0 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-purple-600/10 to-transparent dark:from-indigo-400/15 dark:via-purple-400/10"></div>
           
-          <!-- Close Button -->
-          <button 
-            @click="showHotTopicDialog = false" 
-            class="absolute top-4 right-8 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-md text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-all shadow-sm border border-white/20 dark:border-slate-700/20"
-          >
-            <el-icon :size="18"><Close /></el-icon>
-          </button>
+          <!-- Close Button: Premium Style -->
+          <div class="absolute top-4 right-10 z-50 flex items-center gap-3">
+            <button 
+              @click="showHotTopicDialog = false" 
+              class="w-9 h-9 flex items-center justify-center rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-700 transition-all duration-500 shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700 hover:rotate-90"
+            >
+              <el-icon :size="18"><Close /></el-icon>
+            </button>
+          </div>
 
-          <div class="relative flex items-end gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 ring-4 ring-white dark:ring-slate-800">
-              <el-icon :size="24"><MagicStick /></el-icon>
+          <div class="relative flex items-center gap-6">
+            <div class="w-12 h-12 rounded-[20px] bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-[0_12px_40px_rgba(79,70,229,0.3)] ring-4 ring-white dark:ring-slate-900 transition-all hover:scale-110 hover:rotate-6 duration-500 group">
+              <el-icon :size="24" class="group-hover:animate-pulse"><MagicStick /></el-icon>
             </div>
             <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <h2 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+              <div class="flex items-center gap-4">
+                <h2 class="text-2xl font-[1000] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600 dark:from-white dark:via-indigo-300 dark:to-purple-300 drop-shadow-sm">
                   开启灵感之门
                 </h2>
-                <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-md">
-                  AI Creator
+                <span class="px-3 py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white text-[10px] font-[1000] uppercase tracking-[0.2em] rounded-xl shadow-[0_6px_20px_rgba(79,70,229,0.3)] border border-white/20">
+                  AI PRO
                 </span>
               </div>
-              <p class="text-[12px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">
-                为您精心准备了默认配置，每一项都可以由 AI 深度润色。
+              <p class="text-[13px] text-slate-500 dark:text-slate-400 font-bold flex items-center gap-2 mt-1">
+                每一项都可以由 <span class="text-indigo-600 dark:text-indigo-400 font-black">AI 深度润色</span>，打造爆款短剧。
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Body: Card Layout -->
-        <div class="flex-1 overflow-y-hidden px-8 pb-4 space-y-3 relative z-10">
+        <!-- Body: Refined Card Layout -->
+        <div class="flex-1 overflow-y-auto px-10 pb-4 flex flex-col gap-4 relative z-10 custom-scrollbar-v2">
           
-          <!-- Custom Genre Input (Conditional) -->
-          <div v-if="selectedTopic?.isCustom" class="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white dark:border-slate-800 shadow-sm animate-fade-in">
-            <label class="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">自定义题材</label>
-            <el-input 
-              v-model="configForm.genre" 
-              placeholder="输入题材名称，如：未来末世、职场逆袭..." 
-              class="custom-input-v3"
-            />
-          </div>
-
-          <!-- Section 1: Story Background (World & Era) -->
-          <div class="flex flex-col gap-2 p-4 bg-gradient-to-br from-indigo-50/90 to-white/90 dark:from-indigo-950/30 dark:to-slate-900/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-indigo-200/20 dark:shadow-none relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <div class="flex items-center justify-between relative z-10">
-              <div class="flex items-center gap-2">
-                <!-- <span class="px-2 py-0.5 bg-indigo-500 text-white text-[10px] font-black rounded-md">1. 最先写</span> -->
-                <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">故事背景</span>
-              </div>
-              <button @click="handleAIFeature('storyBackground', 'polish')" :disabled="isGeneratingField.storyBackground" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100/50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all text-[11px] font-black shadow-sm border border-indigo-200 dark:border-indigo-800">
-                <el-icon :size="14" class="text-indigo-500" :class="{'is-loading': isGeneratingField.storyBackground}"><Brush /></el-icon>
-                <span>AI 润色</span>
-              </button>
-            </div>
-            <p class="text-[10px] text-slate-400 font-medium -mt-1">世界观、时代背景、生存环境（告诉 AI：故事发生在什么地方、什么时代）</p>
-            <el-input v-model="configForm.storyBackground" type="textarea" :rows="1" placeholder="例如：2077年的霓虹都市，贫富差距巨大，底层人民在赛博阴影中挣扎..." class="custom-textarea-v3 flex-1" />
-          </div>
-
-          <!-- Section 2: Identity & Style & Specs -->
-          <div class="grid grid-cols-4 gap-4">
-            <!-- Protagonist -->
-            <div class="col-span-2 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
-              <div class="flex items-center gap-2 mb-3">
-                <div class="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                  <el-icon><User /></el-icon>
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Section 0: Work Title -->
+            <div class="group p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 animate-fade-in transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-[10px] bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+                    <el-icon :size="14"><EditPen /></el-icon>
+                  </div>
+                  <div>
+                    <label class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">作品名称</label>
+                  </div>
                 </div>
-                <div class="flex flex-col">
-                  <div class="flex items-center gap-2">
-                    <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">主角设定</label>
+                <button 
+                  @click="handleAIFeature('title', 'polish')" 
+                  :disabled="isGeneratingField.title" 
+                  class="group/btn flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all duration-500 text-[11px] font-black shadow-sm border border-indigo-100 dark:border-indigo-900 overflow-hidden relative"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                  <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.title}"><Brush /></el-icon>
+                  <span class="relative z-10">AI 润色</span>
+                </button>
+              </div>
+              <el-input 
+                v-model="configForm.title" 
+                placeholder="为您的短剧起一个吸睛的名字..." 
+                class="custom-input-v5 !h-14 !text-[15px]"
+              />
+            </div>
+
+            <!-- Section 0.1: Genre Select -->
+              <div class="group p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 animate-fade-in transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-7 h-7 rounded-[10px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+                    <el-icon :size="14"><CollectionTag /></el-icon>
+                  </div>
+                  <div>
+                    <label class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">题材类型</label>
+                  </div>
+                </div>
+                
+                <div class="relative">
+                  <el-select 
+                    v-if="configForm.genre !== '自定义'"
+                    v-model="configForm.genre" 
+                    filterable 
+                    allow-create 
+                    default-first-option
+                    placeholder="选择或输入题材..." 
+                    class="w-full custom-select-v4 !h-14 !text-[15px]"
+                  >
+                    <el-option
+                      v-for="item in hotTopics"
+                      :key="item.label"
+                      :label="item.label"
+                      :value="item.label"
+                    />
+                  </el-select>
+                  
+                  <div v-else class="flex items-center bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200 dark:border-slate-700 overflow-hidden h-14 shadow-sm transition-all hover:border-indigo-500 focus-within:border-indigo-500 focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1)]">
+                    <input 
+                      v-model="configForm.customGenre" 
+                      placeholder="输入自定义题材名称" 
+                      class="flex-1 px-4 bg-transparent border-none outline-none text-[15px] text-slate-700 dark:text-slate-200 font-bold"
+                    />
+                    <div class="flex items-center px-3 h-full gap-2 border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+                      <button @click="handleGenreConfirm" class="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-lg transition-all group/confirm" title="确认">
+                        <el-icon :size="20" class="text-purple-600 dark:text-purple-400 group-hover/confirm:scale-110 transition-transform"><Check /></el-icon>
+                      </button>
+                      <button @click="configForm.genre = ''; configForm.customGenre = ''" class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-all group/cancel" title="取消">
+                        <el-icon :size="20" class="text-slate-500 dark:text-slate-400 group-hover/cancel:scale-110 transition-transform"><Close /></el-icon>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="relative h-10">
-                <!-- Toggle between Select and Custom Input -->
+          </div>
+
+          <!-- Section 1: Strategic Options -->
+          <div class="grid grid-cols-4 gap-4">
+            <!-- Protagonist -->
+            <div class="col-span-1 group bg-white dark:bg-slate-900 p-4 rounded-[24px] border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-500">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-7 h-7 rounded-[10px] bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+                  <el-icon :size="14"><User /></el-icon>
+                </div>
+                <label class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">主角设定</label>
+              </div>
+              <div class="relative">
                 <el-select 
                   v-if="configForm.protagonistSetting !== '自定义'"
                   v-model="configForm.protagonistSetting" 
                   @change="handleProtagonistChange" 
-                  class="w-full custom-select-v3" 
-                  size="default"
+                  class="w-full custom-select-v4 !h-12" 
                 >
                   <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                     <div class="flex items-center justify-between w-full">
-                      <span class="font-bold text-[13px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
-                      <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="14"><Check /></el-icon>
+                      <span class="font-bold text-[14px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+                      <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="12"><Check /></el-icon>
                     </div>
                   </el-option>
                 </el-select>
-                
-                <!-- Custom Input for Protagonist -->
-                <div v-else class="w-full h-full animate-fade-in">
-                  <el-input 
+                <div v-else class="flex items-center bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200 dark:border-slate-700 overflow-hidden h-12 shadow-sm transition-all hover:border-indigo-500 focus-within:border-indigo-500 focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1)]">
+                  <input 
                     v-model="configForm.customProtagonistName" 
-                    placeholder="请输入专属设定 (如: 霸道总裁)" 
-                    class="custom-input-v3 w-full !h-full"
-                    :maxlength="20"
-                  >
-                    <template #prefix>
-                      <el-icon class="text-indigo-400"><EditPen /></el-icon>
-                    </template>
-                    <template #suffix>
-                      <div class="flex items-center h-full pr-1">
-                        <div class="w-[1px] h-4 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-                        <div 
-                          class="flex items-center gap-1 cursor-pointer text-emerald-600 hover:text-emerald-700 transition-all bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-lg"
-                          @click="handleProtagonistConfirm"
-                        >
-                          <el-icon class="text-[12px]"><Check /></el-icon>
-                          <span class="text-[11px] font-medium">确认</span>
-                        </div>
-                        <div class="w-[1px] h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-                        <div 
-                          class="flex items-center gap-1 cursor-pointer text-indigo-500 hover:text-indigo-600 transition-all bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg"
-                          @click="configForm.protagonistSetting = protagonistOptions[0].label"
-                        >
-                          <el-icon class="text-[12px]"><Refresh /></el-icon>
-                          <span class="text-[11px] font-medium">重选</span>
-                        </div>
-                      </div>
-                    </template>
-                  </el-input>
+                    placeholder="自定义名称" 
+                    class="flex-1 px-3 bg-transparent border-none outline-none text-[14px] text-slate-700 dark:text-slate-200 font-bold"
+                  />
+                  <div class="flex items-center px-2 h-full gap-1 border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+                    <button @click="handleProtagonistConfirm" class="p-1.5 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-all group/confirm" title="确认">
+                      <el-icon :size="16" class="text-indigo-600 dark:text-indigo-400 group-hover/confirm:scale-110 transition-transform"><Check /></el-icon>
+                    </button>
+                    <button @click="configForm.protagonistSetting = protagonistOptions[0].label; configForm.customProtagonistName = ''" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-all group/cancel" title="取消">
+                      <el-icon :size="16" class="text-slate-500 dark:text-slate-400 group-hover/cancel:scale-110 transition-transform"><Close /></el-icon>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Video Style -->
-            <div class="col-span-1 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300">
-              <div class="flex items-center gap-2 mb-3">
-                <div class="w-7 h-7 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/20">
-                  <el-icon><Picture /></el-icon>
+            <div class="col-span-1 group bg-white dark:bg-slate-900 p-4 rounded-[24px] border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-500">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-7 h-7 rounded-[10px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all shadow-sm">
+                  <el-icon :size="14"><Picture /></el-icon>
                 </div>
-                <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">视频风格</label>
+                <label class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">视频风格</label>
               </div>
-              <el-select v-model="configForm.videoStyle" class="w-full custom-select-v3" size="default">
+              <el-select v-model="configForm.videoStyle" class="w-full custom-select-v4 !h-12" >
                 <el-option v-for="opt in videoStyleOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                   <div class="flex items-center justify-between w-full">
-                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
-                    <el-icon v-if="configForm.videoStyle === opt.label" class="text-purple-500" :size="14"><Check /></el-icon>
+                    <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+                    <el-icon v-if="configForm.videoStyle === opt.label" class="text-purple-500" :size="12"><Check /></el-icon>
                   </div>
                 </el-option>
               </el-select>
             </div>
 
             <!-- Audience -->
-            <div class="col-span-1 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-pink-500/10 hover:border-pink-500/30 transition-all duration-300">
-              <div class="flex items-center gap-2 mb-3">
-                <div class="w-7 h-7 rounded-lg bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-500/20">
-                  <el-icon><Star /></el-icon>
+            <div class="col-span-1 group bg-white dark:bg-slate-900 p-4 rounded-[24px] border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-pink-500/10 hover:border-pink-500/30 transition-all duration-500">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-7 h-7 rounded-[10px] bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+                  <el-icon :size="14"><Star /></el-icon>
                 </div>
-                <label class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">目标受众</label>
+                <label class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">目标受众</label>
               </div>
-              <el-select v-model="configForm.targetAudience" class="w-full custom-select-v3" size="default">
+              <el-select v-model="configForm.targetAudience" class="w-full custom-select-v4 !h-12" >
                 <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud">
                   <div class="flex items-center justify-between w-full">
-                    <span class="text-[13px] font-bold">{{ aud }}</span>
-                    <el-icon v-if="configForm.targetAudience === aud" class="text-pink-500" :size="14"><Check /></el-icon>
+                    <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">{{ aud }}</span>
+                    <el-icon v-if="configForm.targetAudience === aud" class="text-pink-500" :size="12"><Check /></el-icon>
                   </div>
                 </el-option>
               </el-select>
             </div>
 
-            <!-- Protagonist Detailed Setting (New) -->
-            <div class="col-span-2 group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 rounded-[20px] border border-white dark:border-slate-800 shadow-sm hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-6 h-6 rounded-lg bg-indigo-400 text-white flex items-center justify-center">
-                  <el-icon><Document /></el-icon>
+            <!-- Creation Specs: White Premium Style -->
+            <div class="col-span-1 group bg-white dark:bg-slate-900 p-4 rounded-[24px] border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/30 transition-all duration-500 flex flex-col justify-center gap-4">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0 w-24">
+                  <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-sm">
+                    <el-icon :size="14"><Collection /></el-icon>
+                  </div>
+                  <span class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">生成集数</span>
                 </div>
-                <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">主角详细设定</label>
-              </div>
-              <el-input 
-                v-model="configForm.protagonistDesc" 
-                type="textarea" 
-                :rows="2" 
-                placeholder="在此细化主角的性格、身份背景、特殊技能等..." 
-                class="custom-textarea-v3"
-              />
-            </div>
-
-            <!-- Creation Specs -->
-            <div class="col-span-2 group bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-500/10 dark:to-purple-500/10 p-4 rounded-[20px] border border-indigo-100/50 dark:border-indigo-500/20 shadow-inner flex flex-col gap-2 transition-all duration-300">
-              <div class="flex items-center gap-2 mb-1">
-                <div class="w-6 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
-                <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">创作规格 Specs</span>
-              </div>
-              
-              <div class="flex items-center gap-6">
-                <!-- Episodes -->
-                <div class="flex items-center gap-2 flex-1">
-                  <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 shrink-0">
-                    <el-icon :size="12" class="text-indigo-500"><Collection /></el-icon>
-                    <label class="text-[10px] font-bold">集数</label>
-                  </div>
-                  <div class="relative group/input flex-1">
-                    <el-input v-model="configForm.episodesCount" placeholder="80" class="custom-input-v4 !h-7" />
-                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-600/40">集</span>
-                  </div>
+                <div class="flex-1 relative">
+                  <el-input v-model="configForm.episodesCount" placeholder="80" class="custom-input-v5 !h-10 !text-[14px]" />
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-400/80 uppercase tracking-tighter">EPS</span>
                 </div>
+              </div>
 
-                <!-- Duration -->
-                <div class="flex items-center gap-2 flex-1">
-                  <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 shrink-0">
-                    <el-icon :size="12" class="text-purple-500"><Clock /></el-icon>
-                    <label class="text-[10px] font-bold">时长</label>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0 w-24">
+                  <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-sm">
+                    <el-icon :size="14"><Timer /></el-icon>
                   </div>
-                  <div class="relative group/input flex-1">
-                    <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v4 w-full !h-7" />
-                  </div>
+                  <span class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">单集时长</span>
+                </div>
+                <div class="flex-1 relative">
+                  <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v5 w-full !h-10" />
+                  <span class="absolute right-10 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-400/80 uppercase tracking-tighter pointer-events-none">SEC</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Section 3: Story Setting & Synopsis -->
-          <div class="flex flex-col gap-4">
-            <!-- Setting -->
-            <div class="flex flex-col gap-2 p-5 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group">
-              <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-              <div class="flex items-center justify-between relative z-10">
+          <!-- Section 2: Story Background (Featured Card) -->
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[30px] blur opacity-5 group-focus-within:opacity-20 transition duration-500"></div>
+            <div class="relative flex flex-col gap-2 p-4 bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/40">
+              <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <!-- <span class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-black rounded-md">3</span> -->
-                  <span class="text-[11px] font-black text-amber-600 uppercase tracking-widest">故事设定</span>
+                  <div class="w-7 h-7 rounded-[10px] bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                    <el-icon :size="14"><Location /></el-icon>
+                  </div>
+                  <div>
+                    <h3 class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 uppercase tracking-wider">故事背景</h3>
+                  </div>
                 </div>
-                <button @click="handleAIFeature('storySetting', 'polish')" :disabled="isGeneratingField.storySetting" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/50 dark:bg-amber-900/30 text-amber-600 hover:bg-amber-100 transition-all text-[11px] font-black shadow-sm border border-amber-200 dark:border-amber-800">
-                  <el-icon :size="14" class="text-amber-500" :class="{'is-loading': isGeneratingField.storySetting}"><Brush /></el-icon>
-                  <span>AI 润色</span>
+                <button 
+                  @click="handleAIFeature('storyBackground', 'polish')" 
+                  :disabled="isGeneratingField.storyBackground" 
+                  class="group/btn flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all duration-500 text-[11px] font-black shadow-sm border border-indigo-100 dark:border-indigo-900 overflow-hidden relative"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                  <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storyBackground}"><Brush /></el-icon>
+                  <span class="relative z-10">AI 润色</span>
                 </button>
               </div>
-              <p class="text-[10px] text-slate-400 font-medium -mt-1">人物关系、核心矛盾、金手指、规则</p>
-              <el-input v-model="configForm.storySetting" type="textarea" :rows="3" placeholder="例如：主角拥有一种能听见植物心声的能力..." class="custom-textarea-v3 flex-1" />
+              <el-input v-model="configForm.storyBackground" type="textarea" :rows="3" placeholder="构建世界观、时代与环境设定..." class="custom-textarea-v4 !text-[15px]" />
             </div>
+          </div>
 
-            <!-- Synopsis -->
-            <div class="flex flex-col gap-2 p-5 bg-gradient-to-br from-white/90 to-slate-50/90 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-2xl rounded-[24px] border border-white dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden group border-indigo-500/30">
-              <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-              <div class="flex items-center justify-between relative z-10">
-                <div class="flex items-center gap-2">
-                  <!-- <span class="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-black rounded-md">4. 最后写</span> -->
-                  <span class="text-[11px] font-black text-emerald-600 uppercase tracking-widest">故事梗概</span>
+          <!-- Section 3: Character Profile -->
+          <div class="group flex flex-col gap-2 p-4 bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-500">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-[10px] bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                  <el-icon :size="14"><Avatar /></el-icon>
                 </div>
-                <button @click="handleAIFeature('storySynopsis', 'polish')" :disabled="isGeneratingField.storySynopsis" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-100 transition-all text-[11px] font-black shadow-sm border border-emerald-200 dark:border-emerald-800">
-                  <el-icon :size="14" class="text-emerald-500" :class="{'is-loading': isGeneratingField.storySynopsis}"><Brush /></el-icon>
-                  <span>AI 润色</span>
-                </button>
+                <div>
+                  <h3 class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色档案</h3>
+                </div>
               </div>
-              <p class="text-[10px] text-slate-400 font-medium -mt-1">完整剧情（起承转合）</p>
-              <el-input v-model="configForm.storySynopsis" type="textarea" :rows="4" placeholder="例如：原本平凡的少年意外救下了财阀之女，从此开启了..." class="custom-textarea-v3 flex-1" />
+              <button 
+                @click="handleAIFeature('storySetting', 'polish')"
+                :disabled="isGeneratingField.protagonistDesc" 
+                class="group/btn flex items-center gap-2 px-3 py-1 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 hover:bg-purple-600 hover:text-white transition-all duration-500 text-[11px] font-black shadow-sm border border-purple-100 dark:border-purple-900 overflow-hidden relative"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.protagonistDesc}"><Brush /></el-icon>
+                <span class="relative z-10">AI 润色</span>
+              </button>
             </div>
+            <el-input v-model="configForm.protagonistDesc" type="textarea" :rows="3" placeholder="描述主角的性格、身份背景..." class="custom-textarea-v4 !text-[15px]" />
+          </div>
+
+          <!-- Section 4: Story Setting -->
+          <div class="group flex flex-col gap-2 p-4 bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-500">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-[10px] bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                  <el-icon :size="14"><Connection /></el-icon>
+                </div>
+                <div>
+                  <h3 class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 uppercase tracking-wider">故事设定</h3>
+                </div>
+              </div>
+              <button 
+                @click="handleAIFeature('storySetting', 'polish')" 
+                :disabled="isGeneratingField.storySetting" 
+                class="group/btn flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 hover:bg-amber-600 hover:text-white transition-all duration-500 text-[11px] font-black shadow-sm border border-amber-100 dark:border-amber-900 overflow-hidden relative"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storySetting}"><Brush /></el-icon>
+                <span class="relative z-10">AI 润色</span>
+              </button>
+            </div>
+            <el-input v-model="configForm.storySetting" type="textarea" :rows="3" placeholder="人物关系、核心矛盾设定..." class="custom-textarea-v4 !text-[15px]" />
+          </div>
+
+          <!-- Section 5: Synopsis (Full Width) -->
+          <div class="group flex flex-col gap-2 p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-[24px] border border-emerald-100 dark:border-emerald-900/30 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-500/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-[10px] bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                  <el-icon :size="14"><Document /></el-icon>
+                </div>
+                <div>
+                  <h3 class="text-[12px] font-[1000] text-slate-400 dark:text-slate-500 uppercase tracking-wider">故事梗概</h3>
+                </div>
+              </div>
+              <button 
+                @click="handleAIFeature('storySynopsis', 'polish')" 
+                :disabled="isGeneratingField.storySynopsis" 
+                class="group/btn flex items-center gap-2 px-3 py-1 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 hover:text-white transition-all duration-500 text-[11px] font-black shadow-sm border border-emerald-100 dark:border-emerald-900/30 overflow-hidden relative"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storySynopsis}"><Brush /></el-icon>
+                <span class="relative z-10">AI 补全大纲</span>
+              </button>
+            </div>
+            <el-input v-model="configForm.storySynopsis" type="textarea" :rows="4" placeholder="详细描述整个故事的发展脉络..." class="custom-textarea-v4 !text-[15px]" />
           </div>
 
         </div>
 
-        <!-- Footer: Massive CTA -->
-        <div class="px-8 py-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border-t border-white dark:border-slate-800 flex items-center justify-center shrink-0">
-          <button 
-            @click="finishConfig"
-            :disabled="!configForm.protagonistSetting"
-            class="group relative w-full max-w-md h-12 flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white rounded-2xl font-black text-base shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-[0.98] transition-all duration-500 disabled:opacity-40 disabled:grayscale disabled:pointer-events-none"
-          >
-            <!-- Animated Light Streak -->
-            <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-              <div class="absolute top-0 -left-[100%] w-[50%] h-full bg-white/20 skew-x-[45deg] animate-light-streak"></div>
+        <!-- Footer: High-Impact Action Center -->
+        <div class="px-10 py-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0 relative z-20 shadow-[0_-15px_40px_rgba(0,0,0,0.02)]">
+          <div class="flex items-center gap-8">
+            <!-- Left: AI Intelligence Block -->
+            <div class="flex-1 flex items-center justify-between gap-6 p-4 bg-slate-50 dark:bg-indigo-500/5 rounded-[24px] border border-slate-200/50 dark:border-indigo-500/20 group relative overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/10">
+              <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <div class="flex flex-col relative z-10">
+                <div class="flex items-center gap-3 mb-1">
+                  <div class="flex h-2.5 w-2.5 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
+                  </div>
+                  <span class="text-lg font-[1000] text-slate-800 dark:text-white tracking-tighter">智能灵感补全</span>
+                </div>
+                <p class="text-[13px] text-slate-500 dark:text-slate-400 font-bold tracking-tight">只需基础信息，<span class="text-indigo-600 dark:text-indigo-400">AI</span> 自动构建全案</p>
+              </div>
+
+              <!-- AI One-click Generation Button: Colored Premium Style -->
+              <button 
+                @click="generateInspirationData" 
+                :disabled="isGeneratingInspiration"
+                class="relative z-10 flex items-center gap-3 px-6 h-10 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-500 text-[14px] font-[1000] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border border-white/20 group/btn"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                <el-icon :class="{'is-loading': isGeneratingInspiration}" :size="20" class="relative z-10 group-hover/btn:rotate-12 transition-transform">
+                  <MagicStick v-if="!isGeneratingInspiration"/>
+                  <Loading v-else/>
+                </el-icon>
+                <span class="relative z-10 tracking-wider">{{ isGeneratingInspiration ? '构思中...' : '一键生成' }}</span>
+              </button>
             </div>
-            
-            <el-icon class="group-hover:rotate-12 transition-transform duration-300" :size="20"><MagicStick /></el-icon>
-            <span class="tracking-widest">开启 AI 剧本创作</span>
-            
-            <!-- Floating Particles Effect (Optional) -->
-            <div class="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full blur-[2px] animate-ping opacity-0 group-hover:opacity-40"></div>
-            <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-indigo-400 rounded-full blur-[1px] animate-ping opacity-0 group-hover:opacity-40" style="animation-delay: 0.5s"></div>
-          </button>
+
+            <!-- Right: The Primary Action -->
+            <button 
+              @click="finishConfig"
+              :disabled="!isFormComplete"
+              class="group relative px-10 h-12 flex items-center justify-center gap-4 bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-[24px] font-[1000] text-lg shadow-[0_10px_20px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] transition-all duration-500 disabled:opacity-40 disabled:grayscale disabled:pointer-events-none overflow-hidden"
+              :class="{'hover:shadow-[0_15px_30px_-8px_rgba(79,70,229,0.5)] hover:-translate-y-0.5 animate-pulse-indigo': isFormComplete}"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+              <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <el-icon :size="24" class="group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 animate-float"><Lightning /></el-icon>
+              <span class="tracking-[0.1em] uppercase">开启创作</span>
+            </button>
+          </div>
         </div>
       </div>
     </el-dialog>
+
 
     <ProductDesignDialog
       v-model="showDesignDialog"
@@ -540,6 +638,21 @@
         version: '2.2'
       }"
     />
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 新建短剧"
+      subtitle="NewDrama UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
   </div>
 </template>
 
@@ -578,10 +691,14 @@ import {
   Warning,
   GoldMedal,
   QuestionFilled,
-  Loading
+  Loading,
+  Crop,
+  CircleCheck,
+  FullScreen
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 // 导入产品设计图片以确保被 Vite 编译进源代码
 import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
 
@@ -591,9 +708,153 @@ const router = useRouter();
 const dramaStore = useDramaStore();
 const isLight = inject('isLight', ref(true));
 const showDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
 const showHotTopicDialog = ref(false);
 const currentStep = ref(1);
 const selectedTopic = ref<any>(null);
+
+const uiDesignGroups = {
+  layout: [
+    {
+      id: 'newDrama',
+      title: '短剧创作首页 (NewDrama)',
+      description: '短剧创作入口页：AI 灵感输入 / 剧本导入 / 近期作品。',
+      items: [
+        { name: '页面内边距', value: 'p-4 / lg:p-6', description: '主滚动容器 padding' },
+        { name: '主容器宽度', value: 'max-w-7xl', description: '整体内容水平居中' },
+        { name: '创作卡宽度', value: 'max-w-5xl', description: 'AI 输入与导入区域' },
+        { name: '创作卡圆角', value: '32px', description: 'rounded-[32px]' },
+        { name: 'Tab 容器圆角', value: '18px / 14px', description: 'rounded-[18px] + rounded-[14px]' },
+        { name: '输入框圆角', value: '28px', description: 'rounded-[28px]（含 2px 边框）' },
+        { name: '输入框高度', value: 'h-24 / md:h-28', description: '文本域高度' },
+        { name: '按钮圆角', value: 'rounded-2xl', description: '立即创作主按钮' },
+        { name: '近期作品区圆角', value: '32px', description: 'rounded-[32px]' },
+        { name: '作品卡圆角', value: '20px', description: 'rounded-[20px]' },
+        { name: '作品预览区高度', value: 'h-24', description: '卡片顶部预览区域高度' },
+        { name: '作品网格列数', value: '2 / 4', description: 'grid-cols-2 lg:grid-cols-4，gap-4' }
+      ]
+    },
+    {
+      id: 'hotTopicDialog',
+      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+      description: '高级创作规格配置弹窗：标题/题材/主角/风格/受众/集数/时长/背景等。',
+      items: [
+        { name: 'Dialog 宽度', value: '1200px', description: 'el-dialog width="1200px"' },
+        { name: 'Dialog 顶部偏移', value: 'top: 1vh', description: 'top="1vh"' },
+        { name: 'Dialog 圆角', value: '40px', description: 'rounded-[40px]（外层）' },
+        { name: 'Dialog 内层圆角', value: '36px', description: 'rounded-[36px]（内容容器）' },
+        { name: '头部内边距', value: 'px-10 pt-4 pb-3', description: '沉浸式 Hero Header' },
+        { name: '内容区内边距', value: 'px-10 pb-4', description: '滚动内容区' },
+        { name: '内容区间距', value: 'gap-4', description: '纵向模块间距' },
+        { name: '顶部两列栅格', value: 'grid-cols-2 gap-4', description: '标题/题材' },
+        { name: '策略选项栅格', value: 'grid-cols-4 gap-4', description: '主角/风格/受众/规格' },
+        { name: '底部操作区', value: 'px-10 py-4', description: '固定 Footer（Action Center）' },
+        { name: '关闭按钮尺寸', value: '36x36', description: 'w-9 h-9 rounded-2xl' },
+        { name: '主CTA尺寸', value: 'h-12', description: '开启创作按钮高度' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'newDrama',
+      title: '短剧创作首页 (NewDrama)',
+      description: '入口页字号、层级与组件文本规范。',
+      items: [
+        { name: '主标题 (Hero H1)', style: { fontSize: '30px', fontWeight: '900', letterSpacing: '-0.02em' }, description: 'text-2xl md:text-3xl font-black tracking-tight leading-tight' },
+        { name: '副标题 (Hero Desc)', style: { fontSize: '14px', fontWeight: '500', opacity: '0.7' }, description: 'text-xs md:text-sm font-medium leading-relaxed opacity-70 text-slate-500' },
+        { name: 'Tab 标题', style: { fontSize: '14px', fontWeight: '900' }, description: 'text-[14px] font-black' },
+        { name: '输入正文', style: { fontSize: '18px', fontWeight: '500', lineHeight: '1.6' }, description: 'text-lg font-medium leading-relaxed placeholder:text-slate-400/60' },
+        { name: '工具条统计', style: { fontSize: '11px', fontWeight: '700' }, description: 'text-[11px] font-bold（字数统计/状态提示）' },
+        { name: '区块标题', style: { fontSize: '20px', fontWeight: '900' }, description: 'text-xl font-black（近期作品）' }
+      ]
+    },
+    {
+      id: 'hotTopicDialog',
+      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+      description: '弹窗标题层级、字段标签与按钮字重。',
+      items: [
+        { name: '弹窗标题', style: { fontSize: '24px', fontWeight: '1000', letterSpacing: '-0.03em' }, description: 'text-2xl font-[1000] tracking-tighter（渐变文字）' },
+        { name: '弹窗副文案', style: { fontSize: '13px', fontWeight: '700' }, description: 'text-[13px] font-bold text-slate-500' },
+        { name: '字段 Label', style: { fontSize: '12px', fontWeight: '1000', textTransform: 'uppercase' }, description: 'text-[12px] font-[1000] tracking-tight uppercase' },
+        { name: '输入内容', style: { fontSize: '15px', fontWeight: '700' }, description: '!text-[15px]（custom-input-v5 / custom-select-v4）' },
+        { name: '辅助单位标签', style: { fontSize: '9px', fontWeight: '900', opacity: '0.8' }, description: 'text-[9px] font-black text-indigo-400/80 uppercase' },
+        { name: '底部主按钮', style: { fontSize: '18px', fontWeight: '1000', letterSpacing: '0.1em' }, description: 'text-lg font-[1000] tracking-[0.1em] uppercase' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'newDrama',
+      title: '短剧创作首页 (NewDrama)',
+      description: '入口页背景、毛玻璃与渐变主题色。',
+      items: [
+        { name: '页面背景', value: '#F8FAFC' },
+        { name: '标题渐变', value: 'from-indigo-600 via-purple-600 to-pink-500' },
+        { name: '装饰光晕', value: 'bg-indigo-500/5 + bg-purple-500/5' },
+        { name: '主卡片毛玻璃', value: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl' },
+        { name: '输入区边框', value: 'border-slate-100 dark:border-slate-800' },
+        { name: '输入聚焦高亮', value: 'group-focus-within:border-indigo-500/40' },
+        { name: '工具条底色', value: 'bg-slate-50/80 dark:bg-slate-800/80' },
+        { name: '主按钮渐变', value: 'from-indigo-600 to-purple-600' },
+        { name: '热门题材标签', value: 'bg-white border-slate-100 hover:border-indigo-300 hover:text-indigo-600' },
+        { name: '近期作品标题条', value: 'bg-indigo-600 (left bar)' },
+        { name: '管理作品按钮', value: 'bg-slate-900 dark:bg-white' }
+      ]
+    },
+    {
+      id: 'hotTopicDialog',
+      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+      description: '弹窗背景、Hero 渐变遮罩与主 CTA 色彩。',
+      items: [
+        { name: '弹窗背景', value: '#F8FAFC / dark:bg-slate-950' },
+        { name: '头部渐变遮罩', value: 'from-indigo-600/15 via-purple-600/10 to-transparent' },
+        { name: '光晕装饰', value: 'bg-indigo-500/15 + bg-purple-500/15 + bg-pink-500/10' },
+        { name: '标题渐变', value: 'from-slate-900 via-indigo-600 to-purple-600' },
+        { name: 'AI PRO 徽标', value: 'from-indigo-600 via-purple-600 to-pink-500' },
+        { name: '卡片毛玻璃', value: 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl' },
+        { name: '卡片边框', value: 'border-white dark:border-slate-800' },
+        { name: '卡片 Hover 边框', value: 'hover:border-indigo-500/30' },
+        { name: 'AI 润色按钮', value: 'bg-indigo-50 hover:bg-indigo-600（渐变覆盖）' },
+        { name: '关闭按钮 Hover', value: 'hover:text-rose-500 hover:rotate-90' },
+        { name: '一键生成按钮', value: 'from-indigo-600 to-purple-600' },
+        { name: '开启创作按钮', value: 'from-indigo-600 via-indigo-500 to-purple-600' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'newDrama',
+      title: '短剧创作首页 (NewDrama)',
+      description: '入口页关键组件与交互态。',
+      items: [
+        { name: '模式切换 Tab', tag: 'button', classes: 'flex-1 py-1.5 text-[14px] font-black rounded-[14px] flex items-center justify-center gap-2', notes: ['Active: bg-white/dark:bg-slate-700 + text-indigo-600 + shadow-sm + scale-[1.01]', 'Inactive: text-slate-500 hover:text-slate-700'] },
+        { name: '灵感输入容器', tag: 'div', classes: 'relative bg-white dark:bg-slate-900 rounded-[28px] border-2 border-slate-100 dark:border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-indigo-500/5', notes: ['外围使用渐变 blur 作为动态描边（focus/生成时）'] },
+        { name: '灵感输入 Textarea', tag: 'textarea', classes: 'w-full h-24 md:h-28 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 text-lg p-6 font-medium leading-relaxed', notes: ['Placeholder: text-slate-400/60'] },
+        { name: '底部工具条', tag: 'div', classes: 'px-6 py-3 bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between', notes: ['左侧字数统计/清空/AI润色；右侧主CTA'] },
+        { name: '立即创作 (主 CTA)', tag: 'button', classes: 'px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 disabled:opacity-40 disabled:grayscale', notes: ['Disabled: 无输入或生成中', 'Loading: 图标切换为 Loading'] },
+        { name: '热门题材标签', tag: 'div', classes: 'px-4 py-1.5 rounded-2xl text-[12px] font-bold border border-slate-100 bg-white hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md hover:-translate-y-0.5', notes: ['点击触发“开启灵感之门”弹窗'] },
+        { name: '管理作品按钮', tag: 'button', classes: 'h-8 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-black text-[11px] shadow-md hover:scale-105 active:scale-95', notes: ['右侧箭头 hover 平移 translate-x-1'] },
+        { name: '近期作品卡片', tag: 'div', classes: 'bg-white dark:bg-slate-800 rounded-[20px] border border-slate-100/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500', notes: ['Hover: 预览图 scale-110；标题变色 text-indigo-600'] }
+      ]
+    },
+    {
+      id: 'hotTopicDialog',
+      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+      description: '弹窗关键组件、输入控件与主 CTA。',
+      items: [
+        { name: '关闭按钮', tag: 'button', classes: 'w-9 h-9 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl text-slate-400 hover:text-rose-500 hover:bg-white hover:rotate-90 shadow-xl border border-white', notes: ['点击关闭弹窗', 'Hover: 旋转 90° + 颜色变红'] },
+        { name: '弹窗标题块', tag: 'h2', classes: 'text-2xl font-[1000] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600', notes: ['与左侧 Icon 卡形成 Hero 区域'] },
+        { name: 'AI 润色按钮', tag: 'button', classes: 'px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 hover:bg-indigo-600 hover:text-white text-[11px] font-black border border-indigo-100 overflow-hidden relative', notes: ['Hover: 渐变层覆盖 from-indigo-600 to-purple-600', 'Loading: icon is-loading'] },
+        { name: '字段卡片', tag: 'div', classes: 'p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/30', notes: ['用于作品名称/题材等重要字段'] },
+        { name: 'Select 选择器', tag: 'el-select', classes: 'custom-select-v4 !h-14 / !h-12', notes: ['下拉项右侧显示 Check 选中态', '支持 allow-create（题材）'] },
+        { name: 'Input 输入框', tag: 'el-input', classes: 'custom-input-v5 !h-14 !text-[15px]', notes: ['用于作品名称/集数等'] },
+        { name: 'InputNumber 数字输入', tag: 'el-input-number', classes: 'custom-number-v5 w-full !h-10 controls-position="right"', notes: ['右侧单位 SEC 叠加在输入上'] },
+        { name: '一键生成 (智能补全)', tag: 'button', classes: 'px-6 h-10 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-50', notes: ['Loading: 图标切换为 Loading', 'Hover: 渐变反转层覆盖'] },
+        { name: '开启创作 (主动作)', tag: 'button', classes: 'px-10 h-12 bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-[24px] text-lg font-[1000] shadow-[0_10px_20px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] disabled:opacity-40', notes: ['表单完整时增加 shimmer 光带与 hover 阴影'] }
+      ]
+    }
+  ]
+};
 
 const designImageUrl = (fileName: string) => `${import.meta.env.BASE_URL}images/design/${fileName}`;
 
@@ -601,7 +862,9 @@ const designImageUrl = (fileName: string) => `${import.meta.env.BASE_URL}images/
 const activeTab = ref('ai'); 
 const aiPrompt = ref('');
 const isGenerating = ref(false);
+const isGeneratingInspiration = ref(false);
 const isGeneratingField = reactive<Record<string, boolean>>({
+  title: false,
   storySynopsis: false,
   storyBackground: false,
   storySetting: false,
@@ -610,13 +873,15 @@ const isGeneratingField = reactive<Record<string, boolean>>({
 
 // Configuration state
 const configForm = reactive({
+  title: '',
   scriptType: 'short_drama',
   genre: '',
+  customGenre: '',
   targetAudience: '女频',
   videoStyle: '写实',
   episodesCount: '80',
   expectedDuration: 120,
-  protagonistSetting: '',
+  protagonistSetting: '落魄千金',
   customProtagonistName: '',
   protagonistDesc: '',
   storySynopsis: '',
@@ -728,6 +993,22 @@ const isCustomProtagonist = computed(() => {
   return opt?.isCustom || configForm.protagonistSetting === '自定义';
 });
 
+const isFormComplete = computed(() => {
+  const isGenreValid = configForm.genre === '自定义' 
+    ? configForm.customGenre.trim().length > 0 
+    : (configForm.genre && configForm.genre.trim().length > 0);
+
+  return configForm.title &&
+         isGenreValid && 
+         configForm.protagonistSetting && 
+         configForm.protagonistDesc && 
+         configForm.storySynopsis && 
+         configForm.storyBackground && 
+         configForm.storySetting && 
+         configForm.targetAudience && 
+         configForm.videoStyle;
+});
+
 const handleProtagonistChange = (val: string) => {
   if (val === '自定义') {
     // Focus or simple logic can be added here if needed, but ElMessageBox is removed for better C-end UX.
@@ -743,14 +1024,25 @@ const handleProtagonistConfirm = () => {
   }
 };
 
+const handleGenreConfirm = () => {
+  if (configForm.genre.trim()) {
+    ElMessage.success(`已确认题材：${configForm.genre}`);
+  } else {
+    ElMessage.warning('请选择或输入题材名称');
+  }
+};
+
 const audienceOptions = ['男频', '女频', '大众'];
 
-const handleAIFeature = (field: 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
+const handleAIFeature = (field: 'title' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
   isGeneratingField[field] = true;
   
   // Mock AI behavior
   setTimeout(() => {
-    if (field === 'storySynopsis') {
+    if (field === 'title') {
+      configForm.title = configForm.title || '未命名作品';
+      configForm.title = configForm.title.replace('（已由 AI 润色）', '') + '（已由 AI 润色）';
+    } else if (field === 'storySynopsis') {
       configForm.storySynopsis = configForm.storySynopsis || '在赛博朋克的未来，一个底层少年意外发现自己能连接已故天才的意识...';
       configForm.storySynopsis = configForm.storySynopsis + '（已由 AI 深度润色，增加了剧情转折的不可预测性）';
     } else if (field === 'storyBackground') {
@@ -782,8 +1074,14 @@ const finishConfig = () => {
 
   const protagonist = `【主角设定】${finalProtagonistName}`;
 
-  const finalPrompt = `【题材】${configForm.genre || selectedTopic.value.label}
+  const finalGenre = configForm.genre === '自定义' && configForm.customGenre.trim()
+    ? configForm.customGenre.trim()
+    : (configForm.genre || selectedTopic.value.label);
+
+  const finalPrompt = `【作品名称】${configForm.title || '未命名短剧'}
+【题材】${finalGenre}
 ${protagonist}
+【角色档案】${configForm.protagonistDesc}
 【故事梗概】${configForm.storySynopsis}
 【故事背景】${configForm.storyBackground}
 【故事设定】${configForm.storySetting}
@@ -803,28 +1101,65 @@ const selectHotTopic = (topic: any) => {
   if (isGenerating.value) return;
   selectedTopic.value = topic;
   configForm.genre = topic.label;
+  configForm.title = ''; // Reset title
   
-  // Auto-generate default contents when dialog opens
-  configForm.protagonistSetting = protagonistOptions.value[0].label;
-  configForm.targetAudience = audienceOptions[1]; // 女频
-  configForm.videoStyle = '写实';
   configForm.episodesCount = '80';
   configForm.expectedDuration = 120;
   
-  // Use template to generate synopsis if available, or use defaults
-  if (topic.template) {
-    const parts = topic.template.split('\n');
-    configForm.storySynopsis = parts.find((p: string) => p.includes('核心冲突'))?.replace('核心冲突：', '') || '';
-    configForm.storyBackground = `在典型的${topic.label}环境下展开，注重情感张力与快节奏转折。`;
-    configForm.storySetting = `主角通过不懈努力，最终实现${topic.label}题材中常见的逆袭。`;
-  } else {
-    configForm.storySynopsis = '这是一个充满未知与挑战的故事，讲述了主角如何在逆境中寻找希望并完成自我救赎。';
-    configForm.storyBackground = '现代都市，繁华表象下隐藏着复杂的权谋与深厚的情感纠葛。';
-    configForm.storySetting = '故事注重细节刻画，力求在真实的社会背景下展现人性的光辉与阴暗面。';
-  }
+  // Set default selections for the first row
+  configForm.protagonistSetting = protagonistOptions.value[0].label;
+  configForm.targetAudience = audienceOptions[0];
+  configForm.videoStyle = videoStyleOptions[0].label;
+  
+  // Clear the fields by default as requested by user
+  configForm.storySynopsis = '';
+  configForm.storyBackground = '';
+  configForm.storySetting = '';
+  configForm.protagonistDesc = '';
   
   currentStep.value = 1;
   showHotTopicDialog.value = true;
+};
+
+const generateInspirationData = () => {
+  const topic = selectedTopic.value;
+  if (!topic) return;
+
+  isGeneratingInspiration.value = true;
+  
+  setTimeout(() => {
+    if (topic.template) {
+      const parts = topic.template.split('\n');
+      if (!configForm.storySynopsis) {
+        configForm.storySynopsis = parts.find((p: string) => p.includes('核心冲突'))?.replace('核心冲突：', '') || '';
+      }
+      if (!configForm.storyBackground) {
+        configForm.storyBackground = `在典型的${topic.label}环境下展开，注重情感张力与快节奏转折。`;
+      }
+      if (!configForm.protagonistDesc) {
+        configForm.protagonistDesc = `主角拥有符合${topic.label}设定的特殊身份与技能，在危机中展现出非凡的智慧与勇气。`;
+      }
+      if (!configForm.storySetting) {
+        configForm.storySetting = `主角通过不懈努力，最终实现${topic.label}题材中常见的逆袭。`;
+      }
+    } else {
+      if (!configForm.storySynopsis) {
+        configForm.storySynopsis = '这是一个充满未知与挑战的故事，讲述了主角如何在逆境中寻找希望并完成自我救赎。';
+      }
+      if (!configForm.storyBackground) {
+        configForm.storyBackground = '现代都市，繁华表象下隐藏着复杂的权谋与深厚的情感纠葛。';
+      }
+      if (!configForm.protagonistDesc) {
+        configForm.protagonistDesc = '性格坚韧、外冷内热，拥有不为人知的神秘过往，擅长在绝境中寻找生机。';
+      }
+      if (!configForm.storySetting) {
+        configForm.storySetting = '故事注重细节刻画，力求在真实的社会背景下展现人性的光辉与阴暗面。';
+      }
+    }
+    
+    isGeneratingInspiration.value = false;
+    ElMessage.success('补全灵感内容成功');
+  }, 1000);
 };
 
 const typeText = (text: string) => {
@@ -849,38 +1184,121 @@ const startCreation = () => {
     ElMessage.warning('请输入创作灵感或点击上方建议');
     return;
   }
-  isGenerating.value = true;
-
-  const expandedContent = `【故事设定】
-这是一个充满未知与冲突的世界，规则残酷但机遇并存。主角所在的环境看似寻常，实则暗流涌动，各方势力在此交织博弈。
-
-【主角特征】
-- 身份背景：身处低谷或看似平凡，但拥有某种不为人知的特质。
-- 核心性格：外冷内热，行事果断，在关键时刻能够爆发出惊人的意志力。
-- 核心动机：为了打破不公的命运，或是守护内心最珍视的信念。
-
-【剧情脉络】
-1. 起因：主角因一场意外（或必然的安排）被卷入风暴中心，原本平静的生活被彻底打破。
-2. 发展：在应对危机的过程中，主角逐渐觉醒并结识了性格各异的同伴。他们一路披荆斩棘，发现了隐藏在表象之下的惊天秘密。
-3. 高潮：各方矛盾彻底激化，主角团队面临生死存亡的绝境。在最黑暗的时刻，主角利用关键线索完成绝地反击，局势瞬间逆转。
-4. 结尾：危机解除，最大的反派倒台。主角完成了自己的使命，但也付出了相应的代价。
-
-【最终结局】
-世界迎来了新的黎明，旧的秩序被打破。主角没有选择留在聚光灯下，而是带着同伴踏上了新的旅程，留下了一段属于他们的传奇。
-
-（基于您的灵感：“${aiPrompt.value}”生成）`;
-
-  dramaStore.setExpandedPrompt(expandedContent);
   
-  setTimeout(() => {
-    router.push('/ai-short-drama-creator/outline');
-    isGenerating.value = false;
-  }, 1000);
+  // Instead of direct creation, open the config dialog
+  selectedTopic.value = { label: 'AI 灵感创作', isCustom: true };
+  configForm.genre = 'AI 灵感创作';
+  configForm.title = '';
+  configForm.storySynopsis = aiPrompt.value;
+  configForm.storyBackground = '';
+  configForm.storySetting = '';
+  configForm.protagonistDesc = '';
+  
+  configForm.episodesCount = '80';
+  configForm.expectedDuration = 120;
+  configForm.protagonistSetting = protagonistOptions.value[0].label;
+  configForm.targetAudience = audienceOptions[0];
+  configForm.videoStyle = videoStyleOptions[0].label;
+
+  showHotTopicDialog.value = true;
 };
 
 const handleFileUpload = (file: any) => {
-  ElMessage.success(`文件解析中...`);
-  setTimeout(() => router.push('/ai-short-drama-creator/outline'), 1000);
+  if (!file.raw) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const content = e.target?.result as string;
+    if (!content) return;
+
+    ElMessage({
+      message: '正在智能提取剧本关键信息...',
+      type: 'info',
+      duration: 2000
+    });
+
+    // 智能提取逻辑 (模拟 AI 提取)
+    const extractedInfo = {
+      title: content.match(/(?:剧名|书名|作品名)[:：]\s*(.*)/)?.[1] || file.name.replace(/\.[^/.]+$/, ""),
+      genre: content.match(/(?:题材|类型)[:：]\s*(.*)/)?.[1] || '',
+      protagonistSetting: content.match(/(?:主角设定|主角身份|主角姓名)[:：]\s*(.*)/)?.[1] || '',
+      protagonistDesc: content.match(/(?:主角描述|主角性格|角色简介)[:：]\s*(.*)/)?.[1] || '',
+      storySynopsis: content.match(/(?:故事梗概|剧情简介|故事大纲)[:：]\s*(.*)/)?.[1] || '',
+      storyBackground: content.match(/(?:故事背景|背景设定|世界观)[:：]\s*(.*)/)?.[1] || '',
+      storySetting: content.match(/(?:核心冲突|特殊设定|故事设定)[:：]\s*(.*)/)?.[1] || '',
+      targetAudience: content.match(/(?:目标受众|受众|频道)[:：]\s*(.*)/)?.[1] || '女频',
+      videoStyle: content.match(/(?:视频风格|视觉风格|画风)[:：]\s*(.*)/)?.[1] || '写实'
+    };
+
+    // 设置选中主题，使其与“输入一句话”逻辑保持一致
+    selectedTopic.value = { label: '外部剧本导入', isCustom: true };
+    
+    // 清空表单，确保回显的是新提取的内容
+    configForm.title = '';
+    configForm.genre = '';
+    configForm.customGenre = '';
+    configForm.protagonistSetting = '';
+    configForm.customProtagonistName = '';
+    configForm.protagonistDesc = '';
+    configForm.storySynopsis = '';
+    configForm.storyBackground = '';
+    configForm.storySetting = '';
+    
+    // 回显到表单
+    if (extractedInfo.title) configForm.title = extractedInfo.title;
+    
+    // 题材处理：如果匹配到预设题材则回显，否则设为自定义
+    if (extractedInfo.genre) {
+      const matchedTopic = hotTopics.find(t => extractedInfo.genre.includes(t.label));
+      if (matchedTopic) {
+        configForm.genre = matchedTopic.label;
+      } else {
+        configForm.genre = '自定义';
+        configForm.customGenre = extractedInfo.genre;
+      }
+    } else {
+      configForm.genre = 'AI 灵感创作'; // 默认值
+    }
+
+    // 主角设定处理
+    if (extractedInfo.protagonistSetting) {
+      const matchedProtagonist = protagonistOptions.value.find(p => extractedInfo.protagonistSetting.includes(p.label));
+      if (matchedProtagonist) {
+        configForm.protagonistSetting = matchedProtagonist.label;
+      } else {
+        configForm.protagonistSetting = '自定义';
+        configForm.customProtagonistName = extractedInfo.protagonistSetting;
+      }
+    }
+
+    if (extractedInfo.protagonistDesc) configForm.protagonistDesc = extractedInfo.protagonistDesc;
+    if (extractedInfo.storySynopsis) configForm.storySynopsis = extractedInfo.storySynopsis;
+    if (extractedInfo.storyBackground) configForm.storyBackground = extractedInfo.storyBackground;
+    if (extractedInfo.storySetting) configForm.storySetting = extractedInfo.storySetting;
+    
+    // 受众匹配
+    if (extractedInfo.targetAudience) {
+      const matchedAudience = audienceOptions.find(a => extractedInfo.targetAudience.includes(a));
+      if (matchedAudience) configForm.targetAudience = matchedAudience;
+    }
+
+    // 风格匹配
+    if (extractedInfo.videoStyle) {
+      const matchedStyle = videoStyleOptions.find(s => extractedInfo.videoStyle.includes(s.label));
+      if (matchedStyle) configForm.videoStyle = matchedStyle.label;
+    }
+
+    // 确保弹窗显示正确步骤
+    currentStep.value = 1;
+
+    // 延迟打开弹窗，增加仪式感
+    setTimeout(() => {
+      showHotTopicDialog.value = true;
+      ElMessage.success('剧本信息提取成功，已为您回显至配置页');
+    }, 1000);
+  };
+
+  reader.readAsText(file.raw);
 };
 </script>
 
@@ -984,145 +1402,207 @@ const handleFileUpload = (file: any) => {
 }
 
 /* New V3 UI Styles */
-.hot-topic-dialog-v2 :deep(.el-dialog) {
+.hot-topic-dialog-v3 :deep(.el-dialog) {
   background: transparent !important;
   box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .custom-scrollbar-v2::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
+}
+.custom-scrollbar-v2::-webkit-scrollbar-track {
+  background: transparent;
 }
 .custom-scrollbar-v2::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
+  background: rgba(99, 102, 241, 0.1);
   border-radius: 10px;
+  transition: all 0.3s;
+}
+.custom-scrollbar-v2::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.3);
+}
+.dark .custom-scrollbar-v2::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+}
+.dark .custom-scrollbar-v2::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
 }
 
-:deep(.custom-select-v3 .el-input__wrapper) {
-  border-radius: 20px;
+/* Premium Input Styles V5 */
+:deep(.custom-input-v5 .el-input__wrapper) {
+  border-radius: 10px;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
-  padding: 10px 20px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  padding: 4px 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.dark :deep(.custom-select-v3 .el-input__wrapper) {
-  background-color: #1e293b;
+.dark :deep(.custom-input-v5 .el-input__wrapper) {
+  background-color: #0f172a;
   border-color: #334155;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
-:deep(.custom-select-v3 .el-input__wrapper:hover) {
+:deep(.custom-input-v5 .el-input__wrapper:hover) {
   border-color: #6366f1;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.08) !important;
 }
-:deep(.custom-select-v3 .el-input__wrapper.is-focus) {
-  border-color: #6366f1;
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12), 0 8px 24px rgba(99, 102, 241, 0.1) !important;
-}
-
-/* Option List Styling */
-:deep(.el-select-dropdown__item) {
-  margin: 4px 8px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  height: auto !important;
-  line-height: normal !important;
-  padding: 8px 12px !important;
-}
-:deep(.el-select-dropdown__item.hover), 
-:deep(.el-select-dropdown__item:hover) {
-  background-color: rgba(99, 102, 241, 0.05) !important;
-  color: #6366f1 !important;
-}
-:deep(.el-select-dropdown__item.selected) {
-  background-color: #6366f1 !important;
-  color: #fff !important;
-}
-:deep(.el-select-dropdown__item.selected .text-slate-400),
-:deep(.el-select-dropdown__item.selected .text-slate-500) {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-:deep(.custom-input-v3 .el-input__wrapper) {
-  border-radius: 20px;
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  padding: 8px 16px;
-  height: 100%;
-}
-.dark :deep(.custom-input-v3 .el-input__wrapper) {
-  background-color: #1e293b;
-  border-color: #334155;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-}
-
-:deep(.custom-textarea-v3 .el-textarea__inner) {
-  border-radius: 20px;
-  background-color: rgba(248, 250, 252, 0.8);
-  border: 1px solid #e2e8f0;
-  box-shadow: none !important;
-  padding: 12px 16px;
-  font-size: 13px;
-  line-height: 1.6;
-  resize: none;
-  transition: all 0.3s ease;
-}
-.dark :deep(.custom-textarea-v3 .el-textarea__inner) {
-  background-color: rgba(15, 23, 42, 0.8);
-  border-color: #334155;
-  color: #f1f5f9;
-}
-:deep(.custom-textarea-v3 .el-textarea__inner:focus) {
-  border-color: #6366f1;
-  background-color: #fff;
-}
-
-:deep(.custom-number-v3 .el-input__wrapper) {
-  border-radius: 12px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-}
-
-:deep(.custom-input-v4 .el-input__wrapper) {
-  border-radius: 14px;
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-  padding: 4px 12px;
-  transition: all 0.3s ease;
-}
-.dark :deep(.custom-input-v4 .el-input__wrapper) {
-  background-color: #1e293b;
-  border-color: #334155;
-}
-:deep(.custom-input-v4 .el-input__wrapper.is-focus) {
+:deep(.custom-input-v5 .el-input__wrapper.is-focus) {
   border-color: #6366f1;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
 }
 
-:deep(.custom-number-v4 .el-input__wrapper) {
-  border-radius: 14px;
+/* Premium Select Styles V4 */
+:deep(.custom-select-v4 .el-input__wrapper) {
+  border-radius: 10px;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-  padding-right: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+  padding: 4px 10px;
+  transition: all 0.3s ease;
 }
-.dark :deep(.custom-number-v4 .el-input__wrapper) {
-  background-color: #1e293b;
+.dark :deep(.custom-select-v4 .el-input__wrapper) {
+  background-color: #0f172a;
   border-color: #334155;
 }
-:deep(.custom-number-v4 .el-input-number__increase),
-:deep(.custom-number-v4 .el-input-number__decrease) {
-  background-color: #f8fafc;
-  border-left-color: #e2e8f0;
-  border-radius: 0 14px 14px 0;
+:deep(.custom-select-v4 .el-input__wrapper:hover) {
+  border-color: #6366f1;
 }
-.dark :deep(.custom-number-v4 .el-input-number__increase),
-.dark :deep(.custom-number-v4 .el-input-number__decrease) {
+:deep(.custom-select-v4 .el-input__wrapper.is-focus) {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Dark Theme Dashboard Inputs */
+:deep(.custom-input-dark .el-input__wrapper) {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none !important;
+  padding: 0 8px;
+}
+:deep(.custom-input-dark .el-input__inner) {
+  color: #fff !important;
+  font-weight: 900;
+  font-size: 11px;
+}
+:deep(.custom-input-dark .el-input__wrapper.is-focus) {
+  border-color: #6366f1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.custom-number-dark .el-input__wrapper) {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none !important;
+}
+:deep(.custom-number-dark .el-input__inner) {
+  color: #fff !important;
+  font-weight: 900;
+  font-size: 11px;
+}
+:deep(.custom-number-dark .el-input-number__increase),
+:deep(.custom-number-dark .el-input-number__decrease) {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Premium Number V5 */
+:deep(.custom-number-v5 .el-input__wrapper) {
+  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+  padding: 0 8px;
+  transition: all 0.3s ease;
+}
+.dark :deep(.custom-number-v5 .el-input__wrapper) {
   background-color: #0f172a;
-  border-left-color: #334155;
+  border-color: #334155;
+}
+:deep(.custom-number-v5 .el-input__inner) {
+  font-weight: 700;
+  font-size: 11px;
+}
+:deep(.custom-number-v5 .el-input-number__increase),
+:deep(.custom-number-v5 .el-input-number__decrease) {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+.dark :deep(.custom-number-v5 .el-input-number__increase),
+.dark :deep(.custom-number-v5 .el-input-number__decrease) {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+:deep(.custom-number-v5 .el-input-number__increase:hover),
+:deep(.custom-number-v5 .el-input-number__decrease:hover) {
+  color: #6366f1;
+}
+
+/* Premium Textarea V4 */
+:deep(.custom-textarea-v4 .el-textarea__inner) {
+  border-radius: 10px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: none !important;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  resize: none;
+  transition: all 0.3s ease;
+  min-height: unset !important;
+}
+.dark :deep(.custom-textarea-v4 .el-textarea__inner) {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+:deep(.custom-textarea-v4 .el-textarea__inner:focus) {
+  border-color: #6366f1;
+  background-color: #fff;
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.05) !important;
+}
+.dark :deep(.custom-textarea-v4 .el-textarea__inner:focus) {
+  background-color: #0f172a;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes pulse-indigo {
+  0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+}
+.animate-pulse-indigo {
+  animation: pulse-indigo 2s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.animate-float {
+  animation: float 3s infinite ease-in-out;
+}
+
+/* Legacy Styles Cleanup */
+:deep(.custom-select-v3 .el-input__wrapper),
+:deep(.custom-input-v3 .el-input__wrapper),
+:deep(.custom-textarea-v3 .el-textarea__inner),
+:deep(.custom-number-v3 .el-input__wrapper),
+:deep(.custom-input-v4 .el-input__wrapper),
+:deep(.custom-number-v4 .el-input__wrapper) {
+  /* Keep these for now if used elsewhere, but v5/v4 are preferred for the dialog */
 }
 
 @keyframes light-streak {

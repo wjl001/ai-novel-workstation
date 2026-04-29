@@ -79,84 +79,93 @@
       </div>
     </div>
 
-    <!-- Episode Grid Layout -->
-    <div :class="s.container" ref="listRef">
-      <div :class="s.gridLayout">
-        <div 
-          v-for="ep in currentTabEpisodes" 
-          :key="ep.id" 
-          :class="s.gridCard"
-          @click="handleCardClick(ep)"
-        >
-          <div :class="s.posterWrapper">
-            <div :class="s.poster">
-              <el-image :src="getPosterUrl(ep)" fit="cover">
-                <template #error>
-                  <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400">
-                    <el-icon :size="32"><Picture /></el-icon>
-                  </div>
-                </template>
-              </el-image>
+    <div :class="s.content">
+      <div :class="s.container" ref="listRef">
+        <div :class="s.gridLayout">
+          <div 
+            v-for="ep in paginatedTabEpisodes" 
+            :key="ep.id" 
+            :class="s.gridCard"
+            @click="handleCardClick(ep)"
+          >
+            <div :class="s.posterWrapper">
+              <div :class="s.poster">
+                <el-image :src="getPosterUrl(ep)" fit="cover">
+                  <template #error>
+                    <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400">
+                      <el-icon :size="32"><Picture /></el-icon>
+                    </div>
+                  </template>
+                </el-image>
 
-              <!-- Poster Actions Overlay -->
-              <div :class="s.posterActions">
-                <button :class="s.uploadBtn" @click.stop="handleUploadCover(ep)">
-                  <span>上传封面</span>
-                </button>
-                <button :class="s.aiGenBtn" @click.stop="handleAIGenerateCover(ep)">
-                  <el-icon :size="12"><MagicStick /></el-icon>
-                  <span>AI生成</span>
-                </button>
+                <div :class="s.posterActions">
+                  <button :class="s.uploadBtn" @click.stop="handleUploadCover(ep)">
+                    <span>上传封面</span>
+                  </button>
+                  <button :class="s.aiGenBtn" @click.stop="handleAIGenerateCover(ep)">
+                    <el-icon :size="12"><MagicStick /></el-icon>
+                    <span>AI生成</span>
+                  </button>
+                </div>
+
+                <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
+                  {{ ep.duration || '01:12' }}
+                </div>
+                <div :class="s.indexBadge">{{ ep.index }}</div>
               </div>
+            </div>
 
-              <!-- Duration Badge -->
-              <div v-if="ep.synthesisStatus === 'success'" :class="s.durationBadge">
-                {{ ep.duration || '01:12' }}
+            <div :class="s.info">
+              <h3 :class="s.epTitle" :title="ep.title">{{ ep.title }}</h3>
+              
+              <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
+                <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
+                <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
+                <el-icon v-else-if="getSingleStatusType(ep) === 'assets'"><Box /></el-icon>
+                <el-icon v-else><Document /></el-icon>
+                <span>{{ getSingleStatusLabel(ep) }}</span>
               </div>
-              <div :class="s.indexBadge">{{ ep.index }}</div>
             </div>
-          </div>
 
-          <div :class="s.info">
-            <h3 :class="s.epTitle" :title="ep.title">{{ ep.title }}</h3>
-            
-            <!-- Single Status Indicator -->
-            <div :class="[s.singleStatus, s[getSingleStatusType(ep)]]">
-              <el-icon v-if="getSingleStatusType(ep) === 'processing'" class="is-loading"><Loading /></el-icon>
-              <el-icon v-else-if="getSingleStatusType(ep) === 'completed'"><Check /></el-icon>
-              <el-icon v-else-if="getSingleStatusType(ep) === 'assets'"><Box /></el-icon>
-              <el-icon v-else><Document /></el-icon>
-              <span>{{ getSingleStatusLabel(ep) }}</span>
+            <div :class="s.gridActions">
+              <button 
+                :class="[s.stepBtn, s.edit]"
+                @click.stop="handleEdit(ep)"
+                title="编辑"
+              >
+                <el-icon><EditPen /></el-icon>
+                <span>编辑</span>
+              </button>
+              <button 
+                :class="[s.stepBtn, s.preview]"
+                :disabled="ep.synthesisStatus !== 'success'"
+                @click.stop="handlePreview(ep)"
+                title="预览"
+              >
+                <el-icon><VideoPlay /></el-icon>
+                <span>预览</span>
+              </button>
             </div>
-          </div>
-
-          <!-- Actions Logic: Two Mini Buttons Only -->
-          <div :class="s.gridActions">
-            <button 
-              :class="[s.stepBtn, s.edit]"
-              @click.stop="handleEdit(ep)"
-              title="编辑"
-            >
-              <el-icon><EditPen /></el-icon>
-              <span>编辑</span>
-            </button>
-            <button 
-              :class="[s.stepBtn, s.preview]"
-              :disabled="ep.synthesisStatus !== 'success'"
-              @click.stop="handlePreview(ep)"
-              title="预览"
-            >
-              <el-icon><VideoPlay /></el-icon>
-              <span>预览</span>
-            </button>
           </div>
         </div>
       </div>
+
+      <div v-if="episodes.length === 0" :class="s.empty">
+        <el-empty description="暂无分集数据" />
+      </div>
     </div>
 
-    <!-- Empty State -->
-    <div v-if="episodes.length === 0" :class="s.empty">
-      <el-empty description="暂无分集数据" />
+    <div v-if="currentTabTotal > 0" :class="s.paginationSection">
+      <div :class="s.paginationCard">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[12, 24, 36, 48]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="currentTabTotal"
+          :class="s.pagination"
+        />
+      </div>
     </div>
 
     <!-- Edit Drawer -->
@@ -281,16 +290,33 @@
       @confirm="handleRecoveryConfirm"
       @cancel="handleRecoveryCancel"
     />
+
+    <button
+      type="button"
+      class="fixed bottom-6 right-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="UI 设计标注"
+      @click="showUIDesignSpecsDialog = true"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="剧集管理｜UI 设计标注"
+      subtitle="Episodes View UI Specs"
+      :groups="episodesUIDesignGroups"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   ArrowLeft, InfoFilled, Search, User, Location, Box, VideoCamera, 
   Document, Picture, Film, MagicStick, Loading, VideoPlay, Check, Download,
-  EditPen
+  EditPen,
+  Monitor
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -302,14 +328,146 @@ import ProgressModal from '@/components/episode/ProgressModal.vue';
 
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
 const episodeStore = useEpisodeStore();
 
 // State
 const showDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
 const drawerVisible = ref(false);
 const editingEpisode = ref<any>(null);
+
+const episodesUIDesignGroups = {
+  layout: [
+    {
+      id: 'episodes-view-page',
+      title: '页面结构',
+      description: '剧集管理（卡片列表）整体布局与容器规格',
+      items: [
+        { name: '页面内边距', value: '30px', description: '.page padding' },
+        { name: '页面背景色', value: '#f0f4f8', description: '.page background-color' },
+        { name: '背景光晕', value: 'radial-gradient x2', description: '蓝/紫透明径向渐变' },
+        { name: 'Header 间距', value: 'margin-bottom: 30px', description: '.header' },
+        { name: 'Header 左右间距', value: 'padding: 0 10px', description: '.header' },
+        { name: 'Header 元素间距', value: 'gap: 24px', description: '.header' }
+      ]
+    },
+    {
+      id: 'episodes-view-header',
+      title: '顶部控件',
+      description: '搜索栏 / Tab 切换 / 说明按钮',
+      items: [
+        { name: '搜索栏最大宽度', value: '500px', description: '.searchBar max-width' },
+        { name: '搜索栏圆角', value: '16px', description: '.searchBar border-radius' },
+        { name: '搜索栏内边距', value: '6px', description: '.searchBar padding' },
+        { name: 'Tab 容器圆角', value: '18px', description: '.tabSwitcher border-radius' },
+        { name: 'Tab 容器内边距', value: '6px', description: '.tabSwitcher padding' },
+        { name: 'Tab 间距', value: 'gap: 8px', description: '.tabSwitcher' }
+      ]
+    },
+    {
+      id: 'episodes-view-cards',
+      title: '卡片网格',
+      description: '剧集卡片列表与卡片尺寸',
+      items: [
+        { name: '网格列规则', value: 'auto-fill min 360px', description: '.gridLayout template-columns' },
+        { name: '网格间距', value: '16px', description: '.gridLayout gap' },
+        { name: '卡片最大宽度', value: '420px', description: '.gridCard max-width' },
+        { name: '卡片圆角', value: '20px', description: '.gridCard border-radius' },
+        { name: '卡片内边距', value: '12px', description: '.gridCard padding' },
+        { name: '卡片内元素间距', value: '16px', description: '.gridCard gap' }
+      ]
+    },
+    {
+      id: 'episodes-view-pagination',
+      title: '分页区域',
+      description: '分页容器与视觉层次',
+      items: [
+        { name: '分页区对齐', value: 'center', description: '.paginationSection justify-content' },
+        { name: '分页卡片背景', value: 'rgba(255,255,255,0.8)', description: '.paginationCard' },
+        { name: '分页卡片圆角', value: '18px', description: '.paginationCard border-radius' },
+        { name: '分页卡片模糊', value: 'blur(12px)', description: '.paginationCard backdrop-filter' },
+        { name: '分页卡片阴影', value: '0 10px 30px -12px', description: '.paginationCard box-shadow' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'episodes-view-typography',
+      title: '文字层级',
+      description: '页面常用字号/字重与展示规则',
+      items: [
+        { name: 'Tab 文案', style: { fontSize: '15px', fontWeight: 900, color: '#64748b' } as Record<string, string | number>, description: '.tabBtn font-size/weight/color' },
+        { name: 'Tab 数量徽标', style: { fontSize: '12px', fontWeight: 900, color: '#94a3b8' } as Record<string, string | number>, description: '.tabCount' },
+        { name: '搜索输入', style: { fontSize: '14px', fontWeight: 400, color: '#1e293b' } as Record<string, string | number>, description: '.searchInputWrapper input' },
+        { name: '卡片标题', style: { fontSize: '13px', fontWeight: 800, color: '#1e293b', lineHeight: 1.4 } as Record<string, string | number>, description: '.epTitle 单行省略' },
+        { name: '状态胶囊', style: { fontSize: '10px', fontWeight: 800, color: '#ffffff' } as Record<string, string | number>, description: '.singleStatus' },
+        { name: '卡片操作按钮', style: { fontSize: '11px', fontWeight: 900, color: '#ffffff' } as Record<string, string | number>, description: '.stepBtn' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'episodes-view-colors',
+      title: '颜色与渐变',
+      description: '关键色、边框与阴影（用于复刻一致 UI）',
+      items: [
+        { name: '页面底色', value: '#f0f4f8' },
+        { name: '容器边框', value: '#e2e8f0' },
+        { name: '弱背景', value: '#f8fafc' },
+        { name: '正文主色', value: '#1e293b' },
+        { name: '次级文字', value: '#64748b' },
+        { name: '占位/提示', value: '#94a3b8' },
+        { name: 'Tab-剧本待写', value: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+        { name: 'Tab-主体待设', value: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)' },
+        { name: 'Tab-分镜制作', value: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
+        { name: 'Tab-已完成', value: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
+        { name: '预览按钮', value: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'episodes-view-components',
+      title: '按钮与组件状态',
+      description: '可复用的按钮规格、交互与状态',
+      items: [
+        {
+          name: '返回按钮（左上角）',
+          tag: '<button>',
+          classes: 'w-10 h-10 rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-100 hover:scale-105 active:scale-95',
+          notes: ['hover：文字变为 indigo 系', 'active：scale-95', '暗色模式：bg-slate-800/border-slate-700']
+        },
+        {
+          name: 'Tab 切换按钮',
+          tag: '.tabBtn (module)',
+          classes: 'padding: 8px 20px; radius: 14px; hover: background #f8fafc + translateY(-1px); active: gradient + translateY(-2px)',
+          notes: ['active：根据状态使用不同渐变（pending/assets/processing/completed）', 'active：tabCount 变为半透明白底']
+        },
+        {
+          name: '封面遮罩操作（上传/AI生成）',
+          tag: '.posterActions button (module)',
+          classes: 'w-80px h-28px radius: 8px; hover: scale(1.05); active: scale(0.95)',
+          notes: ['uploadBtn：白底 + indigo 字色', 'aiGenBtn：indigo→purple 渐变 + 白字']
+        },
+        {
+          name: '卡片右侧操作按钮（编辑/预览）',
+          tag: '.stepBtn (module)',
+          classes: 'h-28px px-12px radius: 8px; hover: translateY(-2px) scale(1.02); disabled: opacity 0.3 grayscale',
+          notes: ['编辑：amber 渐变', '预览：purple 渐变（未完成禁用）']
+        },
+        {
+          name: '右下角 UI 标注入口（本按钮）',
+          tag: '<button>',
+          classes: 'fixed bottom-6 right-6 w-12 h-12 rounded-full gradient indigo→fuchsia shadow hover:scale-105 active:scale-95',
+          notes: ['用于前端对照 UI 规范面板（分类 Tab）', 'z-index: 60，确保在卡片与分页之上']
+        }
+      ]
+    }
+  ]
+};
 
 // Recovery Confirm Dialog State
 const recoveryConfirmVisible = ref(false);
@@ -331,6 +489,8 @@ const previewVisible = ref(false);
 const previewEpisode = ref<any>(null);
 const searchQuery = ref('');
 const statusFilter = ref('');
+const currentPage = ref(1);
+const pageSize = ref(12);
 
 // Export Settings
 const watermarkType = ref('brand');
@@ -392,6 +552,22 @@ const currentTabEpisodes = computed(() => {
     if (activeTab.value === 'completed') return ep.synthesisStatus === 'success';
     return true;
   });
+});
+
+const currentTabTotal = computed(() => currentTabEpisodes.value.length);
+
+const paginatedTabEpisodes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  return currentTabEpisodes.value.slice(start, start + pageSize.value);
+});
+
+watch([activeTab, searchQuery, statusFilter], () => {
+  currentPage.value = 1;
+});
+
+watch([currentTabTotal, pageSize], () => {
+  const maxPage = Math.max(1, Math.ceil(currentTabTotal.value / pageSize.value));
+  if (currentPage.value > maxPage) currentPage.value = maxPage;
 });
 
 const getSingleStatusType = (ep: any) => {

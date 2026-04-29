@@ -391,6 +391,21 @@
         version: '2.2'
       }"
     />
+
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="UI 设计标注 - 主体设置"
+      subtitle="Assets UI Design Specifications"
+      :groups="uiDesignGroups as any"
+    />
+
+    <button
+      @click="showUIDesignSpecsDialog = true"
+      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+      title="查看UI设计标注"
+    >
+      <el-icon :size="22"><Monitor /></el-icon>
+    </button>
   </div>
 </template>
 
@@ -403,12 +418,98 @@ import { useDramaStore } from '../../store/drama';
 import { useEpisodeStore } from '../../store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
 const episodeStore = useEpisodeStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
+const showUIDesignSpecsDialog = ref(false);
+
+const uiDesignGroups = {
+  layout: [
+    {
+      id: 'assets-page',
+      title: '资产中心 (主体设置)',
+      description: '三类资产管理：角色 / 场景 / 道具；卡片化瀑布网格 + 底部下一步。',
+      items: [
+        { name: '页面容器', value: 'h-full flex flex-col overflow-hidden', description: '固定全高，内部滚动交由 Tabs Content 承担' },
+        { name: '页面背景', value: 'bg-[#f8fafc]', description: '浅灰蓝底色（暗色模式：dark:bg-slate-900）' },
+        { name: 'Tabs Header', value: 'height: 56px', description: '.modern-tabs el-tabs__item 高度/行高' },
+        { name: 'Tabs Header Padding', value: 'px: 24px', description: '.modern-tabs el-tabs__header padding: 0 24px' },
+        { name: '内容区内边距', value: 'p-6 pt-4', description: '每个 Tab 内部主容器 padding' },
+        { name: 'Header 间距', value: 'mb-6', description: '标题行与网格间距' },
+        { name: '卡片圆角', value: 'rounded-2xl', description: '资产卡片统一 16px 级别圆角' },
+        { name: '卡片图片比例', value: 'aspect-video', description: '统一 16:9 基准图展示' },
+        { name: '角色网格列数', value: '2/3/4/5/6/8', description: 'grid-cols-2...2xl:grid-cols-8 gap-4' },
+        { name: '场景网格列数', value: '1/2/3/4', description: 'grid-cols-1...lg:grid-cols-4 gap-6' },
+        { name: '道具网格列数', value: '2/3/4/6', description: 'grid-cols-2...lg:grid-cols-6 gap-6' },
+        { name: '底部操作区', value: 'p-6 border-t', description: 'footer 操作条（下一步按钮容器）' },
+        { name: '生成中遮罩层', value: 'fixed inset-0 z-[10000]', description: '大 Loading Overlay（主体文字生成阶段）' },
+        { name: '遮罩卡片尺寸', value: 'max-w-lg p-10 rounded-[40px]', description: 'Overlay 中央卡片' }
+      ]
+    }
+  ],
+  style: [
+    {
+      id: 'assets-typography',
+      title: '字体与层级',
+      description: '页内标题、Tab、卡片与按钮的字号/字重规范。',
+      items: [
+        { name: 'Tab 文本', style: { fontSize: '15px', fontWeight: '600' }, description: '.modern-tabs el-tabs__item（默认态）' },
+        { name: '模块标题', style: { fontSize: '18px', fontWeight: '800' }, description: 'text-[18px] font-extrabold（主体库 · 角色/场景/道具）' },
+        { name: '计数弱化', style: { fontSize: '14px', fontWeight: '400', opacity: '0.7' }, description: '标题后计数：text-slate-400/500 font-normal' },
+        { name: '卡片名称', style: { fontSize: '15-16px', fontWeight: '700' }, description: '角色 text-[16px]；场景/道具 text-[15px]（truncate）' },
+        { name: '卡片描述', style: { fontSize: '12-13px', fontWeight: '400', lineHeight: '1.5' }, description: 'line-clamp-2 leading-relaxed' },
+        { name: '信息按钮', style: { fontSize: '12px', fontWeight: '700' }, description: '产品设计说明：text-[12px] font-bold' },
+        { name: '新增按钮', style: { fontSize: '14px', fontWeight: '700' }, description: '新增角色/场景/道具：text-[14px] font-bold' },
+        { name: '下一步按钮', style: { fontSize: '15px', fontWeight: '700' }, description: 'text-[15px] font-bold（含 icon）' },
+        { name: '生成中标题', style: { fontSize: '24px', fontWeight: '900' }, description: 'Overlay H2：text-2xl font-black tracking-tight' },
+        { name: '生成中状态', style: { fontSize: '10px', fontWeight: '900', letterSpacing: '0.2em' }, description: 'Asset Analysis Engine...：uppercase tracking-[0.2em]' }
+      ]
+    }
+  ],
+  color: [
+    {
+      id: 'assets-color',
+      title: '颜色规范',
+      description: '背景、主色、文字、边框与状态色。',
+      items: [
+        { name: '页面背景', value: '#F8FAFC' },
+        { name: '卡片底色', value: 'bg-white' },
+        { name: '内容底色', value: '#FCFDFE' },
+        { name: '主色条', value: 'bg-indigo-600（标题左侧竖条）' },
+        { name: '主按钮', value: 'bg-indigo-600 text-white' },
+        { name: 'Tabs 激活色', value: '#1890ff' },
+        { name: 'Tabs Border', value: '#F1F5F9' },
+        { name: '卡片边框', value: 'border-slate-100' },
+        { name: '提示按钮底色', value: 'bg-slate-50 border-slate-200' },
+        { name: '卡片 Hover 阴影', value: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)]' },
+        { name: '生成中高亮渐变', value: 'from-indigo-500 via-purple-500 to-pink-500' },
+        { name: '删除态', value: 'text-red-500 hover:bg-red-500 hover:text-white' },
+        { name: 'Ring 高亮', value: 'ring-2 ring-indigo-500 ring-offset-2' }
+      ]
+    }
+  ],
+  button: [
+    {
+      id: 'assets-components',
+      title: '按钮与组件元素',
+      description: '关键交互点位：产品说明、新增、编辑/删除、下一步、UI 标注入口。',
+      items: [
+        { name: '产品设计说明', tag: 'button', classes: 'h-10 px-4 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200', notes: ['右上角入口；打开产品设计说明弹窗'] },
+        { name: '新增主体按钮', tag: 'button', classes: 'h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 flex items-center gap-2', notes: ['角色/场景/道具三处一致；Plus 图标 + 文案'] },
+        { name: '卡片-编辑', tag: 'div', classes: 'w-10 h-10 rounded-full bg-white text-[#1890ff] shadow-lg scale-90 group-hover:scale-100 hover:scale-110 active:scale-95', notes: ['卡片 hover 时显示；点击打开编辑弹窗'] },
+        { name: '卡片-删除', tag: 'div', classes: 'w-10 h-10 rounded-2xl bg-white text-red-500 shadow-xl shadow-red-500/10 scale-90 group-hover:scale-100 hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white', notes: ['卡片 hover 时显示；带 Popconfirm 二次确认'] },
+        { name: '下一步：分镜视频', tag: 'button', classes: 'h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2', notes: ['禁用态由 isAssetsComplete 控制；外层 tooltip 提示未完成原因'] },
+        { name: '未保存确认-取消', tag: 'button', classes: 'h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold border border-slate-200', notes: ['关闭 confirmVisible'] },
+        { name: '未保存确认-确定', tag: 'button', classes: 'h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95', notes: ['跳转至分镜视频页'] },
+        { name: 'UI 标注入口', tag: 'button', classes: 'fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform', notes: ['页面右下角悬浮（Monitor 图标）；打开 UI 设计标注弹窗（含分类 Tabs）'] }
+      ]
+    }
+  ]
+};
 
 // Asset Lists
 const characters = computed({
