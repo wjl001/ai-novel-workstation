@@ -56,7 +56,7 @@ export const useProductDesignStore = defineStore('productDesign', {
               loadedDesigns[id].images = [{ url: loadedDesigns[id].image, caption: '原型截图' }];
               delete loadedDesigns[id].image;
             }
-            if (!loadedDesigns[id].updatedAt) loadedDesigns[id].updatedAt = Date.now();
+            if (!loadedDesigns[id].updatedAt) loadedDesigns[id].updatedAt = 0;
           }
           this.designs = loadedDesigns;
         } catch (e) {
