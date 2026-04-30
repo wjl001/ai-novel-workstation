@@ -777,9 +777,17 @@
     <ProductDesignDialog
       v-model="showDesignDialog"
       id="short-drama-outline"
-      doc-title="剧本操作页面设计说明"
-      doc-source="https://raw.githubusercontent.com/wjl001/ai-novel-workstation/main/data/product_designs/2.2.json"
-      :poll-interval-ms="3000"
+      :default-content="{
+        title: '剧本操作页面',
+        location: '确立故事主轴和主要人物，后续所有生成基于此展开。将长故事切分为适合短视频平台的单集，并将摘要转化为可拍摄的具体“场景、动作、对白”。',
+        layout: [
+          '**左侧 (设定与大纲)：** 基础设定（背景、梗概）与剧集分集大纲（支持剧情摘要）。',
+          '**中栏 (剧本编辑器)：** 采用好莱坞标准剧本格式排版的富文本编辑器。',
+          '**右侧 (AI 助手)：** 2.2 版本新增悬浮侧边栏，支持对话微调、扩写、改写剧本段落。'
+        ],
+        interactions: [],
+        version: appVersion
+      }"
     />
 
     <!-- Script Body Design Dialog -->
