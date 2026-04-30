@@ -22,6 +22,20 @@ interface ProductDesignContent {
   updatedAt?: number;
 }
 
+// Load static designs from JSON files
+const staticDesigns: Record<string, ProductDesignContent> = {};
+try {
+  const designFiles = import.meta.glob('../../data/product_designs/*.json', { eager: true });
+  for (const path in designFiles) {
+    const content = (designFiles[path] as any).default || designFiles[path];
+    if (content && typeof content === 'object') {
+      Object.assign(staticDesigns, content);
+    }
+  }
+} catch (e) {
+  console.warn('Failed to load static product designs', e);
+}
+
 export const useProductDesignStore = defineStore('productDesign', {
   state: () => ({
     designs: {} as Record<string, ProductDesignContent>,
@@ -65,38 +79,43 @@ export const useProductDesignStore = defineStore('productDesign', {
       }
     },
     async loadFromServer() {
+      // First, load from static bundled designs (guaranteed to be available)
+      const remote = { ...staticDesigns };
+      
       try {
+        // In development, try to fetch the latest from the API
         const res = await fetch('/api/product-designs', { method: 'GET' });
-        if (!res.ok) return;
-        const remote = (await res.json()) as Record<string, ProductDesignContent>;
-        if (!remote || typeof remote !== 'object') return;
-
-        const ids = new Set([...Object.keys(this.designs), ...Object.keys(remote)]);
-        for (const id of ids) {
-          const local = this.designs[id];
-          const server = remote[id];
-          if (!local && server) {
-            this.designs[id] = server;
-            continue;
-          }
-          if (local && !server) {
-            void this.syncDesignToServer(id);
-            continue;
-          }
-          if (local && server) {
-            const localAt = typeof local.updatedAt === 'number' ? local.updatedAt : 0;
-            const serverAt = typeof server.updatedAt === 'number' ? server.updatedAt : 0;
-            if (serverAt > localAt) {
-              this.designs[id] = server;
-            } else if (localAt > serverAt) {
-              void this.syncDesignToServer(id);
-            }
+        if (res.ok) {
+          const apiData = await res.json();
+          if (apiData && typeof apiData === 'object') {
+            Object.assign(remote, apiData);
           }
         }
-        this.saveToLocalStorage();
       } catch {
-        return;
+        // Ignore fetch errors, fallback to staticDesigns
       }
+
+      if (Object.keys(remote).length === 0) return;
+
+      const ids = new Set([...Object.keys(this.designs), ...Object.keys(remote)]);
+      for (const id of ids) {
+        const local = this.designs[id];
+        const server = remote[id];
+        if (!local && server) {
+          this.designs[id] = server;
+          continue;
+        }
+        if (local && server) {
+          const localAt = typeof local.updatedAt === 'number' ? local.updatedAt : 0;
+          const serverAt = typeof server.updatedAt === 'number' ? server.updatedAt : 0;
+          // Only pull from server if server is newer.
+          // Do not automatically push to server on load to prevent overwriting manual JSON edits.
+          if (serverAt >= localAt) {
+            this.designs[id] = server;
+          }
+        }
+      }
+      this.saveToLocalStorage();
     },
     async syncDesignToServer(id: string) {
       const data = this.designs[id];
