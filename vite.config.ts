@@ -66,7 +66,17 @@ export default defineConfig({
             const designs: any = {}
             for (const file of files) {
               if (file.endsWith('.json')) {
-                const content = await readJsonFile(path.join(productDesignDir, file))
+                const filePath = path.join(productDesignDir, file)
+                const content = await readJsonFile(filePath)
+                // Force update the updatedAt field to the file's modification time 
+                // so manual edits always take precedence over browser cache
+                const stats = await fs.stat(filePath)
+                for (const key in content) {
+                  if (content[key] && typeof content[key] === 'object') {
+                    // Use file mtime to ensure manual edits override local storage
+                    content[key].updatedAt = Math.max(content[key].updatedAt || 0, stats.mtimeMs)
+                  }
+                }
                 Object.assign(designs, content)
               }
             }

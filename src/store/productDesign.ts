@@ -108,9 +108,9 @@ export const useProductDesignStore = defineStore('productDesign', {
         if (local && server) {
           const localAt = typeof local.updatedAt === 'number' ? local.updatedAt : 0;
           const serverAt = typeof server.updatedAt === 'number' ? server.updatedAt : 0;
-          // Only pull from server if server is newer.
-          // Do not automatically push to server on load to prevent overwriting manual JSON edits.
-          if (serverAt >= localAt) {
+          // In development mode, always trust the server/files to allow manual IDE edits to reflect immediately.
+          // In production, only pull if server is newer to respect user's local changes.
+          if (import.meta.env.DEV || serverAt >= localAt) {
             this.designs[id] = server;
           }
         }
