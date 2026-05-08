@@ -1,12 +1,12 @@
 <template>
-  <div class="team-management-layout p-6 bg-slate-50 min-h-screen relative overflow-hidden">
+  <div class="team-management-layout p-6 bg-slate-50 h-full relative overflow-hidden flex flex-col">
     <!-- Decorative background elements -->
     <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-100/50 to-transparent pointer-events-none"></div>
     <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute top-32 -left-24 w-72 h-72 bg-blue-200/40 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="max-w-7xl mx-auto relative z-10">
-      <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+    <div class="max-w-7xl mx-auto w-full relative z-10 flex flex-col flex-1 min-h-0">
+      <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
         <div>
           <h2 class="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
@@ -40,21 +40,21 @@
         </div>
       </div>
 
-      <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl shadow-slate-200/50 border border-white p-2">
-        <el-tabs v-model="activeTab" class="team-tabs">
-          <el-tab-pane name="members">
+      <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl shadow-slate-200/50 border border-white p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <el-tabs v-model="activeTab" class="team-tabs flex-1 flex flex-col min-h-0">
+          <el-tab-pane name="members" class="h-full overflow-y-auto">
             <template #label>
               <div class="flex items-center gap-2 px-4 py-2">
                 <el-icon class="text-lg"><User /></el-icon>
                 <span class="font-bold">成员管理</span>
               </div>
             </template>
-            <div class="p-2 md:p-4">
+            <div class="p-2 md:p-4 h-full">
               <MemberManagement />
             </div>
           </el-tab-pane>
           
-          <el-tab-pane name="roles">
+          <el-tab-pane name="roles" class="h-full overflow-y-auto">
             <template #label>
               <div class="flex items-center gap-2 px-4 py-2">
                 <el-icon class="text-lg"><Lock /></el-icon>
@@ -66,19 +66,15 @@
             </div>
           </el-tab-pane>
           
-          <el-tab-pane name="groups">
+          <el-tab-pane name="groups" class="h-full overflow-y-auto">
             <template #label>
               <div class="flex items-center gap-2 px-4 py-2">
                 <el-icon class="text-lg"><FolderOpened /></el-icon>
                 <span class="font-bold">分组管理</span>
               </div>
             </template>
-            <div class="p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
-              <div class="w-32 h-32 mb-6 flex items-center justify-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200">
-                <el-icon class="text-6xl text-slate-300"><Grid /></el-icon>
-              </div>
-              <h3 class="text-xl font-bold text-slate-700 mb-2">分组管理功能开发中</h3>
-              <p class="text-slate-500">即将为您带来更强大的团队分组与协同体验</p>
+            <div class="p-2 md:p-4 h-full">
+              <GroupManagement />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -92,6 +88,7 @@ import { ref } from 'vue'
 import { Connection, UserFilled, Coin, User, Lock, FolderOpened, Grid } from '@element-plus/icons-vue'
 import MemberManagement from './components/MemberManagement.vue'
 import RolePermissionTable from './components/RolePermissionTable.vue'
+import GroupManagement from './components/GroupManagement.vue'
 
 const activeTab = ref('members')
 </script>
@@ -99,6 +96,10 @@ const activeTab = ref('members')
 <style lang="scss" scoped>
 .team-management-layout {
   :deep(.team-tabs) {
+    .el-tabs__content {
+      flex: 1;
+      min-height: 0;
+    }
     .el-tabs__nav-wrap::after {
       height: 1px;
       background-color: #f1f5f9;

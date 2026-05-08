@@ -137,6 +137,15 @@
               </el-select>
             </el-form-item>
           </div>
+          <el-form-item label="初始分配积分" prop="points" v-if="!isEdit">
+            <div class="w-full relative">
+              <el-input-number v-model="form.points" :min="0" :max="10000" size="large" class="w-full !rounded-xl custom-input-number" />
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-400 pointer-events-none">
+                <el-icon><Coin /></el-icon>
+                <span class="text-xs">团队剩余: 10,000</span>
+              </div>
+            </div>
+          </el-form-item>
         </el-form>
       </div>
       
@@ -239,7 +248,8 @@ const form = reactive({
   username: '',
   password: '',
   group: '',
-  role: ''
+  role: '',
+  points: 0
 })
 
 const rules = {
@@ -251,7 +261,7 @@ const rules = {
 
 const openAddDialog = () => {
   isEdit.value = false
-  Object.assign(form, { id: 0, username: '', password: '', group: '', role: '' })
+  Object.assign(form, { id: 0, username: '', password: '', group: '', role: '', points: 0 })
   dialogVisible.value = true
 }
 
@@ -277,7 +287,7 @@ const saveMember = async () => {
           username: form.username,
           group: form.group,
           role: form.role,
-          points: 0,
+          points: form.points || 0,
           createTime: new Date().toLocaleString()
         })
         ElMessage.success('创建成功')
