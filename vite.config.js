@@ -121,11 +121,11 @@ export default defineConfig({
                 }); };
                 var productDesignDir = path.resolve(__dirname, 'data', 'product_designs');
                 var readAllDesigns = function () { return __awaiter(_this, void 0, void 0, function () {
-                    var files, designs, _i, files_1, file, content, _a;
+                    var files, designs, _i, files_1, file, filePath, content, stats, key, _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                _b.trys.push([0, 7, , 8]);
+                                _b.trys.push([0, 8, , 9]);
                                 return [4 /*yield*/, fs.mkdir(productDesignDir, { recursive: true })];
                             case 1:
                                 _b.sent();
@@ -136,22 +136,35 @@ export default defineConfig({
                                 _i = 0, files_1 = files;
                                 _b.label = 3;
                             case 3:
-                                if (!(_i < files_1.length)) return [3 /*break*/, 6];
+                                if (!(_i < files_1.length)) return [3 /*break*/, 7];
                                 file = files_1[_i];
-                                if (!file.endsWith('.json')) return [3 /*break*/, 5];
-                                return [4 /*yield*/, readJsonFile(path.join(productDesignDir, file))];
+                                if (!file.endsWith('.json')) return [3 /*break*/, 6];
+                                filePath = path.join(productDesignDir, file);
+                                return [4 /*yield*/, readJsonFile(filePath)
+                                    // Force update the updatedAt field to the file's modification time 
+                                    // so manual edits always take precedence over browser cache
+                                ];
                             case 4:
                                 content = _b.sent();
-                                Object.assign(designs, content);
-                                _b.label = 5;
+                                return [4 /*yield*/, fs.stat(filePath)];
                             case 5:
+                                stats = _b.sent();
+                                for (key in content) {
+                                    if (content[key] && typeof content[key] === 'object') {
+                                        // Use file mtime to ensure manual edits override local storage
+                                        content[key].updatedAt = Math.max(content[key].updatedAt || 0, stats.mtimeMs);
+                                    }
+                                }
+                                Object.assign(designs, content);
+                                _b.label = 6;
+                            case 6:
                                 _i++;
                                 return [3 /*break*/, 3];
-                            case 6: return [2 /*return*/, designs];
-                            case 7:
+                            case 7: return [2 /*return*/, designs];
+                            case 8:
                                 _a = _b.sent();
                                 return [2 /*return*/, {}];
-                            case 8: return [2 /*return*/];
+                            case 9: return [2 /*return*/];
                         }
                     });
                 }); };

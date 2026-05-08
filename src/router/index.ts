@@ -15,6 +15,7 @@ import DramaWorks from '../views/AIShortDrama/DramaWorks.vue'
 import NewDrama from '../views/AIShortDrama/NewDrama.vue'
 import DramaCreatorLayout from '../views/AIShortDrama/DramaCreatorLayout.vue'
 import StoryboardView from '../views/AIShortDrama/StoryboardView.vue'
+import TeamManagementView from '../views/TeamManagement/TeamManagementView.vue'
 
 // Placeholder component for the new workflow
 const UnderConstruction = { template: '<div class="p-8 text-center text-lg">正在建设中...</div>' };
@@ -22,6 +23,16 @@ const UnderConstruction = { template: '<div class="p-8 text-center text-lg">正�
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/auth/login',
+      name: 'login',
+      component: () => import('../views/auth/Login.vue')
+    },
+    {
+      path: '/auth/sso',
+      name: 'sso-auth',
+      component: () => import('../views/auth/SsoAuth.vue')
+    },
     {
       path: '/',
       redirect: '/ai-short-drama-creator/new'
@@ -85,6 +96,11 @@ const router = createRouter({
       path: '/ai-short-drama-creator/episodes',
       name: 'drama-episodes-list',
       component: EpisodesView
+    },
+    {
+      path: '/team-management',
+      name: 'team-management',
+      component: TeamManagementView
     },
     {
       path: '/ai-short-drama-creator',
