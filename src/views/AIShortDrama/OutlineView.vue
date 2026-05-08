@@ -198,6 +198,13 @@
                           >
                             正在编辑
                           </div>
+                          <div
+                            v-else
+                            class="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest transition-all duration-300"
+                            :class="getEpisodeStatusInfo(ep.status).class"
+                          >
+                            {{ getEpisodeStatusInfo(ep.status).text }}
+                          </div>
                         </div>
                       </div>
 
@@ -972,6 +979,7 @@ interface EpisodeData {
   characters?: string;
   content: string;
   chatHistory: any[];
+  status?: number;
 }
 
 interface DramaForm {
@@ -1134,6 +1142,20 @@ const stopDragTabs = () => {
   document.removeEventListener('mouseup', stopDragTabs);
 };
 
+const ensureEpisodeStatus = (data: DramaForm | null) => {
+   if (!data || !data.episodesData) return;
+   data.episodesData.forEach(ep => {
+     if (ep.status === undefined || ep.status === 101) {
+       const cleanContent = (ep.content || '').replace(/<p><\/p>|<br>|[\s\n\t\r]/g, '').trim();
+       if (cleanContent.length > 0) {
+         ep.status = 103;
+       } else {
+         ep.status = 101;
+       }
+     }
+   });
+ };
+
 const handleQuickJump = () => {
   const targetIdx = jumpToEpisodeInput.value - 1;
   quickSelectEpisode(targetIdx);
@@ -1148,7 +1170,8 @@ const addNewEpisode = () => {
     title: `第 ${newIndex + 1} 集`,
     summary: '',
     content: '',
-    chatHistory: []
+    chatHistory: [],
+    status: 101
   };
   
   form.value.episodesData.push(newEpisode);
@@ -1426,6 +1449,29 @@ const currentEpisodeSummary = computed(() => {
   return summary || '当前分集暂无剧情梗概';
 });
 
+const getEpisodeStatusInfo = (status?: number) => {
+  const s = status || 101;
+  
+  const map: Record<number, { text: string, class: string }> = {
+    101: { text: '剧本待写', class: 'bg-slate-100 text-slate-500 border border-slate-200' },
+    103: { text: '剧本创作中', class: 'bg-blue-50 text-blue-600 border border-blue-200' },
+    201: { text: '主体待设', class: 'bg-amber-50 text-amber-600 border border-amber-200' },
+    203: { text: '主体待设', class: 'bg-amber-50 text-amber-600 border border-amber-200' },
+    204: { text: '主体待设', class: 'bg-amber-50 text-amber-600 border border-amber-200' },
+    202: { text: '主体已完成', class: 'bg-emerald-50 text-emerald-600 border border-emerald-200' },
+    301: { text: '分镜待作', class: 'bg-purple-50 text-purple-600 border border-purple-200' },
+    302: { text: '分镜待作', class: 'bg-purple-50 text-purple-600 border border-purple-200' },
+    303: { text: '分镜待作', class: 'bg-purple-50 text-purple-600 border border-purple-200' },
+    305: { text: '分镜待作', class: 'bg-purple-50 text-purple-600 border border-purple-200' },
+    306: { text: '分镜已完成', class: 'bg-pink-50 text-pink-600 border border-pink-200' },
+    401: { text: '分镜已完成', class: 'bg-pink-50 text-pink-600 border border-pink-200' },
+    403: { text: '分镜已完成', class: 'bg-pink-50 text-pink-600 border border-pink-200' },
+    402: { text: '已完成', class: 'bg-green-600 text-white shadow-sm' }
+  };
+  
+  return map[s] || { text: '未知状态', class: 'bg-slate-100 text-slate-400' };
+};
+
 const isCurrentEpisode = (episodeId: string, episodeIndex: number) => {
   if (editMode.value !== 'episode') return false;
   return currentEpisodeIndex.value === episodeIndex;
@@ -1514,7 +1560,16 @@ const saveCurrentContentToStore = () => {
       form.value.episodesData.forEach((ep, idx) => {
         if (parts[idx] !== undefined) {
           // 去除多余的空行和 HTML 标签，仅保留纯内容或标准格式
-          ep.content = parts[idx].trim();
+          const newContent = parts[idx].trim();
+          ep.content = newContent;
+          
+          // 自动更新状态：如果有内容且当前是待写状态(101)，更新为已完成(103)
+          const cleanContent = newContent.replace(/<p><\/p>|<br>|[\s\n\t\r]/g, '').trim();
+          if (cleanContent.length > 0) {
+            if (!ep.status || ep.status === 101) ep.status = 103;
+          } else {
+            if (ep.status === 103) ep.status = 101;
+          }
         }
       });
     } else {
@@ -1522,6 +1577,15 @@ const saveCurrentContentToStore = () => {
       if (form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
         form.value.episodesData[currentEpisodeIndex.value].content = content;
         form.value.episodesData[currentEpisodeIndex.value].chatHistory = [...chatMessages.value];
+        
+        // 自动更新状态：如果有内容且当前是待写状态(101)，更新为已完成(103)
+        const cleanContent = content.replace(/<p><\/p>|<br>|[\s\n\t\r]/g, '').trim();
+        const ep = form.value.episodesData[currentEpisodeIndex.value];
+        if (cleanContent.length > 0) {
+          if (!ep.status || ep.status === 101) ep.status = 103;
+        } else {
+          if (ep.status === 103) ep.status = 101;
+        }
       }
       // 同步全集内容：重新合并所有分集
       form.value.fullContent = form.value.episodesData
@@ -1914,6 +1978,7 @@ onMounted(async () => {
       // If we have some data, restore it and potentially resume
       if (dramaStore.outlineData) {
         form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+        ensureEpisodeStatus(form.value);
         totalEpisodesToGenerate.value = totalCount;
         currentGeneratingIndex.value = currentIndex;
         generationProgress.value = progress;
@@ -1927,6 +1992,7 @@ onMounted(async () => {
       const { progress } = dramaStore.generationStatus;
       if (dramaStore.outlineData) {
         form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+        ensureEpisodeStatus(form.value);
         loadContentFromStore();
         
         recoveryConfirmTitle.value = '恢复生成';
@@ -1936,6 +2002,7 @@ onMounted(async () => {
       }
     } else if (dramaStore.outlineData) {
       form.value = JSON.parse(JSON.stringify(dramaStore.outlineData));
+      ensureEpisodeStatus(form.value);
       // Sync current chat messages with initial currentEpisodeIndex
       if (form.value && form.value.episodesData && form.value.episodesData[currentEpisodeIndex.value]) {
         chatMessages.value = form.value.episodesData[currentEpisodeIndex.value].chatHistory || [];
@@ -1947,6 +2014,7 @@ onMounted(async () => {
        isGeneratingOutline.value = true;
        const initialData: any = await fetchInitialDramaInfo();
        form.value = JSON.parse(JSON.stringify(initialData));
+       ensureEpisodeStatus(form.value);
        totalEpisodesToGenerate.value = initialData.episodesCount;
        
        // Clear episodesData first to show sequential generation
@@ -1996,7 +2064,8 @@ onMounted(async () => {
            scenes: '场景待定',
            characters: '沈念安等',
            content: '',
-           chatHistory: []
+           chatHistory: [],
+           status: 101
          };
          
          if (form.value) {
@@ -2047,7 +2116,8 @@ const resumeSequentialGeneration = async (startIndex: number) => {
       scenes: '场景待定',
       characters: '沈念安等',
       content: '',
-      chatHistory: []
+      chatHistory: [],
+      status: 101
     };
     
     form.value.episodesData.push(newEpisode);

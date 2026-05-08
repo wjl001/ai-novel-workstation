@@ -47,9 +47,9 @@
           :class="s.statusSelect"
           popper-class="status-select-popper"
         >
-          <el-option label="剧本待写" value="pending" />
-          <el-option label="主体待设" value="assets" />
-          <el-option label="分镜制作" value="processing" />
+          <el-option label="剧本创作" value="pending" />
+          <el-option label="主体设置" value="assets" />
+          <el-option label="分镜视频" value="processing" />
           <el-option label="已完成" value="completed" />
         </el-select> -->
       </div>
@@ -420,9 +420,9 @@ const episodesUIDesignGroups = {
         { name: '正文主色', value: '#1e293b' },
         { name: '次级文字', value: '#64748b' },
         { name: '占位/提示', value: '#94a3b8' },
-        { name: 'Tab-剧本待写', value: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
-        { name: 'Tab-主体待设', value: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)' },
-        { name: 'Tab-分镜制作', value: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
+        { name: 'Tab-剧本创作', value: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+        { name: 'Tab-主体设置', value: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)' },
+        { name: 'Tab-分镜视频', value: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
         { name: 'Tab-已完成', value: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
         { name: '预览按钮', value: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)' }
       ]
@@ -528,9 +528,9 @@ const hasGeneratedAny = computed(() => episodes.value.some(ep => ep.status === '
 
 const activeTab = ref('pending');
 const availableTabs = [
-  { label: '剧本待写', value: 'pending' },
-  { label: '主体待设', value: 'assets' },
-  { label: '分镜制作', value: 'processing' },
+  { label: '剧本创作', value: 'pending' },
+  { label: '主体设置', value: 'assets' },
+  { label: '分镜视频', value: 'processing' },
   { label: '已完成', value: 'completed' }
 ];
 
@@ -581,10 +581,10 @@ const getSingleStatusLabel = (ep: any) => {
   if (ep.synthesisStatus === 'success') return '已完成';
   if (ep.synthesisStatus === 'synthesizing') return '合成中...';
   if (ep.storyboardStatus === 'generating') return '分镜生成中...';
-  if (ep.storyboardStatus === 'success') return '待合成视频';
-  if (ep.assetsStatus === 'success') return '分镜制作';
-  if (ep.scriptStatus === 'success') return '主体待设';
-  return '剧本待写';
+  if (ep.storyboardStatus === 'success') return '分镜视频';
+  if (ep.assetsStatus === 'success') return '分镜视频';
+  if (ep.scriptStatus === 'success') return '主体设置';
+  return '剧本创作';
 };
 
 // Initialize mock data if empty
