@@ -23,8 +23,8 @@
           <p class="text-xs text-slate-400 mt-0.5">管理和维护您的团队分组架构</p>
         </div>
       </div>
-      <div>
-        <el-button type="primary" size="large" class="!rounded-xl !bg-gradient-to-r !from-emerald-500 !to-teal-500 !border-none hover:shadow-lg hover:shadow-emerald-500/30 transition-all" @click="openAddDialog">
+      <div v-if="currentUserRole === 'admin'">
+        <el-button type="primary" size="large" class="!rounded-xl !bg-gradient-to-r !from-emerald-600 !to-teal-600 !border-none hover:shadow-lg hover:shadow-emerald-500/40 transition-all !text-white font-bold" @click="openAddDialog">
           <el-icon class="mr-1"><Plus /></el-icon>
           创建新分组
         </el-button>
@@ -49,7 +49,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="memberCount" label="成员数量" width="150">
+        <el-table-column prop="memberCount" label="成员数量" width="120">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-icon class="text-slate-400"><User /></el-icon>
@@ -57,7 +57,28 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="description" label="分组描述" min-width="250">
+        <el-table-column label="组管理员" width="150">
+          <template #default="{ row }">
+            <div v-if="row.admin" class="flex items-center gap-2">
+              <el-avatar :size="24" class="!bg-indigo-100 !text-indigo-600 font-bold text-[10px]">
+                {{ row.admin.substring(0, 2).toUpperCase() }}
+              </el-avatar>
+              <span class="text-sm font-bold text-indigo-600">{{ row.admin }}</span>
+            </div>
+            <span v-else class="text-xs text-slate-400 italic">尚未指派</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="指派作品" min-width="180">
+          <template #default="{ row }">
+            <div class="flex flex-wrap gap-1">
+              <el-tag v-for="work in row.works" :key="work" size="small" effect="plain" class="!rounded-md">
+                {{ work }}
+              </el-tag>
+              <span v-if="!row.works || row.works.length === 0" class="text-xs text-slate-400">未关联作品</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" label="分组描述" min-width="180">
           <template #default="{ row }">
             <span class="text-slate-500 text-sm">{{ row.description || '暂无描述' }}</span>
           </template>
@@ -85,7 +106,7 @@
     </div>
 
     <!-- 添加/编辑分组弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑分组' : '创建新分组'" width="480px" class="custom-dialog" :show-close="false">
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑分组' : '创建新分组'" width="480px" class="custom-dialog" :show-close="false" align-center>
       <template #header="{ close, titleId, titleClass }">
         <div class="flex justify-between items-center pb-4 border-b border-slate-100">
           <div class="flex items-center gap-2">
@@ -100,13 +121,43 @@
         </div>
       </template>
 
-      <div class="pt-4">
+      <div class="pt-2">
         <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form">
-          <el-form-item label="分组名称" prop="name">
-            <el-input v-model="form.name" placeholder="请输入分组名称，例如：后期A组" size="large" class="!rounded-xl" maxlength="20" show-word-limit />
+          <el-form-item label="分组名称" prop="name" class="!mb-4">
+            <el-input v-model="form.name" placeholder="请输入分组名称" size="default" class="!rounded-xl" maxlength="20" show-word-limit />
           </el-form-item>
-          <el-form-item label="分组描述" prop="description">
-            <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入该分组的职责或描述（选填）" class="!rounded-xl" maxlength="100" show-word-limit />
+
+          <div class="grid grid-cols-2 gap-x-4">
+            <el-form-item v-if="availableAdmins.length > 0" label="指派组管理员" prop="admin" class="!mb-4">
+              <el-select v-model="form.admin" placeholder="请选择管理员" size="default" class="w-full !rounded-xl" clearable>
+                <el-option v-for="member in availableAdmins" :key="member.id" :label="member.username" :value="member.username">
+                  <div class="flex items-center gap-2">
+                    <el-avatar :size="20" class="!bg-indigo-50 !text-indigo-500 font-bold text-[10px]">
+                      {{ member.username.substring(0, 2).toUpperCase() }}
+                    </el-avatar>
+                    <span>{{ member.username }}</span>
+                  </div>
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="指派作品" prop="works" class="!mb-4" :class="{'col-span-2': availableAdmins.length === 0}">
+              <el-select 
+                v-model="form.works" 
+                multiple 
+                collapse-tags 
+                collapse-tags-indicator
+                placeholder="请选择指派的作品" 
+                size="default" 
+                class="w-full !rounded-xl"
+              >
+                <el-option v-for="work in allWorksList" :key="work" :label="work" :value="work" />
+              </el-select>
+            </el-form-item>
+          </div>
+
+          <el-form-item label="分组描述" prop="description" class="!mb-2">
+            <el-input v-model="form.description" type="textarea" :rows="2" placeholder="请输入职责或描述（选填）" class="!rounded-xl" maxlength="100" show-word-limit />
           </el-form-item>
         </el-form>
       </div>
@@ -124,15 +175,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { FolderOpened, Grid, Plus, Folder, User, Close, FolderAdd } from '@element-plus/icons-vue'
+import { ref, reactive, computed, inject } from 'vue'
+import { FolderOpened, Grid, Plus, Folder, User, Close, FolderAdd, UserFilled, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
-const groups = ref([
-  { id: 1, name: '默认分组', memberCount: 1, description: '系统默认创建的分组，不可删除', isDefault: true, createTime: '2023-01-01 00:00:00' },
-  { id: 2, name: 'A组', memberCount: 2, description: '负责悬疑类短剧项目', isDefault: false, createTime: '2023-10-01 10:00:00' },
-  { id: 3, name: 'B组', memberCount: 0, description: '负责甜宠类短剧项目', isDefault: false, createTime: '2023-10-02 11:30:00' }
-])
+// 注入当前角色，用于模拟“局部自治”
+const currentUserRole = inject('currentUserRole', ref('admin'))
+const allMembers = inject('allMembers', ref([] as any[]))
+const allGroups = inject('allGroups', ref([] as any[]))
+
+// 根据角色过滤分组列表（局部自治逻辑）
+const groups = computed(() => {
+  if (currentUserRole.value === 'admin') {
+    return allGroups.value
+  } else if (currentUserRole.value.startsWith('group_admin_')) {
+    // 提取分组名称
+    const groupName = allGroups.value.find(g => `group_admin_${g.name.toLowerCase()}` === currentUserRole.value)?.name
+    return allGroups.value.filter(g => g.name === groupName)
+  }
+  return []
+})
+
+// 模拟所有可选作品
+const allWorksList = ['作品A', '作品B', '悬疑剧集01', '甜宠短剧02', '科幻大片03', '都市生活04']
+
+const availableAdmins = computed(() => {
+  if (!form.name) return []
+  return allMembers.value.filter(m => m.group === form.name)
+})
 
 const dialogVisible = ref(false)
 const isEdit = ref(false)
@@ -140,7 +210,9 @@ const formRef = ref()
 const form = reactive({
   id: 0,
   name: '',
-  description: ''
+  description: '',
+  admin: '',
+  works: [] as string[]
 })
 
 const rules = {
@@ -149,7 +221,7 @@ const rules = {
 
 const openAddDialog = () => {
   isEdit.value = false
-  Object.assign(form, { id: 0, name: '', description: '' })
+  Object.assign(form, { id: 0, name: '', description: '', admin: '', works: [] })
   dialogVisible.value = true
 }
 
@@ -164,20 +236,39 @@ const saveGroup = async () => {
   await formRef.value.validate((valid: boolean) => {
     if (valid) {
       if (isEdit.value) {
-        const index = groups.value.findIndex(g => g.id === form.id)
+        const index = allGroups.value.findIndex(g => g.id === form.id)
         if (index > -1) {
-          groups.value[index] = { ...groups.value[index], ...form }
+          const oldAdmin = allGroups.value[index].admin
+          allGroups.value[index] = { ...allGroups.value[index], ...form }
+          
+          // 同步成员角色：如果指派了新管理员，更新其角色
+          if (form.admin && form.admin !== oldAdmin) {
+            const member = allMembers.value.find(m => m.username === form.admin)
+            if (member) member.role = '组管理员'
+            
+            // 如果原来的管理员不再是管理员，可以考虑重置其角色，但这里逻辑视业务而定
+            // 简单起见，我们只更新新指派的
+          }
         }
         ElMessage.success('修改分组成功')
       } else {
-        groups.value.push({
+        allGroups.value.push({
           id: Date.now(),
           name: form.name,
           description: form.description,
+          admin: form.admin,
+          works: [...form.works],
           memberCount: 0,
           isDefault: false,
           createTime: new Date().toLocaleString()
         })
+        
+        // 如果创建时就指派了管理员
+        if (form.admin) {
+          const member = allMembers.value.find(m => m.username === form.admin)
+          if (member) member.role = '组管理员'
+        }
+        
         ElMessage.success('创建分组成功')
       }
       dialogVisible.value = false
@@ -186,19 +277,28 @@ const saveGroup = async () => {
 }
 
 const deleteGroup = (id: number) => {
-  const group = groups.value.find(g => g.id === id)
+  const group = allGroups.value.find(g => g.id === id)
   if (group?.isDefault) {
     ElMessage.error('系统默认分组不可删除')
     return
   }
   
   // 模拟将成员移至默认分组的逻辑
-  const defaultGroup = groups.value.find(g => g.isDefault)
+  const defaultGroup = allGroups.value.find(g => g.isDefault)
   if (defaultGroup && group) {
     defaultGroup.memberCount += group.memberCount
+    
+    // 同步更新这些成员的分组信息
+    allMembers.value.forEach(m => {
+      if (m.group === group.name) {
+        m.group = defaultGroup.name
+        // 如果该成员是组管理员，重置其角色
+        if (m.role === '组管理员') m.role = '导演' // 默认设为导演或其他
+      }
+    })
   }
   
-  groups.value = groups.value.filter(g => g.id !== id)
+  allGroups.value = allGroups.value.filter(g => g.id !== id)
   ElMessage.success('删除成功，该组成员已移至默认分组')
 }
 </script>
@@ -225,14 +325,16 @@ const deleteGroup = (id: number) => {
 
   :deep(.custom-dialog) {
     border-radius: 20px;
-    overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 50px;
     .el-dialog__header {
       margin: 0;
       padding: 24px 24px 0;
     }
     .el-dialog__body {
       padding: 24px;
+      max-height: 60vh;
+      overflow-y: auto;
     }
     .el-dialog__footer {
       padding: 0 24px 24px;

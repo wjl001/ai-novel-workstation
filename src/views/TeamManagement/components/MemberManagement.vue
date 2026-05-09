@@ -89,7 +89,7 @@
     </div>
 
     <!-- 添加/编辑子账号弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑子账号' : '创建子账号'" width="480px" class="custom-dialog" :show-close="false">
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑子账号' : '创建子账号'" width="480px" class="custom-dialog" :show-close="false" align-center>
       <template #header="{ close, titleId, titleClass }">
         <div class="flex justify-between items-center pb-4 border-b border-slate-100">
           <div class="flex items-center gap-2">
@@ -104,47 +104,48 @@
         </div>
       </template>
 
-      <div class="pt-4">
+      <div class="pt-2">
         <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form">
-          <el-form-item label="账号名称" prop="username">
-            <el-input v-model="form.username" placeholder="请输入子账号名称" size="large" class="!rounded-xl" />
-          </el-form-item>
-          <el-form-item label="登录密码" prop="password" v-if="!isEdit">
-            <el-input v-model="form.password" type="password" placeholder="请输入初始密码" show-password size="large" class="!rounded-xl" />
-          </el-form-item>
-          <div class="flex gap-4">
-            <el-form-item label="所属分组" prop="group" class="flex-1">
-              <el-select v-model="form.group" placeholder="请选择分组" size="large" class="w-full !rounded-xl">
-                <el-option label="默认分组" value="默认分组" />
-                <el-option label="A组" value="A组" />
-                <el-option label="B组" value="B组" />
+          <div class="grid grid-cols-2 gap-x-4">
+            <el-form-item label="账号名称" prop="username" class="!mb-4">
+              <el-input v-model="form.username" placeholder="请输入名称" size="default" class="!rounded-xl" />
+            </el-form-item>
+            <el-form-item label="登录密码" prop="password" v-if="!isEdit" class="!mb-4">
+              <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password size="default" class="!rounded-xl" />
+            </el-form-item>
+          </div>
+          <div class="grid grid-cols-2 gap-x-4">
+            <el-form-item label="所属分组" prop="group" class="!mb-4">
+              <el-select v-model="form.group" placeholder="请选择分组" size="default" class="w-full !rounded-xl">
+                <el-option v-for="g in allGroups" :key="g.id" :label="g.name" :value="g.name" />
               </el-select>
             </el-form-item>
-            <el-form-item label="角色权限" prop="role" class="flex-1">
-              <el-select v-model="form.role" placeholder="请选择角色" size="large" class="w-full !rounded-xl">
+            <el-form-item label="角色权限" prop="role" class="!mb-4">
+              <el-select v-model="form.role" placeholder="请选择角色" size="default" class="w-full !rounded-xl">
                 <el-option-group label="管理类角色">
                   <el-option label="管理员" value="管理员" />
                   <el-option label="组管理员" value="组管理员" />
                 </el-option-group>
                 <el-option-group label="生产类角色">
                   <el-option label="导演" value="导演" />
-                  <el-option label="导演（可下载删除）" value="导演（可下载删除）" />
                   <el-option label="动画师" value="动画师" />
-                  <el-option label="动画师（可下载删除）" value="动画师（可下载删除）" />
                   <el-option label="编剧" value="编剧" />
                   <el-option label="剪辑师" value="剪辑师" />
                 </el-option-group>
               </el-select>
             </el-form-item>
           </div>
-          <el-form-item label="初始分配积分" prop="points" v-if="!isEdit">
-            <div class="w-full relative">
-              <el-input-number v-model="form.points" :min="0" :max="10000" size="large" class="w-full !rounded-xl custom-input-number" />
-              <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-400 pointer-events-none">
-                <el-icon><Coin /></el-icon>
-                <span class="text-xs">团队剩余: 10,000</span>
+          <el-form-item prop="points" v-if="!isEdit" class="!mb-2">
+            <template #label>
+              <div class="flex justify-between items-center w-full mb-1">
+                <span class="font-semibold text-slate-700">初始分配积分</span>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 rounded-lg border border-orange-100">
+                  <el-icon class="text-orange-500"><Coin /></el-icon>
+                  <span class="text-[11px] font-bold text-orange-600">剩余: 10,000</span>
+                </div>
               </div>
-            </div>
+            </template>
+            <el-input-number v-model="form.points" :min="0" :max="10000" size="default" class="w-full !rounded-xl custom-input-number" />
           </el-form-item>
         </el-form>
       </div>
@@ -160,7 +161,7 @@
     </el-dialog>
 
     <!-- 积分下发弹窗 -->
-    <el-dialog v-model="pointsDialogVisible" width="420px" class="custom-dialog" :show-close="false">
+    <el-dialog v-model="pointsDialogVisible" width="420px" class="custom-dialog" :show-close="false" align-center>
       <template #header="{ close }">
         <div class="flex justify-between items-center pb-4 border-b border-slate-100">
           <div class="flex items-center gap-2">
@@ -211,17 +212,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, inject, computed } from 'vue'
 import { Plus, Avatar, Coin, UserFilled, Close, Setting, VideoCamera, MagicStick, EditPen, Scissor } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
+// 注入当前角色，用于模拟“局部自治”
+const currentUserRole = inject('currentUserRole', ref('admin'))
+const allMembers = inject('allMembers', ref([] as any[]))
+const allGroups = inject('allGroups', ref([] as any[]))
+
 // 模拟数据
 const loading = ref(false)
-const members = ref([
-  { id: 10001, username: 'sub_director_01', group: 'A组', role: '导演', points: 500, createTime: '2023-10-01 10:00:00' },
-  { id: 10002, username: 'sub_animator_02', group: 'A组', role: '动画师', points: 200, createTime: '2023-10-02 11:30:00' },
-  { id: 10003, username: 'sub_admin_01', group: '默认分组', role: '管理员', points: 1000, createTime: '2023-09-15 09:00:00' }
-])
+
+// 根据角色过滤成员列表（局部自治逻辑）
+const members = computed(() => {
+  if (currentUserRole.value === 'admin') {
+    return allMembers.value
+  } else if (currentUserRole.value.startsWith('group_admin_')) {
+    // 提取分组名称（例如从 group_admin_a 提取 A组）
+    const groupName = allGroups.value.find(g => `group_admin_${g.name.toLowerCase()}` === currentUserRole.value)?.name
+    return allMembers.value.filter(m => m.group === groupName)
+  }
+  return []
+})
 
 const getRoleStyle = (role: string) => {
   if (role.includes('管理')) return 'role-admin'
@@ -261,7 +274,20 @@ const rules = {
 
 const openAddDialog = () => {
   isEdit.value = false
-  Object.assign(form, { id: 0, username: '', password: '', group: '', role: '', points: 0 })
+  
+  let defaultGroup = ''
+  if (currentUserRole.value.startsWith('group_admin_')) {
+    defaultGroup = allGroups.value.find(g => `group_admin_${g.name.toLowerCase()}` === currentUserRole.value)?.name || ''
+  }
+
+  Object.assign(form, { 
+    id: 0, 
+    username: '', 
+    password: '', 
+    group: defaultGroup, 
+    role: '', 
+    points: 0 
+  })
   dialogVisible.value = true
 }
 
@@ -276,13 +302,29 @@ const saveMember = async () => {
   await formRef.value.validate((valid: boolean) => {
     if (valid) {
       if (isEdit.value) {
-        const index = members.value.findIndex(m => m.id === form.id)
+        const index = allMembers.value.findIndex(m => m.id === form.id)
         if (index > -1) {
-          members.value[index] = { ...members.value[index], ...form }
+          const oldUsername = allMembers.value[index].username
+          const oldRole = allMembers.value[index].role
+          const oldGroup = allMembers.value[index].group
+          
+          allMembers.value[index] = { ...allMembers.value[index], ...form }
+          
+          // 如果角色改为组管理员，同步更新分组信息
+          if (form.role === '组管理员' && (oldRole !== '组管理员' || oldGroup !== form.group)) {
+            const group = allGroups.value.find(g => g.name === form.group)
+            if (group) group.admin = form.username
+          }
+          
+          // 如果角色从组管理员改为其他，同步清除分组的管理员信息
+          if (oldRole === '组管理员' && form.role !== '组管理员') {
+            const group = allGroups.value.find(g => g.name === oldGroup)
+            if (group && group.admin === oldUsername) group.admin = ''
+          }
         }
         ElMessage.success('修改成功')
       } else {
-        members.value.push({
+        allMembers.value.push({
           id: 10000 + Math.floor(Math.random() * 1000),
           username: form.username,
           group: form.group,
@@ -290,6 +332,13 @@ const saveMember = async () => {
           points: form.points || 0,
           createTime: new Date().toLocaleString()
         })
+        
+        // 如果创建时就是组管理员
+        if (form.role === '组管理员') {
+          const group = allGroups.value.find(g => g.name === form.group)
+          if (group) group.admin = form.username
+        }
+        
         ElMessage.success('创建成功')
       }
       dialogVisible.value = false
@@ -298,7 +347,14 @@ const saveMember = async () => {
 }
 
 const deleteMember = (id: number) => {
-  members.value = members.value.filter(m => m.id !== id)
+  const member = allMembers.value.find(m => m.id === id)
+  if (member && member.role === '组管理员') {
+    // 如果删除的是组管理员，同步清除分组信息
+    const group = allGroups.value.find(g => g.name === member.group)
+    if (group && group.admin === member.username) group.admin = ''
+  }
+  
+  allMembers.value = allMembers.value.filter(m => m.id !== id)
   ElMessage.success('删除成功')
 }
 
@@ -318,9 +374,9 @@ const openPointsDialog = (row: any) => {
 }
 
 const distributePoints = () => {
-  const index = members.value.findIndex(m => m.id === pointsForm.id)
+  const index = allMembers.value.findIndex(m => m.id === pointsForm.id)
   if (index > -1) {
-    members.value[index].points += pointsForm.amount
+    allMembers.value[index].points += pointsForm.amount
     ElMessage.success(`成功为 ${pointsForm.username} 下发 ${pointsForm.amount} 积分`)
   }
   pointsDialogVisible.value = false
@@ -384,14 +440,16 @@ const distributePoints = () => {
 
   :deep(.custom-dialog) {
     border-radius: 20px;
-    overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 50px; // 确保底部有间距
     .el-dialog__header {
       margin: 0;
       padding: 24px 24px 0;
     }
     .el-dialog__body {
       padding: 24px;
+      max-height: 60vh; // 限制高度并允许滚动
+      overflow-y: auto;
     }
     .el-dialog__footer {
       padding: 0 24px 24px;
