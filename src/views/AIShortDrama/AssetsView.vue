@@ -39,14 +39,14 @@
       </transition>
     </teleport>
 
-    <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative">
+    <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
       <!-- 角色管理 -->
       <el-tab-pane label="角色管理" name="characters">
         <div class="flex flex-col h-full p-6 pt-4">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Product Design Info Button -->
@@ -72,10 +72,10 @@
                 <div 
                 v-for="char in characters" 
                 :key="char.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
               >
-                <div class="aspect-video bg-slate-50 relative overflow-hidden">
+                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
@@ -88,14 +88,14 @@
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else-if="!generatingAssetImages.has(`char-${char.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                  <div v-else-if="!generatingAssetImages.has(`char-${char.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
                   <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(char, 'character')"
                     >
                       <el-icon size="20"><Edit /></el-icon>
@@ -111,7 +111,7 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
                           @click.stop
                         >
                           <el-icon size="20"><Delete /></el-icon>
@@ -121,8 +121,8 @@
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
-                  <div class="font-bold text-[16px] text-slate-800 truncate">{{ char.name }}</div>
-                  <div class="text-[13px] text-slate-600 line-clamp-2 leading-relaxed" :title="char.description">{{ char.description || '暂无描述' }}</div>
+                  <div class="font-bold text-[16px] text-slate-800 dark:text-slate-100 truncate">{{ char.name }}</div>
+                  <div class="text-[13px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="char.description">{{ char.description || '暂无描述' }}</div>
                 </div>
               </div>
             </div>
@@ -136,13 +136,13 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Product Design Info Button -->
               <button 
                 @click="showDesignDialog = true"
-                class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 transition-all duration-300"
+                class="h-10 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-300"
               >
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
@@ -162,10 +162,10 @@
               <div 
                 v-for="scene in scenes" 
                 :key="scene.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
               >
-                <div class="aspect-video bg-slate-50 relative overflow-hidden">
+                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
@@ -178,14 +178,14 @@
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else-if="!generatingAssetImages.has(`scene-${scene.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                  <div v-else-if="!generatingAssetImages.has(`scene-${scene.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
                   <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(scene, 'scene')"
                     >
                       <el-icon size="20"><Edit /></el-icon>
@@ -201,7 +201,7 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
                           @click.stop
                         >
                           <el-icon size="20"><Delete /></el-icon>
@@ -211,8 +211,8 @@
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
-                  <div class="font-bold text-[15px] text-slate-800 truncate">{{ scene.name }}</div>
-                  <div class="text-[12px] text-slate-500 line-clamp-2 leading-relaxed" :title="scene.description">{{ scene.description || '暂无描述' }}</div>
+                  <div class="font-bold text-[15px] text-slate-800 dark:text-slate-100 truncate">{{ scene.name }}</div>
+                  <div class="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="scene.description">{{ scene.description || '暂无描述' }}</div>
                 </div>
               </div>
             </div>
@@ -226,13 +226,13 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Product Design Info Button -->
               <button 
                 @click="showDesignDialog = true"
-                class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 transition-all duration-300"
+                class="h-10 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-300"
               >
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
@@ -252,10 +252,10 @@
               <div 
                 v-for="prop in propsList" 
                 :key="prop.id" 
-                class="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
                 :class="generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
               >
-                <div class="aspect-video bg-slate-50 relative overflow-hidden">
+                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
@@ -268,14 +268,14 @@
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
                   />
-                  <div v-else-if="!generatingAssetImages.has(`prop-${prop.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                  <div v-else-if="!generatingAssetImages.has(`prop-${prop.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
                   <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
                     >
                       <el-icon size="20"><Edit /></el-icon>
@@ -291,7 +291,7 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
                           @click.stop
                         >
                           <el-icon size="20"><Delete /></el-icon>
@@ -301,8 +301,8 @@
                   </div>
                 </div>
                 <div class="p-4 flex flex-col gap-1.5">
-                  <div class="font-bold text-[15px] text-slate-800 truncate">{{ prop.name }}</div>
-                  <div class="text-[12px] text-slate-500 line-clamp-2 leading-relaxed" :title="prop.description">{{ prop.description || '暂无描述' }}</div>
+                  <div class="font-bold text-[15px] text-slate-800 dark:text-slate-100 truncate">{{ prop.name }}</div>
+                  <div class="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="prop.description">{{ prop.description || '暂无描述' }}</div>
                 </div>
               </div>
             </div>
@@ -311,7 +311,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div class="flex justify-end items-center p-6 border-t border-slate-100 bg-white shrink-0">
+    <div class="flex justify-end items-center p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
       <el-tooltip
         :disabled="isAssetsComplete"
         :content="incompleteMessage"
@@ -813,6 +813,10 @@ defineExpose({
   background-color: #fff;
   border-bottom: 1px solid #f1f5f9;
 }
+.dark .modern-tabs :deep(.el-tabs__header) {
+  background-color: #1e293b;
+  border-bottom-color: #334155;
+}
 .modern-tabs :deep(.el-tabs__nav-wrap::after) {
   display: none;
 }
@@ -824,6 +828,9 @@ defineExpose({
   height: 56px;
   line-height: 56px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dark .modern-tabs :deep(.el-tabs__item) {
+  color: #94a3b8;
 }
 .modern-tabs :deep(.el-tabs__item.is-active) {
   color: #1890ff;
@@ -837,6 +844,9 @@ defineExpose({
   flex: 1;
   overflow-y: hidden;
   background-color: #fcfdfe;
+}
+.dark .modern-tabs :deep(.el-tabs__content) {
+  background-color: #0f172a;
 }
 .modern-tabs .el-tab-pane {
   height: 100%;

@@ -21,6 +21,7 @@ export interface Episode {
   storyboardCount?: number;
   synthesisProgress?: number;
   synthesisVideo?: string;
+  storyboardScenes?: any[];
 }
 
 export interface Subject {

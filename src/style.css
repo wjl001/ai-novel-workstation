@@ -3,11 +3,27 @@
 @tailwind utilities;
 
 /* Global Clarity Improvements */
+html,
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background: #f5f6fb;
+  color: #1e293b;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body,
+#app {
+  min-height: 100vh;
+}
+
+html.dark,
+html.dark body {
+  background: #020617;
+  color: #e2e8f0;
+  color-scheme: dark;
 }
 
 /* Global Layout Helper for AI Script Writing */
@@ -36,4 +52,135 @@ body {
 
 .ai-drama-container .text-slate-500 {
   color: #334155; /* slate-700 */
+}
+
+html.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-\[\#f8fafc\] {
+  background-color: #111827 !important;
+}
+
+html.dark .bg-slate-100,
+html.dark .bg-\[\#f1f3f5\] {
+  background-color: #1f2937 !important;
+}
+
+html.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+html.dark .bg-white\/70 {
+  background-color: rgba(15, 23, 42, 0.78) !important;
+}
+
+html.dark .bg-white\/80,
+html.dark .bg-white\/90,
+html.dark .bg-white\/95 {
+  background-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+html.dark .border-white,
+html.dark .border-slate-50,
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+html.dark .shadow-\[0_8px_30px_rgb\(0\2c 0\2c 0\2c 0\.08\)\] {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28) !important;
+}
+
+html.dark .el-overlay {
+  background-color: rgba(2, 6, 23, 0.72) !important;
+}
+
+html.dark .el-dialog,
+html.dark .el-drawer,
+html.dark .el-message-box,
+html.dark .el-dropdown-menu,
+html.dark .el-select-dropdown,
+html.dark .el-popover.el-popper,
+html.dark .el-popper.is-light {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark .el-dialog__title,
+html.dark .el-drawer__title,
+html.dark .el-message-box__title,
+html.dark .el-dropdown-menu__item,
+html.dark .el-select-dropdown__item,
+html.dark .el-radio-button__inner,
+html.dark .el-checkbox__label,
+html.dark .el-form-item__label {
+  color: #e2e8f0 !important;
+}
+
+html.dark .el-dialog__body,
+html.dark .el-message-box__content,
+html.dark .el-dropdown-menu__item:not(.is-disabled),
+html.dark .el-select-dropdown__item {
+  color: #cbd5e1 !important;
+}
+
+html.dark .el-divider,
+html.dark .el-dropdown-menu__item,
+html.dark .el-message-box__header,
+html.dark .el-message-box__content,
+html.dark .el-dialog__header,
+html.dark .el-dialog__footer {
+  border-color: #334155 !important;
+}
+
+html.dark .el-input__wrapper,
+html.dark .el-textarea__inner,
+html.dark .el-select__wrapper {
+  background: #111827 !important;
+  box-shadow: 0 0 0 1px #334155 inset !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .el-input__inner,
+html.dark .el-textarea__inner,
+html.dark .el-select__selected-item,
+html.dark .el-textarea__inner::placeholder,
+html.dark .el-input__inner::placeholder {
+  color: #cbd5e1 !important;
+}
+
+html.dark .el-button:not(.el-button--primary):not(.is-text):not(.is-link) {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .el-button:not(.el-button--primary):not(.is-text):not(.is-link):hover {
+  background: #334155 !important;
+  border-color: #475569 !important;
+}
+
+html.dark .el-radio-button__inner,
+html.dark .el-tag {
+  background: #111827 !important;
+  border-color: #334155 !important;
 }

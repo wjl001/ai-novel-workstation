@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '../store/user'
 import Projects from '../views/AIScriptWriting/Projects.vue'
 import Editor from '../views/AIScriptWriting/Editor.vue'
 import Convert from '../views/ScriptConversion/Convert.vue'
@@ -124,6 +125,19 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+// 路由守卫：检查登录状态
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const publicPages = ['/auth/login', '/auth/sso']
+  const authRequired = !publicPages.includes(to.path)
+
+  if (authRequired && !userStore.isLoggedIn) {
+    return next('/auth/login')
+  }
+
+  next()
 })
 
 export default router

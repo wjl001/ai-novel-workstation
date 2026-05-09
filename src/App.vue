@@ -1,6 +1,6 @@
 <template>
-  <el-container class="h-screen w-screen overflow-hidden transition-colors duration-300" :class="isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-900 text-slate-200'">
-    <el-header v-if="!isAuthPage" class="border-b flex items-center justify-between px-8 z-10 shadow-sm transition-colors duration-300" :class="isLight ? 'bg-white/80 backdrop-blur-md border-slate-200' : 'bg-slate-800/80 backdrop-blur-md border-slate-700'">
+  <el-container class="h-screen w-screen overflow-hidden transition-colors duration-300" :class="isLight ? 'theme-light bg-[#f5f6fb] text-slate-800' : 'theme-dark bg-slate-950 text-slate-100'">
+    <el-header v-if="!isAuthPage" class="border-b flex items-center justify-between px-8 z-10 shadow-sm transition-colors duration-300" :class="isLight ? 'bg-white/80 backdrop-blur-md border-slate-200' : 'bg-slate-900/85 backdrop-blur-md border-slate-700'">
       <div class="flex items-center gap-3">
         <!-- Teleport target for back button -->
         <div id="header-back-button"></div>
@@ -18,7 +18,20 @@
       <!-- Teleport target for process nodes -->
       <div id="header-center" class="flex-1 flex justify-center mx-4"></div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
+        <button
+          v-if="userStore.isLoggedIn"
+          type="button"
+          class="flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold transition-all duration-300"
+          :class="isLight ? 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:text-indigo-600 shadow-sm' : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-indigo-500 hover:text-indigo-300 shadow-sm shadow-black/20'"
+          @click="themeStore.toggleTheme()"
+        >
+          <el-icon :size="14">
+            <Sunny v-if="isLight" />
+            <Moon v-else />
+          </el-icon>
+          <span>{{ isLight ? '浅色' : '深色' }}</span>
+        </button>
         <el-dropdown v-if="userStore.isLoggedIn" trigger="click" @command="handleCommand">
           <div class="flex items-center gap-3 cursor-pointer outline-none group">
             <el-avatar :size="32" class="!bg-indigo-600 shadow-inner ring-2 ring-transparent group-hover:ring-indigo-300 transition-all" :src="userStore.userInfo?.avatar">
@@ -176,16 +189,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, provide, watch, computed, onErrorCaptured, onMounted } from 'vue'
+import { ref, reactive, provide, computed, onErrorCaptured, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, Picture, Edit, Check, Refresh } from '@element-plus/icons-vue'
+import { VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, Edit, Check, Refresh, Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useDramaStore } from '@/store/drama'
 import { useEpisodeStore } from '@/store/episode'
 import { useUserStore } from '@/store/user'
+import { useThemeStore } from '@/store/theme'
 
-const currentTheme = ref('dreamy')
-const isLight = ref(true)
 const runtimeError = ref<string | null>(null)
 const router = useRouter()
 
@@ -196,6 +208,8 @@ const isAuthPage = computed(() => {
 const dramaStore = useDramaStore()
 const episodeStore = useEpisodeStore()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
+const isLight = computed(() => themeStore.isLight)
 
 const showProfileDialog = ref(false)
 const isGeneratingAvatar = ref(false)
@@ -269,14 +283,14 @@ onMounted(() => {
 })
 
 const mainBgClass = computed(() => {
-  if (currentTheme.value === 'dreamy') {
-    return 'bg-gradient-to-br from-[#F5F3FF] via-[#F8FAFC] to-[#ECFEFF]'
+  if (isLight.value) {
+    return 'bg-[#f5f6fb]'
   }
-  return isLight.value ? 'bg-slate-50' : 'bg-slate-900'
+  return 'bg-slate-950'
 })
 
 provide('isLight', isLight)
-provide('theme', currentTheme)
+provide('theme', computed(() => themeStore.theme))
 
 onErrorCaptured((error) => {
   runtimeError.value = error instanceof Error ? error.message : String(error)
@@ -771,5 +785,96 @@ onErrorCaptured((error) => {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.dark {
+  .user-dropdown-v4 {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .user-dropdown-header {
+    background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+    border-bottom-color: #334155;
+
+    .user-info-wrapper {
+      .name {
+        color: #f8fafc;
+      }
+
+      .role {
+        color: #94a3b8;
+      }
+    }
+  }
+
+  .dropdown-content {
+    .menu-item-inner {
+      span {
+        color: #cbd5e1;
+      }
+    }
+
+    .divider {
+      background-color: #334155;
+    }
+
+    :deep(.el-dropdown-menu__item) {
+      &:hover {
+        .menu-item-inner {
+          background-color: #1e293b;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+
+  .profile-settings-dialog {
+    :deep(.el-dialog) {
+      background: #0f172a;
+      border: 1px solid #334155;
+    }
+
+    :deep(.el-dialog__header) {
+      background: #111827;
+      border-bottom-color: #334155;
+    }
+
+    .avatar-wrapper-outer,
+    .form-container,
+    .dialog-footer-v4,
+    .avatar-action-bar .glass-btn {
+      background: #111827;
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+
+    .avatar-status-text,
+    :deep(.el-form-item__label),
+    .dialog-footer-v4 .cancel-btn {
+      color: #94a3b8;
+    }
+
+    .dialog-footer-v4 .cancel-btn {
+      border-color: #334155;
+    }
+
+    .avatar-container {
+      .profile-preview-avatar {
+        background: #1e293b;
+        border-color: #334155;
+      }
+
+      .preview-confirm-overlay {
+        background: linear-gradient(to top, rgba(2, 6, 23, 0.65) 0%, transparent 60%);
+
+        .retry-btn {
+          background: #1e293b;
+          color: #cbd5e1;
+        }
+      }
+    }
+  }
 }
 </style>

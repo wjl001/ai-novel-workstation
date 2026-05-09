@@ -1,21 +1,29 @@
 <template>
   <div class="login-container min-h-screen flex items-center justify-center p-4">
-    <!-- 动态背景装饰 -->
-    <div class="bg-decor absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
+    <!-- 视频背景 -->
+    <div class="video-background absolute inset-0 overflow-hidden pointer-events-none">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline 
+        class="w-full h-full object-cover"
+      >
+        <source src="/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4" type="video/mp4">
+      </video>
+      <!-- 视频遮罩层 -->
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
     </div>
 
-    <div class="login-card relative z-10 w-full max-w-[1100px] min-h-[600px] flex bg-white/80 backdrop-blur-xl rounded-[32px] shadow-[0_20px_80px_rgba(0,0,0,0.1)] border border-white/50 overflow-hidden">
+    <div class="login-card relative z-10 w-full max-w-[1100px] min-h-[600px] flex bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl rounded-[32px] shadow-[0_20px_80px_rgba(0,0,0,0.1)] border border-white/50 dark:border-slate-800 overflow-hidden">
       <!-- 左侧：品牌展示区 -->
       <div class="hidden lg:flex w-1/2 bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#d946ef] p-12 flex-col justify-between relative overflow-hidden">
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         
         <div class="relative z-10">
           <div class="flex items-center space-x-3 mb-8">
-            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-              <el-icon class="text-2xl text-[#8b5cf6]"><VideoCamera /></el-icon>
+            <div class="w-12 h-12 bg-white dark:bg-white/10 dark:backdrop-blur-md rounded-2xl flex items-center justify-center shadow-lg">
+              <el-icon class="text-2xl text-[#8b5cf6] dark:text-white"><VideoCamera /></el-icon>
             </div>
             <span class="text-2xl font-black text-white tracking-tight">智影</span>
           </div>
@@ -45,17 +53,21 @@
       <div class="w-full lg:w-1/2 p-8 md:p-16 flex flex-col justify-center relative">
         <div class="w-full max-w-[400px] mx-auto">
           <div class="mb-10 text-center lg:text-left">
-            <h2 class="text-3xl font-bold text-slate-900 mb-2">
-              {{ isRegister ? '加入智影' : '欢迎回来' }}
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              <template v-if="isForgot">找回密码</template>
+              <template v-else-if="isRegister">加入智影</template>
+              <template v-else>欢迎回来</template>
             </h2>
-            <p class="text-slate-500 font-medium">
-              {{ isRegister ? '开启您的 AI 创作新篇章' : '请登录您的账号以开始工作' }}
+            <p class="text-slate-500 dark:text-slate-400 font-medium">
+              <template v-if="isForgot">通过手机号重置您的登录密码</template>
+              <template v-else-if="isRegister">开启您的 AI 创作新篇章</template>
+              <template v-else>请登录您的账号以开始工作</template>
             </p>
           </div>
 
-          <!-- 登录/注册切换 -->
+          <!-- 登录/注册/忘记密码切换 -->
           <div class="custom-tabs-container">
-            <el-tabs v-if="!isRegister" v-model="activeTab" class="modern-tabs">
+            <el-tabs v-if="!isRegister && !isForgot" v-model="activeTab" class="modern-tabs">
               <!-- 短信登录（默认） -->
               <el-tab-pane label="短信登录" name="sms">
                 <el-form ref="smsFormRef" :model="smsForm" :rules="smsRules" class="mt-8 space-y-5">
@@ -135,8 +147,8 @@
                     <GraphicCaptcha ref="pwdCaptchaRef" v-model="pwdForm.captcha" />
                   </el-form-item>
                   <div class="flex items-center justify-between text-sm px-1">
-                    <el-checkbox v-model="rememberMe" label="记住我" />
-                    <a href="#" class="text-[#8b5cf6] font-semibold hover:underline">忘记密码？</a>
+                    <el-checkbox v-model="rememberMe" label="记住我" class="dark-checkbox" />
+                    <a href="javascript:void(0)" class="text-[#8b5cf6] font-semibold hover:underline" @click="isForgot = true">忘记密码？</a>
                   </div>
                   <el-form-item>
                     <el-button 
@@ -146,7 +158,7 @@
                       :loading="loading" 
                       @click="handlePwdLogin"
                     >
-                      安全登录
+                      立即登录
                     </el-button>
                   </el-form-item>
                 </el-form>
@@ -154,7 +166,7 @@
             </el-tabs>
 
             <!-- 注册表单 -->
-            <div v-else class="mt-8">
+            <div v-else-if="isRegister" class="mt-8">
               <el-form ref="regFormRef" :model="regForm" :rules="regRules" class="space-y-5">
                 <el-form-item prop="phone">
                   <el-input 
@@ -214,20 +226,88 @@
                 </el-form-item>
               </el-form>
             </div>
+
+            <!-- 忘记密码表单 -->
+            <div v-else-if="isForgot" class="mt-8">
+              <el-form ref="forgotFormRef" :model="forgotForm" :rules="forgotRules" class="space-y-5">
+                <el-form-item prop="phone">
+                  <el-input 
+                    v-model="forgotForm.phone" 
+                    placeholder="请输入手机号" 
+                    size="large"
+                    class="modern-input"
+                  >
+                    <template #prefix><el-icon class="text-[#8b5cf6]"><Iphone /></el-icon></template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item prop="captcha">
+                  <GraphicCaptcha ref="forgotCaptchaRef" v-model="forgotForm.captcha" />
+                </el-form-item>
+                <el-form-item prop="code">
+                  <div class="flex space-x-3 w-full">
+                    <el-input 
+                      v-model="forgotForm.code" 
+                      placeholder="验证码" 
+                      size="large" 
+                      class="flex-1 modern-input"
+                    >
+                      <template #prefix><el-icon class="text-[#8b5cf6]"><ChatDotRound /></el-icon></template>
+                    </el-input>
+                    <el-button 
+                      size="large" 
+                      class="sms-code-btn"
+                      :disabled="countdown > 0" 
+                      @click="sendForgotSmsCode"
+                    >
+                      {{ countdown > 0 ? `${countdown}s` : '获取验证码' }}
+                    </el-button>
+                  </div>
+                </el-form-item>
+                <el-form-item prop="newPassword">
+                  <el-input 
+                    v-model="forgotForm.newPassword" 
+                    type="password" 
+                    placeholder="设置新密码 (6-16位)" 
+                    show-password 
+                    size="large"
+                    class="modern-input"
+                  >
+                    <template #prefix><el-icon class="text-[#8b5cf6]"><Lock /></el-icon></template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button 
+                    type="primary" 
+                    class="w-full submit-btn" 
+                    size="large" 
+                    :loading="loading" 
+                    @click="handleResetPassword"
+                  >
+                    重置并登录
+                  </el-button>
+                </el-form-item>
+              </el-form>
+            </div>
           </div>
 
           <!-- 底部操作 -->
           <div class="mt-8 text-center">
-            <p class="text-slate-500 text-sm">
-              {{ isRegister ? '已经有账号了？' : '还没有智影账号？' }}
-              <a href="javascript:void(0)" class="text-[#8b5cf6] font-bold hover:underline ml-1" @click="toggleRegister">
-                {{ isRegister ? '立即登录' : '免费注册' }}
-              </a>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">
+              <template v-if="isForgot">
+                想起来了？
+                <a href="javascript:void(0)" class="text-[#8b5cf6] font-bold hover:underline ml-1" @click="isForgot = false">立即登录</a>
+              </template>
+              <template v-else>
+                {{ isRegister ? '已经有账号了？' : '还没有智影账号？' }}
+                <a href="javascript:void(0)" class="text-[#8b5cf6] font-bold hover:underline ml-1" @click="toggleRegister">
+                  {{ isRegister ? '立即登录' : '免费注册' }}
+                </a>
+              </template>
             </p>
           </div>
 
-          <!-- 第三方登录 -->
-          <div class="mt-10">
+          <!-- 第三方登录 (根据要求隐藏) -->
+          <!-- <div class="mt-10">
             <div class="relative flex items-center justify-center mb-6">
               <span class="absolute w-full border-t border-slate-200"></span>
               <span class="relative bg-white px-4 text-xs text-slate-400 font-medium">其他登录方式</span>
@@ -241,7 +321,7 @@
                 <span class="text-sm font-semibold text-slate-600 group-hover:text-[#8b5cf6]">恒智易单点登录</span>
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -262,6 +342,7 @@ const userStore = useUserStore()
 // 默认开启短信登录
 const activeTab = ref('sms')
 const isRegister = ref(false)
+const isForgot = ref(false)
 const loading = ref(false)
 const countdown = ref(0)
 const rememberMe = ref(true)
@@ -269,14 +350,17 @@ const rememberMe = ref(true)
 const pwdCaptchaRef = ref()
 const smsCaptchaRef = ref()
 const regCaptchaRef = ref()
+const forgotCaptchaRef = ref()
 
 const pwdFormRef = ref()
 const smsFormRef = ref()
 const regFormRef = ref()
+const forgotFormRef = ref()
 
 const pwdForm = reactive({ username: '', password: '', captcha: '' })
 const smsForm = reactive({ phone: '', code: '', captcha: '' })
 const regForm = reactive({ phone: '', password: '', code: '', captcha: '' })
+const forgotForm = reactive({ phone: '', code: '', captcha: '', newPassword: '' })
 
 const pwdRules = {
   username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
@@ -306,8 +390,22 @@ const regRules = {
   captcha: [{ required: true, message: '请输入图形验证码', trigger: 'blur' }]
 }
 
+const forgotRules = {
+  phone: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+  ],
+  code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+  captcha: [{ required: true, message: '请输入图形验证码', trigger: 'blur' }],
+  newPassword: [
+    { required: true, message: '请设置新密码', trigger: 'blur' },
+    { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
+  ]
+}
+
 const toggleRegister = () => {
   isRegister.value = !isRegister.value
+  isForgot.value = false
 }
 
 const startCountdown = () => {
@@ -336,6 +434,17 @@ const sendRegSmsCode = () => {
   if (!/^1[3-9]\d{9}$/.test(regForm.phone)) return ElMessage.warning('手机号格式不正确')
   if (!regCaptchaRef.value?.validate()) {
     regCaptchaRef.value?.refreshCaptcha()
+    return ElMessage.error('图形验证码不正确')
+  }
+  ElMessage.success('验证码发送成功（模拟: 123456）')
+  startCountdown()
+}
+
+const sendForgotSmsCode = () => {
+  if (!forgotForm.phone) return ElMessage.warning('请先输入手机号')
+  if (!/^1[3-9]\d{9}$/.test(forgotForm.phone)) return ElMessage.warning('手机号格式不正确')
+  if (!forgotCaptchaRef.value?.validate()) {
+    forgotCaptchaRef.value?.refreshCaptcha()
     return ElMessage.error('图形验证码不正确')
   }
   ElMessage.success('验证码发送成功（模拟: 123456）')
@@ -410,51 +519,45 @@ const handleRegister = async () => {
     }
   })
 }
+
+const handleResetPassword = async () => {
+  if (!forgotFormRef.value) return
+  await forgotFormRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      if (!forgotCaptchaRef.value?.validate()) {
+        forgotCaptchaRef.value?.refreshCaptcha()
+        return ElMessage.error('图形验证码不正确')
+      }
+      loading.value = true
+      try {
+        // 模拟重置密码逻辑
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        await userStore.loginByPassword({ username: forgotForm.phone, password: forgotForm.newPassword })
+        ElMessage.success('密码重置成功，已自动登录')
+        router.push('/ai-short-drama-creator/new')
+      } catch (e) {
+        ElMessage.error('重置失败')
+        forgotCaptchaRef.value?.refreshCaptcha()
+      } finally {
+        loading.value = false
+      }
+    }
+  })
+}
 </script>
 
 <style scoped lang="scss">
 .login-container {
-  background-color: #f3f4f6;
+  background-color: #000;
   position: relative;
   overflow: hidden;
 }
 
-.bg-decor {
-  .circle {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.4;
+.video-background {
+  z-index: 0;
+  video {
+    filter: brightness(0.8);
   }
-  .circle-1 {
-    width: 600px;
-    height: 600px;
-    background: #818cf8;
-    top: -200px;
-    left: -200px;
-    animation: move 20s infinite alternate;
-  }
-  .circle-2 {
-    width: 500px;
-    height: 500px;
-    background: #c084fc;
-    bottom: -150px;
-    right: -100px;
-    animation: move 15s infinite alternate-reverse;
-  }
-  .circle-3 {
-    width: 300px;
-    height: 300px;
-    background: #fb7185;
-    top: 20%;
-    right: 10%;
-    animation: move 25s infinite alternate;
-  }
-}
-
-@keyframes move {
-  from { transform: translate(0, 0); }
-  to { transform: translate(100px, 50px); }
 }
 
 .login-card {
@@ -483,6 +586,12 @@ const handleRegister = async () => {
   }
 }
 
+.dark .modern-tabs :deep(.el-tabs__item) {
+  &.is-active {
+    color: #fff;
+  }
+}
+
 .modern-input :deep(.el-input__wrapper) {
   background-color: #f8fafc;
   box-shadow: none;
@@ -501,6 +610,36 @@ const handleRegister = async () => {
     border-color: #8b5cf6;
     box-shadow: 0 0 0 6px rgba(139, 92, 246, 0.1);
   }
+}
+
+.dark .modern-input :deep(.el-input__wrapper) {
+  background-color: #1e293b;
+  border-color: #334155;
+  
+  &:hover {
+    background-color: #1e293b;
+    border-color: #475569;
+  }
+  
+  &.is-focus {
+    background-color: #0f172a;
+    border-color: #8b5cf6;
+  }
+
+  .el-input__inner {
+    color: #fff;
+    &::placeholder {
+      color: #64748b;
+    }
+  }
+}
+
+.dark-checkbox :deep(.el-checkbox__label) {
+  color: #94a3b8;
+}
+
+.dark .dark-checkbox :deep(.el-checkbox__label) {
+  color: #64748b;
 }
 
 .submit-btn {

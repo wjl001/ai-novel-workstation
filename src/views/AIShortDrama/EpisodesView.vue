@@ -155,15 +155,15 @@
       </div>
     </div>
 
-    <div v-if="currentTabTotal > 0" :class="s.paginationSection">
-      <div :class="s.paginationCard">
+    <div v-if="currentTabTotal > 0" class="flex justify-center mt-10 relative z-10">
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-2 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         <el-pagination
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :page-sizes="[12, 24, 36, 48]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="currentTabTotal"
-          :class="s.pagination"
+          class="custom-pagination-v2"
         />
       </div>
     </div>
@@ -280,6 +280,95 @@
       }"
     />
 
+    <!-- AI Generator Dialog -->
+    <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="ai-generator-dialog">
+      <div class="space-y-6">
+        <!-- Prompt Input -->
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-5 transition-colors focus-within:border-indigo-500/50 shadow-inner">
+           <div class="text-sm mb-3 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+             <el-icon class="text-indigo-500"><EditPen /></el-icon>
+             生成描述词 (Prompt)
+           </div>
+           <el-input 
+             v-model="aiPrompt"
+             type="textarea" 
+             :rows="4"
+             placeholder="例如：古风武侠，边境战火，义军首领手持重锤，背景是燃烧的村庄..."
+             class="custom-textarea"
+           />
+           <div class="flex justify-end mt-4">
+             <el-button type="primary" :loading="isGenerating" class="!rounded-xl px-6 h-11 shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
+               <el-icon class="mr-2"><MagicStick /></el-icon> 开始生成
+             </el-button>
+           </div>
+        </div>
+
+        <!-- Result Grid -->
+        <div class="space-y-4">
+           <!-- Gallery Tabs -->
+           <div class="flex items-center gap-4 mb-2">
+             <div class="text-sm font-bold text-slate-700 dark:text-slate-300">可选封面素材</div>
+             <div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+           </div>
+
+           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 min-h-[200px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-4 transition-colors">
+              <!-- Default Gallery (Always shown initially or when not generating) -->
+              <template v-if="generatedImages.length === 0 && !isGenerating">
+                <div 
+                  v-for="(img, idx) in defaultCovers" 
+                  :key="'default-' + idx"
+                  class="relative group cursor-pointer rounded-xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-md"
+                  :class="selectedImage === img ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
+                  @click="selectedImage = img"
+                >
+                  <img :src="img" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img"></div>
+                  <div class="absolute top-2 right-2" v-if="selectedImage === img">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                      <el-icon :size="16"><Check /></el-icon>
+                    </div>
+                  </div>
+                  <!-- Label for default -->
+                  <div class="absolute bottom-0 inset-x-0 p-1 bg-black/40 backdrop-blur-sm text-[10px] text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">推荐素材</div>
+                </div>
+              </template>
+              
+              <!-- AI Generated Image (Single Mode) -->
+              <template v-else-if="generatedImages.length > 0">
+                <div class="col-span-full flex justify-center py-2">
+                  <div 
+                    class="relative group cursor-pointer rounded-2xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-2xl w-full max-w-[480px]"
+                    :class="selectedImage === generatedImages[0] ? 'border-indigo-500 scale-[1.02]' : 'border-transparent'"
+                    @click="selectedImage = generatedImages[0]"
+                  >
+                    <img :src="generatedImages[0]" class="w-full h-full object-cover" />
+                    <div class="absolute top-4 right-4">
+                      <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                        <el-icon :size="20"><Check /></el-icon>
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 p-3 bg-indigo-600/80 backdrop-blur-md text-sm text-white text-center font-bold">
+                      AI 已为您生成专属封面
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <div v-if="isGenerating" class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl">
+                <div class="loading-spinner-v2 mb-4"></div>
+                <p class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">AI 正在绘图...</p>
+              </div>
+           </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+          <el-button @click="showAIDialog = false" class="!rounded-xl px-6 h-11">取消</el-button>
+          <el-button type="primary" :disabled="!selectedImage" @click="confirmAICover" class="!rounded-xl px-8 h-11 shadow-lg shadow-indigo-500/20">应用封面</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- Recovery Confirm Dialog -->
     <ConfirmDialog
       v-model="recoveryConfirmVisible"
@@ -336,6 +425,25 @@ const episodeStore = useEpisodeStore();
 // State
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
+const showAIDialog = ref(false);
+const aiPrompt = ref('');
+const isGenerating = ref(false);
+const generatedImages = ref<string[]>([]);
+const selectedImage = ref('');
+const currentEpisodeForAI = ref<any>(null);
+
+// Default cover gallery
+const defaultCovers = [
+  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=600&h=375&auto=format&fit=crop', // Sci-fi
+  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=600&h=375&auto=format&fit=crop', // Ancient
+  'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&h=375&auto=format&fit=crop', // Movie
+  'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&h=375&auto=format&fit=crop', // Forest/Mystery
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&h=375&auto=format&fit=crop', // Cyberpunk
+  'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&h=375&auto=format&fit=crop', // Cinema
+  'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600&h=375&auto=format&fit=crop', // City Night
+  'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&h=375&auto=format&fit=crop'  // Vintage
+];
+
 const drawerVisible = ref(false);
 const editingEpisode = ref<any>(null);
 
@@ -751,10 +859,7 @@ const getStepHint = (ep: any) => {
 
 const getPosterUrl = (ep: any) => {
   const defaultImage = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=400';
-  if (ep.storyboardStatus === 'success' || ep.synthesisStatus === 'success') {
-    return ep.poster || defaultImage;
-  }
-  return defaultImage;
+  return ep.poster || defaultImage;
 };
 
 const navigateToOutline = (ep: any) => {
@@ -799,12 +904,32 @@ const handleUploadCover = (ep: any) => {
 };
 
 const handleAIGenerateCover = (ep: any) => {
-  ElMessage({
-    message: `正在为第 ${ep.index} 集 AI 生成封面...`,
-    icon: MagicStick,
-    customClass: 'modern-message-success'
-  });
-  // Add real AI generation logic here
+  currentEpisodeForAI.value = ep;
+  aiPrompt.value = `${ep.title}，短剧海报风格，高清，唯美`;
+  generatedImages.value = [];
+  selectedImage.value = '';
+  showAIDialog.value = true;
+};
+
+const generateCoverImages = () => {
+  if (!aiPrompt.value) return ElMessage.warning('请输入描述词');
+  isGenerating.value = true;
+  generatedImages.value = [];
+  setTimeout(() => {
+    // Generate only ONE image as requested
+    const newImg = 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=1200&h=750&auto=format&fit=crop';
+    generatedImages.value = [newImg];
+    selectedImage.value = newImg; // Auto-select the only generated image
+    isGenerating.value = false;
+  }, 2000);
+};
+
+const confirmAICover = () => {
+  if (currentEpisodeForAI.value && selectedImage.value) {
+    episodeStore.updateEpisode(currentEpisodeForAI.value.id, { poster: selectedImage.value });
+    showAIDialog.value = false;
+    ElMessage.success('封面应用成功');
+  }
 };
 
 const handleEdit = (ep: any) => {
@@ -905,3 +1030,113 @@ const cancelNext = () => {
 
 </script>
 
+<style scoped>
+/* Pagination Customization (Match DramaWorks) */
+.custom-pagination-v2 :deep(.el-pagination__total),
+.custom-pagination-v2 :deep(.el-pagination__jump) {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 13px;
+}
+.dark .custom-pagination-v2 :deep(.el-pagination__total),
+.dark .custom-pagination-v2 :deep(.el-pagination__jump),
+.dark .custom-pagination-v2 :deep(.el-pagination__classifier) {
+  color: #64748b;
+}
+.custom-pagination-v2 {
+  --el-font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--el-font-family);
+}
+.custom-pagination-v2 :deep(*) {
+  font-family: var(--el-font-family);
+}
+.custom-pagination-v2 :deep(.el-pager li) {
+  background-color: #f8fafc !important;
+  color: #64748b;
+  font-weight: 700;
+  border-radius: 10px;
+  margin: 0 2px;
+  border: 1px solid #e2e8f0;
+}
+.dark .custom-pagination-v2 :deep(.el-pager li) {
+  background-color: #1e293b !important;
+  border-color: #334155;
+  color: #94a3b8;
+}
+.custom-pagination-v2 :deep(.el-pager li.is-active) {
+  background: #6366f1 !important;
+  color: white !important;
+  border-color: #6366f1 !important;
+}
+.custom-pagination-v2 :deep(.btn-prev),
+.custom-pagination-v2 :deep(.btn-next) {
+  background-color: #fff !important;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  margin: 0 4px;
+}
+.dark .custom-pagination-v2 :deep(.btn-prev),
+.dark .custom-pagination-v2 :deep(.btn-next) {
+  background-color: #1e293b !important;
+  border-color: #334155;
+  color: #94a3b8;
+}
+.custom-pagination-v2 :deep(.el-input__wrapper) {
+  border-radius: 8px;
+}
+.dark .custom-pagination-v2 :deep(.el-input__wrapper) {
+  background-color: #1e293b !important;
+  box-shadow: 0 0 0 1px #334155 inset !important;
+}
+.dark .custom-pagination-v2 :deep(.el-input__inner) {
+  color: #cbd5e1 !important;
+  background-color: transparent !important;
+}
+
+/* AI Generator Dialog */
+:deep(.ai-generator-dialog) {
+  border-radius: 24px;
+  overflow: hidden;
+  background-color: #f8fafc;
+}
+.dark :deep(.ai-generator-dialog) {
+  background-color: #0f172a;
+}
+
+:deep(.ai-generator-dialog .el-dialog__header) {
+  margin-right: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.dark :deep(.ai-generator-dialog .el-dialog__header) {
+  border-bottom: 1px solid #1e293b;
+}
+
+:deep(.custom-textarea .el-textarea__inner) {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+}
+.dark :deep(.custom-textarea .el-textarea__inner) {
+  color: #f1f5f9;
+}
+
+.loading-spinner-v2 {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.1);
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>

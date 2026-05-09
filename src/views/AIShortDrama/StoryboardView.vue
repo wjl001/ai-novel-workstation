@@ -282,9 +282,9 @@
       <!-- Right Column: Editor & Timeline -->
       <div class="flex-1 flex flex-col gap-3 min-w-0 transition-all duration-500">
         <!-- Center: Script Editor Area -->
-        <section class="flex-1 flex flex-col min-h-0 bg-[#F0F7FF] dark:bg-slate-800/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100 dark:shadow-none border border-blue-100 dark:border-slate-700/50 overflow-hidden relative">
+        <section class="flex-1 flex flex-col min-h-0 bg-[#F0F7FF] dark:bg-slate-900/50 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100 dark:shadow-none border border-blue-100 dark:border-slate-800 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-2.5 bg-white/60 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-700/50">
+          <div class="px-6 py-2.5 bg-white/60 dark:bg-slate-900/40 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-800/50">
             <div class="flex items-center gap-3">
               <div class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">分镜 {{ currentSceneIdx + 1 }}</div>
               <span class="text-[12px] text-indigo-400 dark:text-slate-500 font-bold">输入“@”可快速引用主体，分镜建议 4-15s</span>
@@ -925,7 +925,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
@@ -1613,6 +1613,41 @@ const handleScriptInput = (e: any) => {
 
 const timelineScenes = ref<any[]>([]);
 
+const cloneScenes = (scenes: any[]) => JSON.parse(JSON.stringify(scenes || []));
+
+const persistStoryboardForEpisode = (targetEpisodeId: string) => {
+  if (!targetEpisodeId) return;
+  const targetEpisode = episodeStore.episodes.find(e => e.id === targetEpisodeId);
+  if (!targetEpisode) return;
+
+  const hasScenes = timelineScenes.value.length > 0;
+  const hasGenerating = timelineScenes.value.some(s => s.status === 'generating' || s.status === 'script_generating');
+  const isAllSuccess = hasScenes && timelineScenes.value.every(s => s.status === 'success');
+
+  episodeStore.updateEpisode(targetEpisodeId, {
+    storyboardScenes: cloneScenes(timelineScenes.value),
+    storyboardGenerated: hasScenes,
+    storyboardStatus: hasGenerating ? 'generating' : (isAllSuccess ? 'success' : 'pending')
+  });
+};
+
+const restoreStoryboardForEpisode = (targetEpisodeId: string) => {
+  const targetEpisode = episodeStore.episodes.find(e => e.id === targetEpisodeId);
+  const cachedScenes = targetEpisode?.storyboardScenes;
+  if (!Array.isArray(cachedScenes) || cachedScenes.length === 0) return false;
+
+  timelineScenes.value = cloneScenes(cachedScenes);
+  currentSceneIdx.value = Math.min(currentSceneIdx.value, timelineScenes.value.length - 1);
+  if (currentSceneIdx.value < 0) currentSceneIdx.value = 0;
+
+  nextTick(() => {
+    if (currentScript.value) {
+      editor.value?.commands.setContent(currentScript.value);
+    }
+  });
+  return true;
+};
+
 const handleEditScript = () => {
   isEditingScript.value = true;
   editor.value?.commands.setContent(currentScript.value);
@@ -1636,6 +1671,7 @@ const handleSaveScriptInline = () => {
     
       timelineScenes.value[currentSceneIdx.value].modified = true;
     }
+    persistStoryboardForEpisode(episodeId.value);
     isEditingScript.value = false;
     showMentionMenu.value = false;
     ElMessage.success('脚本已保存');
@@ -1645,6 +1681,7 @@ const handleSaveScriptInline = () => {
 const handleSaveScript = (data: { index: number, script: string }) => {
   if (timelineScenes.value[data.index]) {
     timelineScenes.value[data.index].script = data.script;
+    persistStoryboardForEpisode(episodeId.value);
     ElMessage.success('脚本更新成功');
   }
 };
@@ -1902,6 +1939,7 @@ const handleGenerateSingleScene = (idx: number) => {
         timelineScenes.value[idx].video = '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4';
         // 同时设置预览图，确保时间轴能看到画面
         timelineScenes.value[idx].image = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600';
+        persistStoryboardForEpisode(episodeId.value);
         ElMessage.success(`分镜 ${idx + 1} 生成成功`);
       }
     }, 100);
@@ -1957,6 +1995,7 @@ const handleExport = () => {
 };
 
 const handleEpisodeSwitch = (id: string) => {
+  persistStoryboardForEpisode(episodeId.value);
   router.push({ query: { ...route.query, id } });
   ElMessage.info(`已切换至 ${episodeStore.episodes.find(e => e.id === id)?.title}`);
 };
@@ -1976,6 +2015,7 @@ const addTimelineScene = () => {
     modified: false,
     script: ''
   });
+  persistStoryboardForEpisode(episodeId.value);
 };
 
 const deleteScene = (idx: number) => {
@@ -1988,6 +2028,7 @@ const deleteScene = (idx: number) => {
     if (currentSceneIdx.value >= timelineScenes.value.length) {
       currentSceneIdx.value = Math.max(0, timelineScenes.value.length - 1);
     }
+    persistStoryboardForEpisode(episodeId.value);
   });
 };
 
@@ -2024,13 +2065,29 @@ onMounted(async () => {
     recoveryConfirmTitle.value = '恢复生成';
     recoveryConfirmMessage.value = `检测到分镜脚本生成意外中断，是否恢复生成？`;
     recoveryConfirmVisible.value = true;
-  } else if (timelineScenes.value.length === 0) {
-    // Trigger sequential generation for storyboard
+  } else if (!restoreStoryboardForEpisode(episodeId.value)) {
+    // Trigger sequential generation for storyboard only when no cached data
     await startStoryboardSequentialGeneration();
   }
 
   if (currentScript.value) {
     editor.value?.commands.setContent(currentScript.value);
+  }
+});
+
+watch(episodeId, async (newId, oldId) => {
+  if (!newId || newId === oldId) return;
+  if (oldId) persistStoryboardForEpisode(oldId);
+
+  isEditingScript.value = false;
+  showMentionMenu.value = false;
+  selectedScenes.value = [];
+  isMultiSelectMode.value = false;
+  currentSceneIdx.value = 0;
+
+  if (!restoreStoryboardForEpisode(newId)) {
+    timelineScenes.value = [];
+    await startStoryboardSequentialGeneration();
   }
 });
 
@@ -2151,6 +2208,7 @@ const startStoryboardSequentialGeneration = async () => {
     isSequentiallyGeneratingStoryboard.value = false;
     currentGeneratingStoryboardIndex.value = -1;
     episodeStore.setGenerationStatus({ isGenerating: false, type: '' });
+    persistStoryboardForEpisode(episodeId.value);
     ElMessage.success('分镜脚本生成完毕，点击“生成视频”开始制作画面');
   };
 </script>

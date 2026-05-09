@@ -1,8 +1,43 @@
 <template>
-  <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 relative overflow-hidden">
-    <!-- Decorative background elements -->
-    <div class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="relative h-full flex flex-col overflow-hidden transition-colors duration-500" :class="isLight ? 'bg-slate-50' : 'bg-slate-950'">
+    
+    <!-- Cinematic Blockbuster Background -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <!-- Ambient Video Layer: 60% for Light, 80% for Dark -->
+      <div class="absolute inset-0 transition-opacity duration-1000" :class="isLight ? 'opacity-60' : 'opacity-80'">
+        <video 
+          autoplay 
+          muted 
+          loop 
+          playsinline 
+          class="w-full h-full object-cover scale-100"
+          style="filter: saturate(1.3) contrast(1.2) brightness(0.8) hue-rotate(-5deg);"
+        >
+          <source src="/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <!-- Theme-aware Gradient Overlays: Light/Dark compatibility -->
+      <div 
+        class="absolute inset-0 transition-all duration-700"
+        :class="isLight 
+          ? 'bg-gradient-to-b from-white/20 via-transparent to-white/40' 
+          : 'bg-gradient-to-b from-black/30 via-transparent to-black/50'"
+      ></div>
+
+      <!-- Cinematic Elements -->
+      <div class="absolute inset-0 pointer-events-none">
+        <!-- Film Grain: Reduced opacity for clarity -->
+        <div class="absolute inset-0 opacity-[0.05] dark:opacity-[0.1] mix-blend-overlay bg-noise-pattern"></div>
+        
+        <!-- Vignette -->
+        <div class="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_200px_rgba(0,0,0,0.4)]"></div>
+        
+        <!-- Dynamic Glows -->
+        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-[120px] animate-pulse-slow-delayed"></div>
+      </div>
+    </div>
 
     <!-- Main Content: Top Creation Area -->
     <div class="flex-1 overflow-y-auto p-4 lg:p-6 relative z-10 flex flex-col min-h-0 custom-scrollbar">
@@ -13,7 +48,8 @@
           <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
             <button 
               @click="showDesignDialog = true"
-              class="h-8 px-3 flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 rounded-full font-bold text-[10px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-300"
+              class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
+              :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
             >
               <el-icon :size="12"><InfoFilled /></el-icon>
               <span>产品设计说明</span>
@@ -21,28 +57,35 @@
           </div>
           
           <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
               智能极速创作，打造爆款短剧
             </span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm font-medium leading-relaxed opacity-70">
+          <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
             AI全流程辅助，内置高转化剧情模板，让创意触手可及。
           </p>
         </div>
 
         <!-- Creation Card: More compact and color-distinguished -->
-        <div class="w-full max-w-5xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl rounded-[32px] shadow-xl shadow-indigo-500/5 border border-white dark:border-slate-700/50 overflow-hidden mb-4 transition-all duration-500 shrink-0">
-          <div class="p-1 bg-slate-100/50 dark:bg-slate-900/50 flex m-2 rounded-[18px]">
+        <div
+          class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
+          :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
+        >
+          <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
             <button 
               class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
-              :class="activeTab === 'ai' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
+              :class="activeTab === 'ai'
+                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
               @click="activeTab = 'ai'"
             >
               <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
             </button>
             <button 
               class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
-              :class="activeTab === 'upload' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm scale-[1.01]' : 'text-slate-500 hover:text-slate-700'"
+              :class="activeTab === 'upload'
+                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
               @click="activeTab = 'upload'"
             >
               <el-icon :size="16"><Upload /></el-icon> 导入已有小说
@@ -60,37 +103,54 @@
                     :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
                   ></div>
                   
-                  <div class="relative bg-white dark:bg-slate-900 rounded-[28px] border-2 border-slate-100 dark:border-slate-800 group-focus-within:border-indigo-500/40 transition-all overflow-hidden shadow-2xl shadow-indigo-500/5">
+                  <div
+                    class="relative rounded-[28px] border-2 transition-all overflow-hidden"
+                    :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
+                  >
                     <textarea 
                       v-model="aiPrompt"
-                      class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400/60 text-lg p-6 transition-all font-medium leading-relaxed"
+                      class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
+                      :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
                       placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
                     ></textarea>
                     
                     <!-- Textarea Bottom Toolbar -->
-                    <div class="px-6 py-3 bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
-                      <div class="flex items-center gap-4 text-slate-400">
-                        <span class="text-[11px] font-bold flex items-center gap-1.5 bg-white dark:bg-slate-700 px-3 py-1 rounded-full shadow-sm">
-                          <el-icon class="text-indigo-500"><EditPen /></el-icon> {{ aiPrompt.length }} 字
+                    <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
+                      <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                        <span
+                          class="text-[11px] font-bold flex items-center gap-1.5 px-3 py-1 rounded-full shadow-sm"
+                          :class="isLight ? 'bg-white text-slate-500 border border-slate-100' : 'bg-white/10 text-slate-300'"
+                        >
+                          <el-icon class="text-indigo-400"><EditPen /></el-icon> {{ aiPrompt.length }} 字
                         </span>
-                        <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="w-px h-4" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></div>
                         <div class="flex items-center gap-1">
-                          <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 transition-all shadow-sm" title="清空内容" @click="aiPrompt = ''" v-if="aiPrompt">
-                            <el-icon :size="14" class="text-rose-400 dark:text-rose-500"><Delete /></el-icon>
+                          <button
+                            class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
+                            :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
+                            title="清空内容"
+                            @click="aiPrompt = ''"
+                            v-if="aiPrompt"
+                          >
+                            <el-icon :size="14" class="text-rose-400"><Delete /></el-icon>
                           </button>
-                          <button class="h-8 px-3 rounded-full flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 hover:bg-indigo-100 transition-all shadow-sm text-[11px] font-black border border-indigo-100 dark:border-indigo-800" title="优化描述">
-                            <el-icon :size="14" class="text-indigo-500"><Brush /></el-icon>
+                          <button
+                            class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                            :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                            title="优化描述"
+                          >
+                            <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
                             <span>AI 润色</span>
                           </button>
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-3">
-                         <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-600 animate-pulse mr-2 flex items-center gap-1.5">
+                         <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
                            <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
                          </span>
                          <button 
-                          class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                          class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                           :disabled="!aiPrompt.trim() || isGenerating"
                           @click="startCreation"
                         >
@@ -104,19 +164,20 @@
 
                 <!-- Featured Categories -->
                 <div class="flex flex-col items-center gap-3 mt-1">
-                  <div class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-60">
-                    <span class="w-8 h-[1px] bg-slate-200"></span>
+                  <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+                    <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
                     热门题材灵感
-                    <span class="w-8 h-[1px] bg-slate-200"></span>
+                    <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
                   </div>
                   <div class="flex flex-wrap items-center justify-center gap-2">
                     <div 
                       v-for="topic in hotTopics" 
                       :key="topic.label" 
                       @click="selectHotTopic(topic)"
-                      class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md hover:-translate-y-0.5 group"
+                      class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
+                      :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
                     >
-                      <span class="w-1.5 h-1.5 rounded-full bg-slate-200 group-hover:bg-indigo-400 transition-colors"></span>
+                      <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
                       {{ topic.label }}
                     </div>
                   </div>
@@ -129,17 +190,21 @@
                   drag
                   action="#"
                   :auto-upload="false"
-                  class="custom-upload-v2 w-full h-full"
+                  class="custom-upload-v3 w-full h-full"
                   @change="handleFileUpload"
                 >
                   <div class="py-4">
-                    <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm" :class="isLight ? 'bg-indigo-50 text-indigo-500' : 'bg-indigo-500/30 text-indigo-300'">
                       <el-icon :size="20"><upload-filled /></el-icon>
                     </div>
-                    <div class="el-upload__text text-slate-500 dark:text-slate-400 font-bold text-sm mb-1">
-                      将小说文件拖到此处，或 <em class="text-indigo-600 dark:text-indigo-400 not-italic">点击上传</em>
+                    <div class="el-upload__text font-black text-[15px] mb-1 drop-shadow-md" :class="isLight ? 'text-slate-700' : '!text-white'">
+                      <span :class="isLight ? 'text-slate-700' : 'text-white'">将小说文件拖到此处，或</span> 
+                      <em 
+                        class="not-italic font-[1000] underline underline-offset-4 transition-colors"
+                        :class="isLight ? 'text-indigo-600 hover:text-indigo-500' : 'text-indigo-300 hover:text-indigo-200'"
+                      >点击上传</em>
                     </div>
-                    <div class="text-slate-400 text-[11px] font-medium">
+                    <div class="text-[12px] font-black drop-shadow-sm" :class="isLight ? 'text-slate-500' : 'text-white'">
                       支持 docx, pdf, txt 格式，不超过3万字
                     </div>
                   </div>
@@ -150,17 +215,18 @@
         </div>
 
         <!-- Recent Projects Section -->
-        <div class="w-full relative flex-1 min-h-0 flex flex-col bg-slate-50/50 dark:bg-slate-900/30 rounded-[32px] p-4 border border-slate-100 dark:border-slate-800">
+        <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
           <div class="flex items-center justify-between mb-4 shrink-0">
-            <h2 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-              <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span>
+            <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
+              <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
               近期作品
-              <span class="text-slate-300 font-light text-lg">/</span>
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Recent Projects</span>
+              <span class="text-slate-600 font-light text-lg">/</span>
+              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
             </h2>
             <button 
               @click="router.push('/ai-short-drama-creator/works')" 
-              class="group h-8 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+              class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+              :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
             >
               <span>管理作品</span>
               <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
@@ -171,21 +237,23 @@
             <div 
               v-for="work in recentWorks.slice(0, 4)" 
               :key="work.id"
-              class="bg-white dark:bg-slate-800 rounded-[20px] overflow-hidden border border-slate-100/50 dark:border-slate-700 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-500 cursor-pointer group flex flex-col"
+              class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
+              :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
               @click="router.push('/ai-short-drama-creator/outline')"
             >
               <!-- Previews Area: More compact -->
-              <div class="h-24 bg-slate-100 dark:bg-slate-900 flex p-1 gap-1 overflow-hidden relative shrink-0">
+              <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
                 <template v-if="work.previews && work.previews.length > 0">
                   <div 
                     v-for="(img, idx) in work.previews" 
                     :key="idx"
-                    class="flex-1 h-full rounded-lg overflow-hidden bg-slate-200"
+                    class="flex-1 h-full rounded-lg overflow-hidden"
+                    :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
                   >
                     <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                   </div>
                 </template>
-                <div v-else class="w-full h-full flex items-center justify-center text-indigo-200 dark:text-indigo-900/30 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 rounded-lg">
+                <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
                    <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
                 </div>
                 <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
@@ -194,15 +262,15 @@
               </div>
 
               <div class="p-3 flex flex-col gap-1.5">
-                <h3 class="font-black text-slate-800 dark:text-white truncate text-[14px] group-hover:text-indigo-600 transition-colors" :title="work.title">
+                <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
                   {{ work.title }}
                 </h3>
-                <div class="flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
                   <div class="flex items-center gap-1">
-                    <el-icon class="text-indigo-500" :size="10"><Clock /></el-icon>
+                    <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
                     <span>{{ work.updatedAt.split(' ')[0] }}</span>
                   </div>
-                  <span v-if="work.episodes" class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">
+                  <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
                     {{ work.episodes }} 集
                   </span>
                 </div>
@@ -1394,6 +1462,37 @@ const handleFileUpload = (file: any) => {
   background-color: rgba(99, 102, 241, 0.05);
 }
 
+/* Premium Upload Styles V3 */
+:deep(.custom-upload-v3 .el-upload-dragger) {
+  border-radius: 24px;
+  border: 2px dashed #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.dark :deep(.custom-upload-v3 .el-upload-dragger) {
+  border-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(15, 23, 42, 0.75);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+}
+.dark :deep(.custom-upload-v3 .el-upload__text) {
+   color: #ffffff;
+ }
+ .dark :deep(.custom-upload-v3 .el-upload__text em) {
+   color: #a5b4fc !important; /* text-indigo-300 */
+ }
+:deep(.custom-upload-v3 .el-upload-dragger:hover) {
+  border-color: #6366f1;
+  background-color: rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+}
+
 :deep(.custom-slider .el-slider__bar) {
   background-color: #6366f1;
 }
@@ -1576,6 +1675,30 @@ const handleFileUpload = (file: any) => {
 }
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+/* Cinematic Background Elements */
+.bg-noise-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+@keyframes pulse-slow-delayed {
+  0%, 100% { opacity: 0.2; transform: scale(1.1); }
+  50% { opacity: 0.4; transform: scale(1); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.animate-pulse-slow-delayed {
+  animation: pulse-slow-delayed 10s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 @keyframes pulse-indigo {

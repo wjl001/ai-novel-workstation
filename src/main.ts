@@ -7,6 +7,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 import { useProductDesignStore } from './store/productDesign'
+import { useThemeStore } from './store/theme'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -14,6 +15,9 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus, { locale: zhCn })
+
+const themeStore = useThemeStore(pinia)
+themeStore.initializeTheme()
 
 // Initialize store from localStorage
 const store = useProductDesignStore(pinia)

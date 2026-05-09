@@ -44,7 +44,7 @@
         <!-- Step 2 -->
         <div 
           class="flex items-center gap-4 group relative py-0.5"
-          :class="isScriptGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
+          :class="(isScriptGenerated || activeStep >= 1) ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
           @click="goToStep(1, '/ai-short-drama-creator/assets')"
         >
           <div 
@@ -71,7 +71,7 @@
         <!-- Step 3 -->
         <div 
           class="flex items-center gap-4 group py-0.5"
-          :class="isAssetsGenerated ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
+          :class="(isAssetsGenerated || activeStep >= 2) ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
           @click="goToStep(2, '/ai-short-drama-creator/storyboard')"
         >
           <div 
@@ -164,18 +164,19 @@ const isScriptGenerated = computed(() => dramaStore.isScriptGenerated);
 const isAssetsGenerated = computed(() => dramaStore.isAssetsGenerated);
 
 const goToStep = (step: number, path: string) => {
-  if (step === 0) {
+  // 允许跳转到当前步骤或之前的步骤
+  if (step <= activeStep.value) {
     router.push(path);
     return;
   }
   
-  // 如果没有生成剧本，且不是当前步骤（防止刷新状态没同步时的误判，虽然有 store 应该没问题）
-  if (!isScriptGenerated.value && step === 1) {
+  // 跳转到后续步骤时的逻辑
+  if (step === 1 && !isScriptGenerated.value) {
     ElMessage.warning('请先生成剧本正文内容，再进行后续设置');
     return;
   }
 
-  if (!isAssetsGenerated.value && step === 2) {
+  if (step === 2 && !isAssetsGenerated.value) {
     ElMessage.warning('请先完成主体设置，再进行分镜视频创作');
     return;
   }

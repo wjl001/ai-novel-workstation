@@ -1499,19 +1499,19 @@ const selectEpisode = async (index: number | string) => {
     // 如果已经在该集且是分集模式，则不需要切换
     if (editMode.value === 'episode' && currentEpisodeIndex.value === targetIndex) return;
 
+    // 切换前保存当前分集的数据
+    if (editMode.value === 'episode') {
+      saveCurrentContentToStore(true);
+      if (form.value.episodesData[currentEpisodeIndex.value]) {
+        form.value.episodesData[currentEpisodeIndex.value].chatHistory = [...chatMessages.value];
+      }
+    }
+
     // 触发切换淡出动画
     isSwitchingContent.value = true;
     
     // 等待 150ms 以允许 fade-out 动画执行
     await new Promise(resolve => setTimeout(resolve, 150));
-
-    // 切换前保存当前分集的数据
-    if (editMode.value === 'episode') {
-      saveCurrentContentToStore();
-      if (form.value.episodesData[currentEpisodeIndex.value]) {
-        form.value.episodesData[currentEpisodeIndex.value].chatHistory = [...chatMessages.value];
-      }
-    }
 
     // 更新状态
     editMode.value = 'episode';
@@ -1548,9 +1548,9 @@ const selectEpisode = async (index: number | string) => {
   }
 };
 
-const saveCurrentContentToStore = () => {
+const saveCurrentContentToStore = (forceSave = false) => {
   try {
-    if (!form.value || isSwitchingContent.value || !tiptapEditor.value) return;
+    if (!form.value || (!forceSave && isSwitchingContent.value) || !tiptapEditor.value) return;
     const content = tiptapEditor.value.getHTML();
     
     if (editMode.value === 'full') {
