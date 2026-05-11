@@ -13,7 +13,7 @@
           class="w-full h-full object-cover scale-100"
           style="filter: saturate(1.3) contrast(1.2) brightness(0.8) hue-rotate(-5deg);"
         >
-          <source src="/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4" type="video/mp4">
+          <source src="/assets/video_07e1234349e0e3972393d879f1c65c53.mp4" type="video/mp4">
         </video>
       </div>
 
