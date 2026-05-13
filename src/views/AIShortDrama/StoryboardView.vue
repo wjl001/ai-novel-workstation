@@ -1084,11 +1084,19 @@
                   >
                     <!-- thumbnails -->
                     <div class="absolute inset-0 flex overflow-hidden pointer-events-none transition-colors duration-500"
-                         :class="isLight ? 'bg-slate-100' : 'bg-teal-900/40'">
+                         :class="isLight ? 'bg-slate-100' : 'bg-[#2a2a32]'">
                       <div v-for="i in Math.max(1, Math.ceil((clip.endTime - clip.startTime) * cropZoom / 2))" :key="i" 
-                           class="h-full w-10 shrink-0 border-r relative transition-colors duration-500"
-                           :class="isLight ? 'border-white/60' : 'border-black/20'">
-                          <img :src="currentPreviewThumbnail" class="w-full h-full object-cover opacity-80 mix-blend-normal" />
+                           class="h-full w-12 shrink-0 border-r relative transition-colors duration-500"
+                           :class="isLight ? 'border-white/60' : 'border-white/5'">
+                          <img :src="getFrameThumbnail(clip, i-1)" 
+                               class="w-full h-full object-cover opacity-100 block" 
+                               @error="(e: any) => { e.target.style.display = 'none'; e.target.parentElement.classList.add('has-error'); }" />
+                          <div class="absolute inset-0 flex items-center justify-center opacity-20 error-placeholder hidden">
+                            <el-icon :size="16"><Picture /></el-icon>
+                          </div>
+                          <div v-if="!getFrameThumbnail(clip, i-1)" class="w-full h-full flex items-center justify-center opacity-20">
+                            <el-icon :size="16"><Picture /></el-icon>
+                          </div>
                       </div>
                     </div>
                     
@@ -2140,7 +2148,73 @@ const isMicEnabled = ref(false);
 const cropCurrentTime = ref(0);
 const cropDuration = ref(0);
 const cropZoom = ref(5);
-const currentPreviewThumbnail = computed(() => timelineScenes.value[currentSceneIdx.value]?.image);
+
+// 视频帧提取状态
+const extractedThumbnails = ref<string[]>([]); // 存储提取的 base64 帧
+const isExtracting = ref(false);
+const thumbnailInterval = 1; // 每隔 1 秒提取一帧
+
+const extractThumbnails = async (url: string) => {
+  if (!url || isExtracting.value) return;
+  isExtracting.value = true;
+  extractedThumbnails.value = [];
+  
+  const video = document.createElement('video');
+  video.src = url;
+  video.crossOrigin = 'anonymous';
+  video.muted = true;
+  
+  try {
+    await new Promise((resolve, reject) => {
+      video.onloadedmetadata = resolve;
+      video.onerror = reject;
+      setTimeout(reject, 5000);
+    });
+    
+    const duration = video.duration;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 设定缩略图尺寸，保持较小以提高性能
+    const thumbWidth = 160;
+    const thumbHeight = (video.videoHeight / video.videoWidth) * thumbWidth;
+    canvas.width = thumbWidth;
+    canvas.height = thumbHeight;
+    
+    for (let t = 0; t < duration; t += thumbnailInterval) {
+      video.currentTime = t;
+      await new Promise(r => video.onseeked = r);
+      ctx?.drawImage(video, 0, 0, thumbWidth, thumbHeight);
+      extractedThumbnails.value.push(canvas.toDataURL('image/jpeg', 0.6));
+    }
+  } catch (err) {
+    console.error('Failed to extract thumbnails:', err);
+  } finally {
+    isExtracting.value = false;
+    video.remove();
+  }
+};
+
+const getFrameThumbnail = (clip: CropClip, index: number) => {
+  if (extractedThumbnails.value.length === 0) return currentPreviewThumbnail.value;
+  
+  // 根据 index 计算对应的时间点
+  // 每个缩略图宽度为 48px (w-12)，pxPerSec = cropZoom * 20
+  // 每个缩略图代表的时间长度 = 48 / pxPerSec
+  const timePerThumb = 48 / pxPerSec.value;
+  const timeAtThumb = clip.sourceStartTime + (index * timePerThumb);
+  
+  // 找到最接近提取帧索引
+  const frameIndex = Math.floor(timeAtThumb / thumbnailInterval);
+  return extractedThumbnails.value[Math.min(frameIndex, extractedThumbnails.value.length - 1)] || currentPreviewThumbnail.value;
+};
+
+const currentPreviewThumbnail = computed(() => {
+  const scene = timelineScenes.value[currentSceneIdx.value];
+  if (!scene) return '';
+  // 增加更多可能的图片字段回退
+  return scene.image || scene.targetImage || scene.cover || scene.poster || scene.thumbnail || scene.gif || '';
+});
 
 const cropTracks = ref<CropTrack[]>([]);
 const selectedTrack = computed(() => {
@@ -2246,6 +2320,9 @@ const openCropDialog = () => {
   isMicEnabled.value = false; 
   cropCurrentTime.value = 0;
   cropZoom.value = 5;
+
+  // 开始提取视频帧
+  extractThumbnails(currentPreview.value);
   
   // init tracks
   cropTracks.value = [
@@ -2386,7 +2463,8 @@ const onTrimHandleMouseDown = (e: MouseEvent, clip: CropClip, side: 'left' | 'ri
 };
 
 const onTracksBackgroundMouseDown = (e: MouseEvent) => {
-  cropTracks.value.forEach(t => t.clips.forEach(c => c.selected = false));
+  // 移除点击背景时取消选中的逻辑，避免分割/删除按钮消失
+  // cropTracks.value.forEach(t => t.clips.forEach(c => c.selected = false));
   
   // Also move playhead when clicking empty track area
   if (!tracksContainerRef.value) return;
@@ -2907,6 +2985,10 @@ const startStoryboardSequentialGeneration = async () => {
 </script>
 
 <style scoped>
+.has-error .error-placeholder {
+  display: flex !important;
+}
+
 /* TipTap Styling */
 :deep(.script-editor-content) {
   height: 100%;
