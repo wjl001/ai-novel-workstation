@@ -1,20 +1,20 @@
 <template>
-  <div class="team-management-layout p-6 bg-slate-50 h-full relative overflow-hidden flex flex-col">
+  <div class="team-management-layout p-6 bg-slate-50 dark:bg-slate-950 h-full relative overflow-hidden flex flex-col">
     <!-- Decorative background elements -->
-    <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-100/50 to-transparent pointer-events-none"></div>
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute top-32 -left-24 w-72 h-72 bg-blue-200/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-100/50 dark:from-indigo-900/20 to-transparent pointer-events-none"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/40 dark:bg-purple-900/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-32 -left-24 w-72 h-72 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto w-full relative z-10 flex flex-col flex-1 min-h-0">
       <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
         <div>
-          <h2 class="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+          <h2 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <el-icon class="text-white text-xl"><Connection /></el-icon>
             </div>
             团队协作与管理
           </h2>
-          <p class="text-sm text-slate-500 mt-2 ml-13 font-medium">灵活管控团队分组、子账号成员及权限积分</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">灵活管控团队分组、子账号成员及权限积分</p>
         </div>
         
         <div class="flex items-center gap-3">
@@ -36,18 +36,18 @@
               </div>
             </div>
             <template #dropdown>
-              <el-dropdown-menu class="custom-role-dropdown">
+              <el-dropdown-menu class="custom-role-dropdown dark:!bg-slate-800 dark:!border-slate-700">
                 <el-dropdown-item command="admin" :class="{'is-active': currentUserRole === 'admin'}">
                   <div class="flex items-center gap-3 py-1.5 px-1">
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                    <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
                       <el-icon><Monitor /></el-icon>
                     </div>
-                    <span class="font-bold text-slate-700">超级管理员</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200">超级管理员</span>
                     <el-tag size="small" type="danger" effect="dark" class="ml-auto !rounded-md !border-none">全局</el-tag>
                   </div>
                 </el-dropdown-item>
-                <el-dropdown-divider />
-                <div class="px-4 py-2.5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
+                <el-dropdown-divider class="dark:!border-slate-700" />
+                <div class="px-4 py-2.5 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] flex items-center gap-2">
                   <div class="w-1 h-3 bg-indigo-400 rounded-full"></div>
                   指派的分组管理员
                 </div>
@@ -58,10 +58,10 @@
                   :class="{'is-active': currentUserRole === `group_admin_${group.name.toLowerCase()}`}"
                 >
                   <div class="flex items-center gap-3 py-1.5 px-1">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
                       <el-icon><FolderOpened /></el-icon>
                     </div>
-                    <span class="font-bold text-slate-700">{{ group.name }}管理员</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200">{{ group.name }}管理员</span>
                     <el-icon v-if="currentUserRole === `group_admin_${group.name.toLowerCase()}`" class="ml-auto text-indigo-500"><Select /></el-icon>
                   </div>
                 </el-dropdown-item>
@@ -70,25 +70,25 @@
           </el-dropdown>
 
           <!-- 用户信息卡片 -->
-          <div class="flex items-center gap-4 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/50">
+          <div class="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/50 dark:border-slate-700">
             <div class="flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
                 <el-icon class="text-white text-sm"><UserFilled /></el-icon>
               </div>
               <div class="flex flex-col">
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none">当前登录</span>
-                <span class="font-bold text-slate-700 text-sm leading-tight mt-1">
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider leading-none">当前登录</span>
+                <span class="font-bold text-slate-700 dark:text-slate-200 text-sm leading-tight mt-1">
                   {{ currentUserRole === 'admin' ? 'Admin_Owner' : allMembers.find(m => m.username === allGroups.find(g => `group_admin_${g.name.toLowerCase()}` === currentUserRole)?.admin)?.username || 'Group_Admin' }}
                 </span>
               </div>
             </div>
-            <div class="w-px h-6 bg-slate-100"></div>
+            <div class="w-px h-6 bg-slate-100 dark:bg-slate-700"></div>
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <div class="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
                 <el-icon class="text-orange-500"><Coin /></el-icon>
               </div>
               <div class="flex flex-col">
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none">积分余额</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider leading-none">积分余额</span>
                 <span class="font-black text-orange-500 text-base leading-none mt-1">10,000</span>
               </div>
             </div>
@@ -96,7 +96,7 @@
         </div>
       </div>
 
-      <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl shadow-slate-200/50 border border-white p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div class="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-800 p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
         <el-tabs v-model="activeTab" class="team-tabs flex-1 flex flex-col min-h-0">
           <el-tab-pane name="members" class="h-full overflow-y-auto">
             <template #label>
@@ -207,6 +207,23 @@ provide('allGroups', allGroups)
     }
     .el-tabs__header {
       margin-bottom: 20px;
+    }
+  }
+
+  :global(.dark) & {
+    :deep(.team-tabs) {
+      .el-tabs__nav-wrap::after {
+        background-color: #334155;
+      }
+      .el-tabs__item {
+        color: #94a3b8;
+        &.is-active {
+          color: #818cf8;
+        }
+        &:hover {
+          color: #a5b4fc;
+        }
+      }
     }
   }
 }

@@ -213,6 +213,16 @@
                     </el-button>
                   </div>
                 </el-form-item>
+                <el-form-item prop="invitationCode">
+                  <el-input 
+                    v-model="regForm.invitationCode" 
+                    placeholder="请输入邀请码" 
+                    size="large"
+                    class="modern-input"
+                  >
+                    <template #prefix><el-icon class="text-[#8b5cf6]"><Ticket /></el-icon></template>
+                  </el-input>
+                </el-form-item>
                 <el-form-item>
                   <el-button 
                     type="primary" 
@@ -329,15 +339,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
-import { User, Lock, Iphone, ChatDotRound, VideoCamera, EditPen } from '@element-plus/icons-vue'
+import { User, Lock, Iphone, ChatDotRound, VideoCamera, EditPen, Ticket } from '@element-plus/icons-vue'
 import GraphicCaptcha from './components/GraphicCaptcha.vue'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
+
+onMounted(() => {
+  const inviteCode = route.query.inviteCode as string
+  if (inviteCode) {
+    isRegister.value = true
+    regForm.invitationCode = inviteCode
+    ElMessage.info(`已自动填充邀请码: ${inviteCode}`)
+  }
+})
 
 // 默认开启短信登录
 const activeTab = ref('sms')
@@ -359,7 +379,7 @@ const forgotFormRef = ref()
 
 const pwdForm = reactive({ username: '', password: '', captcha: '' })
 const smsForm = reactive({ phone: '', code: '', captcha: '' })
-const regForm = reactive({ phone: '', password: '', code: '', captcha: '' })
+const regForm = reactive({ phone: '', password: '', code: '', captcha: '', invitationCode: '' })
 const forgotForm = reactive({ phone: '', code: '', captcha: '', newPassword: '' })
 
 const pwdRules = {
@@ -386,6 +406,7 @@ const regRules = {
     { required: true, message: '请设置密码', trigger: 'blur' },
     { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
   ],
+  invitationCode: [{ required: true, message: '请输入邀请码', trigger: 'blur' }],
   code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
   captcha: [{ required: true, message: '请输入图形验证码', trigger: 'blur' }]
 }
@@ -507,7 +528,7 @@ const handleRegister = async () => {
       }
       loading.value = true
       try {
-        await userStore.loginByPassword({ username: regForm.phone, password: regForm.password })
+        await userStore.register(regForm)
         ElMessage.success('智影账号注册成功')
         router.push('/ai-short-drama-creator/new')
       } catch (e) {

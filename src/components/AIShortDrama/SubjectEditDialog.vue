@@ -150,7 +150,7 @@
           <div class="flex justify-center">
             <button 
               @click="generateImage"
-              class="w-full h-[40px] flex items-center justify-center gap-2 bg-[#1f2329] text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 group/ai"
+              class="w-full h-[40px] flex items-center justify-center gap-2 bg-[#1f2329] text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-black/10 dark:shadow-black/40 group/ai"
               :disabled="isGeneratingImage"
             >
               <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{'animate-spin': isGeneratingImage}"><MagicStick /></el-icon>

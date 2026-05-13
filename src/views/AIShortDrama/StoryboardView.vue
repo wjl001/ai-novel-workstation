@@ -387,6 +387,15 @@
                       <el-icon class="animate-pulse"><MagicStick /></el-icon>
                       <span>重新生成分镜</span>
                     </button>
+                    <button 
+                      @click="openCropDialog"
+                      :disabled="!currentPreview"
+                      class="h-8 px-6 rounded-full text-[13px] font-black transition-all shadow-md flex items-center gap-2 group"
+                      :class="currentPreview ? (isLight ? 'bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white shadow-sm' : 'bg-teal-500/10 text-teal-400 border border-teal-500/30 hover:bg-teal-500/20 shadow-[0_0_15px_rgba(20,184,166,0.1)]') : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                    >
+                      <el-icon class="group-hover:rotate-12 transition-transform"><Scissor /></el-icon>
+                      <span>分镜剪辑</span>
+                    </button>
                   </template>
                   <template v-else>
                     <button 
@@ -427,6 +436,17 @@
                     @ended="handleSceneVideoEnded"
                     @timeupdate="onCenterVideoTimeUpdate"
                   ></video>
+                  <!-- Hover Crop Button -->
+                  <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <button 
+                      @click="openCropDialog"
+                      class="h-8 px-4 backdrop-blur-md rounded-full text-[12px] font-bold transition-all shadow-lg flex items-center gap-2"
+                      :class="isLight ? 'bg-indigo-50/90 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white' : 'bg-teal-500/20 text-teal-400 border border-teal-500/30 hover:bg-teal-500/30'"
+                    >
+                      <el-icon><Scissor /></el-icon>
+                      <span>分镜剪辑</span>
+                    </button>
+                  </div>
                 </div>
                 <div v-else class="flex flex-col items-center gap-6 text-slate-400">
                   <div class="relative">
@@ -649,40 +669,6 @@
 
             <!-- Export Options Panel (Redesigned for C-end users) -->
             <div class="bg-white px-10 py-8 flex items-center justify-end border-t border-slate-50 shrink-0 z-40 h-[140px]">
-              <div class="flex items-center gap-16">
-                <!-- Watermark Selector -->
-                <div class="flex flex-col gap-3">
-                  <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">水印设置</span>
-                  <div class="flex bg-slate-100 p-1 rounded-full w-fit">
-                    <button 
-                      v-for="opt in [{l:'带品牌水印',v:'brand'},{l:'无水印',v:'none'}]" 
-                      :key="opt.v"
-                      @click="exportConfig.watermark = opt.v"
-                      class="px-5 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300"
-                      :class="exportConfig.watermark === opt.v ? 'bg-white text-[#1890ff] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
-                    >
-                      {{ opt.l }}
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Resolution Selector -->
-                <div class="flex flex-col gap-3">
-                  <span class="text-[13px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1">导出分辨率</span>
-                  <div class="flex bg-slate-100 p-1 rounded-full w-fit">
-                    <button 
-                      v-for="opt in [{l:'1080P',v:'1080p'},{l:'720P',v:'720p'},{l:'4K',v:'4k'}]" 
-                      :key="opt.v"
-                      @click="exportConfig.resolution = opt.v"
-                      class="px-6 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300"
-                      :class="exportConfig.resolution === opt.v ? 'bg-white text-[#1890ff] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
-                    >
-                      {{ opt.l }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
               <!-- Primary Export Button -->
               <el-button 
                 type="primary" 
@@ -921,16 +907,241 @@
       @confirm="handleRecoveryConfirm"
       @cancel="handleRecoveryCancel"
     />
+
+    <!-- Crop Video Dialog -->
+    <el-dialog 
+      v-model="showCropDialog" 
+      title="分镜剪辑" 
+      width="1100px" 
+      :class="['crop-video-dialog', isLight ? 'is-light' : 'is-dark']"
+      :append-to-body="true"
+      destroy-on-close
+      :close-on-click-modal="false"
+      align-center
+      @closed="onCropDialogClosed"
+    >
+      <div class="crop-container flex flex-col overflow-hidden h-[620px] transition-all duration-500 relative">
+        <!-- Top: Video Player Area -->
+        <div class="h-[400px] flex items-center justify-center relative group/crop-player shrink-0 border-b transition-colors duration-500"
+             :class="isLight ? 'bg-slate-900 border-slate-200/20' : 'bg-black border-[#333]'">
+          <video 
+            ref="cropVideoRef" 
+            :src="currentPreview" 
+            class="h-full w-auto object-contain shadow-2xl"
+            @timeupdate="onCropVideoTimeUpdate"
+            @loadedmetadata="onCropVideoLoaded"
+          ></video>
+          <!-- Play/Pause Overlay -->
+          <button @click="toggleCropPlay" class="absolute inset-0 w-full h-full flex items-center justify-center bg-black/10 opacity-0 group-hover/crop-player:opacity-100 transition-opacity z-10">
+            <el-icon :size="56" class="text-white drop-shadow-2xl filter blur-[0.5px]"><VideoPause v-if="isCropPlaying" /><VideoPlay v-else /></el-icon>
+          </button>
+        </div>
+        
+        <!-- Middle: Toolbar -->
+        <div class="h-14 flex items-center justify-between px-6 shrink-0 select-none transition-all duration-500 relative z-10"
+             :class="isLight ? 'bg-white/80 backdrop-blur-xl border-b border-slate-200/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]' : 'bg-[#222228] border-b border-[#111] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)]'">
+          <div class="flex items-center gap-5 transition-colors duration-500"
+               :class="isLight ? 'text-slate-600' : 'text-[#888]'">
+            <div class="flex items-center gap-2">
+              <button 
+                @click="undoCrop" 
+                title="撤销"
+                class="p-2 rounded-xl transition-all border shadow-sm"
+                :disabled="cropHistoryIndex <= 0"
+                :class="cropHistoryIndex > 0 ? (isLight ? 'bg-white text-indigo-600 border-indigo-100 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 hover:shadow-lg hover:-translate-y-0.5' : 'bg-[#2a2a32] text-white border-[#3d3d4a] hover:bg-teal-500 hover:border-teal-500 hover:shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:-translate-y-0.5') : 'opacity-30 cursor-not-allowed bg-transparent border-transparent'"
+              >
+                <el-icon :size="18"><Back /></el-icon>
+              </button>
+              <button 
+                @click="redoCrop" 
+                title="重做"
+                class="p-2 rounded-xl transition-all border shadow-sm"
+                :disabled="cropHistoryIndex >= cropHistory.length - 1"
+                :class="cropHistoryIndex < cropHistory.length - 1 ? (isLight ? 'bg-white text-indigo-600 border-indigo-100 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 hover:shadow-lg hover:-translate-y-0.5' : 'bg-[#2a2a32] text-white border-[#3d3d4a] hover:bg-teal-500 hover:border-teal-500 hover:shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:-translate-y-0.5') : 'opacity-30 cursor-not-allowed bg-transparent border-transparent'"
+              >
+                <el-icon :size="18"><Right /></el-icon>
+              </button>
+            </div>
+            <template v-if="selectedTrack && !selectedTrack.locked">
+              <div class="w-px h-6 transition-colors duration-500"
+                   :class="isLight ? 'bg-slate-200' : 'bg-[#444]'"></div>
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="splitCropClip" 
+                  title="分割 (Ctrl+K)"
+                  class="p-2 rounded-xl transition-all border shadow-sm"
+                  :class="isLight ? 'bg-white text-indigo-600 border-indigo-100 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 hover:shadow-lg hover:-translate-y-0.5' : 'bg-[#2a2a32] text-[#aaa] border-[#3d3d4a] hover:bg-teal-500 hover:text-white hover:border-teal-500 hover:shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:-translate-y-0.5'"
+                >
+                  <el-icon :size="18"><Scissor /></el-icon>
+                </button>
+                <button 
+                  @click="deleteCropClip" 
+                  title="删除 (Delete)"
+                  class="p-2 rounded-xl transition-all border shadow-sm"
+                  :class="isLight ? 'bg-white text-red-500 border-red-100 hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-lg hover:-translate-y-0.5' : 'bg-[#2a2a32] text-[#aaa] border-[#3d3d4a] hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:-translate-y-0.5'"
+                >
+                  <el-icon :size="18"><Delete /></el-icon>
+                </button>
+              </div>
+            </template>
+          </div>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+              <span class="text-[14px] font-black font-mono tracking-tight transition-colors duration-500"
+                    :class="isLight ? 'text-slate-800' : 'text-white'">{{ formatCropTime(cropCurrentTime) }} <span class="opacity-30">/</span> {{ formatCropTime(cropDuration) }}</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white/50 dark:bg-white/5 px-4 py-1.5 rounded-full border border-slate-200/50 dark:border-transparent w-[200px]">
+              <el-icon class="cursor-pointer transition-colors text-slate-400 hover:text-indigo-600" 
+                       title="缩小时间轴" @click="zoomOutCrop"><Minus /></el-icon>
+              <el-slider v-model="cropZoom" :min="1" :max="100" size="small" :show-tooltip="false" 
+                         :class="['crop-zoom-slider', isLight ? 'is-light' : 'is-dark']" @input="drawRuler" />
+              <el-icon class="cursor-pointer transition-colors text-slate-400 hover:text-indigo-600" 
+                       title="放大时间轴" @click="zoomInCrop"><Plus /></el-icon>
+              <el-icon class="cursor-pointer transition-colors text-slate-400 hover:text-indigo-600 ml-1" 
+                       title="自适应时间轴" @click="zoomFitCrop"><Position /></el-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom: Timeline Track (Like CapCut) -->
+        <div class="flex-1 relative overflow-hidden flex flex-col min-h-0 select-none transition-colors duration-500"
+             :class="isLight ? 'bg-slate-50' : 'bg-[#1a1a1f]'">
+          <!-- Ruler -->
+          <div class="h-8 border-b flex items-end relative shrink-0 overflow-hidden transition-colors duration-500" 
+               :class="isLight ? 'bg-white border-slate-200/60' : 'bg-[#25252b] border-[#111]'"
+               @mousedown="onRulerMouseDown">
+            <!-- Offset to align with right track area -->
+            <div class="absolute bottom-0 left-[80px] right-0 h-full">
+                <canvas ref="rulerCanvas" class="w-full h-full block cursor-pointer"></canvas>
+            </div>
+          </div>
+          
+          <!-- Tracks Area -->
+          <div class="flex-1 relative flex overflow-hidden" @wheel="onTimelineWheel">
+            
+            <!-- Left Track Header -->
+            <div class="w-[80px] shrink-0 border-r flex flex-col z-30 transition-all duration-500 justify-center"
+                 :class="isLight ? 'bg-white border-slate-200/60 shadow-[4px_0_15px_rgba(0,0,0,0.03)]' : 'bg-[#25252b] border-[#111] shadow-[2px_0_5px_rgba(0,0,0,0.5)]'">
+              <div v-for="track in cropTracks" :key="track.id" class="h-16 px-2 flex flex-col items-center justify-center gap-3">
+                <button 
+                  @click="toggleTrackMute(track)"
+                  :title="track.muted ? '取消静音' : '轨道静音'"
+                  class="transition-all p-1.5 rounded-lg border shadow-sm"
+                  :class="track.muted ? (isLight ? 'bg-amber-500 text-white border-amber-500 shadow-amber-200 hover:-translate-y-0.5' : 'bg-teal-500/20 text-teal-400 border-transparent') : (isLight ? 'bg-white text-slate-400 border-slate-100 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-md hover:-translate-y-0.5' : 'bg-white/5 text-[#888] border-transparent hover:text-white')"
+                >
+                  <el-icon :size="16"><Mute v-if="track.muted" /><Microphone v-else /></el-icon>
+                </button>
+                <button 
+                  @click="track.locked = !track.locked"
+                  :title="track.locked ? '解锁轨道' : '锁定轨道'"
+                  class="transition-all p-1.5 rounded-lg border shadow-sm"
+                  :class="track.locked ? (isLight ? 'bg-red-500 text-white border-red-500 shadow-red-200 hover:-translate-y-0.5' : 'bg-teal-500/20 text-teal-400 border-transparent') : (isLight ? 'bg-white text-slate-400 border-slate-100 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-md hover:-translate-y-0.5' : 'bg-white/5 text-[#888] border-transparent hover:text-white')"
+                >
+                  <el-icon :size="16"><Lock /></el-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Track Content with Scrollbar at bottom -->
+            <div class="flex-1 relative overflow-x-auto overflow-y-hidden flex flex-col justify-center transition-colors duration-500" 
+                 :class="[
+                   isLight ? 'bg-[#f8fafc] scrollbar-thumb-slate-300 scrollbar-track-transparent' : 'bg-[#1a1a1f] scrollbar-thumb-[#444] scrollbar-track-[#1a1a1f]',
+                   'scrollbar-thin'
+                 ]"
+                 ref="tracksContainerRef" @scroll="onTimelineScroll" @mousemove="onTimelineMouseMove" @mouseup="onTimelineMouseUp" @mouseleave="onTimelineMouseUp"
+                 @mousedown="onTracksBackgroundMouseDown($event)">
+              <div class="relative h-16" :style="{ width: timelineWidth + 'px' }">
+                <!-- Playhead -->
+                <div 
+                  class="absolute top-[-32px] bottom-[-32px] w-[2px] z-20 flex flex-col items-center transition-all duration-300"
+                  :class="isLight ? 'bg-indigo-500' : 'bg-white'"
+                  :style="{ left: playheadPosition + 'px' }"
+                  style="cursor: ew-resize;"
+                  @mousedown.stop="onPlayheadMouseDown"
+                >
+                  <!-- Top Handle -->
+                  <div class="w-4 h-5 rounded-[4px] -mt-2 shadow-md flex items-center justify-center border-2 transition-colors"
+                       :class="isLight ? 'bg-white border-indigo-500' : 'bg-[#25252b] border-white'">
+                    <div class="w-0.5 h-2 rounded-full" :class="isLight ? 'bg-indigo-300' : 'bg-white/50'"></div>
+                  </div>
+                  <!-- Line -->
+                  <div class="flex-1 w-[2px]"
+                       :class="isLight ? 'bg-indigo-500/60' : 'bg-white/60'"></div>
+                  <!-- Bottom Handle -->
+                  <div class="w-4 h-5 rounded-[4px] -mb-2 shadow-md flex items-center justify-center border-2 transition-colors"
+                       :class="isLight ? 'bg-white border-indigo-500' : 'bg-[#25252b] border-white'">
+                    <div class="w-0.5 h-2 rounded-full" :class="isLight ? 'bg-indigo-300' : 'bg-white/50'"></div>
+                  </div>
+                </div>
+                
+                <!-- Video Track -->
+                <div v-for="track in cropTracks" :key="track.id" class="h-16 relative w-full" :class="{'pointer-events-none': track.locked}">
+                  <div v-for="clip in track.clips" :key="clip.id"
+                        class="absolute top-0 h-full rounded-2xl overflow-hidden border-2 cursor-pointer group transition-all duration-300 shadow-sm hover:shadow-md"
+                        :class="clip.selected ? (isLight ? 'border-indigo-600 ring-4 ring-indigo-600/15 z-10' : 'border-teal-400 z-10') : (isLight ? 'border-slate-200/80 bg-white z-0' : 'border-[#333] z-0')"
+                        :style="{ left: timeToPx(clip.startTime) + 'px', width: timeToPx(clip.endTime - clip.startTime) + 'px' }"
+                        @mousedown.stop="onClipMouseDown($event, clip, track)"
+                  >
+                    <!-- thumbnails -->
+                    <div class="absolute inset-0 flex overflow-hidden pointer-events-none transition-colors duration-500"
+                         :class="isLight ? 'bg-slate-100' : 'bg-teal-900/40'">
+                      <div v-for="i in Math.max(1, Math.ceil((clip.endTime - clip.startTime) * cropZoom / 2))" :key="i" 
+                           class="h-full w-10 shrink-0 border-r relative transition-colors duration-500"
+                           :class="isLight ? 'border-white/60' : 'border-black/20'">
+                          <img :src="currentPreviewThumbnail" class="w-full h-full object-cover opacity-80 mix-blend-normal" />
+                      </div>
+                    </div>
+                    
+                    <!-- Left Trim Handle -->
+                    <div 
+                      class="absolute left-0 top-0 bottom-0 w-4 bg-white/95 cursor-col-resize flex items-center justify-center shadow-[2px_0_10px_rgba(0,0,0,0.1)] z-20 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      :class="{'opacity-100': clip.selected}"
+                      @mousedown.stop="onTrimHandleMouseDown($event, clip, 'left')"
+                    >
+                      <div class="w-1 h-6 bg-slate-300 rounded-full pointer-events-none"></div>
+                    </div>
+                    
+                    <!-- Right Trim Handle -->
+                    <div 
+                      class="absolute right-0 top-0 bottom-0 w-4 bg-white/95 cursor-col-resize flex items-center justify-center shadow-[-2px_0_10px_rgba(0,0,0,0.1)] z-20 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      :class="{'opacity-100': clip.selected}"
+                      @mousedown.stop="onTrimHandleMouseDown($event, clip, 'right')"
+                    >
+                      <div class="w-1 h-6 bg-slate-300 rounded-full pointer-events-none"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <template #footer>
+        <div class="flex justify-end gap-4 pt-5 pb-2 px-6 relative z-10 transition-colors duration-500 rounded-b-[24px]"
+             :class="isLight ? 'bg-transparent' : 'bg-transparent'">
+          <el-button @click="showCropDialog = false" 
+                     class="!rounded-xl !h-11 !px-8 !border-2 transition-all font-bold text-[15px]"
+                     :class="isLight ? '!bg-white !border-slate-200 !text-slate-600 hover:!bg-slate-50 hover:!border-slate-300 hover:!text-slate-800' : '!bg-[#2a2a32] !border-[#3d3d4a] !text-white hover:!bg-[#33333b] hover:!border-[#4d4d5a]'">取消</el-button>
+          <el-button type="primary" @click="confirmCrop" 
+                     class="!rounded-xl !h-11 !px-10 !border-none transition-all font-bold text-[15px] hover:-translate-y-0.5"
+                     :class="isLight ? '!bg-gradient-to-r !from-indigo-600 !to-violet-600 hover:!from-indigo-500 hover:!to-violet-500 shadow-[0_6px_16px_rgba(79,70,229,0.3)] hover:shadow-[0_8px_20px_rgba(79,70,229,0.4)]' : '!bg-gradient-to-r !from-teal-600 !to-emerald-600 hover:!from-teal-500 hover:!to-emerald-500 shadow-[0_6px_16px_rgba(20,184,166,0.3)] hover:shadow-[0_8px_20px_rgba(20,184,166,0.4)]'">确认剪辑</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue';
+import { ref, reactive, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
 import { Node, mergeAttributes } from '@tiptap/core';
+
+const isLight = inject('isLight', ref(false));
+const theme = inject('theme', ref('dark'));
 
 // Custom TipTap Extension to handle mention-pills and its nested elements
 const MentionPill = Node.create({
@@ -1003,7 +1214,8 @@ import {
   ArrowLeft, ArrowRight, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
-  Download, VideoPause, Microphone, Mic, Upload, Monitor
+  Download, VideoPause, Microphone, Mic, Upload, Monitor,
+  Scissor, Back, Right, View, Lock, Minus, Position, Mute
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
@@ -1856,8 +2068,8 @@ const duration = ref(0);
 const isSynthesisCompleted = ref(false);
 const fullSynthesisVideoUrl = ref('');
 const synthesisVideoCandidates = [
-  '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4',
-  '/assets/video_c2e5d372661c95731e129f2eb4d56054.mp4'
+  '/assets/video_c2e5d372661c95731e129f2eb4d56054.mp4',
+  '/assets/astronaut_moon.mp4' 
 ];
 const synthesisVideoCandidateIndex = ref(0);
 const exportConfig = reactive({
@@ -1902,6 +2114,479 @@ const seekVideo = (e: MouseEvent) => {
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const pos = (e.clientX - rect.left) / rect.width;
   fullVideoRef.value.currentTime = pos * duration.value;
+};
+
+// --- Crop Feature States & Logic ---
+interface CropClip {
+  id: string;
+  startTime: number;
+  endTime: number;
+  sourceStartTime: number;
+  sourceEndTime: number;
+  selected: boolean;
+}
+
+interface CropTrack {
+  id: string;
+  clips: CropClip[];
+  muted: boolean;
+  locked: boolean;
+}
+
+const showCropDialog = ref(false);
+const cropVideoRef = ref<HTMLVideoElement | null>(null);
+const isCropPlaying = ref(false);
+const isMicEnabled = ref(false);
+const cropCurrentTime = ref(0);
+const cropDuration = ref(0);
+const cropZoom = ref(5);
+const currentPreviewThumbnail = computed(() => timelineScenes.value[currentSceneIdx.value]?.image);
+
+const cropTracks = ref<CropTrack[]>([]);
+const selectedTrack = computed(() => {
+  return cropTracks.value.find(t => t.clips.some(c => c.selected));
+});
+const cropHistory = ref<CropTrack[][]>([]);
+const cropHistoryIndex = ref(-1);
+
+const pxPerSec = computed(() => cropZoom.value * 20); 
+
+const toggleMic = () => {
+  isMicEnabled.value = !isMicEnabled.value;
+  if (cropVideoRef.value) {
+    cropVideoRef.value.muted = !isMicEnabled.value;
+  }
+  if (isMicEnabled.value) {
+    ElMessage.success('视频声音已恢复');
+  } else {
+    ElMessage.info('视频已静音');
+  }
+};
+
+const toggleTrackMute = (track: CropTrack) => {
+  track.muted = !track.muted;
+  isMicEnabled.value = !track.muted;
+  if (cropVideoRef.value) {
+    cropVideoRef.value.muted = track.muted;
+  }
+  if (!track.muted) {
+    ElMessage.success('轨道声音已恢复');
+  } else {
+    ElMessage.info('轨道已静音');
+  }
+};
+
+const maxTimelineDuration = computed(() => {
+  let maxTime = cropDuration.value;
+  cropTracks.value.forEach(t => t.clips.forEach(c => maxTime = Math.max(maxTime, c.endTime)));
+  return Math.max(maxTime + 10, cropDuration.value + 10); 
+});
+const timelineWidth = computed(() => maxTimelineDuration.value * pxPerSec.value);
+const timeToPx = (time: number) => time * pxPerSec.value;
+const pxToTime = (px: number) => px / pxPerSec.value;
+const playheadPosition = computed(() => timeToPx(cropCurrentTime.value));
+
+const zoomInCrop = () => {
+  cropZoom.value = Math.min(100, cropZoom.value + 5);
+  drawRuler();
+};
+
+const zoomOutCrop = () => {
+  cropZoom.value = Math.max(1, cropZoom.value - 5);
+  drawRuler();
+};
+
+const zoomFitCrop = () => {
+  if (tracksContainerRef.value && cropDuration.value > 0) {
+    const containerWidth = tracksContainerRef.value.clientWidth - 80;
+    const targetPxPerSec = containerWidth / (cropDuration.value + 2); 
+    cropZoom.value = Math.max(1, Math.min(100, targetPxPerSec / 20));
+    drawRuler();
+  }
+};
+
+const onTimelineWheel = (e: WheelEvent) => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      zoomOutCrop();
+    } else {
+      zoomInCrop();
+    }
+  }
+};
+
+const saveCropHistory = () => {
+  cropHistory.value = cropHistory.value.slice(0, cropHistoryIndex.value + 1);
+  cropHistory.value.push(JSON.parse(JSON.stringify(cropTracks.value)));
+  cropHistoryIndex.value = cropHistory.value.length - 1;
+};
+
+const undoCrop = () => {
+  if (cropHistoryIndex.value > 0) {
+    cropHistoryIndex.value--;
+    cropTracks.value = JSON.parse(JSON.stringify(cropHistory.value[cropHistoryIndex.value]));
+  }
+};
+
+const redoCrop = () => {
+  if (cropHistoryIndex.value < cropHistory.value.length - 1) {
+    cropHistoryIndex.value++;
+    cropTracks.value = JSON.parse(JSON.stringify(cropHistory.value[cropHistoryIndex.value]));
+  }
+};
+
+const openCropDialog = () => {
+  if (!currentPreview.value) {
+    ElMessage.warning('请先生成分镜视频');
+    return;
+  }
+  showCropDialog.value = true;
+  isCropPlaying.value = false;
+  isMicEnabled.value = false; 
+  cropCurrentTime.value = 0;
+  cropZoom.value = 5;
+  
+  // init tracks
+  cropTracks.value = [
+    {
+      id: 'track-1',
+      muted: true,
+      locked: false,
+      clips: [
+        {
+          id: 'clip-1',
+          startTime: 0,
+          endTime: cropDuration.value || 5,
+          sourceStartTime: 0,
+          sourceEndTime: cropDuration.value || 5,
+          selected: true
+        }
+      ]
+    }
+  ];
+  cropHistory.value = [JSON.parse(JSON.stringify(cropTracks.value))];
+  cropHistoryIndex.value = 0;
+
+  nextTick(() => {
+    if (cropVideoRef.value) {
+      cropVideoRef.value.currentTime = 0;
+      cropVideoRef.value.muted = true; 
+    }
+    drawRuler();
+    window.addEventListener('resize', drawRuler);
+    window.addEventListener('keydown', onCropKeyDown);
+  });
+};
+
+const onCropDialogClosed = () => {
+  window.removeEventListener('resize', drawRuler);
+  window.removeEventListener('keydown', onCropKeyDown);
+};
+
+const toggleCropPlay = () => {
+  if (!cropVideoRef.value) return;
+  if (isCropPlaying.value) {
+    cropVideoRef.value.pause();
+  } else {
+    cropVideoRef.value.play();
+  }
+  isCropPlaying.value = !isCropPlaying.value;
+};
+
+const onCropVideoTimeUpdate = () => {
+  if (cropVideoRef.value && !dragState.type) {
+    cropCurrentTime.value = cropVideoRef.value.currentTime;
+    // auto scroll if playhead goes out of view
+    if (tracksContainerRef.value && isCropPlaying.value) {
+      const containerWidth = tracksContainerRef.value.clientWidth;
+      const playheadX = timeToPx(cropCurrentTime.value);
+      if (playheadX > tracksContainerRef.value.scrollLeft + containerWidth * 0.8) {
+        tracksContainerRef.value.scrollLeft = playheadX - containerWidth * 0.2;
+      }
+    }
+  }
+};
+
+const onCropVideoLoaded = () => {
+  if (cropVideoRef.value) {
+    const dur = cropVideoRef.value.duration || 5;
+    cropDuration.value = dur;
+    if (cropTracks.value.length === 1 && cropTracks.value[0].clips.length === 1 && cropHistoryIndex.value === 0) {
+      cropTracks.value[0].clips[0].endTime = dur;
+      cropTracks.value[0].clips[0].sourceEndTime = dur;
+      cropHistory.value[0] = JSON.parse(JSON.stringify(cropTracks.value));
+      drawRuler();
+    }
+  }
+};
+
+const formatCropTime = (seconds: number) => {
+  if (!seconds || isNaN(seconds)) seconds = 0;
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  const ms = Math.floor((seconds % 1) * 30);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+};
+
+// --- Timeline Interaction Logic ---
+const dragState = reactive({
+  type: null as 'playhead' | 'clip' | 'trim-left' | 'trim-right' | null,
+  clipId: '',
+  startX: 0,
+  startClipStartTime: 0,
+  startClipEndTime: 0,
+  startSourceStartTime: 0,
+  startSourceEndTime: 0,
+});
+
+const tracksContainerRef = ref<HTMLElement | null>(null);
+const rulerCanvas = ref<HTMLCanvasElement | null>(null);
+
+const onRulerMouseDown = (e: MouseEvent) => {
+  if (!tracksContainerRef.value) return;
+  const rect = tracksContainerRef.value.getBoundingClientRect();
+  const x = e.clientX - rect.left + tracksContainerRef.value.scrollLeft;
+  // Always allow clicking in the ruler row, but clamp x to 0
+  cropCurrentTime.value = Math.max(0, pxToTime(x));
+  seekCropVideo();
+  dragState.type = 'playhead';
+};
+
+const onPlayheadMouseDown = () => {
+  dragState.type = 'playhead';
+};
+
+const onClipMouseDown = (e: MouseEvent, clip: CropClip, track: CropTrack) => {
+  if (track.locked) return;
+  cropTracks.value.forEach(t => t.clips.forEach(c => c.selected = false));
+  clip.selected = true;
+  
+  dragState.type = 'clip';
+  dragState.clipId = clip.id;
+  dragState.startX = e.clientX;
+  dragState.startClipStartTime = clip.startTime;
+  dragState.startClipEndTime = clip.endTime;
+};
+
+const onTrimHandleMouseDown = (e: MouseEvent, clip: CropClip, side: 'left' | 'right') => {
+  const track = cropTracks.value.find(t => t.clips.some(c => c.id === clip.id));
+  if (track?.locked) return;
+  
+  cropTracks.value.forEach(t => t.clips.forEach(c => c.selected = false));
+  clip.selected = true;
+  
+  dragState.type = `trim-${side}`;
+  dragState.clipId = clip.id;
+  dragState.startX = e.clientX;
+  dragState.startClipStartTime = clip.startTime;
+  dragState.startClipEndTime = clip.endTime;
+  dragState.startSourceStartTime = clip.sourceStartTime;
+  dragState.startSourceEndTime = clip.sourceEndTime;
+};
+
+const onTracksBackgroundMouseDown = (e: MouseEvent) => {
+  cropTracks.value.forEach(t => t.clips.forEach(c => c.selected = false));
+  
+  // Also move playhead when clicking empty track area
+  if (!tracksContainerRef.value) return;
+  const rect = tracksContainerRef.value.getBoundingClientRect();
+  const x = e.clientX - rect.left + tracksContainerRef.value.scrollLeft;
+  if (x >= 0) {
+    cropCurrentTime.value = Math.max(0, pxToTime(x));
+    seekCropVideo();
+    dragState.type = 'playhead';
+  }
+};
+
+const onTimelineMouseMove = (e: MouseEvent) => {
+  if (!dragState.type || !tracksContainerRef.value) return;
+  
+  if (dragState.type === 'playhead') {
+    const rect = tracksContainerRef.value.getBoundingClientRect();
+    const x = e.clientX - rect.left + tracksContainerRef.value.scrollLeft;
+    cropCurrentTime.value = Math.max(0, pxToTime(x));
+    seekCropVideo();
+  } else {
+    const dx = e.clientX - dragState.startX;
+    const dt = pxToTime(dx);
+    
+    let clip: CropClip | undefined;
+    cropTracks.value.forEach(t => {
+      const c = t.clips.find(c => c.id === dragState.clipId);
+      if (c) clip = c;
+    });
+    if (!clip) return;
+
+    if (dragState.type === 'clip') {
+      const newStart = Math.max(0, dragState.startClipStartTime + dt);
+      const duration = dragState.startClipEndTime - dragState.startClipStartTime;
+      clip.startTime = newStart;
+      clip.endTime = newStart + duration;
+    } else if (dragState.type === 'trim-left') {
+      const newStart = Math.max(0, dragState.startClipStartTime + dt);
+      if (newStart < clip.endTime - 0.1) {
+        clip.startTime = newStart;
+        clip.sourceStartTime = Math.max(0, dragState.startSourceStartTime + dt);
+      }
+    } else if (dragState.type === 'trim-right') {
+      const newEnd = Math.max(clip.startTime + 0.1, dragState.startClipEndTime + dt);
+      clip.endTime = newEnd;
+      clip.sourceEndTime = dragState.startSourceEndTime + dt;
+    }
+  }
+};
+
+const onTimelineMouseUp = () => {
+  if (dragState.type && dragState.type !== 'playhead') {
+    saveCropHistory();
+  }
+  dragState.type = null;
+};
+
+const seekCropVideo = () => {
+  if (cropVideoRef.value) {
+    cropVideoRef.value.currentTime = cropCurrentTime.value;
+  }
+};
+
+const onTimelineScroll = () => {
+  drawRuler();
+};
+
+const drawRuler = () => {
+  if (!rulerCanvas.value || !tracksContainerRef.value) return;
+  const ctx = rulerCanvas.value.getContext('2d');
+  if (!ctx) return;
+  
+  const width = rulerCanvas.value.clientWidth;
+  const height = rulerCanvas.value.clientHeight;
+  
+  rulerCanvas.value.width = width;
+  rulerCanvas.value.height = height;
+  
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = isLight.value ? '#475569' : '#888'; // Darker slate for better readability
+  ctx.font = '600 10px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  
+  const fps = 30;
+  const pxPerSec = cropZoom.value * 20;
+  const scrollLeft = tracksContainerRef.value.scrollLeft;
+  
+  // Calculate time intervals based on zoom
+  let intervalSec = 1;
+  if (cropZoom.value < 2) intervalSec = 10;
+  else if (cropZoom.value < 5) intervalSec = 5;
+  else if (cropZoom.value < 10) intervalSec = 2;
+  else if (cropZoom.value < 20) intervalSec = 1;
+  else intervalSec = 0.5;
+
+  const startSec = Math.floor(scrollLeft / pxPerSec);
+  const endSec = Math.ceil((scrollLeft + width) / pxPerSec);
+  
+  ctx.beginPath();
+  ctx.strokeStyle = isLight.value ? '#cbd5e1' : '#444'; // More visible ruler lines
+  ctx.lineWidth = 1;
+  
+  for (let s = startSec; s <= endSec; s += intervalSec / 10) {
+    const x = s * pxPerSec - scrollLeft;
+    if (x < 0 || x > width) continue;
+    
+    const isMajor = Math.abs(s % intervalSec) < 0.001;
+    const isMid = Math.abs(s % (intervalSec / 2)) < 0.001;
+    
+    if (isMajor) {
+      ctx.moveTo(x, height - 10);
+      ctx.lineTo(x, height);
+      
+      // Format time: 00:00:00:00 or 00f/10f...
+      const totalFrames = Math.round(s * fps);
+      const mins = Math.floor(s / 60);
+      const secs = Math.floor(s % 60);
+      const frames = totalFrames % fps;
+      
+      let timeStr = "";
+      if (cropZoom.value > 50) {
+        timeStr = `${frames}f`;
+      } else {
+        timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        if (cropZoom.value > 30) timeStr += `:${frames.toString().padStart(2, '0')}`;
+      }
+      ctx.fillText(timeStr, x, 4);
+    } else if (isMid) {
+      ctx.moveTo(x, height - 7);
+      ctx.lineTo(x, height);
+    } else {
+      ctx.moveTo(x, height - 4);
+      ctx.lineTo(x, height);
+    }
+  }
+  ctx.stroke();
+};
+
+const getSelectedClipInfo = () => {
+  for (let t of cropTracks.value) {
+    const idx = t.clips.findIndex(c => c.selected);
+    if (idx > -1) return { track: t, clip: t.clips[idx], idx };
+  }
+  return null;
+};
+
+const splitCropClip = () => {
+  const info = getSelectedClipInfo();
+  if (!info) return ElMessage.warning('请先选中一个片段');
+  const { track, clip, idx } = info;
+  if (track.locked) return ElMessage.warning('轨道已锁定');
+  
+  if (cropCurrentTime.value <= clip.startTime || cropCurrentTime.value >= clip.endTime) {
+    return ElMessage.warning('播放头需在选中片段内部');
+  }
+  
+  const splitTime = cropCurrentTime.value;
+  const splitSourceTime = clip.sourceStartTime + (splitTime - clip.startTime);
+  
+  const newClip1 = { ...clip, endTime: splitTime, sourceEndTime: splitSourceTime, selected: false };
+  const newClip2 = { 
+    ...clip, 
+    id: 'clip-' + Date.now(), 
+    startTime: splitTime, 
+    sourceStartTime: splitSourceTime,
+    selected: true 
+  };
+  
+  track.clips.splice(idx, 1, newClip1, newClip2);
+  saveCropHistory();
+};
+
+const deleteCropClip = () => {
+  const info = getSelectedClipInfo();
+  if (!info) return ElMessage.warning('请先选中一个片段');
+  if (info.track.locked) return ElMessage.warning('轨道已锁定');
+  info.track.clips.splice(info.idx, 1);
+  saveCropHistory();
+};
+
+const onCropKeyDown = (e: KeyboardEvent) => {
+  if (!showCropDialog.value) return;
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    deleteCropClip();
+  } else if (e.key === 'k' && e.ctrlKey) {
+    e.preventDefault();
+    splitCropClip();
+  } else if (e.key === 'z' && e.ctrlKey && !e.shiftKey) {
+    e.preventDefault();
+    undoCrop();
+  } else if (e.key === 'z' && e.ctrlKey && e.shiftKey) {
+    e.preventDefault();
+    redoCrop();
+  }
+};
+
+const confirmCrop = () => {
+  ElMessage.success('裁剪设置已保存，将在合成全集时生效');
+  showCropDialog.value = false;
 };
 
 const formatTime = (seconds: number) => {
@@ -2072,6 +2757,14 @@ onMounted(async () => {
 
   if (currentScript.value) {
     editor.value?.commands.setContent(currentScript.value);
+  }
+});
+
+watch(isLight, () => {
+  if (showCropDialog.value) {
+    nextTick(() => {
+      drawRuler();
+    });
   }
 });
 
@@ -2548,5 +3241,167 @@ const startStoryboardSequentialGeneration = async () => {
 .fade-scale-leave-to {
   opacity: 0;
   transform: scale(1.1);
+}
+
+/* Crop Dialog Styles */
+:deep(.crop-video-dialog) {
+  --el-dialog-border-radius: 24px !important;
+  --el-dialog-box-shadow: none !important;
+}
+
+:deep(.crop-video-dialog .el-dialog) {
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+:deep(.crop-video-dialog.is-dark .el-dialog) {
+  background-color: #1e1e24 !important;
+  border: 1px solid rgba(20, 184, 166, 0.3) !important;
+  box-shadow: 0 0 40px rgba(20, 184, 166, 0.15), inset 0 0 0 1px rgba(20, 184, 166, 0.1) !important;
+}
+
+:deep(.crop-video-dialog.is-light .el-dialog) {
+  background-color: #f1f5f9 !important;
+  border: 1px solid rgba(79, 70, 229, 0.2) !important;
+  box-shadow: 0 0 40px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* Subtle Glow Effect for Dark Mode */
+:deep(.crop-video-dialog.is-dark .el-dialog::before) {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(20, 184, 166, 0.1), transparent);
+  z-index: 0;
+}
+
+:deep(.crop-video-dialog.is-dark .el-dialog__header) {
+  background-color: transparent !important;
+  margin-right: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 20px 24px;
+  position: relative;
+  z-index: 1;
+}
+:deep(.crop-video-dialog.is-light .el-dialog__header) {
+  background-color: transparent !important;
+  margin-right: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 20px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+:deep(.crop-video-dialog.is-dark .el-dialog__title) {
+  color: #fff !important;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+:deep(.crop-video-dialog.is-light .el-dialog__title) {
+  color: #0f172a !important;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+:deep(.crop-video-dialog .el-dialog__body) {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+
+:deep(.crop-video-dialog .el-dialog__footer) {
+  padding: 0 24px 24px !important;
+  background-color: transparent !important;
+}
+:deep(.crop-video-dialog.is-dark .el-dialog__footer) {
+  background-color: transparent !important;
+}
+:deep(.crop-video-dialog.is-light .el-dialog__footer) {
+  background-color: transparent !important;
+}
+
+:deep(.crop-video-dialog.is-dark .el-dialog__headerbtn .el-dialog__close) {
+  color: #888;
+}
+:deep(.crop-video-dialog.is-light .el-dialog__headerbtn .el-dialog__close) {
+  color: #64748b;
+}
+
+:deep(.crop-video-dialog.is-dark .el-dialog__headerbtn:hover .el-dialog__close) {
+  color: #fff;
+}
+:deep(.crop-video-dialog.is-light .el-dialog__headerbtn:hover .el-dialog__close) {
+  color: #0f172a;
+}
+
+:deep(.crop-video-dialog.is-dark .crop-zoom-slider .el-slider__runway) {
+  background-color: #333 !important;
+  height: 4px;
+}
+:deep(.crop-video-dialog.is-light .crop-zoom-slider .el-slider__runway) {
+  background-color: #e2e8f0 !important;
+  height: 4px;
+  border-radius: 2px;
+}
+
+:deep(.crop-video-dialog.is-dark .crop-zoom-slider .el-slider__bar) {
+  background-color: #0d9488 !important;
+  height: 4px;
+}
+:deep(.crop-video-dialog.is-light .crop-zoom-slider .el-slider__bar) {
+  background-color: #6366f1 !important;
+  height: 4px;
+  border-radius: 2px;
+}
+
+:deep(.crop-video-dialog .crop-zoom-slider .el-slider__button) {
+  border: 2px solid currentColor !important;
+  width: 10px;
+  height: 10px;
+  background-color: #fff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+:deep(.crop-video-dialog .crop-zoom-slider .el-slider__button:hover) {
+  transform: scale(1.2);
+}
+:deep(.crop-video-dialog.is-dark .crop-zoom-slider .el-slider__button) {
+  color: #0d9488 !important;
+}
+:deep(.crop-video-dialog.is-light .crop-zoom-slider .el-slider__button) {
+  color: #6366f1 !important;
+}
+
+/* Custom Scrollbar for Tracks Area */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 10px;
+  width: 8px;
+}
+.is-dark .scrollbar-thin::-webkit-scrollbar-track {
+  background: #1a1a1f;
+  border-radius: 4px;
+}
+.is-light .scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.is-dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 10px;
+  border: 2px solid #1a1a1f;
+}
+.is-light .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+.is-dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #444;
+}
+.is-light .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
 }
 </style>

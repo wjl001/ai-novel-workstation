@@ -2856,9 +2856,28 @@ const resumeScriptGeneration = (startProgress: number) => {
   transition: all 0.3s;
   height: 52px;
 }
-.dark :deep(.modern-chat-input .el-input__wrapper) {
-  background-color: #0F172A !important;
-  border-color: #334155 !important;
+
+/* 强制深色模式样式 - 解决 scoped data-v 属性带来的优先级问题 */
+:global(html.dark) :deep(.modern-chat-input .el-input__wrapper),
+:global(.dark) :deep(.modern-chat-input .el-input__wrapper) {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+}
+
+:global(html.dark) :deep(.modern-chat-input .el-input__inner),
+:global(.dark) :deep(.modern-chat-input .el-input__inner) {
+  color: #E2E8F0 !important;
+}
+
+:global(html.dark) :deep(.modern-chat-input .el-input__inner::placeholder),
+:global(.dark) :deep(.modern-chat-input .el-input__inner::placeholder) {
+  color: #94A3B8 !important;
+}
+
+:global(html.dark) :deep(.modern-chat-input .el-input__wrapper.is-focus),
+:global(.dark) :deep(.modern-chat-input .el-input__wrapper.is-focus) {
+  background-color: #334155 !important;
+  border-color: #6366f1 !important;
 }
 
 /* Modern Input Styles V2 & V3 */
@@ -3123,5 +3142,29 @@ const resumeScriptGeneration = (startProgress: number) => {
 @keyframes toast-bounce-in {
   0% { opacity: 0; transform: scale(0.85) translateY(-20px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+</style>
+
+<style>
+html.dark .modern-chat-input .el-input__wrapper,
+.dark .modern-chat-input .el-input__wrapper {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+}
+
+html.dark .modern-chat-input .el-input__inner,
+.dark .modern-chat-input .el-input__inner {
+  color: #E2E8F0 !important;
+}
+
+html.dark .modern-chat-input .el-input__inner::placeholder,
+.dark .modern-chat-input .el-input__inner::placeholder {
+  color: #94A3B8 !important;
+}
+
+html.dark .modern-chat-input .el-input__wrapper.is-focus,
+.dark .modern-chat-input .el-input__wrapper.is-focus {
+  background-color: #334155 !important;
+  border-color: #6366f1 !important;
 }
 </style>

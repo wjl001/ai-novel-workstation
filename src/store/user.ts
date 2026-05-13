@@ -79,6 +79,19 @@ export const useUserStore = defineStore('user', {
         roles: ['user']
       })
     },
+    // 注册
+    async register(form: any) {
+      // 真实环境调用后端接口
+      console.log('Register:', form)
+      // 模拟注册成功并登录
+      this.setToken('mock_token_reg_' + Date.now())
+      this.setUserInfo({
+        id: 'local_user_' + Date.now(),
+        name: form.phone || '新用户',
+        avatar: '',
+        roles: ['user']
+      })
+    },
     // 注销
     async logout() {
       // 真实环境可能需要调用后端注销接口

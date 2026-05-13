@@ -104,6 +104,11 @@ const router = createRouter({
       component: TeamManagementView
     },
     {
+      path: '/member-center',
+      name: 'member-center',
+      component: () => import('../views/MemberCenter/MemberCenterView.vue')
+    },
+    {
       path: '/ai-short-drama-creator',
       component: DramaCreatorLayout,
       children: [
