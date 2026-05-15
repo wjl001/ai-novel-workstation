@@ -7,6 +7,8 @@ export const useDramaStore = defineStore('drama', {
     isScriptGenerated: false,
     isAssetsGenerated: false,
     expandedPrompt: '' as string,
+    fullScriptContent: '' as string,
+    episodesCount: 80 as number,
     generationStatus: {
       isGenerating: false,
       type: '' as 'outline' | 'script' | 'storyboard' | '',
@@ -36,20 +38,34 @@ export const useDramaStore = defineStore('drama', {
       this.expandedPrompt = prompt
       this.saveToLocalStorage()
     },
+    setFullScriptContent(content: string) {
+      this.fullScriptContent = content
+      this.saveToLocalStorage()
+    },
+    setEpisodesCount(count: number) {
+      this.episodesCount = count
+      this.saveToLocalStorage()
+    },
     setGenerationStatus(status: Partial<typeof useDramaStore.prototype.generationStatus>) {
       this.generationStatus = { ...this.generationStatus, ...status }
       this.saveToLocalStorage()
     },
     saveToLocalStorage() {
-      const stateToSave = {
-        currentDramaId: this.currentDramaId,
-        outlineData: this.outlineData,
-        isScriptGenerated: this.isScriptGenerated,
-        isAssetsGenerated: this.isAssetsGenerated,
-        expandedPrompt: this.expandedPrompt,
-        generationStatus: this.generationStatus
+      try {
+        const stateToSave = {
+          currentDramaId: this.currentDramaId,
+          outlineData: this.outlineData,
+          isScriptGenerated: this.isScriptGenerated,
+          isAssetsGenerated: this.isAssetsGenerated,
+          expandedPrompt: this.expandedPrompt,
+          fullScriptContent: this.fullScriptContent,
+          episodesCount: this.episodesCount,
+          generationStatus: this.generationStatus
+        }
+        localStorage.setItem('drama_store', JSON.stringify(stateToSave))
+      } catch (e) {
+        console.warn('Failed to save to localStorage (possibly quota exceeded)', e)
       }
-      localStorage.setItem('drama_store', JSON.stringify(stateToSave))
     },
     loadFromLocalStorage() {
       const savedState = localStorage.getItem('drama_store')
@@ -61,6 +77,8 @@ export const useDramaStore = defineStore('drama', {
           this.isScriptGenerated = parsed.isScriptGenerated
           this.isAssetsGenerated = parsed.isAssetsGenerated || false
           this.expandedPrompt = parsed.expandedPrompt
+          this.fullScriptContent = parsed.fullScriptContent || ''
+          this.episodesCount = parsed.episodesCount || 80
           this.generationStatus = parsed.generationStatus || this.generationStatus
         } catch (e) {
           console.error('Failed to parse drama_store from localStorage', e)

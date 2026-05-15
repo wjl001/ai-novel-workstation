@@ -13,8 +13,15 @@
               <el-icon class="text-white text-xl"><Connection /></el-icon>
             </div>
             团队协作与管理
+            <button 
+              @click="showDesignDialog = true"
+              class="ml-2 h-7 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500/50"
+            >
+              <el-icon :size="12"><InfoFilled /></el-icon>
+              <span>产品设计说明</span>
+            </button>
           </h2>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">灵活管控团队分组、子账号成员及权限积分</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">灵活管控团队分组、子账号成员及权限算力豆</p>
         </div>
         
         <div class="flex items-center gap-3">
@@ -88,7 +95,7 @@
                 <el-icon class="text-orange-500"><Coin /></el-icon>
               </div>
               <div class="flex flex-col">
-                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider leading-none">积分余额</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider leading-none">算力豆余额</span>
                 <span class="font-black text-orange-500 text-base leading-none mt-1">10,000</span>
               </div>
             </div>
@@ -136,18 +143,44 @@
         </el-tabs>
       </div>
     </div>
+
+    <!-- 产品设计说明弹窗 -->
+    <ProductDesignDialog 
+      v-model="showDesignDialog" 
+      id="team-management"
+      :default-content="teamManagementDesign"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, provide, computed } from 'vue'
-import { Connection, UserFilled, Coin, User, Lock, FolderOpened, Grid, ArrowDown, Monitor, Select } from '@element-plus/icons-vue'
+import { Connection, UserFilled, Coin, User, Lock, FolderOpened, Grid, ArrowDown, Monitor, Select, InfoFilled } from '@element-plus/icons-vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 import MemberManagement from './components/MemberManagement.vue'
 import RolePermissionTable from './components/RolePermissionTable.vue'
 import GroupManagement from './components/GroupManagement.vue'
 
 const activeTab = ref('members')
 const currentUserRole = ref('admin')
+
+const showDesignDialog = ref(false)
+
+const teamManagementDesign = {
+  title: '团队协作与管理',
+  location: '企业级/专业创作团队的核心管理中枢，支持多层级权限管控、成员分组及算力豆资源调度。',
+  layout: [
+    '**头部功能区**：包含“视图角色切换”下拉框，支持管理员在全局与特定分组视角间切换。同时展示当前登录身份及团队算力豆余额。',
+    '**标签页导航**：集成“成员管理”、“分组管理”及“角色权限”三大核心模块。',
+    '**列表视图**：各子模块采用现代化的表格与卡片结合布局，支持实时搜索、筛选及快速操作。'
+  ],
+  interactions: [
+    '**角色切换交互**：通过顶部渐变背景的下拉触发器，管理员可以即时切换管理范围，页面数据将根据选定视角动态过滤。',
+    '**成员与分组同步**：在分组管理中修改信息或指派管理员，会实时同步到成员管理列表，利用 Vue 的响应式系统确保数据一致性。',
+    '**算力豆分配与回收**：支持针对特定分组或子账号进行精确的算力豆下发与回收操作。',
+    '**多级菜单样式**：针对 Element Plus 下拉菜单进行了深度定制，在深色模式下提供半透明紫色悬停反馈，消除视觉割裂感。'
+  ]
+}
 
 const currentRoleLabel = computed(() => {
   if (currentUserRole.value === 'admin') return '超级管理员'
@@ -228,26 +261,59 @@ provide('allGroups', allGroups)
   }
 }
 
-:deep(.custom-role-dropdown) {
-  padding: 8px;
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+</style>
+
+<style lang="scss">
+/* 全局样式，用于覆盖 teleported 的下拉框样式 */
+.custom-role-dropdown {
+  padding: 8px !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+  
   .el-dropdown-menu__item {
-    border-radius: 8px;
-    margin-bottom: 2px;
-    color: #64748b;
-    font-size: 13px;
+    border-radius: 8px !important;
+    margin-bottom: 2px !important;
+    color: #64748b !important;
+    font-size: 13px !important;
+    transition: all 0.2s !important;
+    
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: 0 !important;
     }
-    &:hover {
-      background-color: #f1f5f9;
-      color: #4f46e5;
+    
+    &:hover, &:focus {
+      background-color: #f1f5f9 !important;
+      color: #4f46e5 !important;
     }
+    
     &.is-active {
-      background-color: #eef2ff;
-      color: #4f46e5;
+      background-color: #eef2ff !important;
+      color: #4f46e5 !important;
+    }
+  }
+
+  /* 深色模式适配 */
+  .dark & {
+    background-color: #1e293b !important; /* slate-800 */
+    border-color: #334155 !important; /* slate-700 */
+    
+    .el-dropdown-menu__item {
+      color: #94a3b8 !important;
+      
+      &:hover, &:focus {
+        background-color: rgba(99, 102, 241, 0.15) !important; /* 移除白色背景，改用半透明紫色 */
+        color: #818cf8 !important;
+      }
+      
+      &.is-active {
+        background-color: rgba(99, 102, 241, 0.25) !important;
+        color: #818cf8 !important;
+      }
+
+      /* 额外强制覆盖 Element Plus 可能存在的默认背景色变量 */
+      --el-dropdown-menuItem-hover-fill: rgba(99, 102, 241, 0.15);
+      --el-dropdown-menuItem-hover-color: #818cf8;
     }
   }
 }

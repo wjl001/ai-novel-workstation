@@ -55,7 +55,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="points" label="可用积分" width="150">
+        <el-table-column prop="points" label="可用算力豆" width="150">
           <template #default="{ row }">
             <div class="flex items-center gap-1.5">
               <el-icon class="text-orange-400 text-lg"><Coin /></el-icon>
@@ -68,11 +68,11 @@
             <span class="text-slate-500 dark:text-slate-400 text-sm">{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="220">
+        <el-table-column label="操作" fixed="right" width="280">
           <template #default="{ row }">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
               <el-button size="small" class="!rounded-lg dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300 hover:!text-orange-500 hover:!bg-orange-50 dark:hover:!bg-orange-900/20 hover:!border-orange-200 transition-colors" @click="openPointsDialog(row)">
-                下发积分
+                下发算力豆
               </el-button>
               <el-button size="small" class="!rounded-lg dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300 hover:!text-blue-500 hover:!bg-blue-50 dark:hover:!bg-blue-900/20 hover:!border-blue-200 transition-colors" @click="openEditDialog(row)">
                 编辑
@@ -138,7 +138,7 @@
           <el-form-item prop="points" v-if="!isEdit" class="!mb-2">
             <template #label>
               <div class="flex justify-between items-center w-full mb-1">
-                <span class="font-semibold text-slate-700 dark:text-slate-200">初始分配积分</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-200">初始分配算力豆</span>
                 <div class="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-100 dark:border-orange-800/30">
                   <el-icon class="text-orange-500"><Coin /></el-icon>
                   <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400">剩余: 10,000</span>
@@ -160,7 +160,7 @@
       </template>
     </el-dialog>
 
-    <!-- 积分下发弹窗 -->
+    <!-- 算力豆下发弹窗 -->
     <el-dialog v-model="pointsDialogVisible" width="420px" class="custom-dialog dark-dialog" :show-close="false" align-center>
       <template #header="{ close }">
         <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
@@ -168,7 +168,7 @@
             <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
               <el-icon class="text-orange-500 dark:text-orange-400"><Coin /></el-icon>
             </div>
-            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">下发积分</h4>
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">下发算力豆</h4>
           </div>
           <el-button circle text @click="close" class="dark:!text-slate-400">
             <el-icon><Close /></el-icon>
@@ -178,7 +178,7 @@
 
       <div class="pt-4 flex flex-col gap-6">
         <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-500/20">
-          <div class="text-white/80 text-sm font-medium mb-1">团队主账号剩余积分</div>
+          <div class="text-white/80 text-sm font-medium mb-1">团队主账号剩余算力豆</div>
           <div class="text-3xl font-black flex items-center gap-2">
             <el-icon><Coin /></el-icon> 10,000
           </div>
@@ -389,7 +389,7 @@ const distributePoints = () => {
   const index = allMembers.value.findIndex(m => m.id === pointsForm.id)
   if (index > -1) {
     allMembers.value[index].points += pointsForm.amount
-    ElMessage.success(`成功为 ${pointsForm.username} 下发 ${pointsForm.amount} 积分`)
+    ElMessage.success(`成功为 ${pointsForm.username} 下发 ${pointsForm.amount} 算力豆`)
   }
   pointsDialogVisible.value = false
 }

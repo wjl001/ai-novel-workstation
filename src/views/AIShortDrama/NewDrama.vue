@@ -88,7 +88,7 @@
                 : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
               @click="activeTab = 'upload'"
             >
-              <el-icon :size="16"><Upload /></el-icon> 导入已有小说
+              <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
             </button>
           </div>
 
@@ -198,14 +198,14 @@
                       <el-icon :size="20"><upload-filled /></el-icon>
                     </div>
                     <div class="el-upload__text font-black text-[15px] mb-1 drop-shadow-md" :class="isLight ? 'text-slate-700' : '!text-white'">
-                      <span :class="isLight ? 'text-slate-700' : 'text-white'">将小说文件拖到此处，或</span> 
+                      <span :class="isLight ? 'text-slate-700' : 'text-white'">将剧本文件拖到此处，或</span> 
                       <em 
                         class="not-italic font-[1000] underline underline-offset-4 transition-colors"
                         :class="isLight ? 'text-indigo-600 hover:text-indigo-500' : 'text-indigo-300 hover:text-indigo-200'"
                       >点击上传</em>
                     </div>
                     <div class="text-[12px] font-black drop-shadow-sm" :class="isLight ? 'text-slate-500' : 'text-white'">
-                      支持 docx, pdf, txt 格式，不超过3万字
+                      支持 docx, pdf, txt 格式，不超过10万字
                     </div>
                   </div>
                 </el-upload>
@@ -1158,6 +1158,7 @@ ${protagonist}
 【规格】${configForm.episodesCount}集，单集时长${configForm.expectedDuration}秒`;
 
   dramaStore.setExpandedPrompt(finalPrompt);
+  dramaStore.setEpisodesCount(parseInt(configForm.episodesCount) || 80);
   
   setTimeout(() => {
     router.push('/ai-short-drama-creator/outline');
@@ -1271,51 +1272,115 @@ const startCreation = () => {
   showHotTopicDialog.value = true;
 };
 
-const handleFileUpload = (file: any) => {
+const handleFileUpload = async (file: any) => {
   if (!file.raw) return;
   
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const content = e.target?.result as string;
-    if (!content) return;
+  const fileName = file.name;
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  
+  ElMessage({
+    message: '正在智能提取剧本关键信息...',
+    type: 'info',
+    duration: 2000
+  });
 
-    ElMessage({
-      message: '正在智能提取剧本关键信息...',
-      type: 'info',
-      duration: 2000
-    });
+  try {
+    let content = '';
+    
+    if (extension === 'docx') {
+      // 动态加载 mammoth.js
+      if (!(window as any).mammoth) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      
+      const arrayBuffer = await file.raw.arrayBuffer();
+      const result = await (window as any).mammoth.extractRawText({ arrayBuffer });
+      content = result.value;
+    } else if (extension === 'pdf') {
+      // PDF 解析通常比较复杂，这里可以给个提示，或者如果项目有 PDF 库则调用
+      // 暂时先按文本读取试试，或者提示用户建议使用 docx/txt
+      ElMessage.warning('PDF 解析支持正在优化中，建议优先使用 docx 或 txt 格式');
+      const reader = new FileReader();
+      content = await new Promise((resolve) => {
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.readAsText(file.raw);
+      });
+    } else {
+      // 默认按文本读取
+      const reader = new FileReader();
+      content = await new Promise((resolve) => {
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.readAsText(file.raw);
+      });
+    }
+
+    if (!content) {
+      ElMessage.error('读取剧本内容失败，请检查文件是否损坏');
+      return;
+    }
+
+    // 存储提取出的纯文本到 store
+    dramaStore.setFullScriptContent(content);
+
+    // 辅助提取函数：提取关键词之后直到下一个主要部分之前的内容
+    const extractSection = (text: string, startRegex: RegExp, endRegex: RegExp) => {
+      const startMatch = text.match(startRegex);
+      if (!startMatch) return '';
+      const startIndex = startMatch.index! + startMatch[0].length;
+      const restOfText = text.substring(startIndex);
+      const endMatch = restOfText.match(endRegex);
+      if (endMatch) {
+        return restOfText.substring(0, endMatch.index).trim();
+      }
+      return restOfText.trim();
+    };
+
+    const firstLine = content.split('\n').find(l => l.trim().length > 0) || '';
+
+    // 核算总集数：统计“第X集”或“第X回”的出现次数
+    const episodeMatches = content.match(/第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]/g);
+    const calculatedEpisodesCount = episodeMatches ? episodeMatches.length.toString() : '80';
 
     // 智能提取逻辑 (模拟 AI 提取)
     const extractedInfo = {
-      title: content.match(/(?:剧名|书名|作品名)[:：]\s*(.*)/)?.[1] || file.name.replace(/\.[^/.]+$/, ""),
+      title: content.match(/(?:剧名|书名|作品名)[:：]\s*(.*)/)?.[1] || firstLine.trim() || fileName.replace(/\.[^/.]+$/, ""),
       genre: content.match(/(?:题材|类型)[:：]\s*(.*)/)?.[1] || '',
       protagonistSetting: content.match(/(?:主角设定|主角身份|主角姓名)[:：]\s*(.*)/)?.[1] || '',
-      protagonistDesc: content.match(/(?:主角描述|主角性格|角色简介)[:：]\s*(.*)/)?.[1] || '',
-      storySynopsis: content.match(/(?:故事梗概|剧情简介|故事大纲)[:：]\s*(.*)/)?.[1] || '',
+      protagonistDesc: extractSection(content, /(?:人物小传|角色简介|人物设定)[:：]?/, /\n\s*(?:第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]|故事梗概|故事背景|$)/),
+      storySynopsis: extractSection(content, /(?:故事梗概|剧情简介|故事大纲)[:：]?/, /\n\s*(?:人物小传|第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]|故事背景|$)/),
       storyBackground: content.match(/(?:故事背景|背景设定|世界观)[:：]\s*(.*)/)?.[1] || '',
       storySetting: content.match(/(?:核心冲突|特殊设定|故事设定)[:：]\s*(.*)/)?.[1] || '',
       targetAudience: content.match(/(?:目标受众|受众|频道)[:：]\s*(.*)/)?.[1] || '女频',
-      videoStyle: content.match(/(?:视频风格|视觉风格|画风)[:：]\s*(.*)/)?.[1] || '写实'
+      videoStyle: content.match(/(?:视频风格|视觉风格|画风)[:：]\s*(.*)/)?.[1] || '写实',
+      episodesCount: calculatedEpisodesCount,
+      expectedDuration: content.match(/(?:单集时长|剧集时长|时长)[:：]\s*(\d+)/)?.[1] || '120'
     };
 
-    // 设置选中主题，使其与“输入一句话”逻辑保持一致
+    // 设置选中主题
     selectedTopic.value = { label: '外部剧本导入', isCustom: true };
     
-    // 清空表单，确保回显的是新提取的内容
-    configForm.title = '';
-    configForm.genre = '';
-    configForm.customGenre = '';
-    configForm.protagonistSetting = '';
-    configForm.customProtagonistName = '';
-    configForm.protagonistDesc = '';
-    configForm.storySynopsis = '';
-    configForm.storyBackground = '';
-    configForm.storySetting = '';
+    // 重置并填充表单
+    Object.assign(configForm, {
+      title: extractedInfo.title,
+      genre: '',
+      customGenre: '',
+      protagonistSetting: '',
+      customProtagonistName: '',
+      protagonistDesc: extractedInfo.protagonistDesc,
+      storySynopsis: extractedInfo.storySynopsis,
+      storyBackground: extractedInfo.storyBackground,
+      storySetting: extractedInfo.storySetting,
+      expectedDuration: parseInt(extractedInfo.expectedDuration) || 120,
+      episodesCount: extractedInfo.episodesCount
+    });
     
-    // 回显到表单
-    if (extractedInfo.title) configForm.title = extractedInfo.title;
-    
-    // 题材处理：如果匹配到预设题材则回显，否则设为自定义
+    // 题材匹配
     if (extractedInfo.genre) {
       const matchedTopic = hotTopics.find(t => extractedInfo.genre.includes(t.label));
       if (matchedTopic) {
@@ -1325,10 +1390,10 @@ const handleFileUpload = (file: any) => {
         configForm.customGenre = extractedInfo.genre;
       }
     } else {
-      configForm.genre = 'AI 灵感创作'; // 默认值
+      configForm.genre = 'AI 灵感创作';
     }
 
-    // 主角设定处理
+    // 主角设定匹配
     if (extractedInfo.protagonistSetting) {
       const matchedProtagonist = protagonistOptions.value.find(p => extractedInfo.protagonistSetting.includes(p.label));
       if (matchedProtagonist) {
@@ -1337,13 +1402,10 @@ const handleFileUpload = (file: any) => {
         configForm.protagonistSetting = '自定义';
         configForm.customProtagonistName = extractedInfo.protagonistSetting;
       }
+    } else {
+      configForm.protagonistSetting = protagonistOptions.value[0].label;
     }
 
-    if (extractedInfo.protagonistDesc) configForm.protagonistDesc = extractedInfo.protagonistDesc;
-    if (extractedInfo.storySynopsis) configForm.storySynopsis = extractedInfo.storySynopsis;
-    if (extractedInfo.storyBackground) configForm.storyBackground = extractedInfo.storyBackground;
-    if (extractedInfo.storySetting) configForm.storySetting = extractedInfo.storySetting;
-    
     // 受众匹配
     if (extractedInfo.targetAudience) {
       const matchedAudience = audienceOptions.find(a => extractedInfo.targetAudience.includes(a));
@@ -1356,17 +1418,15 @@ const handleFileUpload = (file: any) => {
       if (matchedStyle) configForm.videoStyle = matchedStyle.label;
     }
 
-    // 确保弹窗显示正确步骤
+    // 立即显示弹窗
     currentStep.value = 1;
+    showHotTopicDialog.value = true;
+    ElMessage.success('剧本信息提取成功，已为您回显至配置页');
 
-    // 延迟打开弹窗，增加仪式感
-    setTimeout(() => {
-      showHotTopicDialog.value = true;
-      ElMessage.success('剧本信息提取成功，已为您回显至配置页');
-    }, 1000);
-  };
-
-  reader.readAsText(file.raw);
+  } catch (error) {
+    console.error('File parsing error:', error);
+    ElMessage.error('剧本解析失败，请尝试将文件另存为 txt 后重新上传');
+  }
 };
 </script>
 

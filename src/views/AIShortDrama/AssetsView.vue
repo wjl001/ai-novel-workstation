@@ -49,6 +49,46 @@
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
+              <!-- Multi-select Toggle -->
+              <button 
+                @click="toggleMultiSelect"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
+                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+              >
+                <el-icon :size="16"><Pointer /></el-icon>
+                <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
+              </button>
+
+              <!-- Select All / Deselect All -->
+              <template v-if="isMultiSelect">
+                <button 
+                  @click="handleSelectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Finished /></el-icon>
+                  <span>全选</span>
+                </button>
+                <button 
+                  @click="handleDeselectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Close /></el-icon>
+                  <span>取消全选</span>
+                </button>
+              </template>
+
+              <!-- Batch Delete Button -->
+              <transition name="fade">
+                <button 
+                  v-if="isMultiSelect && selectedAssetIds.size > 0"
+                  @click="handleBatchDelete"
+                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Delete /></el-icon>
+                  <span>删除 ({{ selectedAssetIds.size }})</span>
+                </button>
+              </transition>
+
               <!-- Product Design Info Button -->
               <button 
                 @click="showDesignDialog = true"
@@ -56,6 +96,24 @@
               >
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
+              </button>
+              <!-- 批量生成角色图片 -->
+              <button 
+                v-if="!isMultiSelect"
+                @click="toggleMultiSelect"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                批量生成角色
+              </button>
+              <button 
+                v-else
+                @click="handleBatchGenerate('character')"
+                :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('char')).length }})
               </button>
               <!-- 新增角色入口 -->
               <button 
@@ -72,9 +130,24 @@
                 <div 
                 v-for="char in characters" 
                 :key="char.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
-                :class="generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                :class="[
+                  generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
+                  isAssetSelected(char.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
+                  isMultiSelect ? 'cursor-pointer' : 'cursor-default'
+                ]"
+                @click="toggleAssetSelection(char.id)"
               >
+                <!-- Selection Overlay -->
+                <div v-if="isMultiSelect" class="absolute top-3 right-3 z-20">
+                  <div 
+                    class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+                    :class="isAssetSelected(char.id) ? 'bg-indigo-600 border-indigo-600 text-white scale-110' : 'bg-white/80 border-slate-300 text-transparent'"
+                  >
+                    <el-icon :size="14" v-if="isAssetSelected(char.id)"><Check /></el-icon>
+                  </div>
+                </div>
+
                 <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
@@ -93,7 +166,7 @@
                     <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(char, 'character')"
@@ -139,6 +212,46 @@
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
+              <!-- Multi-select Toggle -->
+              <button 
+                @click="toggleMultiSelect"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
+                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+              >
+                <el-icon :size="16"><Pointer /></el-icon>
+                <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
+              </button>
+
+              <!-- Select All / Deselect All -->
+              <template v-if="isMultiSelect">
+                <button 
+                  @click="handleSelectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Finished /></el-icon>
+                  <span>全选</span>
+                </button>
+                <button 
+                  @click="handleDeselectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Close /></el-icon>
+                  <span>取消全选</span>
+                </button>
+              </template>
+
+              <!-- Batch Delete Button -->
+              <transition name="fade">
+                <button 
+                  v-if="isMultiSelect && selectedAssetIds.size > 0"
+                  @click="handleBatchDelete"
+                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Delete /></el-icon>
+                  <span>删除 ({{ selectedAssetIds.size }})</span>
+                </button>
+              </transition>
+
               <!-- Product Design Info Button -->
               <button 
                 @click="showDesignDialog = true"
@@ -146,6 +259,24 @@
               >
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
+              </button>
+              <!-- 批量生成场景图片 -->
+              <button 
+                v-if="!isMultiSelect"
+                @click="toggleMultiSelect"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                批量生成场景
+              </button>
+              <button 
+                v-else
+                @click="handleBatchGenerate('scene')"
+                :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('scene')).length }})
               </button>
               <!-- 新增场景入口 -->
               <button 
@@ -162,9 +293,24 @@
               <div 
                 v-for="scene in scenes" 
                 :key="scene.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
-                :class="generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                :class="[
+                  generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
+                  isAssetSelected(scene.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
+                  isMultiSelect ? 'cursor-pointer' : 'cursor-default'
+                ]"
+                @click="toggleAssetSelection(scene.id)"
               >
+                <!-- Selection Overlay -->
+                <div v-if="isMultiSelect" class="absolute top-3 right-3 z-20">
+                  <div 
+                    class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+                    :class="isAssetSelected(scene.id) ? 'bg-indigo-600 border-indigo-600 text-white scale-110' : 'bg-white/80 border-slate-300 text-transparent'"
+                  >
+                    <el-icon :size="14" v-if="isAssetSelected(scene.id)"><Check /></el-icon>
+                  </div>
+                </div>
+
                 <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
@@ -183,7 +329,7 @@
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(scene, 'scene')"
@@ -229,6 +375,46 @@
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
+              <!-- Multi-select Toggle -->
+              <button 
+                @click="toggleMultiSelect"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
+                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+              >
+                <el-icon :size="16"><Pointer /></el-icon>
+                <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
+              </button>
+
+              <!-- Select All / Deselect All -->
+              <template v-if="isMultiSelect">
+                <button 
+                  @click="handleSelectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Finished /></el-icon>
+                  <span>全选</span>
+                </button>
+                <button 
+                  @click="handleDeselectAll"
+                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Close /></el-icon>
+                  <span>取消全选</span>
+                </button>
+              </template>
+
+              <!-- Batch Delete Button -->
+              <transition name="fade">
+                <button 
+                  v-if="isMultiSelect && selectedAssetIds.size > 0"
+                  @click="handleBatchDelete"
+                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                >
+                  <el-icon :size="16"><Delete /></el-icon>
+                  <span>删除 ({{ selectedAssetIds.size }})</span>
+                </button>
+              </transition>
+
               <!-- Product Design Info Button -->
               <button 
                 @click="showDesignDialog = true"
@@ -236,6 +422,24 @@
               >
                 <el-icon :size="14"><InfoFilled /></el-icon>
                 <span>产品设计说明</span>
+              </button>
+              <!-- 批量生成道具图片 -->
+              <button 
+                v-if="!isMultiSelect"
+                @click="toggleMultiSelect"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                批量生成道具
+              </button>
+              <button 
+                v-else
+                @click="handleBatchGenerate('prop')"
+                :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
+                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              >
+                <el-icon><MagicStick /></el-icon>
+                确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('prop')).length }})
               </button>
               <!-- 新增道具入口 -->
               <button 
@@ -252,9 +456,24 @@
               <div 
                 v-for="prop in propsList" 
                 :key="prop.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-default"
-                :class="generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : ''"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                :class="[
+                  generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
+                  isAssetSelected(prop.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
+                  isMultiSelect ? 'cursor-pointer' : 'cursor-default'
+                ]"
+                @click="toggleAssetSelection(prop.id)"
               >
+                <!-- Selection Overlay -->
+                <div v-if="isMultiSelect" class="absolute top-3 right-3 z-20">
+                  <div 
+                    class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+                    :class="isAssetSelected(prop.id) ? 'bg-indigo-600 border-indigo-600 text-white scale-110' : 'bg-white/80 border-slate-300 text-transparent'"
+                  >
+                    <el-icon :size="14" v-if="isAssetSelected(prop.id)"><Check /></el-icon>
+                  </div>
+                </div>
+
                 <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
@@ -273,7 +492,7 @@
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                     <div 
                       class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
                       @click.stop="openEditModal(prop, 'prop')"
@@ -380,7 +599,7 @@
         ],
         interactions: [
           {
-            text: '**主体资产管理 (2.2 版本)：**\n - **手动模式：** 2.2 版本全面开放手动【新增主体】（角色、场景、道具）功能。\n - **编辑与删除：** 支持用户手动编辑资产描述、重新生成基准图或删除冗余资产。\n - **视觉标准：** 全面适配短剧主流比例，主体资产图统一采用 **16:9** 展示。',
+            text: '**主体资产管理 (2.2 版本)：**\n - **手动模式：** 2.2 版本全面开放手动【新增主体】及【批量生成】（角色、场景、道具）功能。\n - **智能规划：** 支持一键批量生成更多角色、场景或道具，AI 自动解析剧本提取特征。\n - **批量操作：** 新增【多选】模式，支持批量选中主体进行删除等快捷操作。\n - **编辑与删除：** 支持用户手动编辑资产描述、重新生成基准图或删除冗余资产。\n - **视觉标准：** 全面适配短剧主流比例，主体资产图统一采用 **16:9** 展示。',
             image: ''
           },
           {
@@ -411,7 +630,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
@@ -426,6 +645,73 @@ const episodeStore = useEpisodeStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
+
+// Selection State
+const isMultiSelect = ref(false);
+const selectedAssetIds = reactive<Set<string>>(new Set());
+
+const toggleMultiSelect = () => {
+  isMultiSelect.value = !isMultiSelect.value;
+  if (!isMultiSelect.value) {
+    selectedAssetIds.clear();
+  }
+};
+
+const toggleAssetSelection = (id: string) => {
+  if (!isMultiSelect.value) return;
+  if (selectedAssetIds.has(id)) {
+    selectedAssetIds.delete(id);
+  } else {
+    selectedAssetIds.add(id);
+  }
+};
+
+const isAssetSelected = (id: string) => selectedAssetIds.has(id);
+
+const handleSelectAll = () => {
+  let currentAssets: any[] = [];
+  if (activeTab.value === 'characters') currentAssets = characters.value;
+  else if (activeTab.value === 'scenes') currentAssets = scenes.value;
+  else if (activeTab.value === 'props') currentAssets = propsList.value;
+
+  currentAssets.forEach(asset => {
+    selectedAssetIds.add(asset.id);
+  });
+};
+
+const handleDeselectAll = () => {
+  let currentAssets: any[] = [];
+  if (activeTab.value === 'characters') currentAssets = characters.value;
+  else if (activeTab.value === 'scenes') currentAssets = scenes.value;
+  else if (activeTab.value === 'props') currentAssets = propsList.value;
+
+  currentAssets.forEach(asset => {
+    selectedAssetIds.delete(asset.id);
+  });
+};
+
+const handleBatchDelete = () => {
+  if (selectedAssetIds.size === 0) return;
+  
+  ElMessageBox.confirm(
+    `确认删除选中的 ${selectedAssetIds.size} 个主体？`,
+    '批量删除',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      buttonSize: 'default',
+      customClass: 'modern-message-box'
+    }
+  ).then(() => {
+    selectedAssetIds.forEach(id => {
+      episodeStore.deleteSubject(id);
+    });
+    selectedAssetIds.clear();
+    isMultiSelect.value = false;
+    ElMessage.success('批量删除成功');
+  }).catch(() => {});
+};
 
 const uiDesignGroups = {
   layout: [
@@ -463,6 +749,7 @@ const uiDesignGroups = {
         { name: '卡片名称', style: { fontSize: '15-16px', fontWeight: '700' }, description: '角色 text-[16px]；场景/道具 text-[15px]（truncate）' },
         { name: '卡片描述', style: { fontSize: '12-13px', fontWeight: '400', lineHeight: '1.5' }, description: 'line-clamp-2 leading-relaxed' },
         { name: '信息按钮', style: { fontSize: '12px', fontWeight: '700' }, description: '产品设计说明：text-[12px] font-bold' },
+        { name: '批量生成按钮', style: { fontSize: '14px', fontWeight: '700' }, description: '批量生成角色/场景/道具：text-[14px] font-bold，渐变背景' },
         { name: '新增按钮', style: { fontSize: '14px', fontWeight: '700' }, description: '新增角色/场景/道具：text-[14px] font-bold' },
         { name: '下一步按钮', style: { fontSize: '15px', fontWeight: '700' }, description: 'text-[15px] font-bold（含 icon）' },
         { name: '生成中标题', style: { fontSize: '24px', fontWeight: '900' }, description: 'Overlay H2：text-2xl font-black tracking-tight' },
@@ -499,6 +786,7 @@ const uiDesignGroups = {
       description: '关键交互点位：产品说明、新增、编辑/删除、下一步、UI 标注入口。',
       items: [
         { name: '产品设计说明', tag: 'button', classes: 'h-10 px-4 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200', notes: ['右上角入口；打开产品设计说明弹窗'] },
+        { name: '批量生成主体按钮', tag: 'button', classes: 'h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 flex items-center gap-2', notes: ['角色/场景/道具三处一致；MagicStick 图标 + 文案'] },
         { name: '新增主体按钮', tag: 'button', classes: 'h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 flex items-center gap-2', notes: ['角色/场景/道具三处一致；Plus 图标 + 文案'] },
         { name: '卡片-编辑', tag: 'div', classes: 'w-10 h-10 rounded-full bg-white text-[#1890ff] shadow-lg scale-90 group-hover:scale-100 hover:scale-110 active:scale-95', notes: ['卡片 hover 时显示；点击打开编辑弹窗'] },
         { name: '卡片-删除', tag: 'div', classes: 'w-10 h-10 rounded-2xl bg-white text-red-500 shadow-xl shadow-red-500/10 scale-90 group-hover:scale-100 hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white', notes: ['卡片 hover 时显示；带 Popconfirm 二次确认'] },
@@ -639,7 +927,7 @@ const startSequentialGeneration = async () => {
   const mockAssets = {
     characters: [
       { id: 'char-1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人。', prompt: '1个女孩，漂亮，头像，职业装，办公室女性，坚强独立，写实风格，8k分辨率', image: '' },
-      { id: 'char-2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马。', prompt: '1个男孩，帅气，头像，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: '' }
+      { id: 'char-2', name: '陈宇', description: '30岁，自由摄影师，随性洒刺，林星的青梅竹马。', prompt: '1个男孩，帅气，头像，休闲装，摄影师，轻松自然，写实风格，8k分辨率', image: '' }
     ],
     scenes: [
       { id: 'scene-1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', image: '' },
@@ -670,12 +958,12 @@ const startSequentialGeneration = async () => {
   isGeneratingAssetsText.value = false;
   
   // Phase 2: Sequential Image Generation (Per-asset loading)
-  const allAssets = [
-    ...characters.value.map(a => ({ ...a, type: 'character' })),
-    ...scenes.value.map(a => ({ ...a, type: 'scene' })),
-    ...propsList.value.map(a => ({ ...a, type: 'prop' }))
-  ];
+  await generateImagesForAssets(allGeneratedSubjects);
+  
+  ElMessage.success('主体资产生成完毕');
+};
 
+const generateImagesForAssets = async (assets: any[]) => {
   const mockImages: Record<string, string> = {
     'char-1': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1280&h=720&q=80',
     'char-2': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1280&h=720&q=80',
@@ -685,9 +973,10 @@ const startSequentialGeneration = async () => {
     'prop-2': 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1280&h=720&q=80'
   };
 
-  for (const asset of allAssets) {
+  for (const asset of assets) {
     const key = asset.id;
-    const loadingKey = `${asset.type.substring(0, 4)}-${asset.id}`;
+    const typePrefix = asset.type === 'character' ? 'char' : asset.type;
+    const loadingKey = `${typePrefix}-${asset.id}`;
     generatingAssetImages.add(loadingKey);
     
     // Switch tab automatically to show progress
@@ -698,12 +987,31 @@ const startSequentialGeneration = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500)); // Image generation takes longer
     
     // Update the image in store
-    episodeStore.updateSubject(asset.id, { image: mockImages[key] });
+    const imageUrl = mockImages[key] || `https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=1280&h=720&seed=${asset.id}`;
+    episodeStore.updateSubject(asset.id, { image: imageUrl });
     
     generatingAssetImages.delete(loadingKey);
   }
+};
+
+const handleBatchGenerate = async (type: 'character' | 'scene' | 'prop') => {
+  if (generatingAssetImages.size > 0) return;
+
+  const selectedItems = episodeStore.subjects.filter(s => s.type === type && selectedAssetIds.has(s.id));
   
-  ElMessage.success('主体资产生成完毕');
+  if (selectedItems.length === 0) {
+    ElMessage.warning(`请先选择要生成的${getAssetTypeName(type)}`);
+    return;
+  }
+
+  // Generate images for selected existing assets (will show loading on cards)
+  await generateImagesForAssets(selectedItems);
+  
+  // Clear selection and exit multi-select after successful generation
+  selectedAssetIds.clear();
+  isMultiSelect.value = false;
+  
+  ElMessage.success(`批量生成 ${selectedItems.length} 张图片成功`);
 };
 
 // Modal State
@@ -986,5 +1294,15 @@ defineExpose({
 .fade-scale-leave-to {
   opacity: 0;
   transform: scale(1.1);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -88,9 +88,9 @@
             <span class="text-slate-500 dark:text-slate-400 text-sm">{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="180">
+        <el-table-column label="操作" fixed="right" width="200">
           <template #default="{ row }">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
               <el-button size="small" class="!rounded-lg dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300 hover:!text-emerald-500 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/20 hover:!border-emerald-200 transition-colors" @click="openEditDialog(row)" :disabled="row.isDefault">
                 编辑
               </el-button>

@@ -1920,6 +1920,59 @@ const handleKeydown = (e: KeyboardEvent) => {
   }
 };
 
+const disassembleFullScript = (content: string) => {
+   if (!form.value || !form.value.episodesData) return;
+ 
+   ElMessage({
+     message: '正在根据导入内容拆解剧本正文...',
+     type: 'info'
+   });
+ 
+   // 识别第一集或者第1集的位置，跳过前面的标题、梗概、人物小传等内容
+   const firstEpisodeMatch = content.match(/第\s*(\d+|[一二三四五六七八九十百]+)\s*[集回]/);
+   let scriptContent = content;
+   
+   if (firstEpisodeMatch) {
+     scriptContent = content.substring(firstEpisodeMatch.index!);
+   }
+ 
+   // 使用正则表达式拆分剧集，匹配“第X集”、“第 X 集”、“第X回”等
+   const episodeParts = scriptContent.split(/第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]/g).filter(p => p.trim().length > 0);
+   
+   // 如果拆分出的部分少于 2 个，说明可能没有明显的剧集标识，尝试按段落拆分或作为第一集
+   if (episodeParts.length <= 1) {
+     if (form.value.episodesData.length > 0) {
+       form.value.episodesData[0].content = `<p>${scriptContent.trim().replace(/\n/g, '</p><p>')}</p>`;
+       form.value.episodesData[0].status = 103;
+     }
+   } else {
+     // 将拆分出的内容填充到对应的剧集中
+     form.value.episodesData.forEach((ep, index) => {
+       if (episodeParts[index]) {
+         ep.content = `<p>${episodeParts[index].trim().replace(/\n/g, '</p><p>')}</p>`;
+         ep.status = 103; // 设置为已完成状态，从而“解锁”
+       }
+     });
+   }
+
+  // 确保所有剧集都被解锁（即使没有匹配到内容的剧集也设置为创作中状态，或者根据需求解锁）
+  form.value.episodesData.forEach(ep => {
+    if (!ep.status || ep.status === 101) {
+      ep.status = 103;
+    }
+  });
+
+  // 同步全集内容
+  form.value.fullContent = form.value.episodesData
+    .map(ep => ep.content || '<p></p>')
+    .join(SEPARATOR);
+
+  // 同步至 Pinia
+  dramaStore.setOutlineData(JSON.parse(JSON.stringify(form.value)));
+  
+  ElMessage.success('剧本正文拆解填充完成，所有剧集已解锁');
+};
+
 onMounted(async () => {
   window.addEventListener('keydown', handleKeydown);
   document.addEventListener('click', closeContextMenu);
@@ -2079,6 +2132,13 @@ onMounted(async () => {
        isSequentiallyGenerating.value = false;
        currentGeneratingIndex.value = -1;
        dramaStore.setGenerationStatus({ isGenerating: false, type: '' });
+
+       // 如果有导入的剧本内容，进行拆解填充
+       if (dramaStore.fullScriptContent) {
+         disassembleFullScript(dramaStore.fullScriptContent);
+         // 填充完后清除，防止重复触发
+         dramaStore.setFullScriptContent('');
+       }
        
        // Final load
        loadContentFromStore();
@@ -2138,7 +2198,7 @@ const fetchInitialDramaInfo = () => {
         scriptType: 'short_drama',
         genre: '都市情感',
         targetAudience: '女性向',
-        episodesCount: 100,
+        episodesCount: dramaStore.episodesCount || 100,
         expectedDuration: 120,
         synopsis: '沈念安本以为订婚是幸福的开始，却在订婚宴上遭遇妹妹沈薇薇怀了未婚夫顾承泽孩子的重击。随后被沈家父母以养女身份驱逐，甚至工作室也被查封。在大雨中，神秘人周助理和他的先生出现在她面前，开启了她的逆袭之路。',
         background: '豪门沈家，表面风光无限。沈念安作为沈家养女，多年来小心翼翼，本以为能通过与顾家的联姻获得真正的家庭归属感。然而，这一切都在沈家亲生女儿沈薇薇回国后化为影。在金钱与亲情的博弈中，沈念安成了被抛弃的棋子。',

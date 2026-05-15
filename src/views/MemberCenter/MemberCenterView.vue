@@ -12,6 +12,13 @@
               <el-icon class="text-white text-xl"><GoldMedal /></el-icon>
             </div>
             会员中心
+            <button 
+              @click="showDesignDialog = true"
+              class="ml-2 h-7 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-300 dark:hover:border-amber-500/50"
+            >
+              <el-icon :size="12"><InfoFilled /></el-icon>
+              <span>产品设计说明</span>
+            </button>
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">管理会员、算力豆与订单，解锁更强创作能力</p>
         </div>
@@ -879,6 +886,13 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 产品设计说明弹窗 -->
+    <ProductDesignDialog 
+      v-model="showDesignDialog" 
+      id="member-center"
+      :default-content="memberCenterDesign"
+    />
   </div>
 </template>
 
@@ -886,6 +900,7 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 import { useUserStore } from '@/store/user'
 import { useThemeStore } from '@/store/theme'
 import {
@@ -964,6 +979,26 @@ const STORAGE_KEY = 'member-center-state-v1'
 const router = useRouter()
 const userStore = useUserStore()
 const themeStore = useThemeStore()
+
+const showDesignDialog = ref(false)
+
+const memberCenterDesign = {
+  title: '会员中心',
+  location: '用户管理个人会员权益、算力豆余额及订单记录的核心枢纽，承载 C 端变现转化的关键功能。',
+  layout: [
+    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、订单记录、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
+    '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
+    '**总览页头部**：展示超级会员状态、核心权益标签及可用算力豆大数值显示。',
+    '**会员套餐区**：支持“连续包月/按年购买”切换，并按业务线（短剧、视频、音乐、小说）分类展示不同档位套餐。',
+    '**算力包充值**：提供不同额度的算力豆充值包，并带有折扣标签提示。'
+  ],
+  interactions: [
+    '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',
+    '**支付确认弹窗**：点击“选择计划”或“立即充值”触发确认支付弹窗，展示金额及赠送算力豆详情。',
+    '**订单记录详情**：点击订单列表项可展开查看详细订单号及开票入口。',
+    '**积分兑换**：在邀请返利页面，支持用户将积累的积分按 100:10 比例兑换为算力豆。'
+  ]
+}
 
 const activeKey = ref<NavKey>('overview')
 const orderFilter = ref<OrderType | 'all'>('all')

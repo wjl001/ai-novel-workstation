@@ -37,14 +37,38 @@
           </p>
         </div>
 
-        <div class="relative z-10 grid grid-cols-2 gap-4">
-          <div class="feature-item p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
-            <div class="text-white font-bold mb-1">AI 编剧</div>
-            <div class="text-white/60 text-xs">灵感瞬间爆发</div>
+        <div class="relative z-10 grid grid-cols-2 gap-3">
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">AI 编剧</div>
+            <div class="text-white/60 text-[10px]">灵感瞬间爆发</div>
           </div>
-          <div class="feature-item p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
-            <div class="text-white font-bold mb-1">自动剪辑</div>
-            <div class="text-white/60 text-xs">效率提升 10 倍</div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">一键导入剧本</div>
+            <div class="text-white/60 text-[10px]">快速开启创作</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">主体固定</div>
+            <div class="text-white/60 text-[10px]">视觉始终如一</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">@快速引用主体</div>
+            <div class="text-white/60 text-[10px]">智能关联资产</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">AI 分镜</div>
+            <div class="text-white/60 text-[10px]">剧本自动拆解</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">分镜剪辑</div>
+            <div class="text-white/60 text-[10px]">精细画面控制</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">团队管理</div>
+            <div class="text-white/60 text-[10px]">高效协同创作</div>
+          </div>
+          <div class="feature-item p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-white font-bold text-sm mb-0.5">智能合成</div>
+            <div class="text-white/60 text-[10px]">一键生成视频</div>
           </div>
         </div>
       </div>
@@ -53,10 +77,18 @@
       <div class="w-full lg:w-1/2 p-8 md:p-16 flex flex-col justify-center relative">
         <div class="w-full max-w-[400px] mx-auto">
           <div class="mb-10 text-center lg:text-left">
-            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-center lg:justify-start gap-3">
               <template v-if="isForgot">找回密码</template>
               <template v-else-if="isRegister">加入智影</template>
               <template v-else>欢迎回来</template>
+              
+              <button 
+                @click="showDesignDialog = true"
+                class="h-6 px-2.5 flex items-center gap-1.5 rounded-full font-bold text-[9px] shadow-sm border transition-all duration-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:text-[#8b5cf6] dark:hover:text-[#a78bfa] hover:border-[#8b5cf6]/30 dark:hover:border-[#8b5cf6]/50"
+              >
+                <el-icon :size="10"><InfoFilled /></el-icon>
+                <span>产品设计说明</span>
+              </button>
             </h2>
             <p class="text-slate-500 dark:text-slate-400 font-medium">
               <template v-if="isForgot">通过手机号重置您的登录密码</template>
@@ -335,6 +367,28 @@
         </div>
       </div>
     </div>
+
+    <!-- 产品设计说明弹窗 -->
+    <ProductDesignDialog 
+      v-model="showDesignDialog" 
+      id="auth-portal"
+      :default-content="{
+        title: '身份验证门户',
+        location: '用户进入系统的第一站，集成登录、注册与找回密码的核心验证流程，采用 C 端视觉风格提升品牌初印象。',
+        layout: [
+          '**沉浸式左侧品牌区：** 使用动态视频背景配合毛玻璃 (Glassmorphism) 质感，强化“智影”AI 视频创作引擎的品牌调性。',
+          '**右侧交互容器：** 采用响应式布局，在移动端自动切换为全屏模式。表单区域保持清晰的层级关系与充足的留白。',
+          '**多模态切换：** 登录页支持“短信验证码”与“账号密码”双模式切换；注册与找回密码作为独立子状态在同一视图内平滑流转。',
+          '**安全加固组件：** 集成图形验证码 (GraphicCaptcha) 与短信下发逻辑，确保身份验证的安全合规。'
+        ],
+        interactions: [
+          { text: '**状态流转 (isRegister/isForgot)：** 点击“加入智影”或“忘记密码”。**动作：** 修改响应式变量。**流程：** 页面内容在登录、注册、找回密码三者间无刷新切换。', image: '' },
+          { text: '**短信验证逻辑：** 点击“获取验证码”。**动作：** 触发倒计时 (Countdown)。**流程：** 验证手机号格式及图形码后，下发 6-16 位随机码，按钮进入 60s 冷却状态。', image: '' },
+          { text: '**登录/注册提交：** 点击“立即登录”或“立即注册”。**动作：** 表单校验 (Validation)。**异常：** 若校验失败，通过 `ElMessage` 弹出红色警告；若成功，执行 `router.push` 跳转至主应用。', image: '' },
+          { text: '**第三方集成：** 底部提供微信等社交登录入口。**流程：** 点击图标跳转至扫码或授权页，完成快捷身份绑定。', image: '' }
+        ]
+      }"
+    />
   </div>
 </template>
 
@@ -343,8 +397,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
-import { User, Lock, Iphone, ChatDotRound, VideoCamera, EditPen, Ticket } from '@element-plus/icons-vue'
+import { 
+  User, Lock, Iphone, ChatDotRound, VideoCamera, 
+  EditPen, Ticket, InfoFilled 
+} from '@element-plus/icons-vue'
 import GraphicCaptcha from './components/GraphicCaptcha.vue'
+import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -363,6 +421,7 @@ onMounted(() => {
 const activeTab = ref('sms')
 const isRegister = ref(false)
 const isForgot = ref(false)
+const showDesignDialog = ref(false)
 const loading = ref(false)
 const countdown = ref(0)
 const rememberMe = ref(true)
