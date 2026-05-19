@@ -9,8 +9,8 @@
   >
     <!-- Custom Header -->
     <div class="flex justify-between items-center mb-6 px-2">
-      <h2 class="text-[20px] font-black text-slate-800">{{ title }}</h2>
-      <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+      <h2 class="text-[20px] font-black text-slate-800 dark:text-slate-100">{{ title }}</h2>
+      <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors">
         <el-icon size="16"><Close /></el-icon>
       </button>
     </div>
@@ -30,8 +30,8 @@
                 v-model="localSubject.name" 
                 type="text" 
                 placeholder="请输入名称"
-                class="w-full px-4 py-2.5 border border-slate-100 rounded-2xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all pr-16"
-                :class="isEdit ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-[#f8fafc]'"
+                class="w-full px-4 py-2.5 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all pr-16 dark:text-slate-200"
+                :class="isEdit ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-[#f8fafc] dark:bg-slate-900/50'"
                 maxlength="20"
                 :disabled="isEdit"
               />
@@ -56,37 +56,69 @@
                 <span>AI 润色优化</span>
               </button>
             </div>
-            <div class="relative bg-[#f8fafc] border border-slate-100 rounded-[20px] p-3.5 min-h-[90px] flex flex-col group transition-all focus-within:ring-4 focus-within:ring-indigo-500/5">
+            <div class="relative bg-[#f8fafc] dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 rounded-[20px] p-3.5 min-h-[90px] flex flex-col group transition-all focus-within:ring-4 focus-within:ring-indigo-500/5">
               <textarea 
                 v-model="localSubject.description" 
                 placeholder="请输入详细描述..."
-                class="w-full flex-1 bg-transparent border-none resize-none text-[13px] text-slate-600 leading-relaxed font-bold focus:outline-none"
+                class="w-full flex-1 bg-transparent border-none resize-none text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-bold focus:outline-none"
               ></textarea>
             </div>
           </div>
 
-          <!-- Appeared Episodes (Scene & Prop Only) - Hidden as requested -->
-          <!-- <div v-if="type !== 'character'" class="flex flex-col gap-1.5">
-            <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">出现集数</label>
-            <el-select
-              v-model="localSubject.appeared_episodes"
-              multiple
-              placeholder="请选择集数"
-              class="custom-select-v3"
-            >
-              <el-option
-                v-for="item in [1, 2, 3]"
-                :key="item"
-                :label="'第 ' + item + ' 集'"
-                :value="item"
-              />
-            </el-select>
-          </div> -->
+          <!-- Reference Image -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">
+              参考图 <span class="text-slate-300 font-normal ml-1">(可选)</span>
+            </label>
+            <div class="flex items-center gap-4 bg-[#f8fafc] dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 rounded-[20px] p-3.5 transition-all hover:border-indigo-100 dark:hover:border-indigo-900/50">
+              <div 
+                class="w-20 h-20 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group/ref shrink-0 shadow-sm"
+              >
+                <img v-if="localSubject.reference_image" :src="localSubject.reference_image" class="w-full h-full object-cover" />
+                <el-icon v-else size="24" class="text-slate-200 dark:text-slate-700"><Picture /></el-icon>
+                
+                <!-- Action Overlay -->
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/ref:opacity-100 transition-all flex items-center justify-center gap-2">
+                  <el-upload
+                    action="#"
+                    :auto-upload="false"
+                    :show-file-list="false"
+                    @change="handleReferenceImageUpload"
+                  >
+                    <el-icon class="text-white cursor-pointer hover:scale-110" size="18"><Upload /></el-icon>
+                  </el-upload>
+                  <el-icon 
+                    v-if="localSubject.reference_image" 
+                    class="text-white cursor-pointer hover:scale-110" 
+                    size="18"
+                    @click="localSubject.reference_image = ''"
+                  >
+                    <Delete />
+                  </el-icon>
+                </div>
+              </div>
+              <div class="flex-1 flex flex-col gap-2">
+                <p class="text-[11px] text-slate-400 leading-relaxed font-medium">
+                  上传参考图可以帮助 AI 更准确地控制{{ type === 'character' ? '角色' : type === 'scene' ? '场景' : '道具' }}的视觉特征。
+                </p>
+                <el-upload
+                  action="#"
+                  :auto-upload="false"
+                  :show-file-list="false"
+                  @change="handleReferenceImageUpload"
+                >
+                  <button class="px-4 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 border border-indigo-100 dark:border-indigo-900/50 rounded-full text-[11px] font-black hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all shadow-sm">
+                    {{ localSubject.reference_image ? '更换图片' : '上传参考图' }}
+                  </button>
+                </el-upload>
+              </div>
+            </div>
+          </div>
 
           <!-- Voice Description (Character Only) -->
           <div v-if="type === 'character'" class="flex flex-col gap-2">
             <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider px-1">角色声音设定</label>
-            <div class="bg-[#f8fafc] rounded-[20px] border border-slate-100 p-1 flex flex-col min-h-[160px]">
+            <div class="bg-[#f8fafc] dark:bg-slate-900/50 rounded-[20px] border border-slate-100 dark:border-slate-700 p-1 flex flex-col min-h-[160px]">
               <!-- Content -->
               <div class="flex-1 flex flex-col p-1.5 min-h-0">
                 <div class="h-full flex flex-col">
@@ -103,7 +135,7 @@
                   <textarea 
                     v-model="localSubject.voice_description" 
                     placeholder="描述角色的音色特点，如：男声，深沉，富有磁性..."
-                    class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 leading-relaxed font-bold focus:outline-none px-2"
+                    class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed font-bold focus:outline-none px-2"
                     @input="handleVoiceDescriptionInput"
                   ></textarea>
                 </div>
@@ -114,10 +146,10 @@
 
         <!-- Right: Preview -->
         <div class="w-[300px] flex flex-col gap-3 shrink-0 overflow-hidden">
-          <div class="aspect-video rounded-[24px] bg-slate-50 border border-slate-100 overflow-hidden relative shadow-sm group">
-            <div v-if="isGeneratingImage" class="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+          <div class="aspect-video rounded-[24px] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 overflow-hidden relative shadow-sm group">
+            <div v-if="isGeneratingImage" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
               <el-icon class="animate-spin text-indigo-600" size="28"><Loading /></el-icon>
-              <span class="text-[12px] text-slate-500 font-black">AI 绘图中...</span>
+              <span class="text-[12px] text-slate-500 dark:text-slate-400 font-black">AI 绘图中...</span>
             </div>
 
             <img 
@@ -125,13 +157,13 @@
               :src="localSubject.image" 
               class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
-            <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-2">
+            <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 gap-2">
               <el-icon size="40"><Picture /></el-icon>
               <span class="text-[12px] font-black uppercase tracking-widest">暂无预览</span>
             </div>
             
             <!-- Hover Action -->
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
+            <div v-if="!hideUpload" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
               <el-upload
                 action="#"
                 :auto-upload="false"
@@ -150,7 +182,7 @@
           <div class="flex justify-center">
             <button 
               @click="generateImage"
-              class="w-full h-[40px] flex items-center justify-center gap-2 bg-[#1f2329] text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-black/10 dark:shadow-black/40 group/ai"
+              class="w-full h-[40px] flex items-center justify-center gap-2 bg-[#1f2329] dark:bg-slate-700 text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-black/10 dark:shadow-black/40 group/ai"
               :disabled="isGeneratingImage"
             >
               <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{'animate-spin': isGeneratingImage}"><MagicStick /></el-icon>
@@ -165,10 +197,10 @@
 
     <!-- Footer -->
     <template #footer>
-      <div class="flex justify-end gap-3 px-2 pt-4 border-t border-slate-100 bg-white">
+      <div class="flex justify-end gap-3 px-2 pt-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800">
         <button 
           @click="visible = false" 
-          class="px-8 py-2.5 rounded-full bg-slate-50 text-slate-400 text-[14px] font-black hover:bg-slate-100 hover:text-slate-600 transition-all"
+          class="px-8 py-2.5 rounded-full bg-slate-50 dark:bg-slate-900 text-slate-400 text-[14px] font-black hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 transition-all"
         >
           取消
         </button>
@@ -193,6 +225,7 @@ const props = defineProps<{
   modelValue: boolean;
   subject: any;
   isEdit: boolean;
+  hideUpload?: boolean;
 }>();
 
 const emit = defineEmits(['update:modelValue', 'save']);
@@ -210,6 +243,7 @@ const localSubject = ref<any>({
   voice_audio: '',
   type: 'character',
   image: '',
+  reference_image: '',
   appeared_episodes: []
 });
 
@@ -234,6 +268,7 @@ watch(() => props.subject, (newVal) => {
       voice_description: newVal.voice_description || (newVal.type === 'character' ? '沉稳大气，富有磁性' : ''),
       voice_audio: newVal.voice_audio || '',
       image: newVal.image || '',
+      reference_image: newVal.reference_image || '',
       appeared_episodes: newVal.appeared_episodes && newVal.appeared_episodes.length > 0 ? newVal.appeared_episodes : [1]
     };
   }
@@ -250,15 +285,23 @@ const generateImage = async () => {
     // Simulate AI Image Generation
     await new Promise(resolve => setTimeout(resolve, 2000));
     
+    // If there's a reference image, simulate that it's being used
+    const refSuffix = localSubject.value.reference_image ? '_with_ref' : '';
+    
     const mockImages = {
-      character: `https://picsum.photos/960/540?random=char_${Date.now()}`,
-      scene: `https://picsum.photos/960/540?random=scene_${Date.now()}`,
-      prop: `https://picsum.photos/960/540?random=prop_${Date.now()}`
+      character: `https://picsum.photos/960/540?random=char_${Date.now()}${refSuffix}`,
+      scene: `https://picsum.photos/960/540?random=scene_${Date.now()}${refSuffix}`,
+      prop: `https://picsum.photos/960/540?random=prop_${Date.now()}${refSuffix}`
     };
     
     const typeKey = (type.value || 'character') as keyof typeof mockImages;
     localSubject.value.image = mockImages[typeKey] || mockImages.character;
-    ElMessage.success('AI 图片生成成功');
+    
+    if (localSubject.value.reference_image) {
+      ElMessage.success('已结合参考图生成 AI 图片');
+    } else {
+      ElMessage.success('AI 图片生成成功');
+    }
   } catch (error) {
     ElMessage.error('图片生成失败，请稍后重试');
   } finally {
@@ -309,6 +352,11 @@ const handleImageUpload = (file: any) => {
   ElMessage.success('预览图更新成功');
 };
 
+const handleReferenceImageUpload = (file: any) => {
+  localSubject.value.reference_image = URL.createObjectURL(file.raw);
+  ElMessage.success('参考图上传成功');
+};
+
 const handleVoiceDescriptionInput = () => {
   if (localSubject.value.voice_description) {
     localSubject.value.voice_audio = '';
@@ -326,6 +374,14 @@ const handleSave = () => {
   border-radius: 24px !important;
   padding: 24px !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid transparent !important;
+  transition: all 0.3s ease;
+}
+
+.dark .custom-subject-dialog {
+  background-color: #1e293b !important; /* slate-800 */
+  border: 1px solid #334155 !important; /* slate-700 */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
 }
 
 .custom-subject-dialog .el-dialog__header {
@@ -338,6 +394,11 @@ const handleSave = () => {
 
 .custom-subject-dialog .el-dialog__footer {
   padding: 16px 0 0 0 !important;
+  background-color: transparent !important;
+}
+
+.dark .custom-subject-dialog .el-dialog__footer {
+  border-top-color: #334155 !important;
 }
 
 .custom-select .el-select__wrapper {

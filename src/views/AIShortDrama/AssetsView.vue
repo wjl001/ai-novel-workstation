@@ -1,27 +1,33 @@
 <template>
   <div class="h-full flex flex-col overflow-hidden relative bg-[#f8fafc] dark:bg-slate-900">
-    <!-- Big Loading Overlay for Assets Text Generation -->
+    <!-- Small Loading Floating Card for Assets Generation (Non-blocking) -->
     <teleport to="body">
-      <transition name="fade-scale">
-        <div v-if="isGeneratingAssetsText" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
-          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
-            <!-- Central Icon -->
+      <transition name="el-zoom-in-center">
+        <div v-if="isGeneratingAssetsText" class="fixed inset-0 z-[1500] flex items-center justify-center pointer-events-none">
+          <div class="relative w-[440px] px-6 flex flex-col items-center gap-6 bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-white dark:border-slate-700 pointer-events-auto">
+            <!-- Central Icon with Pulse -->
             <div class="relative">
-              <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
-              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20 rotate-6 animate-float-slow">
-                <el-icon :size="40" class="animate-bounce-subtle"><MagicStick /></el-icon>
+              <div class="absolute inset-0 bg-indigo-500 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
+              <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg rotate-3 animate-float-slow">
+                <el-icon :size="32" class="animate-bounce-subtle"><MagicStick /></el-icon>
               </div>
             </div>
 
-            <!-- Progress Info -->
-            <div class="w-full flex flex-col items-center gap-5">
-              <div class="text-center">
-                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 资产规划中</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">{{ currentAssetInfo }}</p>
-              </div>
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">AI 资产规划中</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-[13px] font-medium flex items-center justify-center gap-2">
+                <el-icon class="is-loading"><Loading /></el-icon>
+                {{ currentAssetInfo }}
+              </p>
+            </div>
 
-              <!-- Progress Bar -->
-              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+            <!-- Progress Bar -->
+            <div class="w-full space-y-3 px-2">
+              <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">分析进度</span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">预计耗时 1 分钟</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
                 <div 
                   class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out relative"
                   :style="{ width: generationProgress + '%' }"
@@ -29,17 +35,83 @@
                   <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
                 </div>
               </div>
-              
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Asset Analysis Engine...</span>
-              </div>
             </div>
+
+            <!-- Background Button -->
+            <button 
+              @click="isGeneratingAssetsText = false"
+              class="w-full h-11 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-black text-[13px] hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/20 transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 group"
+            >
+              <span>好的，后台运行</span>
+              <el-icon class="group-hover:translate-x-1 transition-transform"><Right /></el-icon>
+            </button>
           </div>
         </div>
       </transition>
     </teleport>
 
-    <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
+    <div class="flex-1 flex flex-col min-h-0 relative">
+      <!-- Work Info Overlay - Integrated into Tabs Row -->
+      <div class="absolute left-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
+        <div class="flex items-center gap-4">
+          <div class="flex flex-col">
+            <span class="text-[14px] font-black text-slate-800 dark:text-white truncate max-w-[200px]">{{ dramaStore.outlineData?.title || '未命名剧本' }}</span>
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">主体资产管理</span>
+          </div>
+          <div class="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-1"></div>
+          <!-- Background Generation Status -->
+        <div v-if="isGeneratingAssetsText" class="flex items-center gap-3 px-4 py-1.5 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-500/20 rounded-full animate-in fade-in slide-in-from-left-4 duration-500 mr-4">
+          <div class="relative flex items-center justify-center">
+            <el-icon class="is-loading text-indigo-600 dark:text-indigo-400" :size="14"><Loading /></el-icon>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">正在分析资产...</span>
+              <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{{ generationProgress }}%</span>
+            </div>
+            <div class="w-24 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mt-0.5 overflow-hidden">
+              <div 
+                class="h-full bg-indigo-500 transition-all duration-500"
+                :style="{ width: generationProgress + '%' }"
+              ></div>
+            </div>
+          </div>
+          <button 
+            @click="isGeneratingAssetsText = true" 
+            class="ml-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"
+          >
+            <el-icon :size="12"><FullScreen /></el-icon>
+          </button>
+        </div>
+
+        <el-dropdown trigger="click" @command="handleEpisodeSwitch">
+            <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
+              <h1 class="text-[13px] font-black text-slate-600 dark:text-slate-300 truncate max-w-[200px] group-hover:text-indigo-600 transition-colors">
+                <template v-if="episodeNotFound">暂无剧集</template>
+                <template v-else>{{ episode?.title || '请选择剧集' }}</template>
+              </h1>
+              <el-icon class="text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:rotate-180 duration-300"><ArrowDown /></el-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu class="!rounded-2xl !p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                <el-dropdown-item 
+                  v-for="ep in episodeStore.episodes" 
+                  :key="ep.id" 
+                  :command="ep.id"
+                  :disabled="ep.id === episodeId"
+                  class="!rounded-xl !py-3 !px-4"
+                  :class="{ '!text-indigo-600 !bg-indigo-50 !font-bold': ep.id === episodeId }"
+                >
+                  {{ ep.title }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <div class="w-px h-8 bg-slate-100 dark:bg-slate-700/50 mx-4"></div>
+        </div>
+      </div>
+
+      <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
       <!-- 角色管理 -->
       <el-tab-pane label="角色管理" name="characters">
         <div class="flex flex-col h-full p-6 pt-4">
@@ -116,6 +188,13 @@
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('char')).length }})
               </button>
               <!-- 新增角色入口 -->
+              <button 
+                @click="showLibraryModal = true"
+                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
+              >
+                <el-icon><Menu /></el-icon>
+                从主体库导入
+              </button>
               <button 
                 @click="addAsset('character')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
@@ -280,6 +359,13 @@
               </button>
               <!-- 新增场景入口 -->
               <button 
+                @click="showLibraryModal = true"
+                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
+              >
+                <el-icon><Menu /></el-icon>
+                从主体库导入
+              </button>
+              <button 
                 @click="addAsset('scene')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
@@ -443,6 +529,13 @@
               </button>
               <!-- 新增道具入口 -->
               <button 
+                @click="showLibraryModal = true"
+                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
+              >
+                <el-icon><Menu /></el-icon>
+                从主体库导入
+              </button>
+              <button 
                 @click="addAsset('prop')"
                 class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
@@ -529,6 +622,7 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+  </div>
 
     <div class="flex justify-end items-center p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
       <el-tooltip
@@ -582,7 +676,16 @@
       v-model="editModalVisible"
       :subject="editingAsset"
       :is-edit="isEditAsset"
+      :hide-upload="currentAssetType === 'character'"
       @save="saveAsset"
+    />
+
+    <!-- Subject Library Modal -->
+    <SubjectLibraryModal
+      v-model="showLibraryModal"
+      :subjects="episodeStore.subjects"
+      :current-project-name="dramaStore.outlineData?.title || '未命名剧本'"
+      @confirm="handleLibraryConfirm"
     />
 
     <!-- Product Design Dialog -->
@@ -594,8 +697,8 @@
         location: '承接剧本创作环节，将文字描述转化为视觉资产。管理剧本中所有的角色、场景、道具，并固定其视觉特征，为后续视频生成提供基准。',
         layout: [
           '**分类导航：** 顶部分类管理【角色库】、【场景库】、【道具库】。',
-          '**主体卡片：** 包含基准图 (Reference Image)、名称及 AI 自动提取的特征描述。',
-          '**编辑弹窗：** 核心交互区，支持精修主体信息、生成形象及上传本地资源。'
+          '**主体卡片：** 包含基准图 (Main Image)、名称及 AI 自动提取的特征描述。',
+          '**编辑弹窗：** 核心交互区，支持精修主体信息、新增参考图（可选）、生成形象及上传本地资源。'
         ],
         interactions: [
           {
@@ -630,12 +733,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
 import { useEpisodeStore } from '../../store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
+import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
@@ -645,6 +749,33 @@ const episodeStore = useEpisodeStore();
 const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
+const showLibraryModal = ref(false);
+
+const handleLibraryConfirm = (selectedItems: any[]) => {
+  selectedItems.forEach(item => {
+    // 检查是否已存在同名主体
+    if (!episodeStore.subjects.find(s => s.name === item.name)) {
+      episodeStore.addSubject({
+        id: `imported_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: item.name,
+        type: item.type,
+        image: item.image,
+        reference_image: item.reference_image || '',
+        description: item.description || ''
+      });
+    }
+  });
+  ElMessage.success(`成功导入 ${selectedItems.length} 个主体`);
+};
+
+// Episode Switching Logic
+const episodeId = ref(episodeStore.episodes[0]?.id);
+const episode = computed(() => episodeStore.episodes.find(e => e.id === episodeId.value));
+const episodeNotFound = computed(() => episodeStore.episodes.length === 0);
+
+const handleEpisodeSwitch = (id: string) => {
+  episodeId.value = id;
+};
 
 // Selection State
 const isMultiSelect = ref(false);
@@ -826,6 +957,7 @@ const propsList = computed({
 
 // Loading States
 const isGeneratingAssetsText = ref(false);
+const generationSessionId = ref(0);
 const generatingAssetImages = reactive<Set<string>>(new Set());
 const generationProgress = ref(0);
 const currentAssetInfo = ref('');
@@ -920,6 +1052,7 @@ onMounted(async () => {
 });
 
 const startSequentialGeneration = async () => {
+  const sessionId = ++generationSessionId.value;
   isGeneratingAssetsText.value = true;
   currentAssetInfo.value = '正在解析剧本，提取核心角色与场景...';
   
@@ -941,6 +1074,7 @@ const startSequentialGeneration = async () => {
 
   const steps = ['提取角色特征', '规划场景氛围', '锁定核心道具'];
   for (let i = 0; i < steps.length; i++) {
+    if (sessionId !== generationSessionId.value) return;
     currentAssetInfo.value = steps[i];
     generationProgress.value = Math.round(((i + 1) / steps.length) * 100);
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -955,15 +1089,16 @@ const startSequentialGeneration = async () => {
   
   episodeStore.setSubjects(allGeneratedSubjects);
   
+  if (sessionId !== generationSessionId.value) return;
   isGeneratingAssetsText.value = false;
   
   // Phase 2: Sequential Image Generation (Per-asset loading)
-  await generateImagesForAssets(allGeneratedSubjects);
+  await generateImagesForAssets(allGeneratedSubjects, sessionId);
   
   ElMessage.success('主体资产生成完毕');
 };
 
-const generateImagesForAssets = async (assets: any[]) => {
+const generateImagesForAssets = async (assets: any[], sessionId: number) => {
   const mockImages: Record<string, string> = {
     'char-1': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1280&h=720&q=80',
     'char-2': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1280&h=720&q=80',
@@ -974,6 +1109,7 @@ const generateImagesForAssets = async (assets: any[]) => {
   };
 
   for (const asset of assets) {
+    if (sessionId !== generationSessionId.value) return;
     const key = asset.id;
     const typePrefix = asset.type === 'character' ? 'char' : asset.type;
     const loadingKey = `${typePrefix}-${asset.id}`;
@@ -1005,7 +1141,7 @@ const handleBatchGenerate = async (type: 'character' | 'scene' | 'prop') => {
   }
 
   // Generate images for selected existing assets (will show loading on cards)
-  await generateImagesForAssets(selectedItems);
+  await generateImagesForAssets(selectedItems, generationSessionId.value);
   
   // Clear selection and exit multi-select after successful generation
   selectedAssetIds.clear();
@@ -1043,7 +1179,8 @@ const addAsset = (type: 'character' | 'scene' | 'prop') => {
     description: '',
     prompt: '',
     type: type,
-    image: ''
+    image: '',
+    reference_image: ''
   };
   isEditAsset.value = false;
   editModalVisible.value = true;
@@ -1120,38 +1257,55 @@ defineExpose({
   padding: 0 24px;
   background-color: #fff;
   border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
 }
 .dark .modern-tabs :deep(.el-tabs__header) {
+  padding: 0 24px;
   background-color: #1e293b;
   border-bottom-color: #334155;
+}
+.modern-tabs :deep(.el-tabs__nav-wrap) {
+  margin-bottom: 0;
+}
+.modern-tabs :deep(.el-tabs__nav-scroll) {
+  display: flex;
+  justify-content: center;
 }
 .modern-tabs :deep(.el-tabs__nav-wrap::after) {
   display: none;
 }
 .modern-tabs :deep(.el-tabs__item) {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 800;
   color: #64748b;
-  padding: 0 20px;
+  padding: 0 32px;
   height: 56px;
   line-height: 56px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.02em;
 }
 .dark .modern-tabs :deep(.el-tabs__item) {
   color: #94a3b8;
 }
 .modern-tabs :deep(.el-tabs__item.is-active) {
-  color: #1890ff;
+  color: #4f46e5;
+  transform: scale(1.05);
 }
 .modern-tabs :deep(.el-tabs__active-bar) {
-  background-color: #1890ff;
-  height: 3px;
-  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #4f46e5, #9333ea);
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -2px 10px rgba(79, 70, 229, 0.3);
+}
+.modern-tabs :deep(.el-tabs__item:hover) {
+  color: #4f46e5;
+  opacity: 0.8;
 }
 .modern-tabs :deep(.el-tabs__content) {
   flex: 1;
   overflow-y: hidden;
-  background-color: #fcfdfe;
+  background-color: #f8fafc;
 }
 .dark .modern-tabs :deep(.el-tabs__content) {
   background-color: #0f172a;

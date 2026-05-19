@@ -1,39 +1,50 @@
 <template>
   <div class="h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 overflow-hidden relative">
-    <!-- Big Loading Overlay for Storyboard Script Generation -->
+    <!-- Small Loading Floating Card for Storyboard Script Generation (Non-blocking) -->
     <teleport to="body">
-      <transition name="fade-scale">
-        <div v-if="isGeneratingStoryboardText" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
-          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
-            <!-- Central Icon -->
+      <transition name="el-zoom-in-center">
+        <div v-if="isGeneratingStoryboardText" class="fixed inset-0 z-[1500] flex items-center justify-center pointer-events-none">
+          <div class="relative w-[440px] px-6 flex flex-col items-center gap-6 bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-white dark:border-slate-700 pointer-events-auto">
+            <!-- Central Icon with Pulse -->
             <div class="relative">
-              <div class="absolute inset-0 bg-purple-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
-              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-xl shadow-purple-500/20 rotate-6 animate-float-slow">
-                <el-icon :size="40" class="animate-bounce-subtle"><Film /></el-icon>
+              <div class="absolute inset-0 bg-indigo-500 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
+              <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg rotate-3 animate-float-slow">
+                <el-icon :size="32" class="animate-bounce-subtle"><Film /></el-icon>
               </div>
             </div>
 
-            <!-- Progress Info -->
-            <div class="w-full flex flex-col items-center gap-5">
-              <div class="text-center">
-                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 分镜规划中</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">{{ currentStoryboardInfo }}</p>
-              </div>
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">AI 分镜规划中</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-[13px] font-medium flex items-center justify-center gap-2">
+                <el-icon class="is-loading"><Loading /></el-icon>
+                {{ currentStoryboardInfo }}
+              </p>
+            </div>
 
-              <!-- Progress Bar -->
-              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+            <!-- Progress and ETA -->
+            <div class="w-full space-y-3 px-2">
+              <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">规划进度</span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">预计耗时 1-2 分钟</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
                 <div 
-                  class="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 transition-all duration-500 ease-out relative"
+                  class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out relative"
                   :style="{ width: generationProgress + '%' }"
                 >
                   <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
                 </div>
               </div>
-              
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Storyboard Intelligence Engine...</span>
-              </div>
             </div>
+
+            <!-- Background Button -->
+             <button 
+               @click="isGeneratingStoryboardText = false"
+               class="w-full h-11 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-black text-[13px] hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/20 transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 group"
+             >
+               <span>好的，后台运行</span>
+               <el-icon class="group-hover:translate-x-1 transition-transform"><Right /></el-icon>
+             </button>
           </div>
         </div>
       </transition>
@@ -46,19 +57,44 @@
 
     <!-- Header -->
     <header class="h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-6 shrink-0 z-30 relative shadow-sm transition-all duration-300">
-      <!-- Product Design Info Button -->
-      <button 
-        @click="showDesignDialog = true"
-        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-full font-bold text-[12px] shadow-sm border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 z-50"
-      >
-        <el-icon :size="14"><InfoFilled /></el-icon>
-        <span>产品设计说明</span>
-      </button>
+      <div class="flex items-center gap-4">
+        <div class="flex flex-col">
+          <span class="text-[14px] font-black text-slate-800 dark:text-white truncate max-w-[200px]">{{ dramaStore.outlineData?.title || dramaSettings.title }}</span>
+          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">分镜视频创作</span>
+        </div>
+        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-2"></div>
+        
+        <!-- Background Generation Status -->
+        <div v-if="isSequentiallyGeneratingStoryboard || isGeneratingStoryboardText" class="flex items-center gap-3 px-4 py-1.5 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-500/20 rounded-full animate-in fade-in slide-in-from-left-4 duration-500">
+          <div class="relative flex items-center justify-center">
+            <el-icon class="is-loading text-indigo-600 dark:text-indigo-400" :size="14"><Loading /></el-icon>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                {{ isGeneratingStoryboardText ? '正在规划分镜...' : '正在生成脚本...' }}
+              </span>
+              <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{{ generationProgress }}%</span>
+            </div>
+            <div class="w-24 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mt-0.5 overflow-hidden">
+              <div 
+                class="h-full bg-indigo-500 transition-all duration-500"
+                :style="{ width: generationProgress + '%' }"
+              ></div>
+            </div>
+          </div>
+          <button 
+            @click="isGeneratingStoryboardText = true" 
+            v-if="!isGeneratingStoryboardText"
+            class="ml-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"
+          >
+            <el-icon :size="12"><FullScreen /></el-icon>
+          </button>
+        </div>
 
-      <div class="flex items-center gap-4 pl-12">
         <el-dropdown trigger="click" @command="handleEpisodeSwitch">
           <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
-            <h1 class="text-[15px] font-black text-slate-800 dark:text-white truncate max-w-[300px] group-hover:text-indigo-600 transition-colors">
+            <h1 class="text-[14px] font-black text-slate-700 dark:text-slate-200 truncate max-w-[300px] group-hover:text-indigo-600 transition-colors">
               <template v-if="episodeNotFound">
                 视频不存在
               </template>
@@ -84,14 +120,83 @@
           </template>
         </el-dropdown>
       </div>
+
+      <!-- Product Design Info Button -->
+      <button 
+        @click="showDesignDialog = true"
+        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-full font-bold text-[12px] shadow-sm border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 z-50"
+      >
+        <el-icon :size="14"><InfoFilled /></el-icon>
+        <span>产品设计说明</span>
+      </button>
       
       <div class="flex items-center gap-3">
-        <div v-if="false" class="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
-          <el-icon class="text-indigo-500"><Menu /></el-icon>
-          <el-select v-model="synthesisModel" size="small" class="w-36 !border-none custom-select-transparent">
-            <el-option label="Seedance 2.0 • Fast" value="seedance-fast" />
-            <el-option label="Seedance 2.0 • Quality" value="seedance-quality" />
-          </el-select>
+        <!-- AI Generation Config Group (C-End Premium Design) -->
+        <div class="flex items-center gap-1.5 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all hover:shadow-[0_8px_30px_-4px_rgba(99,102,241,0.2)]">
+          <!-- Model Selection Pill -->
+          <div class="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-100/50 dark:border-indigo-500/20 group/model">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-sm group-hover/model:scale-110 transition-transform">
+              <el-icon :size="12"><Cpu /></el-icon>
+            </div>
+            <el-select 
+              v-model="synthesisModel" 
+              size="small" 
+              class="w-36 !border-none custom-select-premium" 
+              placeholder="引擎选择"
+            >
+              <el-option label="Seedance 2.0 Fast" value="seedance-fast">
+                <div class="flex items-center justify-between gap-2">
+                  <span>Seedance 2.0 Fast</span>
+                  <el-tag size="small" type="info" effect="plain" class="!rounded-md !text-[10px] scale-90">极速</el-tag>
+                </div>
+              </el-option>
+              <el-option label="Seedance 2.0 Quality" value="seedance-quality">
+                <div class="flex items-center justify-between gap-2">
+                  <span>Seedance 2.0 Quality</span>
+                  <el-tag size="small" type="success" effect="plain" class="!rounded-md !text-[10px] scale-90">高清</el-tag>
+                </div>
+              </el-option>
+              <el-option label="Sora Pro Ultra" value="sora-pro">
+                <div class="flex items-center justify-between gap-2 text-purple-600 font-bold">
+                  <span>Sora Pro Ultra</span>
+                  <el-tag size="small" type="warning" effect="dark" class="!rounded-md !text-[10px] scale-90">旗舰</el-tag>
+                </div>
+              </el-option>
+            </el-select>
+          </div>
+          
+          <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
+          
+          <!-- Toggle Badges -->
+          <div class="flex items-center gap-1 pr-1">
+            <!-- Subtitle Toggle -->
+            <div 
+              @click="isSubtitled = !isSubtitled"
+              :class="[
+                'flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all duration-300 border',
+                isSubtitled 
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-500/20' 
+                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700'
+              ]"
+            >
+              <el-icon :size="14" :class="isSubtitled ? 'animate-pulse' : ''"><ChatDotRound /></el-icon>
+              <span class="text-[11px] font-black uppercase tracking-wider">字幕</span>
+            </div>
+
+            <!-- Watermark Toggle -->
+            <div 
+              @click="isWatermarkRemoved = !isWatermarkRemoved"
+              :class="[
+                'flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all duration-300 border',
+                isWatermarkRemoved 
+                  ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-500/20' 
+                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700'
+              ]"
+            >
+              <el-icon :size="14" :class="isWatermarkRemoved ? 'animate-pulse' : ''"><CircleClose /></el-icon>
+              <span class="text-[11px] font-black uppercase tracking-wider">去水印</span>
+            </div>
+          </div>
         </div>
         
         <button 
@@ -510,7 +615,7 @@
           </div>
 
           <!-- Timeline Items -->
-          <div class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
+          <div ref="timelineContainer" class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
             <transition-group name="list">
               <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
                 class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
@@ -542,9 +647,9 @@
                     {{ idx + 1 }}
                   </div>
                   <div 
-                    v-if="false"
                     class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-90"
                     @click.stop="deleteScene(idx)"
+                    title="删除分镜"
                   >
                     <el-icon :size="10"><Delete /></el-icon>
                   </div>
@@ -584,12 +689,15 @@
               </div>
             </transition-group>
             
-            <!-- <button 
-              class="flex-shrink-0 w-[40px] h-[95px] rounded-xl border-2 border-dashed border-purple-200 dark:border-slate-700 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 transition-all group"
+            <button 
+              class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] border-2 border-dashed border-purple-200 dark:border-slate-700 bg-white/30 dark:bg-slate-900/30 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 hover:bg-white dark:hover:bg-slate-800 transition-all group"
               @click="addTimelineScene"
+              title="新增分镜"
             >
-              <el-icon :size="18" class="group-hover:scale-125 transition-transform"><Plus /></el-icon>
-            </button> -->
+              <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                <el-icon :size="20"><Plus /></el-icon>
+              </div>
+            </button>
           </div>
         </div>
       </div>
@@ -1223,9 +1331,11 @@ import {
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
-  Scissor, Back, Right, View, Lock, Minus, Position, Mute
+  Scissor, Back, Right, View, Lock, Minus, Position, Mute,
+  Cpu, ChatDotRound, CircleClose
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useDramaStore } from '@/store/drama';
 import { useEpisodeStore } from '@/store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
@@ -1236,16 +1346,20 @@ import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
+const dramaStore = useDramaStore();
 const episodeStore = useEpisodeStore();
 
 // UI States
 const synthesisModel = ref('seedance-fast');
+const isSubtitled = ref(true);
+const isWatermarkRemoved = ref(false);
 const activeAssetTab = ref('roles');
 const isSynthesizing = ref(false);
 const synthesisProgress = ref(0);
 const searchQuery = ref('');
 const showGuide = ref(true);
 const currentSceneIdx = ref(0);
+const timelineContainer = ref<HTMLElement | null>(null);
 const showLibraryModal = ref(false);
 const isEditingScript = ref(false);
 const isLeftCollapsed = ref(false);
@@ -1357,6 +1471,7 @@ const uiDesignGroups = {
 const isGeneratingStoryboardText = ref(false);
 const currentGeneratingStoryboardIndex = ref(-1);
 const generationProgress = ref(0);
+const generationSessionId = ref(0);
 
 // Recovery Confirm Dialog State
 const recoveryConfirmVisible = ref(false);
@@ -2694,6 +2809,14 @@ const handleGenerateSingleScene = (idx: number) => {
     timelineScenes.value[idx].status = 'generating';
     timelineScenes.value[idx].progress = 0;
     
+    // 模拟参数传递
+    const params = {
+      model: synthesisModel.value,
+      withSubtitle: isSubtitled.value,
+      removeWatermark: isWatermarkRemoved.value
+    };
+    console.log(`Generating scene ${idx + 1} with:`, params);
+
     const interval = setInterval(() => {
       timelineScenes.value[idx].progress += 5;
       if (timelineScenes.value[idx].progress >= 100) {
@@ -2703,7 +2826,11 @@ const handleGenerateSingleScene = (idx: number) => {
         // 同时设置预览图，确保时间轴能看到画面
         timelineScenes.value[idx].image = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600';
         persistStoryboardForEpisode(episodeId.value);
-        ElMessage.success(`分镜 ${idx + 1} 生成成功`);
+        
+        let successMsg = `分镜 ${idx + 1} 生成成功 (模型: ${synthesisModel.value})`;
+        if (isSubtitled.value) successMsg += ' [含字幕]';
+        if (isWatermarkRemoved.value) successMsg += ' [已去水印]';
+        ElMessage.success(successMsg);
       }
     }, 100);
   }
@@ -2768,17 +2895,28 @@ const episode = computed(() => episodeStore.episodes.find(e => e.id === episodeI
 const episodeNotFound = computed(() => episodeId.value && !episode.value);
 
 const addTimelineScene = () => {
-  const newId = `scene-${timelineScenes.value.length + 1}`;
+  const newId = `scene-${Date.now()}`;
   timelineScenes.value.push({
     id: newId,
     status: 'pending',
     video: null,
-    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600',
+    image: '',
     progress: 0,
     modified: false,
     script: ''
   });
+  currentSceneIdx.value = timelineScenes.value.length - 1;
   persistStoryboardForEpisode(episodeId.value);
+  
+  // 滚动到末尾
+  nextTick(() => {
+    if (timelineContainer.value) {
+      timelineContainer.value.scrollTo({
+        left: timelineContainer.value.scrollWidth,
+        behavior: 'smooth'
+      });
+    }
+  });
 };
 
 const deleteScene = (idx: number) => {
@@ -2824,11 +2962,12 @@ onMounted(async () => {
   }
 
   // Check for interrupted generation
+  const restored = restoreStoryboardForEpisode(episodeId.value);
   if (episodeStore.generationStatus.isGenerating && episodeStore.generationStatus.type === 'storyboard') {
     recoveryConfirmTitle.value = '恢复生成';
     recoveryConfirmMessage.value = `检测到分镜脚本生成意外中断，是否恢复生成？`;
     recoveryConfirmVisible.value = true;
-  } else if (!restoreStoryboardForEpisode(episodeId.value)) {
+  } else if (!restored) {
     // Trigger sequential generation for storyboard only when no cached data
     await startStoryboardSequentialGeneration();
   }
@@ -2850,6 +2989,9 @@ watch(episodeId, async (newId, oldId) => {
   if (!newId || newId === oldId) return;
   if (oldId) persistStoryboardForEpisode(oldId);
 
+  // Cancel any running generation
+  generationSessionId.value++;
+
   isEditingScript.value = false;
   showMentionMenu.value = false;
   selectedScenes.value = [];
@@ -2863,12 +3005,14 @@ watch(episodeId, async (newId, oldId) => {
 });
 
 const startStoryboardSequentialGeneration = async () => {
+  const sessionId = ++generationSessionId.value;
   isGeneratingStoryboardText.value = true;
   currentStoryboardInfo.value = '正在解析资产库，规划分镜脚本...';
   
   // Phase 1: Text Planning (Big Loading)
   const planningSteps = ['分析角色动态', '匹配场景构图', '设计镜头语言'];
   for (let i = 0; i < planningSteps.length; i++) {
+    if (sessionId !== generationSessionId.value) return;
     currentStoryboardInfo.value = planningSteps[i];
     generationProgress.value = Math.round(((i + 1) / planningSteps.length) * 100);
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -2914,8 +3058,13 @@ const startStoryboardSequentialGeneration = async () => {
   timelineScenes.value = [];
 
     // Phase 2: Sequential Scene Generation (Per-item loading)
-    for (let i = 0; i < sceneData.length; i++) {
-      currentGeneratingStoryboardIndex.value = i;
+  if (sessionId !== generationSessionId.value) return;
+  isSequentiallyGeneratingStoryboard.value = true;
+  generationProgress.value = 0; // Reset progress for script phase
+  
+  for (let i = 0; i < sceneData.length; i++) {
+    if (sessionId !== generationSessionId.value) return;
+    currentGeneratingStoryboardIndex.value = i;
       
       // Add new scene with loading state
       const newScene = {
@@ -2940,6 +3089,7 @@ const startStoryboardSequentialGeneration = async () => {
       let currentHtml = '';
       let j = 0;
       while (j < fullScript.length) {
+        if (sessionId !== generationSessionId.value) return;
         if (fullScript[j] === '<') {
           // Find the end of the tag
           const endIdx = fullScript.indexOf('>', j);
@@ -2967,17 +3117,26 @@ const startStoryboardSequentialGeneration = async () => {
       }
       
       // Only set status to pending after script is done (video stays null)
-      timelineScenes.value[i].status = 'pending';
+    if (sessionId !== generationSessionId.value) return;
+    timelineScenes.value[i].status = 'pending';
       
       // Update store progress
       episodeStore.setGenerationStatus({
         currentIndex: i,
         progress: Math.round(((i + 1) / sceneData.length) * 100)
       });
+      
+      // Sync local progress with store progress for header indicator
+      generationProgress.value = Math.round(((i + 1) / sceneData.length) * 100);
+      
+      // Persist after each scene to ensure data is saved even if interrupted
+      persistStoryboardForEpisode(episodeId.value);
     }
-
+  
+    if (sessionId !== generationSessionId.value) return;
     isSequentiallyGeneratingStoryboard.value = false;
     currentGeneratingStoryboardIndex.value = -1;
+    generationProgress.value = 100;
     episodeStore.setGenerationStatus({ isGenerating: false, type: '' });
     persistStoryboardForEpisode(episodeId.value);
     ElMessage.success('分镜脚本生成完毕，点击“生成视频”开始制作画面');
@@ -3073,42 +3232,98 @@ const startStoryboardSequentialGeneration = async () => {
   color: #475569;
 }
 
-/* Checkbox Styles */
-:deep(.custom-button-checkbox) {
-  height: auto;
+.custom-select-premium :deep(.el-select__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  font-weight: 900;
+  font-size: 12px;
+  color: #4f46e5;
 }
-:deep(.custom-timeline-checkbox) {
-  display: inline-flex;
-  align-items: center;
+
+.dark .custom-select-premium :deep(.el-select__wrapper) {
+  color: #a5b4fc;
 }
-:deep(.custom-timeline-checkbox .el-checkbox__inner) {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
+
+.custom-select-premium :deep(.el-select__placeholder) {
+  color: inherit;
+  font-weight: 900;
 }
-:deep(.custom-timeline-checkbox .el-checkbox__label) {
-  padding-left: 6px;
+
+.custom-select-premium :deep(.el-icon) {
+  color: #6366f1;
 }
 
 /* Animations */
-.theme-primary-btn {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  border: none;
-}
-.theme-primary-btn:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  transform: translateY(-1px);
-}
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(6deg); }
+    50% { transform: translateY(-10px) rotate(8deg); }
+  }
+  .animate-float-slow {
+    animation: float-slow 4s ease-in-out infinite;
+  }
+  
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+  
+  @keyframes shimmer-fast {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .animate-shimmer-fast {
+    animation: shimmer-fast 1.5s infinite;
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
 
-/* Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
-  border-radius: 10px;
-}
+  /* Restore and Integrate */
+  .theme-primary-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+  }
+  .theme-primary-btn:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transform: translateY(-1px);
+  }
+
+  /* Checkbox Styles */
+  :deep(.custom-button-checkbox) {
+    height: auto;
+  }
+  :deep(.custom-timeline-checkbox) {
+    display: inline-flex;
+    align-items: center;
+  }
+  :deep(.custom-timeline-checkbox .el-checkbox__inner) {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+  :deep(.custom-timeline-checkbox .el-checkbox__label) {
+    padding-left: 6px;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+  }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.4);
 }

@@ -9,8 +9,8 @@
   >
     <!-- Custom Header -->
     <div class="flex justify-between items-center mb-6 px-2">
-      <h2 class="text-[20px] font-bold text-slate-900">主体库</h2>
-      <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+      <h2 class="text-[20px] font-bold text-slate-900 dark:text-slate-100">主体库</h2>
+      <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors">
         <el-icon size="16"><Close /></el-icon>
       </button>
     </div>
@@ -23,9 +23,9 @@
           placeholder="搜索作品名称或主体名称..."
           :prefix-icon="Search"
           clearable
-          class="flex-1 custom-search-input"
+          class="flex-1 custom-search-input-v3"
         />
-        <el-radio-group v-model="activeCategory" size="large" class="custom-radio-group">
+        <el-radio-group v-model="activeCategory" size="large" class="custom-radio-group-v3">
           <el-radio-button label="all">全部</el-radio-button>
           <el-radio-button label="character">角色</el-radio-button>
           <el-radio-button label="scene">场景</el-radio-button>
@@ -34,9 +34,9 @@
       </div>
 
       <!-- Content Grid -->
-      <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 bg-[#f8fafc] rounded-2xl p-4 border border-slate-100">
+      <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 bg-[#f8fafc] dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
         <div v-if="filteredItems.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400 gap-3">
-          <el-icon size="48" class="text-slate-300"><Search /></el-icon>
+          <el-icon size="48" class="text-slate-300 dark:text-slate-700"><Search /></el-icon>
           <span class="text-[14px]">未找到相关主体</span>
         </div>
         
@@ -48,21 +48,29 @@
             @click="toggleSelection(item)"
           >
             <div 
-              class="w-full aspect-video rounded-[16px] bg-white border-2 overflow-hidden relative transition-all duration-300 hover:-translate-y-1"
-              :class="isSelected(item) ? 'border-indigo-500 shadow-md ring-4 ring-indigo-500/10' : 'border-transparent hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]'"
+              class="w-full aspect-video rounded-[16px] bg-white dark:bg-slate-800 border-2 overflow-hidden relative transition-all duration-300 hover:-translate-y-1"
+              :class="[
+                isSelected(item) ? 'border-indigo-500 shadow-md ring-4 ring-indigo-500/10' : 'border-transparent hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]',
+                isImported(item) ? 'opacity-60 grayscale-[0.5]' : ''
+              ]"
             >
               <el-image :src="item.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
               
               <!-- Selection Badge -->
               <div 
                 class="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 z-10 shadow-sm"
-                :class="isSelected(item) ? 'bg-indigo-500 text-white scale-100' : 'bg-white/80 backdrop-blur-sm text-transparent scale-90 opacity-0 group-hover:opacity-100 group-hover:text-slate-300 border border-slate-200'"
+                :class="isSelected(item) ? 'bg-indigo-500 text-white scale-100' : 'bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-transparent scale-90 opacity-0 group-hover:opacity-100 group-hover:text-slate-300 border border-slate-200 dark:border-slate-600'"
               >
                 <el-icon><Check /></el-icon>
               </div>
 
+              <!-- Imported Badge -->
+              <div v-if="isImported(item)" class="absolute top-2 right-2 px-2 py-1 rounded-md bg-emerald-500 text-white text-[10px] font-bold shadow-sm z-20">
+                已导入
+              </div>
+
               <!-- Project Badge -->
-              <div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-white/90 backdrop-blur-sm text-[9px] font-black text-indigo-600 shadow-sm border border-indigo-100">
+              <div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-[9px] font-black text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                 {{ item.projectName }}
               </div>
 
@@ -71,7 +79,7 @@
                 {{ getCategoryLabel(item.type) }}
               </div>
             </div>
-            <span class="text-[13px] text-slate-800 font-bold truncate px-1 text-center transition-colors group-hover:text-indigo-600">{{ item.name }}</span>
+            <span class="text-[13px] text-slate-800 dark:text-slate-200 font-bold truncate px-1 text-center transition-colors group-hover:text-indigo-600">{{ item.name }}</span>
           </div>
         </div>
       </div>
@@ -79,18 +87,18 @@
 
     <!-- Footer -->
     <template #footer>
-      <div class="flex items-center justify-between px-2 pt-4 border-t border-slate-50 mt-2">
+      <div class="flex items-center justify-between px-2 pt-4 border-t border-slate-50 dark:border-slate-800 mt-2">
         <div class="flex items-center gap-3">
-          <span class="text-[13px] font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">已选 {{ selectedItems.length }} 个</span>
+          <span class="text-[13px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full">已选 {{ selectedItems.length }} 个</span>
           <div class="flex -space-x-2 overflow-hidden">
             <div 
               v-for="item in selectedItems.slice(0, 5)" 
               :key="item.id"
-              class="w-8 h-8 rounded-full border-2 border-white overflow-hidden shadow-sm bg-slate-50"
+              class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800 overflow-hidden shadow-sm bg-slate-50 dark:bg-slate-900"
             >
               <img :src="item.image" class="w-full h-full object-cover" />
             </div>
-            <div v-if="selectedItems.length > 5" class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[11px] text-slate-600 font-bold shadow-sm z-10">
+            <div v-if="selectedItems.length > 5" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-700 flex items-center justify-center text-[11px] text-slate-600 dark:text-slate-400 font-bold shadow-sm z-10">
               +{{ selectedItems.length - 5 }}
             </div>
           </div>
@@ -99,13 +107,13 @@
         <div class="flex gap-3">
           <button 
             @click="visible = false" 
-            class="px-8 py-2.5 rounded-xl bg-[#f1f3f5] text-slate-600 text-[14px] font-medium hover:bg-slate-200 transition-colors"
+            class="px-8 py-2.5 rounded-xl bg-[#f1f3f5] dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-[14px] font-medium hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
           >
             取消
           </button>
           <button 
             @click="handleConfirm" 
-            class="px-8 py-2.5 rounded-xl bg-slate-900 text-white text-[14px] font-medium hover:bg-black transition-all shadow-md active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+            class="px-8 py-2.5 rounded-xl bg-slate-900 dark:bg-indigo-600 text-white text-[14px] font-medium hover:bg-black dark:hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
             :disabled="selectedItems.length === 0"
           >
             确认导入
@@ -174,15 +182,7 @@ const allLibrarySubjects = ref([
 const filteredItems = computed(() => {
   const query = searchQuery.value.toLowerCase().trim();
   
-  // 获取已导入主体的名称列表，用于去重
-  const importedNames = props.subjects.map(s => s.name);
-  
   return allLibrarySubjects.value.filter(item => {
-    // 排除已经在侧边栏（已导入）显示的主体
-    if (importedNames.includes(item.name)) {
-      return false;
-    }
-
     const matchesCategory = activeCategory.value === 'all' || item.type === activeCategory.value;
     
     // 如果没有搜索词，默认显示当前作品的主体
@@ -199,8 +199,11 @@ const filteredItems = computed(() => {
 });
 
 const isSelected = (item: any) => selectedItems.value.some(i => i.id === item.id);
+const isImported = (item: any) => props.subjects.some(s => s.name === item.name);
 
 const toggleSelection = (item: any) => {
+  if (isImported(item)) return; // 已导入的不可再选
+  
   const index = selectedItems.value.findIndex(i => i.id === item.id);
   if (index > -1) {
     selectedItems.value.splice(index, 1);

@@ -1,40 +1,33 @@
 <template>
   <div class="flex h-full w-full overflow-hidden p-4 lg:p-6 gap-4 lg:gap-6 text-[#1f2329] bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-slate-900 dark:to-slate-800 relative transition-all duration-500" :class="{'is-left-collapsed': isLeftCollapsed, 'is-right-collapsed': !isRightPanelVisible}">
     
-    <!-- Full Screen Loading Overlay for Generation -->
+    <!-- Small Loading Floating Card for Outline Generation (Non-blocking) -->
     <teleport to="body">
-      <transition name="fade-scale">
-        <div v-if="isGeneratingOutline" class="fixed inset-0 z-[10000] flex items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
-          <!-- Animated Background Particles -->
-          <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div v-for="i in 15" :key="i" 
-                 class="absolute w-1 h-1 bg-indigo-500/20 rounded-full animate-float"
-                 :style="{ 
-                   left: Math.random() * 100 + '%', 
-                   top: Math.random() * 100 + '%', 
-                   animationDelay: Math.random() * 5 + 's',
-                   animationDuration: (Math.random() * 10 + 10) + 's'
-                 }"></div>
-          </div>
-
-          <div class="relative w-full max-w-lg px-6 flex flex-col items-center gap-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white dark:border-slate-700">
-            <!-- Central Icon with Pulsing Effect -->
+      <transition name="el-zoom-in-center">
+        <div v-if="isGeneratingOutline" class="fixed inset-0 z-[1500] flex items-center justify-center pointer-events-none">
+          <div class="relative w-[440px] px-6 flex flex-col items-center gap-6 bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-white dark:border-slate-700 pointer-events-auto">
+            <!-- Central Icon with Pulse -->
             <div class="relative">
-              <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-[40px] opacity-10 animate-pulse"></div>
-              <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20 rotate-6 animate-float-slow">
-                <el-icon :size="40" class="animate-bounce-subtle"><MagicStick /></el-icon>
+              <div class="absolute inset-0 bg-indigo-500 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
+              <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg rotate-3 animate-float-slow">
+                <el-icon :size="32" class="animate-bounce-subtle"><MagicStick /></el-icon>
               </div>
             </div>
 
-            <!-- Progress Info -->
-            <div class="w-full flex flex-col items-center gap-5">
-              <div class="text-center">
-                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">AI 剧本构思中</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">正在编织第 <span class="text-indigo-600 dark:text-indigo-400 font-black text-lg">{{ currentGeneratingIndex + 1 }}</span> 集 / 共 {{ totalEpisodesToGenerate }} 集</p>
-              </div>
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">AI 剧本构思中</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-[13px] font-medium">
+                正在编织第 <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ currentGeneratingIndex + 1 }}</span> 集 / 共 {{ totalEpisodesToGenerate }} 集
+              </p>
+            </div>
 
-              <!-- Progress Bar -->
-              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+            <!-- Progress Bar -->
+            <div class="w-full space-y-3 px-2">
+              <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">创作进度</span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">预计耗时 2-3 分钟</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
                 <div 
                   class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out relative"
                   :style="{ width: generationProgress + '%' }"
@@ -42,11 +35,16 @@
                   <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
                 </div>
               </div>
-              
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">创意引擎处理中...</span>
-              </div>
             </div>
+
+            <!-- Background Button -->
+            <button 
+              @click="isGeneratingOutline = false"
+              class="w-full h-11 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-black text-[13px] hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/20 transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 group"
+            >
+              <span>好的，后台运行</span>
+              <el-icon class="group-hover:translate-x-1 transition-transform"><Right /></el-icon>
+            </button>
           </div>
         </div>
       </transition>
@@ -103,11 +101,14 @@
         <div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
           <!-- Sidebar Header -->
           <div class="h-16 px-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/50 shrink-0">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 shrink-0">
                 <el-icon :size="18"><Document /></el-icon>
               </div>
-              <span class="font-black text-[16px] text-slate-800 dark:text-white">剧集大纲</span>
+              <div class="flex flex-col min-w-0">
+                <span class="font-black text-[16px] text-slate-800 dark:text-white truncate">{{ dramaStore.outlineData?.title || '未命名剧本' }}</span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">剧集大纲</span>
+              </div>
             </div>
           </div>
 
@@ -1047,6 +1048,7 @@ const isSavingScript = ref(false);
 
 const editMode = ref<'full' | 'episode'>('episode');
 const currentEpisodeIndex = ref(0);
+const generationSessionId = ref(0);
 
 // Pagination State
 const episodeRange = ref(0); // 0 for 1-20, 20 for 21-40, etc.
@@ -1183,6 +1185,9 @@ const addNewEpisode = () => {
 };
 
 const quickSelectEpisode = (index: number) => {
+  // Cancel running generation if switching
+  generationSessionId.value++;
+  
   // Calculate which range this episode belongs to
   const rangeStart = Math.floor(index / EPISODES_PER_PAGE) * EPISODES_PER_PAGE;
   quickSelectRange(rangeStart);
@@ -2090,7 +2095,9 @@ onMounted(async () => {
         });
 
        // Generate one by one
+       const sessionId = ++generationSessionId.value;
        for (let i = 0; i < totalEpisodesToGenerate.value; i++) {
+         if (sessionId !== generationSessionId.value) return;
          currentGeneratingIndex.value = i;
          generationProgress.value = Math.round(((i + 1) / totalEpisodesToGenerate.value) * 100);
          

@@ -64,7 +64,7 @@
                 <el-dropdown-item command="profile">
                   <div class="menu-item-inner">
                     <div class="icon-box blue"><el-icon><User /></el-icon></div>
-                    <span>个人中心</span>
+                    <span>个人资料</span>
                   </div>
                 </el-dropdown-item>
                 <el-dropdown-item command="team">
@@ -610,7 +610,7 @@ onErrorCaptured((error) => {
   transform: translateY(-1px);
 }
 
-/* 个人中心弹窗专项样式 */
+/* 个人资料弹窗专项样式 */
 .profile-settings-dialog .el-dialog {
   background: #f8fafc;
   border: none;

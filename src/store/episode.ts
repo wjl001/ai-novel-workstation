@@ -29,7 +29,11 @@ export interface Subject {
   name: string;
   type: 'character' | 'scene' | 'prop';
   image?: string;
+  reference_image?: string;
   description?: string;
+  voice_description?: string;
+  voice_audio?: string;
+  appeared_episodes?: number[];
 }
 
 export const useEpisodeStore = defineStore('episode', {
