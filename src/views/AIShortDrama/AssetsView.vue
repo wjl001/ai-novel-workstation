@@ -227,11 +227,22 @@
                   </div>
                 </div>
 
-                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+                <div
+                  class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden"
+                  :class="!isMultiSelect ? 'cursor-pointer' : 'cursor-default'"
+                  @click.stop="!isMultiSelect && openEditModal(char, 'character')"
+                >
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
                     <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">形象生成中...</span>
+                  </div>
+
+                  <div
+                    v-if="getAssetImageCount(char) > 0 && !generatingAssetImages.has(`char-${char.id}`)"
+                    class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-slate-950/65 text-white text-[11px] font-black tracking-wide backdrop-blur-md border border-white/20"
+                  >
+                    {{ getAssetImageCount(char) }} 张历史图
                   </div>
 
                   <el-image 
@@ -397,11 +408,22 @@
                   </div>
                 </div>
 
-                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+                <div
+                  class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden"
+                  :class="!isMultiSelect ? 'cursor-pointer' : 'cursor-default'"
+                  @click.stop="!isMultiSelect && openEditModal(scene, 'scene')"
+                >
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
                     <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">画面生成中...</span>
+                  </div>
+
+                  <div
+                    v-if="getAssetImageCount(scene) > 0 && !generatingAssetImages.has(`scene-${scene.id}`)"
+                    class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-slate-950/65 text-white text-[11px] font-black tracking-wide backdrop-blur-md border border-white/20"
+                  >
+                    {{ getAssetImageCount(scene) }} 张历史图
                   </div>
 
                   <el-image 
@@ -567,11 +589,22 @@
                   </div>
                 </div>
 
-                <div class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+                <div
+                  class="aspect-video bg-slate-50 dark:bg-slate-900 relative overflow-hidden"
+                  :class="!isMultiSelect ? 'cursor-pointer' : 'cursor-default'"
+                  @click.stop="!isMultiSelect && openEditModal(prop, 'prop')"
+                >
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
                     <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">道具生成中...</span>
+                  </div>
+
+                  <div
+                    v-if="getAssetImageCount(prop) > 0 && !generatingAssetImages.has(`prop-${prop.id}`)"
+                    class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-slate-950/65 text-white text-[11px] font-black tracking-wide backdrop-blur-md border border-white/20"
+                  >
+                    {{ getAssetImageCount(prop) }} 张历史图
                   </div>
 
                   <el-image 
@@ -955,6 +988,138 @@ const propsList = computed({
   }
 });
 
+interface AssetImageItem {
+  id: string;
+  url: string;
+  isSelected: boolean;
+  createdAt: number;
+  name?: string;
+  description?: string;
+  reference_image?: string;
+  voice_description?: string;
+  voice_audio?: string;
+}
+
+const createImageHistoryItem = (
+  url: string,
+  createdAt = Date.now(),
+  meta?: Partial<Pick<AssetImageItem, 'name' | 'description' | 'reference_image' | 'voice_description' | 'voice_audio'>>
+): AssetImageItem => ({
+  id: `img_${createdAt}_${Math.random().toString(36).slice(2, 8)}`,
+  url,
+  isSelected: true,
+  createdAt,
+  name: meta?.name,
+  description: meta?.description,
+  reference_image: meta?.reference_image,
+  voice_description: meta?.voice_description,
+  voice_audio: meta?.voice_audio
+});
+
+const normalizeAssetImageState = (asset: any) => {
+  const rawHistory = Array.isArray(asset?.imageHistory)
+    ? asset.imageHistory.filter((item: any) => item && item.url)
+    : [];
+
+  const imageHistory: AssetImageItem[] = rawHistory.map((item: any, index: number) => ({
+    id: item.id || `img_${Date.now()}_${index}`,
+    url: item.url,
+    isSelected: Boolean(item.isSelected),
+    createdAt: typeof item.createdAt === 'number' ? item.createdAt : Date.now() - (rawHistory.length - index) * 1000,
+    name: item.name ?? asset?.name ?? '',
+    description: item.description ?? asset?.description ?? '',
+    reference_image: item.reference_image ?? asset?.reference_image ?? '',
+    voice_description: item.voice_description ?? asset?.voice_description ?? '',
+    voice_audio: item.voice_audio ?? asset?.voice_audio ?? ''
+  }));
+
+  if (!imageHistory.length && asset?.image) {
+    imageHistory.push(
+      createImageHistoryItem(asset.image, Date.now() - 1000, {
+        name: asset?.name ?? '',
+        description: asset?.description ?? '',
+        reference_image: asset?.reference_image ?? '',
+        voice_description: asset?.voice_description ?? '',
+        voice_audio: asset?.voice_audio ?? ''
+      })
+    );
+  }
+
+  if (!imageHistory.length) {
+    return {
+      image: asset?.image || '',
+      selectedImageId: '',
+      imageHistory: [] as AssetImageItem[]
+    };
+  }
+
+  const selectedItem =
+    imageHistory.find(item => item.id === asset?.selectedImageId) ||
+    imageHistory.find(item => item.isSelected) ||
+    imageHistory[imageHistory.length - 1];
+
+  return {
+    image: selectedItem.url,
+    selectedImageId: selectedItem.id,
+    imageHistory: imageHistory.map(item => ({
+      ...item,
+      isSelected: item.id === selectedItem.id
+    }))
+  };
+};
+
+const normalizeAssetPayload = (asset: any) => ({
+  ...asset,
+  ...normalizeAssetImageState(asset)
+});
+
+const buildAssetImagePatch = (asset: any, nextUrl: string) => {
+  const normalized = normalizeAssetImageState(asset);
+  const nextItem = createImageHistoryItem(nextUrl, Date.now(), {
+    name: asset?.name ?? '',
+    description: asset?.description ?? '',
+    reference_image: asset?.reference_image ?? '',
+    voice_description: asset?.voice_description ?? '',
+    voice_audio: asset?.voice_audio ?? ''
+  });
+
+  return {
+    image: nextUrl,
+    selectedImageId: nextItem.id,
+    imageHistory: [
+      ...normalized.imageHistory.map(item => ({ ...item, isSelected: false })),
+      nextItem
+    ]
+  };
+};
+
+const getAssetImageCount = (asset: any) => normalizeAssetImageState(asset).imageHistory.length;
+
+const needsAssetImageNormalization = (asset: any) => {
+  const history = Array.isArray(asset?.imageHistory) ? asset.imageHistory : [];
+  if (asset?.image && history.length === 0) return true;
+  if (!history.length) return false;
+
+  const selectedCount = history.filter((item: any) => item?.isSelected).length;
+  const hasSelectedId = history.some((item: any) => item?.id === asset?.selectedImageId);
+  return selectedCount !== 1 || !hasSelectedId;
+};
+
+const normalizeAllSubjectImageHistories = () => {
+  if (!episodeStore.subjects.length) return;
+
+  let hasChanges = false;
+  const normalizedSubjects = episodeStore.subjects.map(subject => {
+    if (!needsAssetImageNormalization(subject)) return subject;
+    hasChanges = true;
+    return normalizeAssetPayload(subject);
+  });
+
+  if (hasChanges) {
+    episodeStore.setSubjects(normalizedSubjects as any);
+  }
+};
+
 // Loading States
 const isGeneratingAssetsText = ref(false);
 const generationSessionId = ref(0);
@@ -1047,6 +1212,7 @@ onMounted(async () => {
       });
       episodeStore.setSubjects(fixedSubjects);
     }
+    normalizeAllSubjectImageHistories();
     console.log('检测到已有主体数据，保留历史记录，跳过自动生成。');
   }
 });
@@ -1124,7 +1290,8 @@ const generateImagesForAssets = async (assets: any[], sessionId: number) => {
     
     // Update the image in store
     const imageUrl = mockImages[key] || `https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=1280&h=720&seed=${asset.id}`;
-    episodeStore.updateSubject(asset.id, { image: imageUrl });
+    const currentSubject = episodeStore.subjects.find(s => s.id === asset.id) || asset;
+    episodeStore.updateSubject(asset.id, buildAssetImagePatch(currentSubject, imageUrl) as any);
     
     generatingAssetImages.delete(loadingKey);
   }
@@ -1165,7 +1332,7 @@ const getAssetTypeName = (type: string) => {
 
 const openEditModal = (asset: any, type: 'character' | 'scene' | 'prop') => {
   currentAssetType.value = type;
-  editingAsset.value = JSON.parse(JSON.stringify(asset)); // clone
+  editingAsset.value = normalizeAssetPayload(JSON.parse(JSON.stringify(asset)));
   editingAsset.value.type = type;
   isEditAsset.value = true;
   editModalVisible.value = true;
@@ -1180,7 +1347,9 @@ const addAsset = (type: 'character' | 'scene' | 'prop') => {
     prompt: '',
     type: type,
     image: '',
-    reference_image: ''
+    reference_image: '',
+    selectedImageId: '',
+    imageHistory: []
   };
   isEditAsset.value = false;
   editModalVisible.value = true;
@@ -1192,11 +1361,12 @@ const saveAsset = (data: any) => {
     return;
   }
   
-  const index = episodeStore.subjects.findIndex((s: any) => s.id === data.id);
+  const normalizedData = normalizeAssetPayload(data);
+  const index = episodeStore.subjects.findIndex((s: any) => s.id === normalizedData.id);
   if (index > -1) {
-    episodeStore.updateSubject(data.id, data);
+    episodeStore.updateSubject(normalizedData.id, normalizedData as any);
   } else {
-    episodeStore.addSubject(data);
+    episodeStore.addSubject(normalizedData as any);
   }
   
   ElMessage.success('保存成功');

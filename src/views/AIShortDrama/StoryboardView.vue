@@ -615,102 +615,146 @@
           </div>
 
           <!-- Timeline Items -->
-          <div ref="timelineContainer" class="flex-1 flex gap-2.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
-            <transition-group name="list">
-              <div v-for="(scene, idx) in timelineScenes" :key="scene.id" 
-                class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-pointer transition-all hover:scale-105 overflow-hidden group"
-                :class="[
-                  (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
-                    ? 'border-purple-500 ring-4 ring-purple-500/10' 
-                    : 'border-white dark:border-slate-700',
-                  isSequentiallyGeneratingStoryboard && idx === currentGeneratingStoryboardIndex ? 'ring-2 ring-purple-500 ring-offset-2 dark:ring-offset-slate-900' : ''
-                ]"
-                @click="toggleSceneSelection(idx)"
-              >
-                <!-- Active Glowing Border Effect -->
-                <div v-if="currentSceneIdx === idx" class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-blue-500/20 opacity-40 animate-pulse-slow z-[2]"></div>
-
-                <div v-if="scene.image" class="absolute inset-0 w-full h-full z-0">
-                  <img :src="scene.image" class="absolute inset-0 w-full h-full object-cover" />
-                  <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-                </div>
-
-                <!-- Duration Badge (New Request) -->
-                <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[8px] font-black z-10">
-                  {{ getSceneDuration(scene.script) }}s
-                </div>
-
-                <!-- Index Badge -->
-                <div class="absolute top-1.5 left-1.5 z-20 flex items-center gap-1">
-                  <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
-                    :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
-                    {{ idx + 1 }}
-                  </div>
-                  <el-popconfirm
-                     title="确认删除该分镜？"
-                     confirm-button-text="删除"
-                     cancel-button-text="取消"
-                     :width="160"
-                     :icon="Delete"
-                     icon-color="#ef4444"
-                     @confirm="handleDeleteScene(idx)"
-                     popper-class="modern-popconfirm-c-end"
-                   >
-                    <template #reference>
-                      <div 
-                        class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-90"
-                        @click.stop
-                        title="删除分镜"
-                      >
-                        <el-icon :size="10"><Delete /></el-icon>
-                      </div>
-                    </template>
-                  </el-popconfirm>
-                </div>
-
-                <!-- Playback Progress Overlay -->
-                <div 
-                  v-if="isSequentialPlaying && currentSceneIdx === idx"
-                  class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
-                >
-                  <div 
-                    class="absolute bottom-0 left-0 h-1 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] transition-all duration-100 ease-linear"
-                    :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
-                  ></div>
-                </div>
-
-                <div class="flex items-center justify-center w-full h-full relative z-10">
-                  <div v-if="scene.status === 'script_generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
-                    <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
-                    <span class="text-[9px] font-black text-purple-600 uppercase tracking-widest animate-pulse text-center px-1">分镜脚本生成</span>
-                  </div>
-                  <div v-else-if="scene.status === 'generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
-                    <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
-                    <span class="text-[8px] font-black text-purple-600 uppercase tracking-widest animate-pulse">视频生成中</span>
-                  </div>
-                  <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
-                    <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
-                  </div>
-                  <div 
-                    v-else 
-                    class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-purple-600 transition-all shadow-lg border border-white/30"
-                    @click.stop="handleGenerateSingleScene(idx)"
-                  >
-                    <el-icon :size="18"><MagicStick /></el-icon>
-                  </div>
-                </div>
-              </div>
-            </transition-group>
-            
-            <button 
-              class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] border-2 border-dashed border-purple-200 dark:border-slate-700 bg-white/30 dark:bg-slate-900/30 flex items-center justify-center text-purple-300 hover:text-purple-600 hover:border-purple-400 hover:bg-white dark:hover:bg-slate-800 transition-all group"
-              @click="addTimelineScene"
-              title="新增分镜"
+          <div ref="timelineContainer" class="flex-1 flex gap-0.5 overflow-x-auto custom-scrollbar items-center pb-0.5 pl-0.5 relative">
+            <draggable 
+              v-model="timelineScenes" 
+              item-key="id" 
+              class="flex items-center"
+              @end="onTimelineDragEnd"
+              :disabled="isMultiSelectMode"
+              ghost-class="timeline-ghost"
             >
-              <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                <el-icon :size="20"><Plus /></el-icon>
-              </div>
-            </button>
+              <template #item="{ element: scene, index: idx }">
+                <div class="flex items-center">
+                  <!-- Divider & Insert Button Before Item -->
+                  <div class="relative flex items-center justify-center h-full group/divider px-1.5 -mx-0.5 z-20">
+                    <!-- Vertical Line -->
+                    <div class="w-[1.5px] h-12 bg-slate-100 dark:bg-slate-800/50 group-hover/divider:bg-purple-500 transition-all duration-300"></div>
+                    
+                    <!-- Plus Button -->
+                    <div 
+                      class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-300 group-hover/divider:bg-purple-600 group-hover/divider:text-white group-hover/divider:border-purple-600 hover:scale-110 transition-all cursor-pointer shadow-sm"
+                      @click.stop="insertBlankScene(idx)"
+                    >
+                      <el-icon :size="10"><Plus /></el-icon>
+                      
+                      <!-- Tooltip -->
+                      <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-800 text-white text-[10px] font-black opacity-0 group-hover/divider:opacity-100 pointer-events-none whitespace-nowrap transition-all duration-300 shadow-xl translate-y-1 group-hover/divider:translate-y-0">
+                        新增片段
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Storyboard Card -->
+                  <div 
+                    class="flex-shrink-0 w-[70px] h-[95px] rounded-[14px] bg-white dark:bg-slate-900 border-2 shadow-sm flex items-center justify-center relative cursor-grab active:cursor-grabbing transition-all hover:scale-105 overflow-hidden group"
+                    :class="[
+                      (!isMultiSelectMode && currentSceneIdx === idx) || (isMultiSelectMode && selectedScenes.includes(idx)) 
+                        ? 'border-purple-500 ring-4 ring-purple-500/10' 
+                        : 'border-white dark:border-slate-700',
+                      isSequentiallyGeneratingStoryboard && idx === currentGeneratingStoryboardIndex ? 'ring-2 ring-purple-500 ring-offset-2 dark:ring-offset-slate-900' : ''
+                    ]"
+                    @click="toggleSceneSelection(idx)"
+                  >
+                    <!-- Active Glowing Border Effect -->
+                    <div v-if="currentSceneIdx === idx" class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-blue-500/20 opacity-40 animate-pulse-slow z-[2]"></div>
+
+                    <div v-if="scene.image" class="absolute inset-0 w-full h-full z-0">
+                      <img :src="scene.image" class="absolute inset-0 w-full h-full object-cover" />
+                      <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                    </div>
+
+                    <!-- Duration Badge -->
+                    <div class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white text-[8px] font-black z-[11]">
+                      {{ getSceneDuration(scene.script) }}s
+                    </div>
+
+                    <!-- Index Badge -->
+                    <div class="absolute top-1.5 left-1.5 z-20">
+                      <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
+                        :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
+                        {{ idx + 1 }}
+                      </div>
+                    </div>
+
+                    <!-- Delete Button -->
+                    <div class="absolute top-1.5 right-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <el-popconfirm
+                         title="确认删除该分镜？"
+                         confirm-button-text="删除"
+                         cancel-button-text="取消"
+                         :width="160"
+                         :icon="Delete"
+                         icon-color="#ef4444"
+                         @confirm="handleDeleteScene(idx)"
+                         popper-class="modern-popconfirm-c-end"
+                       >
+                        <template #reference>
+                          <div 
+                            class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center shadow-md active:scale-90"
+                            @click.stop
+                            title="删除分镜"
+                          >
+                            <el-icon :size="10"><Delete /></el-icon>
+                          </div>
+                        </template>
+                      </el-popconfirm>
+                    </div>
+
+                    <!-- Playback Progress Overlay -->
+                    <div 
+                      v-if="isSequentialPlaying && currentSceneIdx === idx"
+                      class="absolute inset-0 bg-black/30 pointer-events-none z-[5]"
+                    >
+                      <div 
+                        class="absolute bottom-0 left-0 h-1 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] transition-all duration-100 ease-linear"
+                        :style="{ width: `${(currentSceneVideoTime / getSceneDuration(scene.script)) * 100}%` }"
+                      ></div>
+                    </div>
+
+                    <div class="flex items-center justify-center w-full h-full relative z-10" @click.stop="handleStoryboardImageClick(idx)">
+                      <div v-if="scene.status === 'script_generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+                        <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
+                        <span class="text-[9px] font-black text-purple-600 uppercase tracking-widest animate-pulse text-center px-1">分镜脚本生成</span>
+                      </div>
+                      <div v-else-if="scene.status === 'generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+                        <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
+                        <span class="text-[8px] font-black text-purple-600 uppercase tracking-widest animate-pulse">视频生成中</span>
+                      </div>
+                      <div v-else-if="scene.status === 'success'" class="opacity-0 group-hover:opacity-100 transition-all">
+                        <el-icon :size="18" class="text-white drop-shadow-lg"><VideoPlay /></el-icon>
+                      </div>
+                      <div 
+                        v-else-if="!scene.image"
+                        class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-purple-600 transition-all shadow-lg border border-white/30"
+                        @click.stop="handleGenerateSingleScene(idx)"
+                      >
+                        <el-icon :size="18"><MagicStick /></el-icon>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Last Item Divider -->
+                  <div v-if="idx === timelineScenes.length - 1" class="relative flex items-center justify-center h-full group/divider px-1.5 -mx-0.5 z-20">
+                    <div class="w-[1.5px] h-12 bg-slate-100 dark:bg-slate-800/50 group-hover/divider:bg-purple-500 transition-all duration-300"></div>
+                    <div 
+                      class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-300 group-hover/divider:bg-purple-600 group-hover/divider:text-white group-hover/divider:border-purple-600 hover:scale-110 transition-all cursor-pointer shadow-sm"
+                      @click.stop="addTimelineScene"
+                    >
+                      <el-icon :size="10"><Plus /></el-icon>
+                      <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-800 text-white text-[10px] font-black opacity-0 group-hover/divider:opacity-100 pointer-events-none whitespace-nowrap transition-all duration-300 shadow-xl translate-y-1 group-hover/divider:translate-y-0">
+                        新增片段
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </draggable>
+            
+            <!-- Final Spacer to ensure last item can be seen fully -->
+            <div class="w-10 shrink-0 h-1"></div>
           </div>
         </div>
       </div>
@@ -959,6 +1003,14 @@
           :subject="editingSubject"
           :is-edit="isEdit"
           @save="saveSubject"
+        />
+
+      <!-- Storyboard Image History Modal -->
+      <SubjectEditDialog
+          v-model="showStoryboardEdit"
+          :subject="editingStoryboardScene"
+          :is-edit="true"
+          @save="saveStoryboardScene"
         />
 
         <!-- Subject Library Modal -->
@@ -1339,13 +1391,14 @@ const PillImage = Node.create({
   }
 })
 
+import draggable from 'vuedraggable';
 import { 
   ArrowLeft, ArrowRight, ArrowDown, Star, MoreFilled, Plus, User, Location, 
   Box, Edit, Timer, MagicStick, RefreshRight, VideoPlay, Warning, FullScreen,
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
-  Cpu, ChatDotRound, CircleClose
+  Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useDramaStore } from '@/store/drama';
@@ -1849,6 +1902,84 @@ const editingSubject = ref({
   image: '',
   appeared_episodes: []
 });
+
+// Storyboard Image History
+const showStoryboardEdit = ref(false);
+const editingStoryboardIndex = ref(-1);
+const editingStoryboardScene = ref<any>(null);
+
+const handleEditStoryboardImage = (idx: number) => {
+  const scene = timelineScenes.value[idx];
+  if (!scene) return;
+  
+  editingStoryboardIndex.value = idx;
+  editingStoryboardScene.value = {
+    ...scene,
+    type: 'storyboard',
+    name: `分镜 ${idx + 1}`,
+    description: scene.script || ''
+  };
+  showStoryboardEdit.value = true;
+};
+
+const handleStoryboardImageClick = (idx: number) => {
+  // 1. 先选中该分镜，确保中间编辑区同步
+  toggleSceneSelection(idx);
+  // 2. 弹出历史管理弹窗
+  handleEditStoryboardImage(idx);
+};
+
+// Timeline Drag & Drop
+const onTimelineDragEnd = () => {
+  persistStoryboardForEpisode(episodeId.value);
+  ElMessage.success('分镜顺序已更新');
+};
+
+const moveScene = (idx: number, direction: 'up' | 'down') => {
+  const scenes = [...timelineScenes.value];
+  if (direction === 'up' && idx > 0) {
+    [scenes[idx], scenes[idx - 1]] = [scenes[idx - 1], scenes[idx]];
+    currentSceneIdx.value = idx - 1;
+  } else if (direction === 'down' && idx < scenes.length - 1) {
+    [scenes[idx], scenes[idx + 1]] = [scenes[idx + 1], scenes[idx]];
+    currentSceneIdx.value = idx + 1;
+  }
+  timelineScenes.value = scenes;
+  onTimelineDragEnd();
+};
+
+const insertBlankScene = (idx: number) => {
+  const newScene = {
+    id: `scene_${Date.now()}`,
+    script: '',
+    image: '',
+    video: '',
+    status: 'idle',
+    imageHistory: [],
+    selectedImageId: ''
+  };
+  
+  const scenes = [...timelineScenes.value];
+  scenes.splice(idx, 0, newScene);
+  timelineScenes.value = scenes;
+  currentSceneIdx.value = idx;
+  persistStoryboardForEpisode(episodeId.value);
+  ElMessage.success('已插入空白分镜');
+};
+
+const saveStoryboardScene = (data: any) => {
+  if (editingStoryboardIndex.value > -1 && timelineScenes.value[editingStoryboardIndex.value]) {
+    const target = timelineScenes.value[editingStoryboardIndex.value];
+    target.image = data.image;
+    target.video = data.video; // 同步视频字段
+    target.imageHistory = data.imageHistory;
+    target.selectedImageId = data.selectedImageId;
+    
+    persistStoryboardForEpisode(episodeId.value);
+    ElMessage.success('分镜画面已更新');
+  }
+  showStoryboardEdit.value = false;
+};
 
 const subjects = ref([
   { 

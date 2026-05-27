@@ -29,10 +29,23 @@ export interface Subject {
   name: string;
   type: 'character' | 'scene' | 'prop';
   image?: string;
+  prompt?: string;
   reference_image?: string;
   description?: string;
   voice_description?: string;
   voice_audio?: string;
+  selectedImageId?: string;
+  imageHistory?: {
+    id: string;
+    url: string;
+    isSelected: boolean;
+    createdAt: number;
+    name?: string;
+    description?: string;
+    reference_image?: string;
+    voice_description?: string;
+    voice_audio?: string;
+  }[];
   appeared_episodes?: number[];
 }
 
