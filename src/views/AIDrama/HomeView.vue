@@ -1,6 +1,6 @@
 <template>
   <div class="relative h-full p-6 overflow-y-auto transition-colors duration-300" :class="isLight ? 'bg-[#f5f6fb]' : 'bg-slate-900'">
-    <!-- 视频背景1 -->
+    <!-- 视频背景 -->
     <div v-if="!isLight" class="video-background fixed inset-0 overflow-hidden pointer-events-none">
       <video 
         autoplay 
