@@ -641,18 +641,31 @@
                 </div>
 
                 <!-- Index Badge -->
-                <div class="absolute top-1.5 left-1.5 z-10 flex items-center gap-1">
+                <div class="absolute top-1.5 left-1.5 z-20 flex items-center gap-1">
                   <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
                     :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
                     {{ idx + 1 }}
                   </div>
-                  <div 
-                    class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-90"
-                    @click.stop="deleteScene(idx)"
-                    title="删除分镜"
-                  >
-                    <el-icon :size="10"><Delete /></el-icon>
-                  </div>
+                  <el-popconfirm
+                     title="确认删除该分镜？"
+                     confirm-button-text="删除"
+                     cancel-button-text="取消"
+                     :width="160"
+                     :icon="Delete"
+                     icon-color="#ef4444"
+                     @confirm="handleDeleteScene(idx)"
+                     popper-class="modern-popconfirm-c-end"
+                   >
+                    <template #reference>
+                      <div 
+                        class="w-4 h-4 rounded bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-90"
+                        @click.stop
+                        title="删除分镜"
+                      >
+                        <el-icon :size="10"><Delete /></el-icon>
+                      </div>
+                    </template>
+                  </el-popconfirm>
                 </div>
 
                 <!-- Playback Progress Overlay -->
@@ -2919,17 +2932,36 @@ const addTimelineScene = () => {
   });
 };
 
-const deleteScene = (idx: number) => {
-  ElMessageBox.confirm('确定要删除这个分镜吗？', '删除分镜', {
-    confirmButtonText: '删除',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    timelineScenes.value.splice(idx, 1);
-    if (currentSceneIdx.value >= timelineScenes.value.length) {
-      currentSceneIdx.value = Math.max(0, timelineScenes.value.length - 1);
-    }
-    persistStoryboardForEpisode(episodeId.value);
+const handleDeleteScene = (idx: number) => {
+  // 如果正在生成，提示不可删除或先停止生成
+  const scene = timelineScenes.value[idx];
+  if (scene.status === 'generating' || scene.status === 'script_generating') {
+    ElMessage.warning('正在生成中的分镜不能删除');
+    return;
+  }
+
+  timelineScenes.value.splice(idx, 1);
+  
+  // 更新当前选中的索引
+  if (currentSceneIdx.value === idx) {
+    // 如果删除的是当前选中的，选择前一个或第一个
+    currentSceneIdx.value = Math.max(0, idx - 1);
+  } else if (currentSceneIdx.value > idx) {
+    // 如果删除的是当前选中之前的，索引减1
+    currentSceneIdx.value--;
+  }
+
+  // 更新多选列表中的索引
+  selectedScenes.value = selectedScenes.value
+    .filter(sIdx => sIdx !== idx)
+    .map(sIdx => sIdx > idx ? sIdx - 1 : sIdx);
+
+  persistStoryboardForEpisode(episodeId.value);
+  
+  ElMessage({
+    message: '分镜已删除',
+    type: 'success',
+    customClass: 'modern-message-success'
   });
 };
 
@@ -3413,64 +3445,83 @@ const startStoryboardSequentialGeneration = async () => {
 
 /* Modern Popconfirm C-End Styles - Redesigned for Premium C-End Look */
 :deep(.modern-popconfirm-c-end) {
-  background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%) !important;
-  border-radius: 24px !important;
-  padding: 18px !important;
-  border: 1px solid rgba(251, 113, 133, 0.3) !important;
-  box-shadow: 
-    0 10px 25px -5px rgba(225, 29, 72, 0.15),
-    0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 12px !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
   backdrop-filter: blur(10px);
 }
 
+.is-dark :deep(.modern-popconfirm-c-end) {
+  background: rgba(30, 30, 36, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+}
+
 :deep(.modern-popconfirm-c-end .el-popconfirm__main) {
-  margin-bottom: 16px !important;
-  font-weight: 900 !important;
-  color: #9f1239 !important; /* rose-900 */
-  font-size: 14px !important;
-  letter-spacing: -0.01em;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+  color: inherit !important;
+  font-size: 13px !important;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 :deep(.modern-popconfirm-c-end .el-popconfirm__main .el-popconfirm__icon) {
-  color: #f43f5e !important; /* rose-500 */
-  font-size: 18px !important;
+  font-size: 16px !important;
+}
+
+:deep(.modern-popconfirm-c-end .el-popconfirm__action) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+:deep(.modern-popconfirm-c-end .el-button) {
+  margin-left: 0 !important;
 }
 
 :deep(.modern-popconfirm-c-end .el-button--primary) {
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+  background: #ef4444 !important; /* Tailwind Red 500 */
   border: none !important;
-  border-radius: 12px !important;
-  font-weight: 900 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
   font-size: 12px !important;
-  height: 34px !important;
-  padding: 0 16px !important;
-  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-
-:deep(.modern-popconfirm-c-end .el-button--primary:hover) {
-  transform: translateY(-1px) scale(1.05) !important;
-  box-shadow: 0 6px 15px rgba(225, 29, 72, 0.4) !important;
-}
-
-:deep(.modern-popconfirm-c-end .el-button--default) {
-  border-radius: 12px !important;
-  font-weight: 800 !important;
-  font-size: 12px !important;
-  height: 34px !important;
-  background: rgba(255, 255, 255, 0.8) !important;
-  border: 1px solid rgba(251, 113, 133, 0.2) !important;
-  color: #e11d48 !important;
+  height: 28px !important;
+  padding: 0 12px !important;
   transition: all 0.2s ease !important;
 }
 
+:deep(.modern-popconfirm-c-end .el-button--primary:hover) {
+  background: #dc2626 !important;
+  transform: translateY(-1px);
+}
+
+:deep(.modern-popconfirm-c-end .el-button--default) {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  height: 28px !important;
+  background: transparent !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  transition: all 0.2s ease !important;
+}
+
+.is-dark :deep(.modern-popconfirm-c-end .el-button--default) {
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
 :deep(.modern-popconfirm-c-end .el-button--default:hover) {
-  background: #ffffff !important;
-  color: #be123c !important;
-  border-color: rgba(251, 113, 133, 0.4) !important;
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+.is-dark :deep(.modern-popconfirm-c-end .el-button--default:hover) {
+  background: #334155 !important;
+  color: #f1f5f9 !important;
 }
 
 :deep(.modern-message-success) {
@@ -3702,3 +3753,38 @@ const startStoryboardSequentialGeneration = async () => {
   background-color: #94a3b8;
 }
 </style>
+
+<style>
+/* Global styles for Popconfirm to ensure it works outside scoped scope */
+.modern-popconfirm-c-end {
+  border-radius: 12px !important;
+  padding: 10px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.is-dark .modern-popconfirm-c-end {
+  background: #1e1e24 !important;
+  border-color: #3d3d4a !important;
+}
+
+.modern-popconfirm-c-end .el-popconfirm__main {
+  color: #ef4444 !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+}
+
+.modern-popconfirm-c-end .el-button--primary {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  height: 24px !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+}
+
+.modern-popconfirm-c-end .el-button--default {
+  height: 24px !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+}
+</style>
+

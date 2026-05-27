@@ -54,3 +54,8 @@ Thumbs.db
 *.local
 .pnp
 .pnp.js
+
+# ZIP压缩文件（大文件不提交）
+*.zip
+*.rar
+*.7z

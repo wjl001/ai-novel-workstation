@@ -391,7 +391,7 @@
                   default-first-option
                   placeholder="选择或输入题材..." 
                   class="w-full custom-select-v4 !h-9 !text-[14px]"
-                  popper-class="custom-select-popper"
+                  :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'"
                 >
                     <el-option
                       v-for="item in hotTopics"
@@ -436,7 +436,7 @@
                   v-model="configForm.protagonistSetting" 
                   @change="handleProtagonistChange" 
                   class="w-full custom-select-v4 !h-8" 
-                  popper-class="custom-select-popper"
+                  :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'"
                 >
                   <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                     <div class="flex items-center justify-between w-full">
@@ -471,7 +471,7 @@
                 </div>
                 <label class="text-[11px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">视频风格</label>
               </div>
-              <el-select v-model="configForm.videoStyle" class="w-full custom-select-v4 !h-8" popper-class="custom-select-popper">
+              <el-select v-model="configForm.videoStyle" class="w-full custom-select-v4 !h-8" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
                 <el-option v-for="opt in videoStyleOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                   <div class="flex items-center justify-between w-full">
                     <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
@@ -489,7 +489,7 @@
                 </div>
                 <label class="text-[11px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">视频比例</label>
               </div>
-              <el-select v-model="configForm.videoAspectRatio" class="w-full custom-select-v4 !h-8" popper-class="custom-select-popper">
+              <el-select v-model="configForm.videoAspectRatio" class="w-full custom-select-v4 !h-8" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
                 <el-option v-for="opt in aspectRatioOptions" :key="opt.label" :label="opt.label" :value="opt.label">
                   <div class="flex items-center justify-between w-full">
                     <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
@@ -507,7 +507,7 @@
                 </div>
                 <label class="text-[11px] font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">目标受众</label>
               </div>
-              <el-select v-model="configForm.targetAudience" class="w-full custom-select-v4 !h-8" popper-class="custom-select-popper">
+              <el-select v-model="configForm.targetAudience" class="w-full custom-select-v4 !h-8" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
                 <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud">
                   <div class="flex items-center justify-between w-full">
                     <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">{{ aud }}</span>
@@ -1841,12 +1841,23 @@ const handleFileUpload = async (file: any) => {
   animation: light-streak 3s infinite ease-in-out;
 }
 
-/* Global Popper Styles for Dark Mode Selects */
-:global(.el-popper.is-dark.custom-select-popper),
+/* Global Popper Styles for Selects */
 :global(.custom-select-popper) {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  --el-bg-color-overlay: #ffffff !important;
+  --el-border-color-light: #e2e8f0 !important;
+  --el-fill-color-light: #f8fafc !important;
+  --el-text-color-regular: #64748b !important;
+  --el-text-color-primary: #1e293b !important;
+}
+
+/* Dark Theme Overrides */
+:global(.custom-select-popper.dark) {
   background-color: #0f172a !important;
   border: 1px solid #334155 !important;
-  border-radius: 12px !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
   --el-bg-color-overlay: #0f172a !important;
   --el-border-color-light: #334155 !important;
@@ -1854,38 +1865,58 @@ const handleFileUpload = async (file: any) => {
   --el-text-color-regular: #94a3b8 !important;
   --el-text-color-primary: #f1f5f9 !important;
 }
+
 :global(.custom-select-popper .el-select-dropdown__list) {
-  background-color: #0f172a !important;
+  background-color: transparent !important;
   padding: 4px 0 !important;
 }
+
 :global(.custom-select-popper .el-select-dropdown__item) {
-  color: #94a3b8 !important;
+  color: #64748b !important;
   font-weight: 500 !important;
   transition: all 0.2s ease !important;
   background: transparent !important;
 }
-/* Selected state - default */
+
+:global(.custom-select-popper.dark .el-select-dropdown__item) {
+  color: #94a3b8 !important;
+}
+
+/* Selected state */
 :global(.custom-select-popper .el-select-dropdown__item.selected) {
   color: #fff !important;
   background-color: #6366f1 !important;
 }
-/* Selected state - when hovered or highlighted by keyboard/logic */
+
+/* Normal item - when hovered or highlighted */
+:global(.custom-select-popper .el-select-dropdown__item.hover),
+:global(.custom-select-popper .el-select-dropdown__item.is-hovering),
+:global(.custom-select-popper .el-select-dropdown__item:hover) {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+:global(.custom-select-popper.dark .el-select-dropdown__item.hover),
+:global(.custom-select-popper.dark .el-select-dropdown__item.is-hovering),
+:global(.custom-select-popper.dark .el-select-dropdown__item:hover) {
+  background-color: #1e293b !important;
+  color: #fff !important;
+}
+
+/* Selected state - when hovered */
 :global(.custom-select-popper .el-select-dropdown__item.selected.hover),
 :global(.custom-select-popper .el-select-dropdown__item.selected.is-hovering),
 :global(.custom-select-popper .el-select-dropdown__item.selected:hover) {
   background-color: #4f46e5 !important;
   color: #fff !important;
-  background: #4f46e5 !important;
 }
-/* Normal item - when hovered or highlighted */
-:global(.custom-select-popper .el-select-dropdown__item.hover),
-:global(.custom-select-popper .el-select-dropdown__item.is-hovering),
-:global(.custom-select-popper .el-select-dropdown__item:hover) {
-  background-color: #1e293b !important;
-  background: #1e293b !important;
-  color: #fff !important;
-}
+
 :global(.custom-select-popper .el-popper__arrow::before) {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+:global(.custom-select-popper.dark .el-popper__arrow::before) {
   background-color: #0f172a !important;
   border-color: #334155 !important;
 }

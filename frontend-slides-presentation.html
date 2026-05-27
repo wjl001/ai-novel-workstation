@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>AI短剧生产平台立项报告</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Reveal.js 核心 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <!-- 暗色科技感主题 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/night.min.css" id="theme">
+    
+    <style>
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            text-transform: none;
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-weight: bold;
+        }
+        .core-point {
+            color: #e74c3c;
+            font-size: 0.8em;
+            margin-bottom: 30px !important;
+            border-left: 5px solid #e74c3c;
+            padding-left: 15px;
+            text-align: left;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .content-list {
+            text-align: left;
+            font-size: 0.75em;
+            line-height: 1.8;
+        }
+        .content-list li {
+            margin-bottom: 15px;
+        }
+        .split-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        .split-half {
+            width: 50%;
+        }
+        .highlight-number {
+            font-size: 4em;
+            color: #3498db;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0 0 20px rgba(52, 152, 219, 0.5);
+        }
+        .vs-box {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .money-bar-high {
+            background: #e74c3c;
+            height: 30px;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .money-bar-low {
+            background: #2ecc71;
+            height: 30px;
+            width: 10%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- 第 1 页：封面 -->
+            <section data-background-color="#0f172a" data-background-image="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1920&opacity=0.3">
+                <h2 style="color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);">我们的突围战：做AI短剧界的“超级工厂”</h2>
+                <h4 style="color: #94a3b8; margin-top: 30px;">PC端AI短剧生产平台竞品调研与立项规划</h4>
+                <div style="margin-top: 50px; font-size: 0.6em; color: #cbd5e1;">
+                    <p>汇报人：产品部</p>
+                    <p>汇报日期：2026年5月</p>
+                </div>
+                <div class="core-point" style="margin-top: 40px; background: rgba(0,0,0,0.5);">
+                    <strong>核心观点：</strong>不跟大厂抢流量，做包工头最爱的生产力工具。
+                </div>
+            </section>
+
+            <!-- 第 2 页：市场现状 -->
+            <section>
+                <h3>市场变天：横店没戏拍了，AI掀了桌子</h3>
+                <div class="core-point">核心观点：真人短剧正被淘汰，AI短剧已经占据绝对统治地位。</div>
+                <div class="split-layout">
+                    <div class="split-half">
+                        <ul class="content-list">
+                            <li><strong>大盘数据</strong>：2026年Q1微短剧上线12.8万部，AI制作高达12.2万部。</li>
+                            <li><strong>市场占比</strong>：AI短剧渗透率已超 95%！</li>
+                            <li><strong>行业现状</strong>：传统剧组无戏可拍，算力（显卡）正在取代场地和群演。</li>
+                        </ul>
+                    </div>
+                    <div class="split-half">
+                        <div class="highlight-number">95%+</div>
+                        <div class="vs-box">
+                            <span style="color: #95a5a6;">冷清的横店</span> <br>
+                            <strong>VS</strong> <br>
+                            <span style="color: #3498db;">运转中的显卡机房</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 3 页：核心驱动力 -->
+            <section>
+                <h3>为什么大家都疯了？账算得太明白了</h3>
+                <div class="core-point">核心观点：成本砍掉90%，资本和制作团队必然全面倒向AI。</div>
+                <div class="split-layout">
+                    <div class="split-half">
+                        <ul class="content-list">
+                            <li><strong>传统模式</strong>：场地+群演+灯光 = 50-100万成本，周期半个月。</li>
+                            <li><strong>AI模式</strong>：3-5人+电脑+键盘 = 3-5万成本，周期1个星期。</li>
+                            <li><strong>结论</strong>：资本是逐利的，十倍的利润差是市场剧变的唯一动力。</li>
+                        </ul>
+                    </div>
+                    <div class="split-half" style="text-align: left; font-size: 0.6em;">
+                        <p style="margin-bottom: 5px;">传统成本 (50-100万)</p>
+                        <div class="money-bar-high"></div>
+                        <p style="margin-bottom: 5px; margin-top: 30px;">AI成本 (3-5万)</p>
+                        <div class="money-bar-low"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 4 页：用户痛点 -->
+            <section>
+                <h3>工作室每天都在骂什么？</h3>
+                <div class="core-point">核心观点：虽然用了AI，但现在的工具根本没法干“重体力活”。</div>
+                <ul class="content-list">
+                    <li><strong>痛点一：“换头怪”灾难</strong>。角色脸部无法固定，第一集彭于晏，第十集吴彦祖，观众极易出戏。</li>
+                    <li><strong>痛点二：“缝衣式”工作流</strong>。写剧本(GPT) -> 跑图(MJ) -> 生成视频(可灵) -> 剪辑(剪映)。</li>
+                    <li><strong>现状总结</strong>：几千个镜头，切几十个文件夹，大半夜能把人逼疯。</li>
+                </ul>
+                <div class="vs-box" style="margin-top: 40px; color: #e74c3c;">
+                    😭 "几千个镜头，切几十个文件夹，大半夜能把人逼疯！"
+                </div>
+            </section>
+
+            <!-- 第 5 页：竞品分析 -->
+            <section>
+                <h3>扒一扒对手：大厂们在干嘛？</h3>
+                <div class="core-point">核心观点：大厂都在拼底层大模型（造发动机），没空做体验（造车壳）。</div>
+                <table style="width: 100%; font-size: 0.6em; margin-top: 30px; border-collapse: collapse;">
+                    <tr style="border-bottom: 2px solid #fff;">
+                        <th style="padding: 10px;">大厂</th>
+                        <th style="padding: 10px;">核心模型</th>
+                        <th style="padding: 10px;">主打优势</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                        <td style="padding: 15px; color: #3498db;">字节 (小云雀/即梦)</td>
+                        <td style="padding: 15px;">Seedance 2.0</td>
+                        <td style="padding: 15px;">懂导演思维，镜头连贯。</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                        <td style="padding: 15px; color: #e67e22;">快手 (可灵)</td>
+                        <td style="padding: 15px;">Kling 3.0</td>
+                        <td style="padding: 15px;">物理引擎牛，质感像电影大片。</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; color: #f1c40f;">阿里 (快乐小马)</td>
+                        <td style="padding: 15px;">Wan 系列</td>
+                        <td style="padding: 15px;">便宜又快，自带翻译，主打出海。</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- 第 6 页：战略洞察 -->
+            <section>
+                <h3>为什么大厂不做“手机端短剧APP”？</h3>
+                <div class="core-point">核心观点：大厂绝不内部打架，工具端不能和流量端（抖音/快手）抢饭碗。</div>
+                <ul class="content-list">
+                    <li><strong>定位不同</strong>：AI工具是“炒菜的锅”，抖音快手是“大饭店”。</li>
+                    <li><strong>流量闭环</strong>：大厂巴不得大家用他们的工具生成视频，再发回他们主站变现。</li>
+                    <li><strong>物理限制</strong>：手机屏幕太小，搓几十集、几百个转场的长剧，完全不现实。</li>
+                </ul>
+                <div style="text-align: center; margin-top: 30px; font-size: 0.8em; color: #2ecc71;">
+                    工具端生产 ➔ 导流回母公司流量池 ➔ 商业变现
+                </div>
+            </section>
+
+            <!-- 第 7 页：我们的定位 -->
+            <section>
+                <h3>我们的定位：避开大厂锋芒，做“包工头”最爱的软件</h3>
+                <div class="core-point">核心观点：我们不造发动机（大模型），我们造最好的全自动流水线机床！</div>
+                <ul class="content-list">
+                    <li><strong>绝对不碰</strong>：烧钱的底层大模型、C端短剧流量分发。</li>
+                    <li><strong>死死咬住</strong>：B端工作室的“生产效率”和“工程化管理”。</li>
+                    <li><strong>目标用户</strong>：急着赚钱、手里攥着剧本、被零碎软件折磨的短剧包工头。</li>
+                </ul>
+            </section>
+
+            <!-- 第 8 页：杀手锏 1 -->
+            <section>
+                <h3>杀手锏 1：剧本一键拆解</h3>
+                <div class="core-point">核心观点：消灭乱七八糟的文件夹，把“作坊”变成“正规军”。</div>
+                <div class="split-layout">
+                    <div class="split-half">
+                        <ul class="content-list">
+                            <li><strong>一键导入</strong>：十几万字剧本拖入，后台大模型瞬间解析。</li>
+                            <li><strong>结构化拆解</strong>：自动生成 <code>集数 -> 场次 -> 镜头分镜 -> 角色台词</code>。</li>
+                            <li><strong>左树右图</strong>：左侧点选镜头，右侧直接出画面生成面板。</li>
+                        </ul>
+                    </div>
+                    <div class="split-half vs-box" style="text-align: left; font-family: monospace; font-size: 0.6em; line-height: 1.5;">
+                        📁 霸道总裁爱上我 <br>
+                        &nbsp; ├─ 📄 第1集 <br>
+                        &nbsp; │&nbsp;&nbsp; ├─ 🎬 场次1：雨中相遇 <br>
+                        &nbsp; │&nbsp;&nbsp; │&nbsp;&nbsp; ├─ 📷 镜头1 (全景) <br>
+                        &nbsp; │&nbsp;&nbsp; │&nbsp;&nbsp; └─ 📷 镜头2 (特写) <br>
+                        &nbsp; └─ 📄 第2集
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 9 页：杀手锏 2 -->
+            <section>
+                <h3>杀手锏 2：“锁死”那张脸</h3>
+                <div class="core-point">核心观点：彻底解决“换头怪”痛点，打造短剧界“横店资产库”。</div>
+                <ul class="content-list">
+                    <li><strong>开拍前捏脸</strong>：建立专属“数字演员休息室”。</li>
+                    <li><strong>资产固化</strong>：死死锁住人脸特征、服装风格、AI配音音色。</li>
+                    <li><strong>跨集调用</strong>：第一集到第三十集，一键“调用男主A”，角度随便换，脸绝对不崩。</li>
+                </ul>
+                <div class="split-layout" style="margin-top: 30px;">
+                    <div class="split-half vs-box" style="border-color: #e74c3c;">
+                        ❌ 失败的换头怪<br><span style="font-size: 0.5em; color:#95a5a6;">每集长得都不一样</span>
+                    </div>
+                    <div class="split-half vs-box" style="border-color: #2ecc71;">
+                        ✅ 资产库固化<br><span style="font-size: 0.5em; color:#95a5a6;">100集脸型完全一致</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 10 页：杀手锏 3 -->
+            <section>
+                <h3>杀手锏 3：“海纳百川”的智能调度器</h3>
+                <div class="core-point">核心观点：聚合各家API，做一个“AI接口二道贩子”，用极致体验赚工作流的钱。</div>
+                <ul class="content-list">
+                    <li><strong>痛点</strong>：买三家会员，开三个网页。</li>
+                    <li><strong>解法</strong>：全面接入大厂开放API。要网感调字节，要特效调可灵，要便宜调阿里。</li>
+                    <li><strong>本质</strong>：用户只需提需求，我们负责跑腿，体验无缝闭环。</li>
+                </ul>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px; font-size: 0.6em;">
+                    <div class="vs-box" style="flex: 1;">字节 Seedance</div>
+                    <div class="vs-box" style="flex: 1;">快手 Kling</div>
+                    <div class="vs-box" style="flex: 1;">阿里 Wan</div>
+                </div>
+            </section>
+
+            <!-- 第 11 页：商业模式 -->
+            <section>
+                <h3>怎么赚钱？（搞钱才是硬道理）</h3>
+                <div class="core-point">核心观点：细水长流收月租，赚差价收云租金，出海风口卖增值。</div>
+                <ul class="content-list">
+                    <li>💰 <strong>SaaS高级会员</strong>：卖剧本拆解、资产锁、无限轨剪辑等核心功能（省剪辑师人工费）。</li>
+                    <li>☁️ <strong>算力差价与云存储</strong>：拿大厂批发价赚差价；收几十G工程文件的云端保存费。</li>
+                    <li>🌍 <strong>“一键出海”增值包</strong>：按次收费，提供“一键翻译+口型同步”。</li>
+                </ul>
+            </section>
+
+            <!-- 第 12 页：下一步行动 -->
+            <section>
+                <h3>我们的 Action Plan</h3>
+                <div class="core-point">核心观点：小步快跑，快速验证，死磕前端体验。</div>
+                <div style="text-align: left; font-size: 0.7em; line-height: 2;">
+                    <p><strong style="color:#3498db;">STEP 1:</strong> 启动MVP开发：先做“剧本拆解成目录树” + “简单接入一个视频接口”。</p>
+                    <p><strong style="color:#3498db;">STEP 2:</strong> 引入种子用户：找 2-3 家痛苦的短剧小团队入伙免费测，照着痛点改。</p>
+                    <p><strong style="color:#3498db;">STEP 3:</strong> 前端资源倾斜：前端交互必须像专业剪辑软件一样丝滑，拒绝网页卡顿感。</p>
+                </div>
+            </section>
+
+            <!-- 第 13 页：总结愿景 -->
+            <section>
+                <h3>卖铲子的人，永远最赚钱</h3>
+                <div class="core-point">核心观点：在AI短剧的淘金热中，我们就是那把最好用的冲锋枪。</div>
+                <ul class="content-list">
+                    <li>旧规矩全被打破，影视工业面临重构。</li>
+                    <li>降维打击市面上的“网页玩具”。</li>
+                    <li>只要咱们这把“冲锋枪”造得好，必定能在这个风口赚得盆满钵满！</li>
+                </ul>
+                <h4 style="color: #f1c40f; margin-top: 40px;">做短剧界的“超级工厂”！</h4>
+            </section>
+
+            <!-- 第 14 页：Q&A -->
+            <section>
+                <h1 style="font-size: 4em; color: #3498db;">Q & A</h1>
+                <p style="color: #95a5a6; margin-top: 30px;">感谢聆听，请领导批评指正。</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'convex', // 切换效果: none/fade/slide/convex/concave/zoom
+            slideNumber: 'c/t',   // 显示页码
+            center: true,         // 垂直居中
+        });
+    </script>
+</body>
+</html>
