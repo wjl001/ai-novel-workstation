@@ -333,6 +333,9 @@
             </div>
           </div>
 
+          <!-- 推荐提示语移到图片下方 -->
+          <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest mt-1">推荐 16:9 · 支持 JPG/PNG</p>
+
           <div class="rounded-[22px] bg-[#1f2329] dark:bg-slate-800 px-5 py-4 text-white shadow-lg shadow-black/10 dark:shadow-black/30">
             <div class="flex items-center justify-between gap-3 mb-2">
               <span class="text-[13px] font-black">{{ type === 'storyboard' ? '当前选中分镜' : '当前选中图片' }}</span>
@@ -346,29 +349,37 @@
             </p>
           </div>
 
-          <button
-            @click="generateImage"
-            class="w-full h-[40px] flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-indigo-500/20 group/ai"
-            :disabled="isGeneratingImage"
-          >
+            <button
+              @click="generateImage"
+              class="w-full h-[40px] flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-indigo-500/20 group/ai"
+              :disabled="isGeneratingImage"
+            >
             <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{ 'animate-spin': isGeneratingImage }"><MagicStick /></el-icon>
             <span>{{ localSubject.image ? '重新生成' : '开始生成' }}</span>
           </button>
           </div>
-
-          <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest pb-1 shrink-0">推荐 16:9 · 支持 JPG/PNG</p>
         </aside>
       </div>
     </div>
 
     <template #footer>
-      <div class="flex justify-end gap-3 px-2 pt-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800">
+      <div class="flex justify-end items-center gap-3 px-2 pt-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800">
         <button
           @click="visible = false"
           class="px-8 py-2.5 rounded-full bg-slate-50 dark:bg-slate-900 text-slate-400 text-[14px] font-black hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 transition-all"
         >
           取消
         </button>
+        
+        <!-- 保存当前编辑按钮移到这里 -->
+        <button
+          @click="handleExplicitSave"
+          class="px-8 py-2.5 rounded-full bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 text-[14px] font-black hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:border-indigo-200 transition-all shadow-sm group/save flex items-center gap-2"
+        >
+          <el-icon :size="16" class="group-hover/save:scale-110 transition-transform"><DocumentChecked /></el-icon>
+          <span>保存当前编辑信息</span>
+        </button>
+
         <button
           @click="handleSave"
           class="px-10 py-2.5 rounded-full bg-indigo-600 text-white text-[14px] font-black shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none"
@@ -405,7 +416,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { generateImageAPI } from '@/utils/imageGenerator';
-import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen } from '@element-plus/icons-vue';
+import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 interface AssetImageItem {
@@ -923,6 +934,22 @@ watch(
   }
 );
 
+const handleExplicitSave = () => {
+  if (!localSubject.value.name) {
+    return ElMessage.warning('名称不能为空');
+  }
+  
+  // 确保当前编辑的信息已同步到历史记录中
+  syncSelectedHistoryFromFields();
+  
+  ElMessage({
+    message: '当前编辑信息已保存',
+    type: 'success',
+    duration: 2000,
+    customClass: 'modern-message-success'
+  });
+};
+
 const handleSave = () => {
   const normalized = normalizeImageHistory(localSubject.value);
   emit('save', { ...normalized });
@@ -999,6 +1026,22 @@ const handleSave = () => {
 .custom-subject-dialog .el-dialog__footer {
   padding: 16px 0 0 0 !important;
   background-color: transparent !important;
+}
+
+.modern-message-success {
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  background: #10b981 !important;
+  border: none !important;
+}
+
+.modern-message-success .el-message__content {
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+.modern-message-success .el-message__icon {
+  color: white !important;
 }
 
 .dark .custom-subject-dialog .el-dialog__footer {
