@@ -532,6 +532,7 @@
                 <div v-else-if="currentPreview" class="w-full h-full relative rounded-2xl overflow-hidden group bg-black shadow-2xl">
                   <video 
                     ref="centerVideoRef"
+                    :key="currentPreview"
                     :src="currentPreview" 
                     class="w-full h-full object-contain"
                     controls
@@ -801,6 +802,7 @@
             <div class="flex-1 relative group/player flex items-center justify-center min-h-[400px] bg-black">
               <video 
                 ref="fullVideoRef"
+                :key="fullSynthesisVideoUrl"
                 :src="fullSynthesisVideoUrl" 
                 class="w-full h-full object-contain"
                 autoplay
@@ -1038,15 +1040,19 @@
         ],
         interactions: [
           {
-            text: '**主体资产管理 (2.2新增)：**\n - **流程：** 点击左侧面板的“+”号。\n - **动作：** 顶部“+”号可从主题库选择已有元素导入；各分类“+”号可直接创建新角色/场景/道具。鼠标悬停在卡片上可点击编辑按钮修改资产属性，实现本页面内资产的完全闭环管理。',
+            text: '**主体资产管理 (2.2 & 2.4 升级)：**\n - **动作：** 支持从主题库选择导入或直接创建新主体。鼠标悬停卡片可编辑资产属性。\n - **克隆与历史 (2.4)：** 资产与分镜均支持历史图片/视频管理，通过“历史看板”可回溯过往生成结果。支持一键克隆分镜或资产历史，极大提升创作迭代效率。',
             image: ''
           },
           {
-            text: '**分镜脚本深度编辑 (2.2新增)：**\n - **流程：** 选中某个分镜卡片，在中间编辑区点击“编辑脚本”。\n - **动作：** 进入富文本编辑模式，使用“@”符号快速插入或关联资产库中的主体。编辑保存后，可点击“重新生成分镜”将修改后的内容同步至视频生成引擎。',
+            text: '**分镜管理 (2.4 升级)：**\n - **新增与删除：** 底部时间轴末尾提供“新增片段”入口；分镜卡片 Hover 时可点击“删除”按钮移除。系统会自动处理索引偏移，并拦截正在生成中的分镜删除请求。\n - **排序逻辑：** 集成 `vuedraggable` 实现可视化拖拽排序，支持手动调整叙事节奏。排序后系统会自动持久化最新顺序并实时联动编辑器内容。',
             image: ''
           },
           {
-            text: '**合成预览 (关键节点)：**\n - **流程：** 点击“合成全集”。\n - **动作：** 系统检查所有分镜是否均已生成。异常：若存在空缺，弹出提示“分镜X尚未生成，无法合成”。成功：将拼接成完整视频。',
+            text: '**分镜脚本深度编辑 (2.2 & 2.4 升级)：**\n - **动作：** 进入富文本模式，使用“@”关联资产。编辑保存后可重新生成视频。\n - **时间线克隆 (2.4)：** 底部时间轴支持分镜片段的快速克隆与拖拽排序，实现非线性叙事调整。',
+            image: ''
+          },
+          {
+            text: '**合成预览 (关键节点)：**\n - **动作：** 系统检查所有分镜生成状态，支持拼接成完整短剧视频，提供 C 端品质的预览与导出体验。',
             image: ''
           }
         ],
@@ -1975,6 +1981,11 @@ const saveStoryboardScene = (data: any) => {
     target.imageHistory = data.imageHistory;
     target.selectedImageId = data.selectedImageId;
     
+    // 如果有视频，更新状态为 success，确保 UI 正确显示
+    if (target.video) {
+      target.status = 'success';
+    }
+    
     persistStoryboardForEpisode(episodeId.value);
     ElMessage.success('分镜画面已更新');
   }
@@ -2335,8 +2346,8 @@ const duration = ref(0);
 const isSynthesisCompleted = ref(false);
 const fullSynthesisVideoUrl = ref('');
 const synthesisVideoCandidates = [
-  '/assets/video_c2e5d372661c95731e129f2eb4d56054.mp4',
-  '/assets/astronaut_moon.mp4' 
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
 ];
 const synthesisVideoCandidateIndex = ref(0);
 const exportConfig = reactive({
@@ -2966,9 +2977,9 @@ const handleGenerateSingleScene = (idx: number) => {
       if (timelineScenes.value[idx].progress >= 100) {
         clearInterval(interval);
         timelineScenes.value[idx].status = 'success';
-        timelineScenes.value[idx].video = '/assets/video_4f375ecf2bb7eba03f6809581de8120b.mp4';
-        // 同时设置预览图，确保时间轴能看到画面
-        timelineScenes.value[idx].image = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600';
+        timelineScenes.value[idx].video = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        // 同时设置预览图，确保时间轴能看到画面 (使用随机图片避免加载失败)
+        timelineScenes.value[idx].image = `https://picsum.photos/seed/${idx}_${Date.now()}/600/338`;
         persistStoryboardForEpisode(episodeId.value);
         
         let successMsg = `分镜 ${idx + 1} 生成成功 (模型: ${synthesisModel.value})`;

@@ -235,7 +235,7 @@
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`char-${char.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
-                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">形象生成中...</span>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">角色图片生成中...</span>
                   </div>
 
                   <div
@@ -248,9 +248,18 @@
                   <el-image 
                     v-if="char.image" 
                     :src="char.image" 
+                    :preview-src-list="[char.image]"
+                    preview-teleported
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
-                  />
+                    @click.stop
+                  >
+                    <template #error>
+                      <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-100 dark:bg-slate-800">
+                        <el-icon size="24"><Picture /></el-icon>
+                      </div>
+                    </template>
+                  </el-image>
                   <div v-else-if="!generatingAssetImages.has(`char-${char.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[14px]">暂无画面</span>
@@ -416,7 +425,7 @@
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`scene-${scene.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
-                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">画面生成中...</span>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">场景图片生成中...</span>
                   </div>
 
                   <div
@@ -429,9 +438,18 @@
                   <el-image 
                     v-if="scene.image" 
                     :src="scene.image" 
+                    :preview-src-list="[scene.image]"
+                    preview-teleported
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
-                  />
+                    @click.stop
+                  >
+                    <template #error>
+                      <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-100 dark:bg-slate-800">
+                        <el-icon size="24"><Picture /></el-icon>
+                      </div>
+                    </template>
+                  </el-image>
                   <div v-else-if="!generatingAssetImages.has(`scene-${scene.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
@@ -597,7 +615,7 @@
                   <!-- Loading Indicator for Image Generation -->
                   <div v-if="generatingAssetImages.has(`prop-${prop.id}`)" class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <el-icon class="is-loading text-indigo-600 mb-2" :size="30"><Loading /></el-icon>
-                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">道具生成中...</span>
+                    <span class="text-[12px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">道具图片生成中...</span>
                   </div>
 
                   <div
@@ -610,9 +628,18 @@
                   <el-image 
                     v-if="prop.image" 
                     :src="prop.image" 
+                    :preview-src-list="[prop.image]"
+                    preview-teleported
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     fit="cover"
-                  />
+                    @click.stop
+                  >
+                    <template #error>
+                      <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-100 dark:bg-slate-800">
+                        <el-icon size="24"><Picture /></el-icon>
+                      </div>
+                    </template>
+                  </el-image>
                   <div v-else-if="!generatingAssetImages.has(`prop-${prop.id}`)" class="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-500">
                     <el-icon size="40" class="mb-2"><Picture /></el-icon>
                     <span class="text-[13px]">暂无画面</span>
@@ -735,7 +762,11 @@
         ],
         interactions: [
           {
-            text: '**主体资产管理 (2.2 版本)：**\n - **手动模式：** 2.2 版本全面开放手动【新增主体】及【批量生成】（角色、场景、道具）功能。\n - **智能规划：** 支持一键批量生成更多角色、场景或道具，AI 自动解析剧本提取特征。\n - **批量操作：** 新增【多选】模式，支持批量选中主体进行删除等快捷操作。\n - **编辑与删除：** 支持用户手动编辑资产描述、重新生成基准图或删除冗余资产。\n - **视觉标准：** 全面适配短剧主流比例，主体资产图统一采用 **16:9** 展示。',
+            text: '**主体资产管理 (2.2 & 2.4 升级)：**\n - **手动模式：** 2.2 版本全面开放手动【新增主体】及【批量生成】（角色、场景、道具）功能。\n - **智能规划：** 支持一键批量生成更多角色、场景或道具，AI 自动解析剧本提取特征。\n - **批量操作：** 新增【多选】模式，支持批量选中主体进行删除等快捷操作。\n - **克隆主体 (2.4)：** 在编辑弹窗侧边栏，支持一键克隆当前选中的历史记录，方便基于现有设定进行快速衍生。',
+            image: ''
+          },
+          {
+            text: '**图片历史管理 (2.4 新增)：**\n - **版本回溯：** 每个资产卡片左上角显示历史图片数量角标。\n - **历史看板：** 编辑弹窗左侧新增历史看板，记录每一次生成的图片、参考图及配置参数，支持一键应用历史版本，实现视觉资产的精细化版本控制。',
             image: ''
           },
           {
@@ -1093,6 +1124,87 @@ const buildAssetImagePatch = (asset: any, nextUrl: string) => {
   };
 };
 
+const getAssetTypeTheme = (type: string) => {
+  if (type === 'character') {
+    return {
+      bgStart: '#4f46e5',
+      bgEnd: '#a855f7',
+      badge: 'ROLE',
+      label: '角色'
+    };
+  }
+  if (type === 'scene') {
+    return {
+      bgStart: '#0f766e',
+      bgEnd: '#06b6d4',
+      badge: 'SCENE',
+      label: '场景'
+    };
+  }
+  return {
+    bgStart: '#ea580c',
+    bgEnd: '#f59e0b',
+    badge: 'PROP',
+    label: '道具'
+  };
+};
+
+const escapeSvgText = (value: string) =>
+  String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const wrapSvgLines = (value: string, maxChars = 18, maxLines = 2) => {
+  const text = String(value || '').trim();
+  if (!text) return [];
+  const lines: string[] = [];
+  for (let i = 0; i < text.length && lines.length < maxLines; i += maxChars) {
+    lines.push(text.slice(i, i + maxChars));
+  }
+  return lines;
+};
+
+const createInstantAssetImage = (asset: any, variant = Date.now()) => {
+  const theme = getAssetTypeTheme(asset?.type);
+  const titleLines = wrapSvgLines(asset?.name || `${theme.label}预览`, 12, 2);
+  const descLines = wrapSvgLines(asset?.description || `已生成${theme.label}视觉预览`, 22, 2);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${theme.bgStart}" />
+          <stop offset="100%" stop-color="${theme.bgEnd}" />
+        </linearGradient>
+        <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.28)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,0.10)" />
+        </linearGradient>
+      </defs>
+      <rect width="1280" height="720" fill="url(#bg)" />
+      <circle cx="1080" cy="120" r="180" fill="rgba(255,255,255,0.16)" />
+      <circle cx="180" cy="620" r="220" fill="rgba(255,255,255,0.10)" />
+      <rect x="76" y="72" rx="36" ry="36" width="1128" height="576" fill="rgba(15,23,42,0.18)" stroke="rgba(255,255,255,0.24)" />
+      <rect x="124" y="118" rx="24" ry="24" width="200" height="54" fill="rgba(255,255,255,0.18)" />
+      <text x="224" y="153" text-anchor="middle" font-size="28" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-weight="700" fill="#ffffff">${escapeSvgText(theme.badge)}</text>
+      <text x="124" y="250" font-size="78" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-weight="800" fill="#ffffff">${escapeSvgText(theme.label)}</text>
+      ${titleLines.map((line, index) => `<text x="124" y="${340 + index * 76}" font-size="62" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-weight="800" fill="#ffffff">${escapeSvgText(line)}</text>`).join('')}
+      ${descLines.map((line, index) => `<text x="128" y="${500 + index * 42}" font-size="30" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-weight="500" fill="rgba(255,255,255,0.92)">${escapeSvgText(line)}</text>`).join('')}
+      <text x="124" y="604" font-size="22" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.72)">AI SHORT DRAMA ASSET ${escapeSvgText(String(variant).slice(-6))}</text>
+    </svg>
+  `.trim();
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
+import { generateImageAPI } from '@/utils/imageGenerator';
+
+const shouldRepairAssetImage = (url: string | undefined) => {
+  if (!url || url === 'FAILED') return true;
+  return /image\.pollinations\.ai|picsum\.photos|placehold\.co|unsplash\.com/i.test(url);
+};
+
 const getAssetImageCount = (asset: any) => normalizeAssetImageState(asset).imageHistory.length;
 
 const needsAssetImageNormalization = (asset: any) => {
@@ -1197,16 +1309,16 @@ onMounted(async () => {
       console.log('检测到旧版数据 ID，正在执行自动修复以确保图片正确...');
       const fixedSubjects = episodeStore.subjects.map(s => {
         if (s.type === 'character') {
-          if (s.name === '林星') return { ...s, id: 'char-1', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1280&h=720&q=80' };
-          if (s.name === '陈宇') return { ...s, id: 'char-2', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1280&h=720&q=80' };
+          if (s.name === '林星') return { ...s, id: 'char-1', image: createInstantAssetImage({ ...s, id: 'char-1' }) };
+          if (s.name === '陈宇') return { ...s, id: 'char-2', image: createInstantAssetImage({ ...s, id: 'char-2' }) };
         }
         if (s.type === 'scene') {
-          if (s.name === '公司会议室') return { ...s, id: 'scene-1', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1280&h=720&q=80' };
-          if (s.name === '林星公寓') return { ...s, id: 'scene-2', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1280&h=720&q=80' };
+          if (s.name === '公司会议室') return { ...s, id: 'scene-1', image: createInstantAssetImage({ ...s, id: 'scene-1' }) };
+          if (s.name === '林星公寓') return { ...s, id: 'scene-2', image: createInstantAssetImage({ ...s, id: 'scene-2' }) };
         }
         if (s.type === 'prop') {
-          if (s.name === '复古相机') return { ...s, id: 'prop-1', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1280&h=720&q=80' };
-          if (s.name === '定情项链') return { ...s, id: 'prop-2', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1280&h=720&q=80' };
+          if (s.name === '复古相机') return { ...s, id: 'prop-1', image: createInstantAssetImage({ ...s, id: 'prop-1' }) };
+          if (s.name === '定情项链') return { ...s, id: 'prop-2', image: createInstantAssetImage({ ...s, id: 'prop-2' }) };
         }
         return s;
       });
@@ -1214,6 +1326,14 @@ onMounted(async () => {
     }
     normalizeAllSubjectImageHistories();
     console.log('检测到已有主体数据，保留历史记录，跳过自动生成。');
+
+    const snapshot = [...episodeStore.subjects];
+    for (const asset of snapshot) {
+      if (!shouldRepairAssetImage(asset.image)) continue;
+      const nextUrl = createInstantAssetImage(asset);
+      const patch = buildAssetImagePatch(asset, nextUrl);
+      episodeStore.updateSubject(asset.id, patch);
+    }
   }
 });
 
@@ -1243,7 +1363,7 @@ const startSequentialGeneration = async () => {
     if (sessionId !== generationSessionId.value) return;
     currentAssetInfo.value = steps[i];
     generationProgress.value = Math.round(((i + 1) / steps.length) * 100);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 160));
   }
 
   // Populate text info
@@ -1265,18 +1385,8 @@ const startSequentialGeneration = async () => {
 };
 
 const generateImagesForAssets = async (assets: any[], sessionId: number) => {
-  const mockImages: Record<string, string> = {
-    'char-1': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1280&h=720&q=80',
-    'char-2': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1280&h=720&q=80',
-    'scene-1': 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1280&h=720&q=80',
-    'scene-2': 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1280&h=720&q=80',
-    'prop-1': 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1280&h=720&q=80',
-    'prop-2': 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1280&h=720&q=80'
-  };
-
   for (const asset of assets) {
     if (sessionId !== generationSessionId.value) return;
-    const key = asset.id;
     const typePrefix = asset.type === 'character' ? 'char' : asset.type;
     const loadingKey = `${typePrefix}-${asset.id}`;
     generatingAssetImages.add(loadingKey);
@@ -1286,12 +1396,13 @@ const generateImagesForAssets = async (assets: any[], sessionId: number) => {
     else if (asset.type === 'scene') activeTab.value = 'scenes';
     else activeTab.value = 'props';
 
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Image generation takes longer
-    
-    // Update the image in store
-    const imageUrl = mockImages[key] || `https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=1280&h=720&seed=${asset.id}`;
-    const currentSubject = episodeStore.subjects.find(s => s.id === asset.id) || asset;
-    episodeStore.updateSubject(asset.id, buildAssetImagePatch(currentSubject, imageUrl) as any);
+    await new Promise(resolve => setTimeout(resolve, 120));
+    if (sessionId !== generationSessionId.value) return;
+
+    const prompt = `${asset.name}, ${asset.description}, realistic, high quality`;
+    const nextUrl = await generateImageAPI(prompt);
+    const patch = buildAssetImagePatch(asset, nextUrl);
+    episodeStore.updateSubject(asset.id, patch);
     
     generatingAssetImages.delete(loadingKey);
   }
