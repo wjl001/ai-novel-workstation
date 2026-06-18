@@ -228,6 +228,15 @@
         </button>
 
         <button 
+          @click="handleBatchDownload"
+          :disabled="!timelineScenes.some(s => s.video)"
+          class="h-9 px-4 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <el-icon><Download /></el-icon>
+          批量下载
+        </button>
+
+        <button 
           @click="handleSynthesis"
           :disabled="!canSynthesizeAll"
           class="h-9 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[13px] font-bold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
@@ -410,16 +419,8 @@
                 class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
                 :class="isEditingScript ? 'bg-white dark:bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-200/50' : 'bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 shadow-sm'"
               >
-                <!-- Read-only View -->
-                <div 
-                  v-if="!isEditingScript"
-                  class="px-6 py-4 text-[16px] text-slate-700 dark:text-slate-200 leading-[1.8] outline-none flex-1 overflow-y-auto custom-scrollbar cursor-text font-medium"
-                  v-html="currentScript"
-                >
-                </div>
-
                 <!-- Edit Mode (TipTap) -->
-                <div v-else class="flex-1 flex flex-col relative overflow-hidden px-6 py-4">
+                <div class="flex-1 flex flex-col relative overflow-hidden px-6 py-4">
                   <div class="flex-1 overflow-y-auto custom-scrollbar">
                     <editor-content :editor="editor" class="script-editor-content w-full h-full text-[16px]" />
                   </div>
@@ -433,10 +434,15 @@
                         class="fixed z-[9999] bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/50 dark:border-slate-700/50 p-2 min-w-[280px] max-w-[340px]"
                         :style="mentionMenuStyle"
                       >
-                        <div class="mb-2 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-                          <el-icon class="text-slate-400" size="14"><Search /></el-icon>
-                          <span class="text-[12px] text-slate-500 font-bold uppercase tracking-wider">快捷引用</span>
-                        </div>
+                    <div class="mb-2 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                      <el-icon class="text-slate-400" size="14"><Search /></el-icon>
+                      <input 
+                        v-model="mentionSearch"
+                        class="bg-transparent border-none outline-none text-[12px] text-slate-700 dark:text-slate-200 w-full font-bold placeholder:text-slate-400"
+                        placeholder="搜索主体或输入名称..."
+                        @keydown.enter.prevent="handleMentionSearchEnter"
+                      />
+                    </div>
 
                         <div class="flex gap-1 p-1 mb-2 bg-slate-100/50 dark:bg-slate-900/50 rounded-xl shrink-0 overflow-x-auto custom-scrollbar">
                           <button 
@@ -475,47 +481,31 @@
 
                 <!-- Action Buttons Area -->
                 <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
-                  <template v-if="!isEditingScript">
+                  <div class="flex-1 flex items-center">
                     <button 
-                      @click="handleEditScript"
-                      class="h-8 px-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 rounded-full text-[13px] font-black hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md flex items-center gap-2 group"
+                      @click="handleSyncSubjects"
+                      class="h-8 px-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-full text-[12px] font-black hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-2 group"
+                      title="将脚本中的主体名称同步为胶囊样式"
                     >
-                      <el-icon class="group-hover:rotate-12 transition-transform"><Edit /></el-icon>
-                      <span>编辑脚本</span>
+                      <el-icon class="group-hover:rotate-180 transition-transform duration-500"><RefreshRight /></el-icon>
+                      <span>同步主体</span>
                     </button>
-                    <button 
-                      @click="handleBatchGenerate"
-                      :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
-                    >
-                      <el-icon class="animate-pulse"><MagicStick /></el-icon>
-                      <span>重新生成分镜</span>
-                    </button>
-                    <button 
-                      @click="openCropDialog"
-                      :disabled="!currentPreview"
-                      class="h-8 px-6 rounded-full text-[13px] font-black transition-all shadow-md flex items-center gap-2 group"
-                      :class="currentPreview ? (isLight ? 'bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white shadow-sm' : 'bg-teal-500/10 text-teal-400 border border-teal-500/30 hover:bg-teal-500/20 shadow-[0_0_15px_rgba(20,184,166,0.1)]') : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
-                    >
-                      <el-icon class="group-hover:rotate-12 transition-transform"><Scissor /></el-icon>
-                      <span>分镜剪辑</span>
-                    </button>
-                  </template>
-                  <template v-else>
-                    <button 
-                      @click="handleCancelEdit"
-                      class="h-8 px-6 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[13px] font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
-                    >
-                      取消
-                    </button>
-                    <button 
-                      @click="handleSaveScriptInline"
-                      class="h-8 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
-                    >
-                      确认保存
-                    </button>
-                  </template>
+                  </div>
+                  <button 
+                    @click="handleBatchGenerate"
+                    :disabled="!timelineScenes[currentSceneIdx]?.modified"
+                    class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
+                    :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                  >
+                    <el-icon class="animate-pulse"><MagicStick /></el-icon>
+                    <span>重新生成分镜</span>
+                  </button>
+                  <button 
+                    @click="handleSaveScriptInline"
+                    class="h-8 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
+                  >
+                    确认保存
+                  </button>
                 </div>
               </div>
 
@@ -1406,11 +1396,13 @@ import {
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
   Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom
 } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useDramaStore } from '@/store/drama';
 import { useEpisodeStore } from '@/store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const route = useRoute();
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
@@ -1433,7 +1425,7 @@ const showGuide = ref(true);
 const currentSceneIdx = ref(0);
 const timelineContainer = ref<HTMLElement | null>(null);
 const showLibraryModal = ref(false);
-const isEditingScript = ref(false);
+const isEditingScript = ref(true);
 const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
@@ -1858,6 +1850,143 @@ const editor = useEditor({
     }
   }
 });
+
+const handleSyncSubjects = () => {
+  if (!editor.value) return;
+
+  const content = editor.value.getHTML();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, 'text/html');
+  let hasChanged = false;
+
+  // 收集所有需要替换的文本节点和对应的替换内容
+  const replacements: Array<{node: globalThis.Node, newContent: string}> = [];
+
+  // 递归遍历所有节点，收集需要替换的文本节点
+  const collectReplacements = (node: globalThis.Node | null) => {
+    if (!node) return;
+    
+    // 如果是元素节点，且不是 mention-pill 胶囊，则继续遍历子节点
+    if (node.nodeType === 1) { // Element Node
+      const element = node as globalThis.HTMLElement;
+      if (element.classList && element.classList.contains('mention-pill')) {
+        return; // 已经是胶囊的主体，跳过
+      }
+      Array.from(node.childNodes).forEach(child => collectReplacements(child));
+    } 
+    // 如果是文本节点，检查是否需要替换
+    else if (node.nodeType === 3) { // Text Node
+      const originalText = node.nodeValue || '';
+      let processedText = originalText;
+      let textChanged = false;
+
+      // 我们需要一次性处理所有主体的匹配，避免替换后影响其他匹配
+      // 创建一个映射来记录所有需要替换的位置和内容
+      const replaceMap: Array<{start: number, end: number, html: string}> = [];
+      
+      // 首先收集所有匹配的位置
+      subjects.value.forEach(s => {
+        const escapedName = s.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // 使用 (^|[^\w\u4e00-\u9fa5]) 替代 (?<![\w\u4e00-\u9fa5]) 以兼容不支持后行断言的浏览器
+        const regex = new RegExp(`(^|[^\\w\\u4e00-\\u9fa5])(${escapedName})(?![\\w\\u4e00-\\u9fa5])`, 'g');
+        
+        let match;
+        while ((match = regex.exec(originalText)) !== null) {
+          const prefix = match[1];
+          const actualStart = match.index + prefix.length;
+          const actualEnd = actualStart + match[2].length;
+          
+          let html = '';
+          if (s.type === 'character') {
+            html = `<span class="mention-pill role"><img src="${s.image || ''}" />${s.name}</span>`;
+          } else if (s.type === 'scene') {
+            html = `<span class="mention-pill location"><i class="location-icon"></i>${s.name}</span>`;
+          } else if (s.type === 'prop') {
+            html = `<span class="mention-pill prop"><i class="prop-icon"></i>${s.name}</span>`;
+          }
+          
+          if (html) {
+            replaceMap.push({
+              start: actualStart,
+              end: actualEnd,
+              html: html
+            });
+          }
+        }
+      });
+
+      // 过滤重叠的匹配，优先保留较长的匹配
+      if (replaceMap.length > 0) {
+        // 首先按 start 升序，end 降序排序
+        replaceMap.sort((a, b) => {
+          if (a.start !== b.start) return a.start - b.start;
+          return b.end - a.end; // start相同时，较长的排前面
+        });
+
+        const validMatches: Array<{start: number, end: number, html: string}> = [];
+        let currentEnd = 0;
+        for (const match of replaceMap) {
+          if (match.start >= currentEnd) {
+            validMatches.push(match);
+            currentEnd = match.end;
+          }
+        }
+
+        // 按开始位置从后往前排序进行替换
+        validMatches.sort((a, b) => b.start - a.start);
+        
+        processedText = originalText;
+        validMatches.forEach(replacement => {
+          const before = processedText.slice(0, replacement.start);
+          const after = processedText.slice(replacement.end);
+          processedText = before + replacement.html + after;
+        });
+        
+        textChanged = true;
+      }
+
+      if (textChanged) {
+        replacements.push({node, newContent: processedText});
+      }
+    }
+  };
+
+  collectReplacements(doc.body);
+
+  // 执行替换（从后往前替换，避免影响节点位置）
+  for (let i = replacements.length - 1; i >= 0; i--) {
+    const {node, newContent} = replacements[i];
+    
+    // 创建一个临时容器来转换 HTML 字符串为 DOM 节点
+    const temp = document.createElement('div');
+    temp.innerHTML = newContent;
+    
+    // 用转换后的节点替换原文本节点
+    const fragment = document.createDocumentFragment();
+    while (temp.firstChild) {
+      fragment.appendChild(temp.firstChild);
+    }
+    
+    // 安全地替换节点，确保父节点存在
+    if (node.parentNode) {
+      node.parentNode.replaceChild(fragment, node);
+      hasChanged = true;
+    }
+  }
+
+  if (hasChanged) {
+    editor.value.commands.setContent(doc.body.innerHTML);
+    ElMessage.success('主体同步完成（仅处理手写文本）');
+  } else {
+    ElMessage.info('未发现需要同步的手写主体名称');
+  }
+};
+
+const handleMentionSearchEnter = () => {
+  if (mentionItems.value.length > 0) {
+    insertMention(mentionItems.value[selectedMentionIndex.value]);
+  }
+};
 
 const insertMention = (item: any) => {
   if (!editor.value) return;
@@ -2997,6 +3126,96 @@ const handleBatchGenerate = () => {
   
   ElMessage.success(`开始批量生成 ${targets.length} 个分镜...`);
   targets.forEach(idx => handleGenerateSingleScene(idx));
+};
+
+const handleBatchDownload = async () => {
+  if (!timelineScenes.value.some(s => s.video)) {
+    ElMessage.warning('当前集暂无分镜视频可供下载');
+    return;
+  }
+  
+  const episodeTitle = episode.value?.title || '未命名剧集';
+  const loading = ElLoading.service({
+    lock: true,
+    text: `正在准备 ${episodeTitle} 的批量下载包...`,
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
+  try {
+    const zip = new JSZip();
+    const folder = zip.folder(episodeTitle);
+    
+    if (!folder) throw new Error('无法创建文件夹');
+
+    let manifestContent = `剧集批量下载清单\n`;
+    manifestContent += `====================================\n`;
+    manifestContent += `剧集名称: ${episodeTitle}\n`;
+    manifestContent += `下载时间: ${new Date().toLocaleString()}\n`;
+    manifestContent += `总计分镜数: ${timelineScenes.value.length}\n`;
+    manifestContent += `====================================\n\n`;
+    manifestContent += `文件列表:\n`;
+
+    const downloadPromises: Promise<void>[] = [];
+
+    timelineScenes.value.forEach((scene, sIdx) => {
+      if (scene.video) {
+        const sceneNum = sIdx + 1;
+        
+        // 1. 处理当前使用的视频
+        const currentFileName = `${sceneNum}-0.mp4`;
+        manifestContent += `- ${currentFileName} [当前使用] (源: ${scene.video})\n`;
+        
+        // 模拟下载视频内容 (由于跨域限制，实际环境中需后端支持或配置 CORS)
+        // 这里我们尝试抓取视频，如果失败则存入一个占位说明文件
+        const p1 = fetch(scene.video)
+          .then(res => res.blob())
+          .then(blob => {
+            folder.file(currentFileName, blob);
+          })
+          .catch(err => {
+            console.warn(`无法获取视频 ${currentFileName}:`, err);
+            folder.file(`${currentFileName}.readme.txt`, `由于跨域限制，无法直接打包此视频。请手动下载: ${scene.video}`);
+          });
+        downloadPromises.push(p1);
+
+        // 2. 模拟历史视频 (这里仅作逻辑展示，实际历史视频数据应从 scene.history 中获取)
+        // 假设每个分镜有 1 个历史视频
+        const historyFileName = `${sceneNum}-1.mp4`;
+        const mockHistoryUrl = `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4`;
+        manifestContent += `- ${historyFileName} [历史视频] (源: ${mockHistoryUrl})\n`;
+        
+        const p2 = fetch(mockHistoryUrl)
+          .then(res => res.blob())
+          .then(blob => {
+            folder.file(historyFileName, blob);
+          })
+          .catch(err => {
+            folder.file(`${historyFileName}.readme.txt`, `由于跨域限制，无法直接打包此视频。请手动下载: ${mockHistoryUrl}`);
+          });
+        downloadPromises.push(p2);
+      }
+    });
+
+    // 添加清单文件
+    folder.file('下载清单.txt', manifestContent);
+
+    // 等待所有文件处理完成
+    await Promise.all(downloadPromises);
+
+    // 生成 ZIP 并下载
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, `${episodeTitle}_全集分镜包.zip`);
+
+    ElMessage.success({
+      message: `打包成功！已下载包含清单和视频的压缩包。`,
+      duration: 3000
+    });
+  } catch (error) {
+    console.error('批量下载失败:', error);
+    ElMessage.error('批量下载过程中出现错误，请稍后重试');
+  } finally {
+    loading.close();
+  }
 };
 
 const handleSynthesis = () => {

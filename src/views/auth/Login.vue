@@ -248,7 +248,7 @@
                 <el-form-item prop="invitationCode">
                   <el-input 
                     v-model="regForm.invitationCode" 
-                    placeholder="请输入邀请码" 
+                    placeholder="请输入内侧码" 
                     size="large"
                     class="modern-input"
                   >
@@ -465,7 +465,7 @@ const regRules = {
     { required: true, message: '请设置密码', trigger: 'blur' },
     { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
   ],
-  invitationCode: [{ required: true, message: '请输入邀请码', trigger: 'blur' }],
+  invitationCode: [{ required: true, message: '请输入内侧码', trigger: 'blur' }],
   code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
   captcha: [{ required: true, message: '请输入图形验证码', trigger: 'blur' }]
 }
