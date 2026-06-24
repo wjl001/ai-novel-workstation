@@ -4,8 +4,8 @@
     <div class="absolute -top-28 -right-28 w-[520px] h-[520px] bg-indigo-200/35 dark:bg-indigo-900/20 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute top-32 -left-32 w-[420px] h-[420px] bg-purple-200/25 dark:bg-purple-900/15 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="max-w-7xl mx-auto w-full relative z-10 flex flex-col flex-1 min-h-0">
-      <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
+    <div class="w-full relative z-10 flex flex-col flex-1 min-h-0">
+      <div class="mb-6 px-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
         <div>
           <h2 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/25">
@@ -203,6 +203,13 @@
                 <el-icon><Document /></el-icon>
               </div>
               <span class="text-sm font-black text-slate-800 dark:text-slate-100">订单记录</span>
+              <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
+            </button>
+            <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'consumption'">
+              <div class="w-9 h-9 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center">
+                <el-icon><Coin /></el-icon>
+              </div>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力消耗明细</span>
               <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
             </button>
             <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'invoice'">
@@ -600,6 +607,124 @@
             </div>
           </section>
 
+          <section v-else-if="activeKey === 'consumption'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col">
+            <div class="flex items-center justify-between gap-4 shrink-0 mb-6">
+              <div class="flex items-center gap-3 min-w-0">
+                <button type="button" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors" @click="activeKey = 'overview'">
+                  <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
+                </button>
+                <div class="min-w-0">
+                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力消耗明细</div>
+                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    查看您的每一笔算力消耗详情
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <el-button round class="!rounded-2xl !font-black" @click="exportConsumption">导出报表</el-button>
+                <el-button round type="primary" class="!rounded-2xl !font-black" @click="activeKey = 'overview'">返回中心</el-button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6 bg-slate-50/50 dark:bg-slate-950/20 p-4 rounded-3xl border border-slate-200/50 dark:border-slate-800/50">
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">请求流水号</span>
+                <el-input v-model="consumptionFilter.id" placeholder="流水号" clearable class="modern-input" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">模型大类</span>
+                <el-select v-model="consumptionFilter.modelCategory" placeholder="全部" clearable class="modern-select">
+                  <el-option label="全部" value="" />
+                  <el-option label="图片" value="图片" />
+                  <el-option label="文本" value="文本" />
+                </el-select>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">模型名称</span>
+                <el-input v-model="consumptionFilter.modelName" placeholder="模型名称" clearable class="modern-input" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">短剧名称</span>
+                <el-input v-model="consumptionFilter.dramaName" placeholder="短剧名称" clearable class="modern-input" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">剧集名称</span>
+                <el-input v-model="consumptionFilter.episodeName" placeholder="剧集名称" clearable class="modern-input" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">扣费时间</span>
+                <el-date-picker
+                  v-model="consumptionFilter.dateRange"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始"
+                  end-placeholder="结束"
+                  class="modern-date-picker !w-full"
+                />
+              </div>
+            </div>
+
+            <div class="flex-1 min-h-0 overflow-hidden">
+              <el-table
+                :data="filteredConsumptionList"
+                height="100%"
+                class="modern-table"
+                size="small"
+                :header-cell-style="{
+                  background: 'rgba(148, 163, 184, 0.05)',
+                  borderBottom: '1px solid rgba(148, 163, 184, 0.25)',
+                  color: '#64748b',
+                  fontWeight: 900,
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '8px 0'
+                }"
+                :cell-style="{ padding: '4px 0', fontSize: '11px' }"
+              >
+                <el-table-column prop="id" label="请求流水号" min-width="130" show-overflow-tooltip />
+                <el-table-column prop="userId" label="用户编号" min-width="80" />
+                <el-table-column prop="modelCategory" label="模型大类" min-width="80">
+                  <template #default="{ row }">
+                    <el-tag :type="row.modelCategory === '图片' ? 'primary' : 'success'" size="small" effect="light" class="!rounded-lg !border-none !scale-90">
+                      {{ row.modelCategory }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="modelCode" label="模型编码" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="modelName" label="模型名称" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="sceneCode" label="功能场景编码" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="sceneName" label="功能场景名称" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="billingDimension" label="计费维度" min-width="100" />
+                <el-table-column prop="billingBase" label="计费基数" min-width="150" show-overflow-tooltip />
+                <el-table-column prop="dramaName" label="短剧名称" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="episodeName" label="剧集名称" min-width="100" show-overflow-tooltip />
+                <el-table-column prop="deductPoints" label="本次扣减" min-width="80">
+                  <template #default="{ row }">
+                    <span class="font-black text-rose-500">-{{ row.deductPoints }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="finalDeduct" label="最终扣减" min-width="80" />
+                <el-table-column prop="amount" label="消耗金额" min-width="80">
+                  <template #default="{ row }">
+                    <span class="font-bold">¥{{ row.amount.toFixed(3) }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="balanceBefore" label="前余额" min-width="90" />
+                <el-table-column prop="balanceAfter" label="后余额" min-width="90">
+                  <template #default="{ row }">
+                    <span class="font-black text-slate-800 dark:text-slate-200">{{ row.balanceAfter }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createdAt" label="扣费时间" min-width="140" fixed="right">
+                  <template #default="{ row }">
+                    <span class="text-slate-500 dark:text-slate-400 text-[10px]">{{ formatDateTime(row.createdAt) }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </section>
+
           <section v-else-if="activeKey === 'invoice'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col gap-6">
             <div>
               <div class="text-lg font-black text-slate-800 dark:text-slate-100">开票申请</div>
@@ -927,9 +1052,29 @@ import {
   Check
 } from '@element-plus/icons-vue'
 
-type NavKey = 'overview' | 'orders' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
+type NavKey = 'overview' | 'orders' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
 
 type OrderType = 'member' | 'recharge'
+
+interface ConsumptionDetail {
+  id: string              // 请求流水号
+  userId: string          // 用户编号
+  modelCategory: string   // 模型大类
+  modelCode: string       // 模型编码
+  modelName: string       // 模型名称
+  sceneCode: string       // 功能场景编码
+  sceneName: string       // 功能场景名称
+  billingDimension: string // 主计费维度
+  billingBase: string     // 计费基数描述
+  dramaName: string       // 短剧名称
+  episodeName: string     // 剧集名称
+  deductPoints: number    // 本次扣减算力豆
+  finalDeduct: number     // 最终扣减值
+  amount: number          // 消耗金额 (人民币)
+  balanceBefore: number   // 扣费前余额
+  balanceAfter: number    // 扣费后余额
+  createdAt: number       // 扣费时间
+}
 
 interface LocalOrder {
   id: string
@@ -982,20 +1127,95 @@ const themeStore = useThemeStore()
 
 const showDesignDialog = ref(false)
 
+const consumptionList = ref<ConsumptionDetail[]>([
+  {
+    id: 'IMG202606240012',
+    userId: 'U20001',
+    modelCategory: '图片',
+    modelCode: 'seedance-image-xl',
+    modelName: 'Seedance 超清文生图',
+    sceneCode: 'scene_playlist_storyboard',
+    sceneName: '短剧分镜生成',
+    billingDimension: '按图片张数计费',
+    billingBase: '生成 4K 高清分镜图 1 张',
+    dramaName: '都市逆袭之我当老板',
+    episodeName: '第 3 集：职场反转',
+    deductPoints: 12.5,
+    finalDeduct: 13,
+    amount: 0.089,
+    balanceBefore: 5680,
+    balanceAfter: 5667,
+    createdAt: 1782285817000 // 2026/6/24 14:12
+  },
+  {
+    id: 'TXT202606240007',
+    userId: 'U20001',
+    modelCategory: '文本',
+    modelCode: 'doubao-pro-32k',
+    modelName: '豆包专业版 32K',
+    sceneCode: 'scene_playlist_script',
+    sceneName: '短剧剧本生成',
+    billingDimension: '按 Token 计费',
+    billingBase: '输入 8000token / 输出 3500token / 计费 token:11500',
+    dramaName: '都市逆袭之我当老板',
+    episodeName: '第 3 集：职场反转',
+    deductPoints: 16.1,
+    finalDeduct: 17,
+    amount: 0.115,
+    balanceBefore: 5667,
+    balanceAfter: 5650,
+    createdAt: 1782285817000 - 3600000 // 1 hour before
+  }
+])
+
+const consumptionFilter = reactive({
+  id: '',
+  modelCategory: '',
+  modelName: '',
+  dramaName: '',
+  episodeName: '',
+  dateRange: [] as [Date, Date] | []
+})
+
+const filteredConsumptionList = computed(() => {
+  return consumptionList.value.filter(item => {
+    const matchId = !consumptionFilter.id || item.id.toLowerCase().includes(consumptionFilter.id.toLowerCase())
+    const matchCategory = !consumptionFilter.modelCategory || item.modelCategory === consumptionFilter.modelCategory
+    const matchModelName = !consumptionFilter.modelName || item.modelName.toLowerCase().includes(consumptionFilter.modelName.toLowerCase())
+    const matchDramaName = !consumptionFilter.dramaName || item.dramaName.toLowerCase().includes(consumptionFilter.dramaName.toLowerCase())
+    const matchEpisodeName = !consumptionFilter.episodeName || item.episodeName.toLowerCase().includes(consumptionFilter.episodeName.toLowerCase())
+    
+    let matchDate = true
+    if (consumptionFilter.dateRange && consumptionFilter.dateRange.length === 2) {
+      const start = consumptionFilter.dateRange[0].getTime()
+      const end = consumptionFilter.dateRange[1].getTime() + 86399999 // end of day
+      matchDate = item.createdAt >= start && item.createdAt <= end
+    }
+    
+    return matchId && matchCategory && matchModelName && matchDramaName && matchEpisodeName && matchDate
+  })
+})
+
+const exportConsumption = () => {
+  ElMessage.success('报表导出成功（演示版：已生成 Excel 任务）')
+}
+
 const memberCenterDesign = {
   title: '会员中心',
   location: '用户管理个人会员权益、算力豆余额及订单记录的核心枢纽，承载 C 端变现转化的关键功能。',
   layout: [
-    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、订单记录、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
+    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、订单记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
     '**总览页头部**：展示超级会员状态、核心权益标签及可用算力豆大数值显示。',
     '**会员套餐区**：支持“连续包月/按年购买”切换，并按业务线（短剧、视频、音乐、小说）分类展示不同档位套餐。',
-    '**算力包充值**：提供不同额度的算力豆充值包，并带有折扣标签提示。'
+    '**算力包充值**：提供不同额度的算力豆充值包，并带有折扣标签提示。',
+    '**算力消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
   ],
   interactions: [
     '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',
     '**支付确认弹窗**：点击“选择计划”或“立即充值”触发确认支付弹窗，展示金额及赠送算力豆详情。',
     '**订单记录详情**：点击订单列表项可展开查看详细订单号及开票入口。',
+    '**消耗明细查看**：支持横向滚动查看完整的消耗字段，并提供报表导出功能。',
     '**积分兑换**：在邀请返利页面，支持用户将积累的积分按 100:10 比例兑换为算力豆。'
   ]
 }
