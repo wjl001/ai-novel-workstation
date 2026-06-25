@@ -56,7 +56,7 @@
                 <span class="font-bold text-slate-800">片段 1</span>
                 <span class="text-[12px] text-slate-400">片段时长限制在 4-15s，输入 "@" 可快速调整镜头时长、引用角色、场景、素材</span>
               </div>
-              <span class="text-[12px] text-slate-400">分镜耗时消耗2积分，以实际生成为准</span>
+              <span class="text-[12px] text-slate-400">分镜耗时消耗2算力豆，以实际生成为准</span>
             </div>
             
             <div class="flex flex-col gap-6">
@@ -81,7 +81,7 @@
             <div v-for="i in 5" :key="i" class="flex-shrink-0 w-[160px] h-full rounded-lg border border-slate-100 bg-slate-50 flex flex-col items-center justify-center gap-2 relative group">
               <div v-if="i === 1 || i === 3" class="absolute inset-0 bg-red-50/50 flex flex-col items-center justify-center text-red-500 gap-1 p-2">
                 <el-icon><Warning /></el-icon>
-                <span class="text-[11px] text-center">积分不足，生成失败</span>
+                <span class="text-[11px] text-center">算力豆不足，生成失败</span>
               </div>
               <template v-else>
                 <el-icon class="text-slate-300"><VideoPlay /></el-icon>

@@ -32,8 +32,10 @@
              </el-button>
           </div>
           
-          <div class="flex-1 max-w-2xl mx-8">
-             <StepIndicator :active-index="0" class="!mb-0 scale-90 origin-center" />
+          <div class="flex-1 max-w-2xl mx-8 flex items-center gap-6">
+             <StepIndicator :active-index="0" class="!mb-0 scale-90 origin-center flex-1" />
+             <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+             <AIModelSelector v-model="form.textModel" type="text" />
           </div>
 
           <div class="flex items-center gap-2">
@@ -606,6 +608,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, inject, watch } from 'vue'
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { useRouter, useRoute } from 'vue-router'
 import ProjectList from '@/components/Common/ProjectList.vue'
 import StepIndicator from '@/components/StepIndicator.vue'
@@ -619,8 +622,13 @@ import {
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useLoreStore } from '@/stores/useLoreStore'
+import { useThemeStore } from '@/store/theme'
+import { useModelStore } from '@/store/models'
 import _ from 'lodash'
 
+const themeStore = useThemeStore()
+const modelStore = useModelStore()
+const isLight = computed(() => themeStore.isLight)
 const showPrototypeHelp = ref(false)
 const router = useRouter()
 const route = useRoute()
@@ -746,7 +754,8 @@ const form = reactive({
   characterInfo: '',
   synopsis: '',
   title: '',
-  requirements: ''
+  requirements: '',
+  textModel: modelStore.selectedTextModel
 })
 
 const rules = reactive<FormRules>({
@@ -873,7 +882,7 @@ const addCustomTag = () => {
   }
 }
 
-const isLight = inject('isLight', ref(false))
+// ... no code here, just removing ...
 
 watch(() => route.query.mode, (newMode) => {
   if (newMode === 'create') {
@@ -1125,6 +1134,7 @@ const proceedCreation = () => {
     style: form.styles.join(','),
     perspective: form.perspective,
     longMemory: form.longMemory,
+    textModel: form.textModel,
   })
 
   // Clear existing chapters to force new generation

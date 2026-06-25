@@ -82,9 +82,9 @@
         <div class="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center mb-4 group-hover:bg-orange-500 transition-colors">
           <el-icon class="text-2xl text-orange-500 dark:text-orange-400 group-hover:text-white transition-colors"><Coin /></el-icon>
         </div>
-        <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2 text-lg">积分流转</h4>
+        <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-2 text-lg">算力豆流转</h4>
         <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-          主账号负责统一购买积分。管理员或组管理员可将主账号积分灵活下发给子账号使用。
+          主账号负责统一购买算力豆。管理员或组管理员可将主账号算力豆灵活下发给子账号使用。
         </p>
       </div>
     </div>
@@ -113,14 +113,14 @@ const roleData = ref([
     roleName: '管理员',
     responsibility: '全局（团队）管理',
     managementScope: '跨组管理所有子账号',
-    assetPermissions: '可创作并管理所有项目的全部资产。支持下发积分。'
+    assetPermissions: '可创作并管理所有项目的全部资产。支持下发算力豆。'
   },
   {
     category: '管理类角色',
     roleName: '组管理员',
     responsibility: '局部（成员组）管理',
     managementScope: '管理组内子账号',
-    assetPermissions: '可创作并管理"本成员组"项目的全部资产。支持下发积分。'
+    assetPermissions: '可创作并管理"本成员组"项目的全部资产。支持下发算力豆。'
   },
   {
     category: '生产类角色',

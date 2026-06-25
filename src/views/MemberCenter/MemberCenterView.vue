@@ -20,7 +20,7 @@
               <span>产品设计说明</span>
             </button>
           </h2>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">管理会员、算力豆与订单，解锁更强创作能力</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">管理会员、算力豆与充值，解锁更强创作能力</p>
         </div>
 
         <div class="flex items-center gap-3">
@@ -56,7 +56,7 @@
               </div>
               <div class="flex-1 text-left">
                 <div class="text-sm font-black">我的会员中心</div>
-                <div class="text-[11px] font-bold opacity-80">算力豆/会员/订单控制台</div>
+                <div class="text-[11px] font-bold opacity-80">算力豆/会员/充值控制台</div>
               </div>
               <el-icon class="opacity-80"><ArrowRight /></el-icon>
             </button>
@@ -141,24 +141,6 @@
                 super
               </button>
             </div>
-
-            <div class="mt-4 rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/20 p-4">
-                <div class="flex items-center justify-between">
-                  <div class="text-xs font-black text-slate-500 dark:text-slate-400">算力豆折扣</div>
-                  <div class="text-xs font-black text-slate-800 dark:text-slate-100">{{ superDiscount.toFixed(1) }}折</div>
-                </div>
-              <div class="mt-3 flex items-center gap-2">
-                <el-button round class="!h-9 !rounded-2xl !font-black" @click="activeKey = 'overview'">查看套餐</el-button>
-                <el-button
-                  round
-                  type="primary"
-                  class="!h-9 !rounded-2xl !border-none !bg-gradient-to-r !from-amber-500 !to-orange-600 !text-white !font-black shadow-lg shadow-amber-500/15"
-                  @click="openPurchaseSuper()"
-                >
-                  {{ isSuperMember ? '续费升级' : '立即升级' }}
-                </el-button>
-              </div>
-            </div>
           </div>
 
           <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/85 dark:bg-slate-900/60 backdrop-blur-xl shadow-sm p-5">
@@ -185,24 +167,14 @@
                 <span class="font-black text-amber-600 dark:text-amber-300">0</span>
               </div>
             </div>
-            <div class="mt-4 flex items-center gap-2">
-              <el-button
-                round
-                class="flex-1 !h-10 !rounded-2xl !border-none !bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white !font-black shadow-lg shadow-indigo-500/15"
-                @click="openRechargeQuick()"
-              >
-                立即充值
-              </el-button>
-              <el-button round class="!h-10 !rounded-2xl !font-black" @click="activeKey = 'orders'">订单记录</el-button>
-            </div>
           </div>
 
           <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/85 dark:bg-slate-900/60 backdrop-blur-xl shadow-sm p-2">
-            <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'orders'">
+            <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'recharge-records'">
               <div class="w-9 h-9 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 flex items-center justify-center">
                 <el-icon><Document /></el-icon>
               </div>
-              <span class="text-sm font-black text-slate-800 dark:text-slate-100">订单记录</span>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-100">充值记录</span>
               <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
             </button>
             <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'consumption'">
@@ -289,7 +261,7 @@
                       {{ isSuperMember ? `到期时间：${formatDate(memberState.superExpireAt)}` : '未开通：开通后可享受算力豆折扣与优先权益' }}
                     </div>
                     <div class="mt-5 flex items-center gap-2">
-                      <el-button round class="!h-10 !rounded-2xl !font-black" @click="activeKey = 'orders'">订单记录</el-button>
+                      <el-button round class="!h-10 !rounded-2xl !font-black" @click="activeKey = 'recharge-records'">充值记录</el-button>
                       <el-button
                         round
                         type="primary"
@@ -360,8 +332,15 @@
                 <div
                   v-for="tier in activeTiers"
                   :key="tier.id"
-                  class="relative rounded-3xl border transition-all flex flex-col"
-                  :class="tier.id === 'pro' || tier.id === 'flagship' ? 'border-indigo-500/30 bg-gradient-to-b from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-slate-900 shadow-lg shadow-indigo-500/5' : 'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900'"
+                  class="relative rounded-3xl border transition-all flex flex-col cursor-pointer hover:translate-y-[-4px]"
+                  :class="[
+                    selectedTierId === tier.id 
+                      ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-indigo-50/30 dark:bg-indigo-950/20 shadow-xl shadow-indigo-500/10' 
+                      : (tier.id === 'pro' || tier.id === 'flagship' 
+                          ? 'border-indigo-500/30 bg-gradient-to-b from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-slate-900 shadow-lg shadow-indigo-500/5' 
+                          : 'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900')
+                  ]"
+                  @click="selectedTierId = tier.id"
                 >
                   <div v-if="tier.badge" class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[11px] font-black shadow-sm"
                     :class="tier.id === 'flagship' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'">
@@ -414,7 +393,7 @@
               <div class="flex items-start justify-between gap-4">
                 <div>
                   <div class="text-lg font-black text-slate-900 dark:text-white">算力豆充值套餐</div>
-                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">即时到账；订单可在“订单记录”查看</div>
+                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">即时到账；订单可在“充值记录”查看</div>
                 </div>
                 <button type="button" class="text-sm font-black text-cyan-600 dark:text-cyan-300 hover:underline" @click="ElMessage.info('演示版：可扩展完整充值包与支付方式')">
                   查看完整充值包
@@ -450,53 +429,68 @@
             </div>
           </section>
 
-          <section v-else-if="activeKey === 'orders'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col">
+          <section v-else-if="activeKey === 'recharge-records'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col">
             <div class="flex items-center justify-between gap-4 shrink-0">
               <div class="flex items-center gap-3 min-w-0">
                 <button type="button" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors" @click="activeKey = 'overview'">
                   <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
                 </button>
                 <div class="min-w-0">
-                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">订单记录</div>
+                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">充值记录</div>
                   <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    <span class="font-black">{{ filteredOrders.length }}</span> 条订单
+                    <span class="font-black">{{ filteredOrders.length }}</span> 条充值记录
                   </div>
                 </div>
               </div>
               <el-button round class="!rounded-2xl !font-black" @click="activeKey = 'overview'">返回会员中心</el-button>
             </div>
 
-            <div v-if="isDark" class="mt-5 flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                class="px-4 py-2 rounded-2xl text-sm font-black border transition-all"
-                :class="orderFilter === 'all' ? 'bg-sky-500/15 text-sky-300 border-sky-500/30' : 'bg-slate-950/10 text-slate-300 border-slate-700 hover:border-slate-500'"
-                @click="orderFilter = 'all'"
-              >
-                全部
-              </button>
-              <button
-                type="button"
-                class="px-4 py-2 rounded-2xl text-sm font-black border transition-all"
-                :class="orderFilter === 'member' ? 'bg-sky-500/15 text-sky-300 border-sky-500/30' : 'bg-slate-950/10 text-slate-300 border-slate-700 hover:border-slate-500'"
-                @click="orderFilter = 'member'"
-              >
-                会员订单
-              </button>
-              <button
-                type="button"
-                class="px-4 py-2 rounded-2xl text-sm font-black border transition-all"
-                :class="orderFilter === 'recharge' ? 'bg-sky-500/15 text-sky-300 border-sky-500/30' : 'bg-slate-950/10 text-slate-300 border-slate-700 hover:border-slate-500'"
-                @click="orderFilter = 'recharge'"
-              >
-                算力豆订单
-              </button>
+            <div class="mt-5 flex flex-col md:flex-row items-center gap-4 shrink-0">
+              <div class="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-2xl">
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-xl text-sm font-black transition-all"
+                  :class="orderFilter === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                  @click="orderFilter = 'all'"
+                >
+                  全部
+                </button>
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-xl text-sm font-black transition-all"
+                  :class="orderFilter === 'member' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                  @click="orderFilter = 'member'"
+                >
+                  充值套餐记录
+                </button>
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-xl text-sm font-black transition-all"
+                  :class="orderFilter === 'recharge' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                  @click="orderFilter = 'recharge'"
+                >
+                  充值算力豆记录
+                </button>
+              </div>
+              
+              <div class="flex-1 w-full md:w-auto">
+                <el-input
+                  v-model="rechargeSearchQuery"
+                  placeholder="搜索订单号或商品名称"
+                  class="modern-input"
+                  clearable
+                >
+                  <template #prefix>
+                    <el-icon><Search /></el-icon>
+                  </template>
+                </el-input>
+              </div>
             </div>
 
             <div class="mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
               <template v-if="isDark">
                 <div v-if="filteredOrders.length === 0" class="rounded-3xl border border-slate-700 bg-slate-950/20 p-10 text-center">
-                  <div class="text-sm font-black text-slate-200">暂无订单</div>
+                  <div class="text-sm font-black text-slate-200">暂无记录</div>
                   <div class="mt-2 text-xs text-slate-400">开通会员或充值算力豆后会在此显示</div>
                   <el-button round class="mt-6 !rounded-2xl !font-black !border-none !bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white shadow-lg shadow-indigo-500/15" @click="activeKey = 'overview'">
                     去开通/充值
@@ -608,7 +602,7 @@
           </section>
 
           <section v-else-if="activeKey === 'consumption'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col">
-            <div class="flex items-center justify-between gap-4 shrink-0 mb-6">
+            <div class="flex items-center justify-between gap-4 shrink-0">
               <div class="flex items-center gap-3 min-w-0">
                 <button type="button" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors" @click="activeKey = 'overview'">
                   <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
@@ -616,17 +610,17 @@
                 <div class="min-w-0">
                   <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力消耗明细</div>
                   <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    查看您的每一笔算力消耗详情
+                    <span class="font-black">{{ filteredConsumptionList.length }}</span> 条消耗记录
                   </div>
                 </div>
               </div>
               <div class="flex items-center gap-2">
                 <el-button round class="!rounded-2xl !font-black" @click="exportConsumption">导出报表</el-button>
-                <el-button round type="primary" class="!rounded-2xl !font-black" @click="activeKey = 'overview'">返回中心</el-button>
+                <el-button round class="!rounded-2xl !font-black" @click="activeKey = 'overview'">返回会员中心</el-button>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6 bg-slate-50/50 dark:bg-slate-950/20 p-4 rounded-3xl border border-slate-200/50 dark:border-slate-800/50">
+            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 shrink-0 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-2xl">
               <div class="flex flex-col gap-1.5">
                 <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">请求流水号</span>
                 <el-input v-model="consumptionFilter.id" placeholder="流水号" clearable class="modern-input" />
@@ -664,64 +658,151 @@
               </div>
             </div>
 
-            <div class="flex-1 min-h-0 overflow-hidden">
-              <el-table
-                :data="filteredConsumptionList"
-                height="100%"
-                class="modern-table"
-                size="small"
-                :header-cell-style="{
-                  background: 'rgba(148, 163, 184, 0.05)',
-                  borderBottom: '1px solid rgba(148, 163, 184, 0.25)',
-                  color: '#64748b',
-                  fontWeight: 900,
-                  fontSize: '11px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  padding: '8px 0'
-                }"
-                :cell-style="{ padding: '4px 0', fontSize: '11px' }"
-              >
-                <el-table-column prop="id" label="请求流水号" min-width="130" show-overflow-tooltip />
-                <el-table-column prop="userId" label="用户编号" min-width="80" />
-                <el-table-column prop="modelCategory" label="模型大类" min-width="80">
-                  <template #default="{ row }">
-                    <el-tag :type="row.modelCategory === '图片' ? 'primary' : 'success'" size="small" effect="light" class="!rounded-lg !border-none !scale-90">
-                      {{ row.modelCategory }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="modelCode" label="模型编码" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="modelName" label="模型名称" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="sceneCode" label="功能场景编码" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="sceneName" label="功能场景名称" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="billingDimension" label="计费维度" min-width="100" />
-                <el-table-column prop="billingBase" label="计费基数" min-width="150" show-overflow-tooltip />
-                <el-table-column prop="dramaName" label="短剧名称" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="episodeName" label="剧集名称" min-width="100" show-overflow-tooltip />
-                <el-table-column prop="deductPoints" label="本次扣减" min-width="80">
-                  <template #default="{ row }">
-                    <span class="font-black text-rose-500">-{{ row.deductPoints }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="finalDeduct" label="最终扣减" min-width="80" />
-                <el-table-column prop="amount" label="消耗金额" min-width="80">
-                  <template #default="{ row }">
-                    <span class="font-bold">¥{{ row.amount.toFixed(3) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="balanceBefore" label="前余额" min-width="90" />
-                <el-table-column prop="balanceAfter" label="后余额" min-width="90">
-                  <template #default="{ row }">
-                    <span class="font-black text-slate-800 dark:text-slate-200">{{ row.balanceAfter }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="createdAt" label="扣费时间" min-width="140" fixed="right">
-                  <template #default="{ row }">
-                    <span class="text-slate-500 dark:text-slate-400 text-[10px]">{{ formatDateTime(row.createdAt) }}</span>
-                  </template>
-                </el-table-column>
-              </el-table>
+            <div class="mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
+              <template v-if="isDark">
+                <div v-if="filteredConsumptionList.length === 0" class="rounded-3xl border border-slate-700 bg-slate-950/20 p-10 text-center">
+                  <div class="text-sm font-black text-slate-200">暂无消耗记录</div>
+                </div>
+
+                <div v-else class="flex flex-col gap-3">
+                  <div v-for="c in filteredConsumptionList" :key="c.id" class="rounded-3xl border border-slate-700 bg-slate-950/20 overflow-hidden">
+                    <button
+                      type="button"
+                      class="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-white/5 transition-colors"
+                      @click="expandedConsumption[c.id] = !expandedConsumption[c.id]"
+                    >
+                      <div
+                        class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+                        :class="c.modelCategory === '图片' ? 'bg-indigo-500/15 text-indigo-300' : 'bg-emerald-500/15 text-emerald-300'"
+                      >
+                        <el-icon>
+                          <Picture v-if="c.modelCategory === '图片'" />
+                          <Document v-else />
+                        </el-icon>
+                      </div>
+
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                          <div class="text-sm font-black text-slate-100 truncate">{{ c.modelName }}</div>
+                          <el-tag :type="c.modelCategory === '图片' ? 'primary' : 'success'" size="small" effect="dark" class="!rounded-lg !border-none !scale-90">
+                            {{ c.modelCategory }}
+                          </el-tag>
+                        </div>
+                        <div class="mt-1 text-xs text-slate-400 truncate">
+                          {{ c.sceneName }} · {{ c.dramaName ? `${c.dramaName} - ${c.episodeName}` : '通用场景' }}
+                        </div>
+                        <div class="mt-1 text-xs text-slate-500">{{ formatDateTime(c.createdAt) }}</div>
+                      </div>
+
+                      <div class="flex flex-col items-end gap-2 shrink-0">
+                        <div class="text-base font-black text-rose-400">-{{ c.deductPoints }} 算力豆</div>
+                        <el-icon class="text-slate-400 transition-transform" :class="expandedConsumption[c.id] ? 'rotate-180' : ''"><ArrowDown /></el-icon>
+                      </div>
+                    </button>
+
+                    <div v-if="expandedConsumption[c.id]" class="px-5 pb-5 pt-0">
+                      <div class="mt-2 rounded-3xl border border-slate-700 bg-slate-950/30 p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 text-xs">
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">流水号</span>
+                            <span class="text-slate-200 font-black">{{ c.id }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">用户编号</span>
+                            <span class="text-slate-200 font-black">{{ c.userId }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">模型编码</span>
+                            <span class="text-slate-200 font-black truncate max-w-[120px]">{{ c.modelCode }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">场景编码</span>
+                            <span class="text-slate-200 font-black truncate max-w-[120px]">{{ c.sceneCode }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">计费维度</span>
+                            <span class="text-slate-200 font-black">{{ c.billingDimension }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">计费基数</span>
+                            <span class="text-slate-200 font-black truncate max-w-[150px]">{{ c.billingBase }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">最终扣减</span>
+                            <span class="text-slate-200 font-black">{{ c.finalDeduct }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">消耗金额</span>
+                            <span class="text-slate-200 font-black">¥{{ c.amount.toFixed(3) }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">消耗前余额</span>
+                            <span class="text-slate-200 font-black">{{ c.balanceBefore }}</span>
+                          </div>
+                          <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-400">消耗后余额</span>
+                            <span class="text-cyan-300 font-black">{{ c.balanceAfter }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <template v-else>
+                <el-table
+                  :data="filteredConsumptionList"
+                  height="100%"
+                  class="modern-table"
+                  :header-cell-style="{
+                    background: 'transparent',
+                    borderBottom: '1px solid rgba(148, 163, 184, 0.25)',
+                    color: '#94a3b8',
+                    fontWeight: 900
+                  }"
+                >
+                  <el-table-column prop="id" label="请求流水号" min-width="140" show-overflow-tooltip />
+                  <el-table-column prop="userId" label="用户编号" min-width="90" />
+                  <el-table-column prop="modelCategory" label="模型大类" min-width="90">
+                    <template #default="{ row }">
+                      <el-tag :type="row.modelCategory === '图片' ? 'primary' : 'success'" size="small" class="!rounded-lg">
+                        {{ row.modelCategory }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="modelCode" label="模型编码" min-width="130" show-overflow-tooltip />
+                  <el-table-column prop="modelName" label="模型名称" min-width="150" show-overflow-tooltip />
+                  <el-table-column prop="sceneCode" label="场景编码" min-width="130" show-overflow-tooltip />
+                  <el-table-column prop="sceneName" label="场景名称" min-width="130" show-overflow-tooltip />
+                  <el-table-column prop="billingDimension" label="计费维度" min-width="110" />
+                  <el-table-column prop="billingBase" label="计费基数" min-width="160" show-overflow-tooltip />
+                  <el-table-column prop="dramaName" label="短剧名称" min-width="130" show-overflow-tooltip />
+                  <el-table-column prop="episodeName" label="剧集名称" min-width="110" show-overflow-tooltip />
+                  <el-table-column prop="deductPoints" label="本次扣减" min-width="90">
+                    <template #default="{ row }">
+                      <span class="font-black text-rose-500">-{{ row.deductPoints }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="finalDeduct" label="最终扣减" min-width="90" />
+                  <el-table-column prop="amount" label="消耗金额" min-width="90">
+                    <template #default="{ row }">
+                      <span class="font-bold text-slate-700">¥{{ row.amount.toFixed(3) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="balanceBefore" label="前余额" min-width="100" />
+                  <el-table-column prop="balanceAfter" label="后余额" min-width="100">
+                    <template #default="{ row }">
+                      <span class="font-black text-slate-800">{{ row.balanceAfter }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="createdAt" label="扣费时间" min-width="160" fixed="right">
+                    <template #default="{ row }">
+                      <span class="text-slate-500">{{ formatDateTime(row.createdAt) }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
             </div>
           </section>
 
@@ -892,7 +973,7 @@
           <section v-else-if="activeKey === 'invite'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col gap-6">
             <div>
               <div class="text-lg font-black text-slate-800 dark:text-slate-100">邀请返利</div>
-              <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">邀请好友注册，双方均可获得丰厚积分奖励。积分可按固定比例兑换算力豆。</div>
+              <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">邀请好友注册，双方均可获得丰厚算力豆奖励。</div>
             </div>
 
             <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/20 p-6 flex flex-col items-center justify-center py-10">
@@ -901,8 +982,7 @@
               </div>
               <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">生成您的专属邀请码</h3>
               <p class="text-sm text-slate-500 dark:text-slate-400 text-center max-w-md mb-6">
-                将邀请码分享给新用户。每成功邀请一位好友，您将获得 <span class="font-black text-amber-500">200 积分</span>奖励。<br/>
-                <span class="text-xs">提示：100 积分 = 10 算力豆（固定兑换）</span>
+                将邀请码分享给新用户。每成功邀请一位好友，您将获得 <span class="font-black text-amber-500">20 算力豆</span>奖励。
               </p>
               
               <div v-if="inviteCode" class="flex flex-col items-center">
@@ -928,30 +1008,30 @@
             </div>
             
             <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-5">
-              <div class="text-sm font-black text-slate-800 dark:text-slate-100 mb-4">积分兑换算力豆</div>
+              <div class="text-sm font-black text-slate-800 dark:text-slate-100 mb-4">领取邀请奖励</div>
               <div class="flex items-center gap-4">
                 <div class="flex-1 bg-slate-50 dark:bg-slate-950/50 rounded-2xl p-4 flex justify-between items-center">
                   <div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">当前积分</div>
-                    <div class="text-2xl font-black text-amber-500 mt-1">{{ currentPoints }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">待领取算力豆</div>
+                    <div class="text-2xl font-black text-amber-500 mt-1">{{ pendingBeans }}</div>
                   </div>
                   <el-icon class="text-2xl text-slate-300 dark:text-slate-600"><ArrowRight /></el-icon>
                   <div class="text-right">
-                    <div class="text-xs text-slate-500 dark:text-slate-400">可兑换算力豆</div>
-                    <div class="text-2xl font-black text-cyan-500 mt-1">{{ Math.floor(currentPoints / 100) * 10 }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">总可用算力豆</div>
+                    <div class="text-2xl font-black text-cyan-500 mt-1">{{ memberState.points }}</div>
                   </div>
                 </div>
                 <el-button
                   round
                   class="!h-12 !px-6 !rounded-2xl !font-black"
                   type="primary"
-                  :disabled="currentPoints < 100"
-                  @click="exchangePoints"
+                  :disabled="pendingBeans <= 0"
+                  @click="claimPendingBeans"
                 >
-                  立即兑换
+                  立即领取
                 </el-button>
               </div>
-              <div class="mt-3 text-xs text-slate-400">规则：100 积分 = 10 算力豆，不足 100 积分部分不可兑换。积分不可直接抵扣算力。</div>
+              <div class="mt-3 text-xs text-slate-400">规则：成功邀请好友后，奖励的算力豆将发放至“待领取”账户，点击领取后可进入可用余额。</div>
             </div>
           </section>
           
@@ -1044,6 +1124,7 @@ import {
   Picture,
   Phone,
   Reading,
+  Search,
   StarFilled,
   Share,
   SwitchButton,
@@ -1052,7 +1133,7 @@ import {
   Check
 } from '@element-plus/icons-vue'
 
-type NavKey = 'overview' | 'orders' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
+type NavKey = 'overview' | 'recharge-records' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
 
 type OrderType = 'member' | 'recharge'
 
@@ -1202,9 +1283,9 @@ const exportConsumption = () => {
 
 const memberCenterDesign = {
   title: '会员中心',
-  location: '用户管理个人会员权益、算力豆余额及订单记录的核心枢纽，承载 C 端变现转化的关键功能。',
+  location: '用户管理个人会员权益、算力豆余额及充值记录的核心枢纽，承载 C 端变现转化的关键功能。',
   layout: [
-    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、订单记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
+    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
     '**总览页头部**：展示超级会员状态、核心权益标签及可用算力豆大数值显示。',
     '**会员套餐区**：支持“连续包月/按年购买”切换，并按业务线（短剧、视频、音乐、小说）分类展示不同档位套餐。',
@@ -1214,17 +1295,19 @@ const memberCenterDesign = {
   interactions: [
     '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',
     '**支付确认弹窗**：点击“选择计划”或“立即充值”触发确认支付弹窗，展示金额及赠送算力豆详情。',
-    '**订单记录详情**：点击订单列表项可展开查看详细订单号及开票入口。',
+    '**充值记录详情**：点击充值列表项可展开查看详细订单号及开票入口。',
     '**消耗明细查看**：支持横向滚动查看完整的消耗字段，并提供报表导出功能。',
-    '**积分兑换**：在邀请返利页面，支持用户将积累的积分按 100:10 比例兑换为算力豆。'
+    '**算力豆领取**：在邀请返利页面，支持用户将获得的算力豆奖励领取到可用余额。'
   ]
 }
 
 const activeKey = ref<NavKey>('overview')
 const orderFilter = ref<OrderType | 'all'>('all')
+const rechargeSearchQuery = ref('')
 
 const billingCycle = ref<'monthly' | 'yearly'>('monthly')
 const membershipType = ref<'short-drama' | 'short-video' | 'music' | 'novel' | 'batch'>('short-drama')
+const selectedTierId = ref('pro')
 
 const membershipTypes = [
   { id: 'short-drama', name: 'AI短剧会员' },
@@ -1249,7 +1332,7 @@ const getTierFeatures = (tier: any) => {
   const isVideoOrDrama = ['short-drama', 'short-video', 'batch'].includes(membershipType.value)
   const baseFeatures = [
     `${tier.concurrent}个并发任务`,
-    '每日签到可领取积分',
+    '每日签到可领取算力豆',
     '支持创建与管理团队，并可分配团队算力豆',
     '去水印导出',
     '访问所有图片模型',
@@ -1289,7 +1372,7 @@ const openPurchaseTier = (tier: any) => {
 }
 
 const inviteCode = ref('')
-const currentPoints = ref(500) // Mock points
+const pendingBeans = ref(50) // Mock pending beans (was 500 points)
 
 const generateInviteCode = () => {
   inviteCode.value = 'AI' + Math.random().toString(36).substring(2, 8).toUpperCase()
@@ -1302,17 +1385,17 @@ const copyInviteCode = () => {
   ElMessage.success('邀请链接已复制到剪贴板')
 }
 
-const exchangePoints = () => {
-  if (currentPoints.value < 100) return
-  const exchangeable = Math.floor(currentPoints.value / 100) * 100
-  const gainedBeans = (exchangeable / 100) * 10
-  currentPoints.value -= exchangeable
+const claimPendingBeans = () => {
+  if (pendingBeans.value <= 0) return
+  const gainedBeans = pendingBeans.value
+  pendingBeans.value = 0
   memberState.points += gainedBeans
-  ElMessage.success(`成功使用 ${exchangeable} 积分兑换了 ${gainedBeans} 算力豆`)
+  ElMessage.success(`成功领取了 ${gainedBeans} 算力豆`)
   saveState()
 }
 
 const expandedOrders = reactive<Record<string, boolean>>({})
+const expandedConsumption = reactive<Record<string, boolean>>({})
 const selectedMemberKey = ref<'music' | 'short-drama' | 'super'>('super')
 
 const isDark = computed(() => themeStore.isDark)
@@ -1330,8 +1413,21 @@ const isSuperMember = computed(() => {
 })
 
 const filteredOrders = computed(() => {
-  if (orderFilter.value === 'all') return memberState.orders
-  return memberState.orders.filter(o => o.type === orderFilter.value)
+  let orders = memberState.orders
+  
+  if (orderFilter.value !== 'all') {
+    orders = orders.filter(o => o.type === orderFilter.value)
+  }
+  
+  if (rechargeSearchQuery.value.trim()) {
+    const q = rechargeSearchQuery.value.toLowerCase()
+    orders = orders.filter(o => 
+      o.id.toLowerCase().includes(q) || 
+      o.title.toLowerCase().includes(q)
+    )
+  }
+  
+  return orders
 })
 
 const superDiscount = computed(() => (isSuperMember.value ? 7.5 : 10))
@@ -1424,7 +1520,7 @@ const tutorialSteps = computed(() => {
   return [
     { title: '开通会员', desc: '在“我的会员”选择单品或超级会员，完成支付后立即生效。', icon: GoldMedal, iconBg: 'bg-gradient-to-br from-amber-500 to-orange-600' },
     { title: '充值算力', desc: '选择算力豆包一键充值，算力豆用于生成/优化/素材等功能。', icon: Coin, iconBg: 'bg-gradient-to-br from-indigo-500 to-purple-600' },
-    { title: '查看订单', desc: '在“订单记录”查看开通/充值记录，并可快速发起开票。', icon: Document, iconBg: 'bg-gradient-to-br from-sky-500 to-indigo-600' },
+    { title: '查看充值', desc: '在“充值记录”查看开通/充值记录，并可快速发起开票。', icon: Document, iconBg: 'bg-gradient-to-br from-sky-500 to-indigo-600' },
     { title: '开票申请', desc: '选择关联订单填写抬头与邮箱提交申请，便于财务归档。', icon: StarFilled, iconBg: 'bg-gradient-to-br from-emerald-500 to-teal-600' }
   ]
 })

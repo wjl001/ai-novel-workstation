@@ -370,7 +370,7 @@ const deleteMember = (id: number) => {
   ElMessage.success('删除成功')
 }
 
-// 积分下发弹窗逻辑
+// 算力豆下发弹窗逻辑
 const pointsDialogVisible = ref(false)
 const pointsForm = reactive({
   id: 0,

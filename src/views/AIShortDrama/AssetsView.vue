@@ -59,32 +59,8 @@
             <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">主体资产管理</span>
           </div>
           <div class="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-1"></div>
-          <!-- Background Generation Status -->
-        <div v-if="isGeneratingAssetsText" class="flex items-center gap-3 px-4 py-1.5 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-500/20 rounded-full animate-in fade-in slide-in-from-left-4 duration-500 mr-4">
-          <div class="relative flex items-center justify-center">
-            <el-icon class="is-loading text-indigo-600 dark:text-indigo-400" :size="14"><Loading /></el-icon>
-          </div>
-          <div class="flex flex-col">
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">正在分析资产...</span>
-              <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{{ generationProgress }}%</span>
-            </div>
-            <div class="w-24 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mt-0.5 overflow-hidden">
-              <div 
-                class="h-full bg-indigo-500 transition-all duration-500"
-                :style="{ width: generationProgress + '%' }"
-              ></div>
-            </div>
-          </div>
-          <button 
-            @click="isGeneratingAssetsText = true" 
-            class="ml-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"
-          >
-            <el-icon :size="12"><FullScreen /></el-icon>
-          </button>
-        </div>
-
-        <el-dropdown trigger="click" @command="handleEpisodeSwitch">
+          
+          <el-dropdown trigger="click" @command="handleEpisodeSwitch">
             <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
               <h1 class="text-[13px] font-black text-slate-600 dark:text-slate-300 truncate max-w-[200px] group-hover:text-indigo-600 transition-colors">
                 <template v-if="episodeNotFound">暂无剧集</template>
@@ -107,8 +83,40 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <div class="w-px h-8 bg-slate-100 dark:bg-slate-700/50 mx-4"></div>
+          
+          <div class="w-px h-8 bg-slate-100 dark:bg-slate-700/50 mx-2"></div>
+          
+          <!-- Background Generation Status -->
+          <div v-if="isGeneratingAssetsText" class="flex items-center gap-3 px-4 py-1.5 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-500/20 rounded-full animate-in fade-in slide-in-from-left-4 duration-500">
+            <div class="relative flex items-center justify-center">
+              <el-icon class="is-loading text-indigo-600 dark:text-indigo-400" :size="14"><Loading /></el-icon>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">正在分析资产...</span>
+                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{{ generationProgress }}%</span>
+              </div>
+              <div class="w-24 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mt-0.5 overflow-hidden">
+                <div 
+                  class="h-full bg-indigo-500 transition-all duration-500"
+                  :style="{ width: generationProgress + '%' }"
+                ></div>
+              </div>
+            </div>
+            <button 
+              @click="isGeneratingAssetsText = true" 
+              class="ml-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"
+            >
+              <el-icon :size="12"><FullScreen /></el-icon>
+            </button>
+          </div>
         </div>
+
+      </div>
+
+      <!-- Model Selector Overlay - Aligned with Script Title Row -->
+      <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
+        <AIModelSelector v-model="modelStore.selectedImageModel" type="image" />
       </div>
 
       <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
@@ -797,7 +805,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { useModelStore } from '@/store/models';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu } from '@element-plus/icons-vue';
+
+const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';

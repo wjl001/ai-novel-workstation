@@ -149,6 +149,7 @@
                          <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
                            <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
                          </span>
+                         <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
                          <button 
                           class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                           :disabled="!aiPrompt.trim() || isGenerating"
@@ -335,6 +336,10 @@
               <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold flex items-center gap-2 mt-0.5">
                 每一项都可以由 <span class="text-indigo-600 dark:text-indigo-400 font-black">AI 深度润色</span>，打造爆款短剧。
               </p>
+            </div>
+            <!-- Model Selector for Inspiration Door -->
+            <div class="flex items-center gap-2 ml-auto">
+               <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
             </div>
           </div>
         </div>
@@ -787,6 +792,8 @@ import {
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
+import { useModelStore } from '@/store/models';
 // 导入产品设计图片以确保被 Vite 编译进源代码
 import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
 
@@ -794,6 +801,7 @@ import { useDramaStore } from '../../store/drama';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
+const modelStore = useModelStore();
 const isLight = inject('isLight', ref(true));
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);

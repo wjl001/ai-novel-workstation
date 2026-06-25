@@ -79,6 +79,7 @@
            <el-tag v-if="isAutoWriting" type="success" size="small" :effect="isLight ? 'light' : 'dark'" class="animate-pulse" :class="isLight ? '!bg-green-50 !border-green-200 !text-green-600' : '!bg-green-900/50 !border-green-800 !text-green-300'">AI 正在撰写中...</el-tag>
         </div>
         <div class="flex items-center gap-4">
+           <ModelSelector v-model="loreStore.currentNovel.textModel" type="text" />
            <el-tooltip content="字数统计" placement="bottom">
               <span class="flex items-center gap-1"><el-icon><DataLine /></el-icon> {{ editor?.storage.characterCount.words() || 0 }} 字</span>
            </el-tooltip>
@@ -616,6 +617,7 @@ import { streamLLMResponse } from '@/utils/llmClient'
 import { ElMessage } from 'element-plus'
 import AiOptimizationOverlay from '@/components/AiOptimizationOverlay.vue'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
+import ModelSelector from '@/components/Common/ModelSelector.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -1008,7 +1010,12 @@ const startAutoAiWriting = (title: string) => {
       () => {
         isAutoWriting.value = false
         ElMessage.success('AI 撰写完成！')
-      }
+      },
+      (err) => {
+        isAutoWriting.value = false
+        ElMessage.error('AI 撰写失败')
+      },
+      loreStore.currentNovel.textModel
     )
   }
 }
@@ -1345,7 +1352,9 @@ const autoGenerateCharacters = () => {
         console.error('Parse error:', e)
         ElMessage.error('生成失败，AI 返回格式有误')
       }
-    }
+    },
+    undefined,
+    loreStore.currentNovel.textModel
   )
 }
 
@@ -1416,7 +1425,9 @@ const autoGenerateProps = () => {
         generateFallbackProps()
         ElMessage.success('已使用智能推断生成道具')
       }
-    }
+    },
+    undefined,
+    loreStore.currentNovel.textModel
   )
 }
 
@@ -1530,7 +1541,9 @@ const autoGenerateScenes = () => {
         generateFallbackScenes()
         ElMessage.success('已使用智能推断生成场景')
       }
-    }
+    },
+    undefined,
+    loreStore.currentNovel.textModel
   )
 }
 
@@ -1732,7 +1745,9 @@ const generateSenseContent = () => {
     },
     () => {
       isGeneratingSense.value = false
-    }
+    },
+    undefined,
+    loreStore.currentNovel.textModel
   )
 }
 
@@ -1786,7 +1801,7 @@ const aiActionWithPrompt = (promptCmd: string) => {
      isAutoWriting.value = true
      streamLLMResponse(promptToUse, (chunk) => {
        editor.value?.commands.insertContent(chunk)
-     }, () => isAutoWriting.value = false)
+     }, () => isAutoWriting.value = false, undefined, loreStore.currentNovel.textModel)
   }
   
   // Clear input after use
@@ -1823,7 +1838,7 @@ const aiContinue = () => {
   isAutoWriting.value = true
   streamLLMResponse(prompt, (chunk) => {
       editor.value?.commands.insertContent(chunk)
-  }, () => isAutoWriting.value = false)
+  }, () => isAutoWriting.value = false, undefined, loreStore.currentNovel.textModel)
 }
 
 const sendChatMessage = () => {

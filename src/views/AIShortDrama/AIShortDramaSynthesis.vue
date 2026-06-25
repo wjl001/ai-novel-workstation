@@ -10,6 +10,7 @@
           <p class="text-slate-500 text-sm mt-1">基于 BGM 节奏自动对齐分镜，开启智能创作</p>
         </div>
         <div class="flex items-center gap-4">
+          <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" />
           <div :class="['px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2', 
             isDurationValid ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100']">
             <span class="w-2 h-2 rounded-full" :class="isDurationValid ? 'bg-emerald-500' : 'bg-amber-500'"></span>
@@ -251,6 +252,10 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from 'vue';
+import { useModelStore } from '@/store/models';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
+
+const modelStore = useModelStore();
 
 // --- Types ---
 interface BGM {

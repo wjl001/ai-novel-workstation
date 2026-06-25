@@ -600,8 +600,10 @@ export async function streamLLMResponse(
   prompt: string,
   onChunk: (text: string) => void,
   onComplete?: () => void,
-  onError?: (error: any) => void
+  onError?: (error: any) => void,
+  model?: string
 ) {
+  console.log(`Calling LLM with model: ${model || 'default'}`);
   // 分析 Prompt 意图
   let responseKey = 'default';
   const lowerPrompt = prompt.toLowerCase();

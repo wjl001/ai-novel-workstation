@@ -176,14 +176,17 @@
                   <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider">
                     {{ type === 'character' ? '形象描述' : (type === 'storyboard' ? '分镜脚本' : '详细描述') }}
                   </label>
-                  <button
-                    @click="polishText"
-                    class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[11px] font-black transition-all disabled:opacity-50"
-                    :disabled="isPolishingText || !localSubject.description"
-                  >
-                    <el-icon :class="{ 'animate-spin': isPolishingText }"><Refresh /></el-icon>
-                    <span>AI 润色优化</span>
-                  </button>
+                  <div class="flex items-center gap-3">
+                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+                    <button
+                      @click="polishText"
+                      class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[11px] font-black transition-all disabled:opacity-50"
+                      :disabled="isPolishingText || !localSubject.description"
+                    >
+                      <el-icon :class="{ 'animate-spin': isPolishingText }"><Refresh /></el-icon>
+                      <span>AI 润色优化</span>
+                    </button>
+                  </div>
                 </div>
                 <div class="relative bg-[#f8fafc] dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 rounded-[20px] p-3 flex flex-col group transition-all focus-within:ring-4 focus-within:ring-indigo-500/5"
                      :class="type === 'storyboard' ? 'min-h-[360px]' : 'min-h-[100px]'">
@@ -238,7 +241,7 @@
                 <div class="bg-[#f8fafc] dark:bg-slate-900/50 rounded-[20px] border border-slate-100 dark:border-slate-700 p-1 flex flex-col min-h-[140px]">
                   <div class="flex-1 flex flex-col p-1.5 min-h-0">
                     <div class="h-full flex flex-col">
-                      <div class="flex justify-end px-2 mb-1">
+                      <div class="flex justify-end items-center gap-3 px-2 mb-1">
                         <button
                           @click="polishVoice"
                           class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[10px] font-black transition-all disabled:opacity-50"
@@ -349,14 +352,16 @@
             </p>
           </div>
 
-            <button
-              @click="generateImage"
-              class="w-full h-[40px] flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-indigo-500/20 group/ai"
-              :disabled="isGeneratingImage"
-            >
-            <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{ 'animate-spin': isGeneratingImage }"><MagicStick /></el-icon>
-            <span>{{ localSubject.image ? '重新生成' : '开始生成' }}</span>
-          </button>
+      <div class="space-y-3">
+        <button
+          @click="generateImage"
+          class="w-full h-[40px] flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[13px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-indigo-500/20 group/ai"
+          :disabled="isGeneratingImage"
+        >
+          <el-icon :size="16" class="group-hover/ai:rotate-12 transition-transform" :class="{ 'animate-spin': isGeneratingImage }"><MagicStick /></el-icon>
+          <span>{{ localSubject.image ? '重新生成' : '开始生成' }}</span>
+        </button>
+      </div>
           </div>
         </aside>
       </div>
@@ -416,7 +421,11 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { generateImageAPI } from '@/utils/imageGenerator';
-import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked } from '@element-plus/icons-vue';
+import { useModelStore } from '@/store/models';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
+import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked, Coin } from '@element-plus/icons-vue';
+
+const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 interface AssetImageItem {

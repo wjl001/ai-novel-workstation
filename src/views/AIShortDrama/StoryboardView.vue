@@ -119,51 +119,25 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
+        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-1"></div>
+
+        <!-- Product Design Info Button -->
+        <button 
+          @click="showDesignDialog = true"
+          class="h-8 px-3 flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-full font-bold text-[11px] border border-slate-200 dark:border-slate-700 transition-all duration-300"
+        >
+          <el-icon :size="12"><InfoFilled /></el-icon>
+          <span>设计说明</span>
+        </button>
       </div>
 
-      <!-- Product Design Info Button -->
-      <button 
-        @click="showDesignDialog = true"
-        class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-full font-bold text-[12px] shadow-sm border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 z-50"
-      >
-        <el-icon :size="14"><InfoFilled /></el-icon>
-        <span>产品设计说明</span>
-      </button>
       
       <div class="flex items-center gap-3">
         <!-- AI Generation Config Group (C-End Premium Design) -->
-        <div class="flex items-center gap-1.5 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all hover:shadow-[0_8px_30px_-4px_rgba(99,102,241,0.2)]">
-          <!-- Model Selection Pill -->
-          <div class="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-100/50 dark:border-indigo-500/20 group/model">
-            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-sm group-hover/model:scale-110 transition-transform">
-              <el-icon :size="12"><Cpu /></el-icon>
-            </div>
-            <el-select 
-              v-model="synthesisModel" 
-              size="small" 
-              class="w-36 !border-none custom-select-premium" 
-              placeholder="引擎选择"
-            >
-              <el-option label="Seedance 2.0 Fast" value="seedance-fast">
-                <div class="flex items-center justify-between gap-2">
-                  <span>Seedance 2.0 Fast</span>
-                  <el-tag size="small" type="info" effect="plain" class="!rounded-md !text-[10px] scale-90">极速</el-tag>
-                </div>
-              </el-option>
-              <el-option label="Seedance 2.0 Quality" value="seedance-quality">
-                <div class="flex items-center justify-between gap-2">
-                  <span>Seedance 2.0 Quality</span>
-                  <el-tag size="small" type="success" effect="plain" class="!rounded-md !text-[10px] scale-90">高清</el-tag>
-                </div>
-              </el-option>
-              <el-option label="Sora Pro Ultra" value="sora-pro">
-                <div class="flex items-center justify-between gap-2 text-purple-600 font-bold">
-                  <span>Sora Pro Ultra</span>
-                  <el-tag size="small" type="warning" effect="dark" class="!rounded-md !text-[10px] scale-90">旗舰</el-tag>
-                </div>
-              </el-option>
-            </el-select>
-          </div>
+        <div class="flex items-center gap-2 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-2xl border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all">
+          <!-- Video Model -->
+          <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" />
           
           <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
           
@@ -491,15 +465,18 @@
                       <span>同步主体</span>
                     </button>
                   </div>
-                  <button 
-                    @click="handleBatchGenerate"
-                    :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                    class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
-                    :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
-                  >
-                    <el-icon class="animate-pulse"><MagicStick /></el-icon>
-                    <span>重新生成分镜</span>
-                  </button>
+                  <div class="flex items-center gap-3">
+                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+                    <button 
+                      @click="handleBatchGenerate"
+                      :disabled="!timelineScenes[currentSceneIdx]?.modified"
+                      class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                    >
+                      <el-icon class="animate-pulse"><MagicStick /></el-icon>
+                      <span>重新生成分镜</span>
+                    </button>
+                  </div>
                   <button 
                     @click="handleSaveScriptInline"
                     class="h-8 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
@@ -1312,6 +1289,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useModelStore } from '@/store/models';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -1412,9 +1391,10 @@ import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDi
 const router = useRouter();
 const dramaStore = useDramaStore();
 const episodeStore = useEpisodeStore();
+const modelStore = useModelStore();
 
 // UI States
-const synthesisModel = ref('seedance-fast');
+const synthesisModel = ref('seedance-fast'); // Legacy for compatibility
 const isSubtitled = ref(true);
 const isWatermarkRemoved = ref(false);
 const activeAssetTab = ref('roles');

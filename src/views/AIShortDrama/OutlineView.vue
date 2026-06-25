@@ -396,6 +396,7 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
+              <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
               <transition name="fade">
                 <span 
                   v-if="editorTextContent"
@@ -953,9 +954,12 @@ import { ref, reactive, computed, onMounted, nextTick, onBeforeUnmount, watch } 
 import { useRouter } from 'vue-router';
 import { useDramaStore } from '../../store/drama';
 import { useEpisodeStore } from '../../store/episode';
+import { useModelStore } from '@/store/models';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import pkg from '../../../package.json';
 
 const appVersion = pkg.version;
+const modelStore = useModelStore();
 const isAIAssistantEnabled = computed(() => true); // 2.2 版本默认开启 AI 助手与手动新增功能
 import { 
   MagicStick, Refresh, Edit, Plus, Delete, Check, Loading, 

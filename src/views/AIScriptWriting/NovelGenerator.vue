@@ -49,6 +49,7 @@
                    <div class="text-sm opacity-70 mb-2" :class="isLight ? 'text-slate-500' : 'text-slate-400'">{{ loreStore.currentNovel.genre }} · {{ loreStore.currentNovel.episodeCount }}集</div>
                    <div class="flex items-center gap-2">
                       <el-tag size="small" effect="plain" :type="isLight ? 'primary' : 'info'">AI 智能大纲生成中</el-tag>
+                      <ModelSelector v-model="loreStore.currentNovel.textModel" type="text" />
                       <el-button link size="small" type="primary" @click="showSettingsDialog = true">
                         <el-icon class="mr-1"><Setting /></el-icon> 作品设置
                       </el-button>
@@ -430,6 +431,7 @@ import { ElMessage } from 'element-plus'
 import { useLoreStore, type Chapter } from '@/stores/useLoreStore'
 import StepIndicator from '@/components/StepIndicator.vue'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
+import ModelSelector from '@/components/Common/ModelSelector.vue'
 
 const isLight = inject('isLight', ref(false))
 const theme = inject('theme', ref('dark'))

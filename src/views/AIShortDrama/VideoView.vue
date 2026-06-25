@@ -135,13 +135,7 @@
               <!-- Model Selection -->
               <div>
                 <div class="text-[14px] font-bold text-slate-800 mb-3 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 模型选择</div>
-                <div class="border border-slate-100 rounded-2xl p-4 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 cursor-pointer flex justify-between items-center hover:border-indigo-400 hover:bg-white transition-all shadow-sm group">
-                  <div>
-                    <div class="font-bold text-[14px] text-slate-800">SeedDream 2.0</div>
-                    <div class="text-[11px] text-slate-400 mt-1 font-medium">高品质极速视频生成</div>
-                  </div>
-                  <el-icon class="text-slate-300 group-hover:text-indigo-600"><ArrowDown /></el-icon>
-                </div>
+                <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" class="w-full" />
               </div>
             </div>
 
@@ -188,10 +182,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useModelStore } from '@/store/models'
+import AIModelSelector from '@/components/Common/ModelSelector.vue'
 import { ArrowLeft, ArrowRight, VideoPlay, VideoCamera, Headset, Plus, ArrowDown, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
+const modelStore = useModelStore()
 const activeStoryboard = ref(0)
 const showDesignDialog = ref(false)
 const prompt = ref('一个唯美的极简剖面，展现故事的发生场景和主要人物。画面构图提取，色彩鲜明，具有强烈的视觉冲击力')

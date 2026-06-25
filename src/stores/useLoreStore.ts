@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import { useModelStore } from '../store/models'
 
 export interface Character {
   id: string;
@@ -50,7 +51,10 @@ export interface Novel {
   episodeCount?: number;
   episodeDuration?: number;
   targetAudience?: string;
-  model?: string; // Add model
+  model?: string; // Legacy
+  textModel?: string;
+  imageModel?: string;
+  videoModel?: string;
   worldView?: string;
   goldenFinger?: string;
   mainPlot?: string;
@@ -64,6 +68,8 @@ export interface Novel {
 }
 
 export const useLoreStore = defineStore('lore', () => {
+  const modelStore = useModelStore()
+
   // Persistence Helper
   const loadState = (key: string, defaultVal: any) => {
     try {
@@ -88,7 +94,10 @@ export const useLoreStore = defineStore('lore', () => {
     episodeCount: 12,
     episodeDuration: 30,
     targetAudience: 'general',
-    model: 'gpt-4-turbo',
+    model: modelStore.selectedTextModel,
+    textModel: modelStore.selectedTextModel,
+    imageModel: modelStore.selectedImageModel,
+    videoModel: modelStore.selectedVideoModel,
     chapters: []
   }))
 
