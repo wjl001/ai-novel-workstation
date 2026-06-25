@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus'
 
 interface UserInfo {
   id: string
@@ -57,10 +58,22 @@ export const useUserStore = defineStore('user', {
     async loginByPassword(form: any) {
       // 真实环境调用后端接口
       console.log('Password login:', form)
+
+      // 检查成员是否被冻结（模拟后端校验）
+      const savedMembers = localStorage.getItem('team_members')
+      if (savedMembers) {
+        const members = JSON.parse(savedMembers)
+        const member = members.find((m: any) => m.username === form.username)
+        if (member && member.status === 'frozen') {
+          ElMessage.error('您的账号已被冻结，无法登录。请联系管理员！')
+          throw new Error('Account frozen')
+        }
+      }
+
       this.setToken('mock_token_password_' + Date.now())
       this.setUserInfo({
         id: 'local_user_1',
-        name: '本地用户',
+        name: form.username || '本地用户',
         avatar: '',
         roles: ['user', 'admin'],
         teamId: 'team_01',

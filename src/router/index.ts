@@ -142,6 +142,22 @@ router.beforeEach((to, from, next) => {
     return next('/auth/login')
   }
 
+  // 检查账号是否被冻结
+  if (userStore.isLoggedIn && userStore.userInfo?.name) {
+    const savedMembers = localStorage.getItem('team_members')
+    if (savedMembers) {
+      const members = JSON.parse(savedMembers)
+      const member = members.find((m: any) => m.username === userStore.userInfo?.name)
+      if (member && member.status === 'frozen') {
+        import('element-plus').then(({ ElMessage }) => {
+          ElMessage.error('您的账号已被冻结，请联系管理员！')
+        })
+        userStore.logout()
+        return next('/auth/login')
+      }
+    }
+  }
+
   next()
 })
 

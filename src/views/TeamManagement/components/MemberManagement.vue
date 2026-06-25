@@ -68,12 +68,34 @@
             <span class="text-slate-500 dark:text-slate-400 text-sm">{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="280">
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 'active' ? 'success' : 'danger'" size="small" class="!rounded-full">
+              {{ row.status === 'active' ? '正常' : '已冻结' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" width="320">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
               <el-button size="small" class="!rounded-lg dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300 hover:!text-orange-500 hover:!bg-orange-50 dark:hover:!bg-orange-900/20 hover:!border-orange-200 transition-colors" @click="openPointsDialog(row)">
                 下发算力豆
               </el-button>
+              
+              <el-popconfirm 
+                :title="row.status === 'active' ? '确定要冻结该子账号吗？冻结后该账号将无法登录。' : '确定要解冻该子账号吗？'" 
+                :confirm-button-text="row.status === 'active' ? '确定冻结' : '确定解冻'"
+                cancel-button-text="取消" 
+                :confirm-button-type="row.status === 'active' ? 'warning' : 'success'" 
+                @confirm="toggleMemberStatus(row)"
+              >
+                <template #reference>
+                  <el-button size="small" :type="row.status === 'active' ? 'warning' : 'success'" plain class="!rounded-lg">
+                    {{ row.status === 'active' ? '冻结' : '解冻' }}
+                  </el-button>
+                </template>
+              </el-popconfirm>
+
               <el-button size="small" class="!rounded-lg dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300 hover:!text-blue-500 hover:!bg-blue-50 dark:hover:!bg-blue-900/20 hover:!border-blue-200 transition-colors" @click="openEditDialog(row)">
                 编辑
               </el-button>
@@ -89,39 +111,51 @@
     </div>
 
     <!-- 添加/编辑子账号弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑子账号' : '创建子账号'" width="480px" class="custom-dialog dark-dialog" :show-close="false" align-center>
+    <el-dialog 
+      v-model="dialogVisible" 
+      :title="isEdit ? '编辑子账号' : '创建子账号'" 
+      width="520px" 
+      class="custom-dialog-enhanced" 
+      :show-close="false" 
+      align-center
+      append-to-body
+      :modal="false"
+    >
       <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
-              <el-icon class="text-indigo-500 dark:text-indigo-400"><UserFilled /></el-icon>
+        <div class="flex justify-between items-center px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+              <el-icon class="text-indigo-600 dark:text-indigo-400 text-xl"><UserFilled /></el-icon>
             </div>
-            <h4 :id="titleId" :class="titleClass" class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !m-0">{{ isEdit ? '编辑子账号' : '创建子账号' }}</h4>
+            <div>
+              <h4 :id="titleId" :class="titleClass" class="!text-xl !font-black !text-slate-800 dark:!text-slate-100 !m-0">{{ isEdit ? '编辑子账号' : '创建子账号' }}</h4>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">{{ isEdit ? 'Update member information' : 'Create new team member' }}</p>
+            </div>
           </div>
-          <el-button circle text @click="close" class="dark:!text-slate-400">
-            <el-icon><Close /></el-icon>
+          <el-button circle class="!bg-slate-50 dark:!bg-slate-800 !border-none hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-colors" @click="close">
+            <el-icon class="text-slate-500 dark:text-slate-400"><Close /></el-icon>
           </el-button>
         </div>
       </template>
 
-      <div class="pt-2">
-        <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form dark-form">
-          <div class="grid grid-cols-2 gap-x-4">
-            <el-form-item label="账号名称" prop="username" class="!mb-4">
-              <el-input v-model="form.username" placeholder="请输入名称" size="default" class="!rounded-xl" />
+      <div class="px-8 py-6">
+        <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form-enhanced">
+          <div class="grid grid-cols-2 gap-x-6">
+            <el-form-item label="账号名称" prop="username" class="!mb-6">
+              <el-input v-model="form.username" placeholder="请输入名称" size="large" class="enhanced-input" />
             </el-form-item>
-            <el-form-item label="登录密码" prop="password" v-if="!isEdit" class="!mb-4">
-              <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password size="default" class="!rounded-xl" />
+            <el-form-item label="登录密码" prop="password" v-if="!isEdit" class="!mb-6">
+              <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password size="large" class="enhanced-input" />
             </el-form-item>
           </div>
-          <div class="grid grid-cols-2 gap-x-4">
-            <el-form-item label="所属分组" prop="group" class="!mb-4">
-              <el-select v-model="form.group" placeholder="请选择分组" size="default" class="w-full !rounded-xl">
+          <div class="grid grid-cols-2 gap-x-6">
+            <el-form-item label="所属分组" prop="group" class="!mb-6">
+              <el-select v-model="form.group" placeholder="请选择分组" size="large" class="w-full enhanced-select">
                 <el-option v-for="g in allGroups" :key="g.id" :label="g.name" :value="g.name" />
               </el-select>
             </el-form-item>
-            <el-form-item label="角色权限" prop="role" class="!mb-4">
-              <el-select v-model="form.role" placeholder="请选择角色" size="default" class="w-full !rounded-xl">
+            <el-form-item label="角色权限" prop="role" class="!mb-6">
+              <el-select v-model="form.role" placeholder="请选择角色" size="large" class="w-full enhanced-select">
                 <el-option-group label="管理类角色">
                   <el-option label="管理员" value="管理员" />
                   <el-option label="组管理员" value="组管理员" />
@@ -137,72 +171,93 @@
           </div>
           <el-form-item prop="points" v-if="!isEdit" class="!mb-2">
             <template #label>
-              <div class="flex justify-between items-center w-full mb-1">
-                <span class="font-semibold text-slate-700 dark:text-slate-200">初始分配算力豆</span>
-                <div class="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-100 dark:border-orange-800/30">
+              <div class="flex justify-between items-center w-full mb-2">
+                <span class="font-bold text-slate-700 dark:text-slate-200">初始分配算力豆</span>
+                <div class="flex items-center gap-1.5 px-3 py-1 bg-orange-50 dark:bg-orange-500/10 rounded-full border border-orange-100 dark:border-orange-500/20">
                   <el-icon class="text-orange-500"><Coin /></el-icon>
-                  <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400">剩余: 10,000</span>
+                  <span class="text-[11px] font-black text-orange-600 dark:text-orange-400">剩余: 10,000</span>
                 </div>
               </div>
             </template>
-            <el-input-number v-model="form.points" :min="0" :max="10000" size="default" class="w-full !rounded-xl custom-input-number" />
+            <el-input-number v-model="form.points" :min="0" :max="10000" size="large" class="w-full enhanced-input-number" />
           </el-form-item>
         </el-form>
       </div>
       
       <template #footer>
-        <div class="pt-4 flex justify-end gap-3 border-t dark:border-slate-700">
-          <el-button size="large" class="!rounded-xl px-6 dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300" @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" size="large" class="!rounded-xl px-6 !bg-indigo-600 !border-indigo-600 hover:!bg-indigo-700" @click="saveMember">
-            确认
+        <div class="px-8 pb-8 flex justify-end gap-4">
+          <el-button size="large" class="!rounded-2xl px-8 !bg-slate-50 dark:!bg-slate-800 !border-none font-bold text-slate-600 dark:text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-all" @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" size="large" class="!rounded-2xl px-8 !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-none font-bold hover:shadow-lg hover:shadow-indigo-500/30 transition-all" @click="saveMember">
+            确认创建
           </el-button>
         </div>
       </template>
     </el-dialog>
 
     <!-- 算力豆下发弹窗 -->
-    <el-dialog v-model="pointsDialogVisible" width="420px" class="custom-dialog dark-dialog" :show-close="false" align-center>
+    <el-dialog 
+      v-model="pointsDialogVisible" 
+      width="460px" 
+      class="custom-dialog-enhanced" 
+      :show-close="false" 
+      align-center
+      append-to-body
+      :modal="false"
+    >
       <template #header="{ close }">
-        <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
-              <el-icon class="text-orange-500 dark:text-orange-400"><Coin /></el-icon>
+        <div class="flex justify-between items-center px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center">
+              <el-icon class="text-orange-500 dark:text-orange-400 text-xl"><Coin /></el-icon>
             </div>
-            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">下发算力豆</h4>
+            <div>
+              <h4 class="text-xl font-black text-slate-800 dark:text-slate-100 m-0">下发算力豆</h4>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">Distribute compute points</p>
+            </div>
           </div>
-          <el-button circle text @click="close" class="dark:!text-slate-400">
-            <el-icon><Close /></el-icon>
+          <el-button circle class="!bg-slate-50 dark:!bg-slate-800 !border-none hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-colors" @click="close">
+            <el-icon class="text-slate-500 dark:text-slate-400"><Close /></el-icon>
           </el-button>
         </div>
       </template>
 
-      <div class="pt-4 flex flex-col gap-6">
-        <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-500/20">
-          <div class="text-white/80 text-sm font-medium mb-1">团队主账号剩余算力豆</div>
-          <div class="text-3xl font-black flex items-center gap-2">
-            <el-icon><Coin /></el-icon> 10,000
+      <div class="px-8 py-6 flex flex-col gap-8">
+        <div class="bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl p-6 text-white shadow-xl shadow-orange-500/20 relative overflow-hidden">
+          <!-- 背景装饰 -->
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <div class="absolute right-6 top-6 opacity-20"><el-icon size="60"><Coin /></el-icon></div>
+          
+          <div class="relative z-10">
+            <div class="text-white/80 text-xs font-bold uppercase tracking-widest mb-1">团队主账号余额</div>
+            <div class="text-4xl font-black flex items-center gap-3 tracking-tight">
+              10,000
+              <span class="text-sm font-medium bg-white/20 px-2 py-0.5 rounded-lg backdrop-blur-md">算力豆</span>
+            </div>
           </div>
         </div>
 
-        <el-form :model="pointsForm" label-position="top" class="custom-form dark-form">
-          <el-form-item label="接收账号">
-            <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 w-full">
-              <el-avatar :size="32" class="!bg-indigo-100 dark:!bg-indigo-900/50 !text-indigo-600 dark:!text-indigo-400 font-bold text-sm">
+        <el-form :model="pointsForm" label-position="top" class="custom-form-enhanced">
+          <el-form-item label="接收账号" class="!mb-6">
+            <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 w-full transition-all hover:border-indigo-200 dark:hover:border-indigo-900">
+              <el-avatar :size="40" class="!bg-gradient-to-br !from-indigo-100 dark:!from-indigo-900/50 !to-purple-100 dark:!to-purple-900/50 !text-indigo-600 dark:!text-indigo-400 font-black text-base shadow-sm">
                 {{ pointsForm.username.substring(0, 2).toUpperCase() }}
               </el-avatar>
-              <span class="font-bold text-slate-700 dark:text-slate-200">{{ pointsForm.username }}</span>
+              <div class="flex flex-col">
+                <span class="font-black text-slate-700 dark:text-slate-100">{{ pointsForm.username }}</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Member Account</span>
+              </div>
             </div>
           </el-form-item>
-          <el-form-item label="下发数量">
-            <el-input-number v-model="pointsForm.amount" :min="1" :max="10000" size="large" class="w-full !rounded-xl custom-input-number" />
+          <el-form-item label="下发数量" class="!mb-0">
+            <el-input-number v-model="pointsForm.amount" :min="1" :max="10000" size="large" class="w-full enhanced-input-number" />
           </el-form-item>
         </el-form>
       </div>
 
       <template #footer>
-        <div class="pt-2 flex justify-end gap-3 border-t dark:border-slate-700 mt-4 pt-4">
-          <el-button size="large" class="!rounded-xl px-6 dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300" @click="pointsDialogVisible = false">取消</el-button>
-          <el-button type="primary" size="large" class="!rounded-xl px-6 !bg-orange-500 !border-orange-500 hover:!bg-orange-600" @click="distributePoints">
+        <div class="px-8 pb-8 flex justify-end gap-4">
+          <el-button size="large" class="!rounded-2xl px-8 !bg-slate-50 dark:!bg-slate-800 !border-none font-bold text-slate-600 dark:text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-all" @click="pointsDialogVisible = false">取消</el-button>
+          <el-button type="primary" size="large" class="!rounded-2xl px-8 !bg-gradient-to-r !from-orange-500 !to-amber-500 !border-none font-bold hover:shadow-lg hover:shadow-orange-500/30 transition-all" @click="distributePoints">
             确认下发
           </el-button>
         </div>
@@ -274,7 +329,8 @@ const form = reactive({
   password: '',
   group: '',
   role: '',
-  points: 0
+  points: 0,
+  status: 'active'
 })
 
 const rules = {
@@ -298,7 +354,8 @@ const openAddDialog = () => {
     password: '', 
     group: defaultGroup, 
     role: '', 
-    points: 0 
+    points: 0,
+    status: 'active'
   })
   dialogVisible.value = true
 }
@@ -307,6 +364,10 @@ const openEditDialog = (row: any) => {
   isEdit.value = true
   Object.assign(form, { ...row, password: '' })
   dialogVisible.value = true
+  // 清除上次可能的校验残留
+  if (formRef.value) {
+    formRef.value.clearValidate()
+  }
 }
 
 const saveMember = async () => {
@@ -342,6 +403,7 @@ const saveMember = async () => {
           group: form.group,
           role: form.role,
           points: form.points || 0,
+          status: 'active',
           createTime: new Date().toLocaleString()
         })
         
@@ -356,6 +418,15 @@ const saveMember = async () => {
       dialogVisible.value = false
     }
   })
+}
+
+const toggleMemberStatus = (row: any) => {
+  const index = allMembers.value.findIndex(m => m.id === row.id)
+  if (index > -1) {
+    const newStatus = allMembers.value[index].status === 'active' ? 'frozen' : 'active'
+    allMembers.value[index].status = newStatus
+    ElMessage.success(`子账号 ${row.username} 已${newStatus === 'active' ? '解冻' : '冻结'}`)
+  }
 }
 
 const deleteMember = (id: number) => {
@@ -535,28 +606,134 @@ const distributePoints = () => {
     }
   }
 
-  :deep(.custom-dialog) {
-    &.dark-dialog {
-      .el-dialog {
-        background-color: #1e293b;
-        border: 1px solid #334155;
+  :deep(.custom-dialog-enhanced) {
+    background: transparent !important;
+    box-shadow: none !important;
+    
+    .el-dialog {
+      background-color: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 1px solid #f1f5f9;
+      
+      .is-dark & {
+        background-color: #111827; // 更深色调匹配截图
+        border-color: #1f2937;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       }
     }
-    border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    margin-bottom: 50px; // 确保底部有间距
-    .el-dialog__header {
-      margin: 0;
-      padding: 24px 24px 0;
+    
+    .el-dialog__header, .el-dialog__body, .el-dialog__footer {
+      padding: 0;
     }
-    .el-dialog__body {
-      padding: 24px;
-      max-height: 60vh; // 限制高度并允许滚动
-      overflow-y: auto;
+
+    .custom-form-enhanced {
+      .el-form-item__label {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        
+        .is-dark & {
+          color: #9ca3af;
+        }
+      }
+
+      .enhanced-input, .enhanced-select, .enhanced-input-number {
+        .el-input__wrapper, .el-select__wrapper {
+          background-color: #f9fafb !important;
+          box-shadow: 0 0 0 1px #d1d5db inset !important;
+          border-radius: 12px !important;
+          padding: 6px 14px !important;
+          
+          .is-dark & {
+            background-color: #1f2937 !important;
+            box-shadow: 0 0 0 1px #374151 inset !important;
+          }
+          
+          &.is-focus {
+            box-shadow: 0 0 0 2px #6366f1 inset !important;
+          }
+        }
+      }
     }
-    .el-dialog__footer {
-      padding: 0 24px 24px;
-      border-top: none;
+  }
+
+  // 表格样式增强 - 统一风格并移除阴影
+  :deep(.custom-table) {
+    --el-table-border-color: #f1f5f9;
+    --el-table-header-bg-color: #f8fafc;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    
+    background-color: transparent !important;
+
+    .el-table__inner-wrapper::before {
+      display: none;
+    }
+    
+    .el-table__row {
+      transition: background-color 0.2s;
+      
+      td.el-table__cell {
+        padding: 16px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      
+      &:hover > td.el-table__cell {
+        background-color: #f8fafc !important;
+        box-shadow: none !important; // 移除阴影
+      }
+    }
+    
+    .el-table__header {
+      th.el-table__cell {
+        padding: 20px 0;
+        background-color: #f8fafc !important;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        font-weight: bold;
+        color: #475569;
+      }
+    }
+  }
+
+  &.is-dark {
+    :deep(.custom-table) {
+      --el-bg-color: #0f172a !important;
+      --el-bg-color-overlay: #0f172a !important;
+      --el-fill-color-blank: #0f172a !important;
+      --el-fill-color-lighter: #111c33 !important;
+      --el-fill-color-light: #1e293b !important;
+      --el-table-bg-color: #0f172a !important;
+      --el-table-tr-bg-color: #0f172a !important;
+      --el-table-border-color: #334155 !important;
+      --el-table-header-bg-color: #1e293b !important;
+      --el-table-text-color: #f1f5f9 !important;
+      --el-table-row-hover-bg-color: #1e293b !important;
+      --el-table-current-row-bg-color: #1e293b !important;
+      background-color: #0f172a !important;
+
+      .el-table__cell {
+        color: #f1f5f9 !important;
+        background-color: #0f172a !important;
+        border-bottom: 1px solid #334155 !important;
+      }
+
+      .el-table__header {
+        th.el-table__cell {
+          background-color: #1e293b !important;
+          color: #94a3b8 !important;
+        }
+      }
+
+      tbody tr:hover > td.el-table__cell,
+      .el-table__row:hover > td.el-table__cell {
+        background-color: #1e293b !important;
+        box-shadow: none !important;
+      }
     }
   }
 

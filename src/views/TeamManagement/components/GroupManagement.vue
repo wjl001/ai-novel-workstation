@@ -106,30 +106,42 @@
     </div>
 
     <!-- 添加/编辑分组弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑分组' : '创建新分组'" width="480px" class="custom-dialog dark-dialog" :show-close="false" align-center>
+    <el-dialog 
+      v-model="dialogVisible" 
+      :title="isEdit ? '编辑分组' : '创建新分组'" 
+      width="520px" 
+      class="custom-dialog-enhanced" 
+      :show-close="false" 
+      align-center
+      :modal="false"
+      append-to-body
+    >
       <template #header="{ close, titleId, titleClass }">
-        <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-              <el-icon class="text-emerald-500 dark:text-emerald-400"><FolderAdd /></el-icon>
+        <div class="flex justify-between items-center px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+              <el-icon class="text-emerald-600 dark:text-emerald-400 text-xl"><FolderAdd /></el-icon>
             </div>
-            <h4 :id="titleId" :class="titleClass" class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !m-0">{{ isEdit ? '编辑分组' : '创建新分组' }}</h4>
+            <div>
+              <h4 :id="titleId" :class="titleClass" class="!text-xl !font-black !text-slate-800 dark:!text-slate-100 !m-0">{{ isEdit ? '编辑分组' : '创建新分组' }}</h4>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">{{ isEdit ? 'Update group details' : 'Organize your team structure' }}</p>
+            </div>
           </div>
-          <el-button circle text @click="close" class="dark:!text-slate-400">
-            <el-icon><Close /></el-icon>
+          <el-button circle class="!bg-slate-50 dark:!bg-slate-800 !border-none hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-colors" @click="close">
+            <el-icon class="text-slate-500 dark:text-slate-400"><Close /></el-icon>
           </el-button>
         </div>
       </template>
 
-      <div class="pt-2">
-        <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form dark-form">
-          <el-form-item label="分组名称" prop="name" class="!mb-4">
-            <el-input v-model="form.name" placeholder="请输入分组名称" size="default" class="!rounded-xl" maxlength="20" show-word-limit />
+      <div class="px-8 py-6">
+        <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="custom-form-enhanced">
+          <el-form-item label="分组名称" prop="name" class="!mb-6">
+            <el-input v-model="form.name" placeholder="请输入分组名称" size="large" class="enhanced-input" maxlength="20" show-word-limit />
           </el-form-item>
 
-          <div class="grid grid-cols-2 gap-x-4">
-            <el-form-item v-if="availableAdmins.length > 0" label="指派组管理员" prop="admin" class="!mb-4">
-              <el-select v-model="form.admin" placeholder="请选择管理员" size="default" class="w-full !rounded-xl" clearable>
+          <div class="grid grid-cols-2 gap-x-6">
+            <el-form-item v-if="availableAdmins.length > 0" label="指派组管理员" prop="admin" class="!mb-6">
+              <el-select v-model="form.admin" placeholder="请选择管理员" size="large" class="w-full enhanced-select" clearable>
                 <el-option v-for="member in availableAdmins" :key="member.id" :label="member.username" :value="member.username">
                   <div class="flex items-center gap-2">
                     <el-avatar :size="20" class="!bg-indigo-50 dark:!bg-indigo-900/30 !text-indigo-500 dark:!text-indigo-400 font-bold text-[10px]">
@@ -141,15 +153,15 @@
               </el-select>
             </el-form-item>
             
-            <el-form-item label="指派作品" prop="works" class="!mb-4" :class="{'col-span-2': availableAdmins.length === 0}">
+            <el-form-item label="指派作品" prop="works" class="!mb-6" :class="{'col-span-2': availableAdmins.length === 0}">
               <el-select 
                 v-model="form.works" 
                 multiple 
                 collapse-tags 
                 collapse-tags-indicator
                 placeholder="请选择指派的作品" 
-                size="default" 
-                class="w-full !rounded-xl"
+                size="large" 
+                class="w-full enhanced-select"
               >
                 <el-option v-for="work in allWorksList" :key="work" :label="work" :value="work" />
               </el-select>
@@ -157,16 +169,16 @@
           </div>
 
           <el-form-item label="分组描述" prop="description" class="!mb-2">
-            <el-input v-model="form.description" type="textarea" :rows="2" placeholder="请输入职责或描述（选填）" class="!rounded-xl" maxlength="100" show-word-limit />
+            <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入职责或描述（选填）" class="enhanced-textarea" maxlength="100" show-word-limit />
           </el-form-item>
         </el-form>
       </div>
       
       <template #footer>
-        <div class="pt-4 flex justify-end gap-3 border-t dark:border-slate-700">
-          <el-button size="large" class="!rounded-xl px-6 dark:!bg-slate-800 dark:!border-slate-700 dark:!text-slate-300" @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" size="large" class="!rounded-xl px-6 !bg-emerald-500 !border-emerald-500 hover:!bg-emerald-600" @click="saveGroup">
-            确认
+        <div class="px-8 pb-8 flex justify-end gap-4">
+          <el-button size="large" class="!rounded-2xl px-8 !bg-slate-50 dark:!bg-slate-800 !border-none font-bold text-slate-600 dark:text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-700 transition-all" @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" size="large" class="!rounded-2xl px-8 !bg-gradient-to-r !from-emerald-600 !to-teal-600 !border-none font-bold hover:shadow-lg hover:shadow-emerald-500/40 transition-all" @click="saveGroup">
+            确认保存
           </el-button>
         </div>
       </template>
@@ -386,28 +398,62 @@ const deleteGroup = (id: number) => {
     }
   }
 
-  :deep(.custom-dialog) {
-    &.dark-dialog {
-      .el-dialog {
-        background-color: #1e293b;
-        border: 1px solid #334155;
+  :deep(.custom-dialog-enhanced) {
+    background: transparent !important;
+    box-shadow: none !important;
+    
+    .el-dialog {
+      background-color: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 1px solid #f1f5f9;
+      
+      .is-dark & {
+        background-color: #111827;
+        border-color: #1f2937;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       }
     }
-    border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    margin-bottom: 50px;
-    .el-dialog__header {
-      margin: 0;
-      padding: 24px 24px 0;
+    
+    .el-dialog__header, .el-dialog__body, .el-dialog__footer {
+      padding: 0;
     }
-    .el-dialog__body {
-      padding: 24px;
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-    .el-dialog__footer {
-      padding: 0 24px 24px;
-      border-top: none;
+
+    .custom-form-enhanced {
+      .el-form-item__label {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        
+        .is-dark & {
+          color: #9ca3af;
+        }
+      }
+
+      .enhanced-input, .enhanced-select, .enhanced-textarea {
+        .el-input__wrapper, .el-select__wrapper, .el-textarea__inner {
+          background-color: #f9fafb !important;
+          box-shadow: 0 0 0 1px #d1d5db inset !important;
+          border-radius: 12px !important;
+          padding: 8px 14px !important;
+          
+          .is-dark & {
+            background-color: #1f2937 !important;
+            box-shadow: 0 0 0 1px #374151 inset !important;
+            color: #f3f4f6;
+          }
+          
+          &.is-focus, &:focus {
+            box-shadow: 0 0 0 2px #10b981 inset !important;
+          }
+        }
+        
+        .el-textarea__inner {
+          padding: 12px 14px !important;
+        }
+      }
     }
   }
 
