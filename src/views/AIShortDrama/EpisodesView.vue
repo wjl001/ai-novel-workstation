@@ -68,6 +68,16 @@
           </button>
         </div>
 
+        <!-- Bulk Import Button (Only shown in Storyboard Video tab) -->
+        <button 
+          v-if="activeTab === 'processing'"
+          @click="showManualImportDialog = true"
+          class="h-10 px-6 flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-500/30 rounded-full font-black text-[13px] transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
+        >
+          <el-icon :size="16"><Plus /></el-icon>
+          <span>批量导入分镜</span>
+        </button>
+
         <!-- Product Design Info Button -->
         <button 
           @click="showDesignDialog = true"
@@ -380,6 +390,16 @@
       @cancel="handleRecoveryCancel"
     />
 
+    <!-- Overwrite Confirm Dialog (Styled for C-end) -->
+    <ConfirmDialog
+      v-model="overwriteConfirmVisible"
+      title="覆盖确认"
+      :message="`检测到第 ${overwriteConfirmData?.indices} 集已存在分镜内容，导入将覆盖原有脚本。是否继续？`"
+      confirm-text="覆盖导入"
+      cancel-text="跳过这些"
+      @confirm="handleOverwriteConfirm"
+    />
+
     <button
       type="button"
       class="fixed bottom-6 right-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
@@ -395,6 +415,112 @@
       subtitle="Episodes View UI Specs"
       :groups="episodesUIDesignGroups"
     />
+
+    <!-- Manual Import Storyboard Dialog (Multi-Episode Support) -->
+    <el-dialog
+      v-model="showManualImportDialog"
+      title="全剧分镜脚本批量导入"
+      width="1600px"
+      :close-on-click-modal="false"
+      class="modern-dialog manual-import-dialog"
+      top="4vh"
+      append-to-body
+    >
+      <div class="flex flex-col gap-4">
+        <!-- 1. Input Area (Top) -->
+        <el-input
+          v-model="manualImportText"
+          type="textarea"
+          :rows="22"
+          placeholder="请在此粘贴全剧或多集的分镜脚本内容..."
+          class="custom-textarea import-textarea text-[16px]"
+        />
+
+        <!-- 2. Format Instructions (Bottom) -->
+        <div class="bg-indigo-50/30 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100/30 dark:border-indigo-800/20 flex items-center justify-between">
+          <div class="flex items-center gap-8">
+            <!-- 2.1 Import Requirements -->
+            <el-popover
+              placement="top-start"
+              :width="380"
+              trigger="hover"
+              popper-class="modern-popover"
+            >
+              <template #reference>
+                <div class="flex items-center gap-2 text-indigo-600 cursor-help hover:opacity-80 transition-opacity px-1">
+                  <el-icon :size="20"><InfoFilled /></el-icon>
+                  <span class="text-[13px] font-bold tracking-wide">批量导入要求说明</span>
+                </div>
+              </template>
+              <div class="p-1">
+                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-3">
+                  <el-icon><InfoFilled /></el-icon>
+                  <span>批量导入详细要求</span>
+                </div>
+                <div class="flex flex-col gap-3 text-[12px] text-indigo-900/80 dark:text-indigo-200/80 leading-relaxed">
+                  <p>• <strong>剧集识别</strong>：系统通过“<strong>第x集</strong>”关键字自动识别并分发分镜内容。</p>
+                  <p>• <strong>主体校验</strong>：仅支持导入已完成“<strong>主体设置</strong>”的剧集。</p>
+                  <p>• <strong>覆盖逻辑</strong>：若目标剧集已有分镜，导入将覆盖原有内容。</p>
+                  <p>• <strong>空行分隔</strong>：不同分镜内容之间必须保留<strong>至少一行空行</strong>。</p>
+                </div>
+              </div>
+            </el-popover>
+
+            <!-- 2.2 Full Import Example (Now Hidden by Popover) -->
+            <el-popover
+              placement="top"
+              :width="600"
+              trigger="hover"
+              popper-class="modern-popover-wide"
+            >
+              <template #reference>
+                <div class="flex items-center gap-2 text-indigo-500 cursor-help hover:text-indigo-600 transition-colors px-1">
+                  <el-icon :size="20"><Picture /></el-icon>
+                  <span class="text-[13px] font-bold tracking-wide">查看全剧导入示例</span>
+                </div>
+              </template>
+              <div class="p-2">
+                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-4">
+                  <el-icon><Picture /></el-icon>
+                  <span>全剧分镜导入标准格式示例</span>
+                </div>
+                <div class="font-mono text-[11px] bg-indigo-50/30 dark:bg-black/30 p-5 rounded-xl border border-indigo-100/50 leading-relaxed text-slate-600 dark:text-slate-300 shadow-inner max-h-[400px] overflow-y-auto">
+                  <div class="flex flex-col gap-0">
+                    <!-- Episode 1 -->
+                    <p class="font-black text-indigo-600 text-[13px]">第1集</p>
+                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
+                    
+                    <p class="font-bold text-slate-800 dark:text-slate-200">分镜1</p>
+                    <p>内容：描述内容（分镜内不空行）</p>
+                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
+
+                    <p class="font-bold text-slate-800 dark:text-slate-200">分镜2</p>
+                    <p>内容：描述内容（分镜内不空行）</p>
+                    
+                    <!-- Episode Separator -->
+                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
+
+                    <!-- Episode 2 -->
+                    <p class="font-black text-indigo-600 text-[13px]">第2集</p>
+                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
+                    
+                    <p class="font-bold text-slate-800 dark:text-slate-200">分镜1</p>
+                    <p>内容：描述内容...</p>
+                  </div>
+                </div>
+                <p class="mt-4 text-[11px] text-slate-400 text-center italic">温馨提示：分镜标题与内容间不空行，整体分镜之间必须有空行隔开</p>
+              </div>
+            </el-popover>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-4 pb-2">
+          <el-button @click="showManualImportDialog = false" class="!rounded-xl !px-10 !h-11">取消</el-button>
+          <el-button type="primary" @click="handleManualImportConfirm" class="theme-primary-btn !rounded-xl !px-16 !h-11 font-black shadow-lg shadow-indigo-500/20">开始识别并分发导入</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -407,7 +533,7 @@ import {
   EditPen,
   Monitor
 } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useEpisodeStore } from '@/store/episode';
 import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
 
@@ -426,6 +552,8 @@ const episodeStore = useEpisodeStore();
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showAIDialog = ref(false);
+const showManualImportDialog = ref(false);
+const manualImportText = ref('');
 const aiPrompt = ref('');
 const isGenerating = ref(false);
 const generatedImages = ref<string[]>([]);
@@ -699,116 +827,98 @@ const getSingleStatusLabel = (ep: any) => {
 onMounted(() => {
   episodeStore.loadFromLocalStorage();
 
-  if (episodes.value.length === 0) {
+  // 强制加载模拟数据以修复“分镜视频”Tab 不显示的问题
+  if (episodes.value.length <= 1) {
     episodeStore.setEpisodes([
       {
         id: '1',
         index: 1,
-        title: '第 1 集：命运抉择系统自毁',
+        title: '第 1 集：命运抉择',
         poster: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400',
-        roleCount: 7,
-        sceneCount: 2,
-        propCount: 5,
-        storyboardCount: 16,
         scriptStatus: 'success',
         assetsStatus: 'success',
-        storyboardStatus: 'success',
-        synthesisStatus: 'success',
-        status: 'success',
-        storyboardGenerated: true,
-        duration: '01:12',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        storyboardGenerated: false,
+        duration: '00:00',
+        storyboardScenes: [],
         gif: '',
-        synthesisVideo: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+        status: 'pending'
       },
       {
         id: '2',
         index: 2,
-        title: '第 2 集：重生归来之境',
+        title: '第 2 集：重生归来',
         poster: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=400',
-        roleCount: 5,
-        sceneCount: 3,
-        propCount: 3,
-        storyboardCount: 12,
         scriptStatus: 'success',
         assetsStatus: 'success',
-        storyboardStatus: 'generating',
-        synthesisStatus: 'pending',
-        status: 'generating',
-        storyboardGenerated: false,
-        duration: '00:38',
-        gif: '',
-      },
-      {
-        id: '4',
-        index: 4,
-        title: '第 4 集：真相大白',
-        poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400',
-        roleCount: 8,
-        sceneCount: 4,
-        propCount: 6,
-        storyboardCount: 20,
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'success',
-        synthesisStatus: 'synthesizing',
-        status: 'generating',
-        storyboardGenerated: true,
-        duration: '01:45',
-        gif: '',
-      },
-      {
-        id: '5',
-        index: 5,
-        title: '第 5 集：暗流涌动',
-        poster: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=400',
-        roleCount: 3,
-        sceneCount: 2,
-        propCount: 4,
-        storyboardCount: 0,
-        scriptStatus: 'success',
-        assetsStatus: 'pending',
         storyboardStatus: 'pending',
         synthesisStatus: 'pending',
-        status: 'pending',
         storyboardGenerated: false,
         duration: '00:00',
+        storyboardScenes: [],
         gif: '',
+        status: 'pending'
       },
       {
         id: '3',
         index: 3,
         title: '第 3 集：商战风云',
         poster: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=400',
-        roleCount: 4,
-        sceneCount: 2,
-        propCount: 2,
-        storyboardCount: 0,
-        scriptStatus: 'pending',
-        assetsStatus: 'pending',
+        scriptStatus: 'success',
+        assetsStatus: 'success',
         storyboardStatus: 'pending',
         synthesisStatus: 'pending',
-        status: 'pending',
         storyboardGenerated: false,
-        duration: '00:45',
+        duration: '00:00',
+        storyboardScenes: [],
         gif: '',
+        status: 'pending'
+      },
+      {
+        id: '4',
+        index: 4,
+        title: '第 4 集：真相大白',
+        poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400',
+        scriptStatus: 'success',
+        assetsStatus: 'success',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        storyboardGenerated: false,
+        duration: '00:00',
+        storyboardScenes: [],
+        gif: '',
+        status: 'pending'
+      },
+      {
+        id: '5',
+        index: 5,
+        title: '第 5 集：暗流涌动',
+        poster: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=400',
+        scriptStatus: 'success',
+        assetsStatus: 'success',
+        storyboardStatus: 'pending',
+        synthesisStatus: 'pending',
+        storyboardGenerated: false,
+        duration: '00:00',
+        storyboardScenes: [],
+        gif: '',
+        status: 'pending'
       },
       {
         id: '6',
         index: 6,
         title: '第 6 集：最后对决',
         poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=400',
-        roleCount: 10,
-        sceneCount: 5,
-        propCount: 8,
-        storyboardCount: 0,
         scriptStatus: 'pending',
         assetsStatus: 'pending',
         storyboardStatus: 'pending',
         synthesisStatus: 'pending',
-        status: 'pending',
         storyboardGenerated: false,
         duration: '00:00',
+        storyboardScenes: [],
         gif: '',
+        status: 'pending'
       }
     ]);
   }
@@ -902,6 +1012,131 @@ const handleUploadCover = (ep: any) => {
   ElMessage.info(`正在为第 ${ep.index} 集上传封面...`);
   // Add real upload logic here
 };
+
+// --- Manual Import Logic Start ---
+const overwriteConfirmVisible = ref(false);
+const overwriteConfirmData = ref<{ items: any[]; indices: string } | null>(null);
+
+const executeImport = (items: any[]) => {
+  const SCENE_REGEX = /^分镜\s*(\d+)/;
+  items.forEach(({ episode: ep, scenes }) => {
+    const formattedScenes = scenes.map((content: string) => ({
+      id: `scene-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      status: 'pending',
+      video: null,
+      image: '',
+      progress: 0,
+      modified: false,
+      script: content.replace(SCENE_REGEX, '').replace(/^内容[:：]/, '').trim().split('\n').map(line => `<p>${line}</p>`).join('')
+    }));
+
+    episodeStore.updateEpisode(ep.id, {
+      storyboardScenes: formattedScenes,
+      storyboardGenerated: true,
+      storyboardStatus: 'success'
+    });
+  });
+
+  const totalImported = items.length;
+  ElMessage.success(`成功导入 ${totalImported} 集分镜脚本。`);
+  showManualImportDialog.value = false;
+  manualImportText.value = '';
+};
+
+const handleOverwriteConfirm = () => {
+  if (overwriteConfirmData.value) {
+    executeImport(overwriteConfirmData.value.items);
+    overwriteConfirmVisible.value = false;
+    overwriteConfirmData.value = null;
+  }
+};
+
+const handleManualImportConfirm = async () => {
+  if (!manualImportText.value.trim()) {
+    ElMessage.warning('请输入分镜内容');
+    return;
+  }
+
+  // 1. 按连续空行拆分块
+  const rawBlocks = manualImportText.value.split(/\n\s*\n/).map(b => b.trim()).filter(b => b !== '');
+  if (rawBlocks.length === 0) {
+    ElMessage.warning('未能识别出有效内容');
+    return;
+  }
+
+  const EP_REGEX = /^第\s*(\d+)\s*集/;
+
+  const episodeDataMap = new Map<number, string[]>();
+  let currentEpIdx = -1;
+
+  // 2. 解析分镜归属
+  rawBlocks.forEach(block => {
+    const epMatch = block.match(EP_REGEX);
+    if (epMatch) {
+      currentEpIdx = parseInt(epMatch[1]);
+      if (!episodeDataMap.has(currentEpIdx)) {
+        episodeDataMap.set(currentEpIdx, []);
+      }
+      const remaining = block.replace(EP_REGEX, '').trim();
+      if (remaining) {
+        episodeDataMap.get(currentEpIdx)?.push(remaining);
+      }
+    } else if (currentEpIdx !== -1) {
+      episodeDataMap.get(currentEpIdx)?.push(block);
+    }
+  });
+
+  if (episodeDataMap.size === 0) {
+    ElMessage.warning('未能识别到“第x集”标识，请检查格式');
+    return;
+  }
+
+  // 3. 校验逻辑
+  const episodesToImport: any[] = [];
+  const episodesToConfirm: any[] = [];
+  const episodesSkippedNoAssets: number[] = [];
+
+  episodeDataMap.forEach((contents, epIdx) => {
+    const targetEp = episodeStore.episodes.find(e => e.index === epIdx);
+    if (!targetEp) return;
+
+    if (targetEp.assetsStatus !== 'success') {
+      episodesSkippedNoAssets.push(epIdx);
+      return;
+    }
+
+    const hasExisting = targetEp.storyboardScenes && targetEp.storyboardScenes.length > 0;
+    const item = { episode: targetEp, scenes: contents };
+    
+    if (hasExisting) {
+      episodesToConfirm.push(item);
+    } else {
+      episodesToImport.push(item);
+    }
+  });
+
+  if (episodesToImport.length === 0 && episodesToConfirm.length === 0) {
+    let msg = '没有符合条件的剧集可供导入。';
+    if (episodesSkippedNoAssets.length > 0) {
+      msg += `第 ${episodesSkippedNoAssets.join(', ')} 集未完成主体设置，已忽略。`;
+    }
+    ElMessage.warning(msg);
+    return;
+  }
+
+  // 4. 处理导入与确认逻辑
+  if (episodesToConfirm.length > 0) {
+    const epIndices = episodesToConfirm.map(i => i.episode.index).join('、');
+    overwriteConfirmData.value = { 
+      items: [...episodesToImport, ...episodesToConfirm],
+      indices: epIndices 
+    };
+    overwriteConfirmVisible.value = true;
+  } else {
+    executeImport(episodesToImport);
+  }
+};
+// --- Manual Import Logic End ---
 
 const handleAIGenerateCover = (ep: any) => {
   currentEpisodeForAI.value = ep;

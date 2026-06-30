@@ -400,7 +400,7 @@
         <!-- Center: Script Editor Area -->
         <section class="flex-1 flex flex-col min-h-0 bg-[#F0F7FF] dark:bg-slate-900/50 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100 dark:shadow-none border border-blue-100 dark:border-slate-800 overflow-hidden relative">
           <!-- Top Toolbar / Header -->
-          <div class="px-6 py-2.5 bg-white/60 dark:bg-slate-900/40 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-800/50">
+          <div v-if="timelineScenes.length > 0" class="px-6 py-2.5 bg-white/60 dark:bg-slate-900/40 flex justify-between items-center shrink-0 border-b border-blue-100/50 dark:border-slate-800/50">
             <div class="flex items-center gap-3">
               <div class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">分镜 {{ currentSceneIdx + 1 }}</div>
               <span class="text-[12px] text-indigo-400 dark:text-slate-500 font-bold">输入“@”可快速引用主体，分镜建议 4-15s</span>
@@ -415,7 +415,7 @@
 
           <!-- Content Wrapper -->
           <div class="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-            <div class="flex-1 flex gap-4 px-6 pb-4 overflow-hidden mt-3">
+            <div v-if="timelineScenes.length > 0" class="flex-1 flex gap-4 px-6 pb-4 overflow-hidden mt-3">
               <!-- Left: Script Content Box -->
               <div 
                 class="flex-[4] rounded-[24px] transition-all duration-500 relative flex flex-col overflow-hidden"
@@ -527,7 +527,7 @@
                 <div v-else-if="currentPreview" class="w-full h-full relative rounded-2xl overflow-hidden group bg-black shadow-2xl">
                   <video 
                     ref="centerVideoRef"
-                    :key="currentPreview"
+                    :key="'video-' + currentSceneIdx"
                     :src="currentPreview" 
                     class="w-full h-full object-contain"
                     controls
@@ -559,6 +559,30 @@
                     <p class="text-[12px] text-slate-500 font-medium">请点击下方时间轴上的图标开始生成</p>
                   </div>
                 </div>
+              </div>
+            </div>
+            <!-- Empty State -->
+            <div v-else class="flex-1 flex flex-col items-center justify-center bg-white/50 dark:bg-slate-900/50 m-6 rounded-[24px] border border-dashed border-blue-200 dark:border-slate-700">
+              <el-icon :size="80" class="text-indigo-200 dark:text-indigo-900 mb-6"><Film /></el-icon>
+              <h2 class="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">暂无分镜内容</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 text-center max-w-md">
+                当前剧集的分镜尚未生成或导入。您可以选择手动粘贴分镜脚本，或者由系统自动智能生成。
+              </p>
+              <div class="flex items-center gap-6">
+                <button 
+                  @click="showManualImportDialog = true"
+                  class="h-12 px-8 bg-white dark:bg-slate-800 text-indigo-600 border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 rounded-full font-black text-[14px] transition-all flex items-center gap-2 group"
+                >
+                  <el-icon class="group-hover:-translate-y-0.5 transition-transform"><Edit /></el-icon>
+                  手动粘贴分镜
+                </button>
+                <button 
+                  @click="startStoryboardSequentialGeneration"
+                  class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
+                >
+                  <el-icon class="animate-pulse"><MagicStick /></el-icon>
+                  系统智能生成
+                </button>
               </div>
             </div>
           </div>
@@ -674,8 +698,18 @@
                       </div>
                     </div>
 
-                    <!-- Delete Button -->
-                    <div class="absolute top-1.5 right-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <!-- Action Buttons (Edit & Delete) -->
+                    <div class="absolute top-1.5 right-1.5 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <!-- Edit Button -->
+                      <div 
+                        class="w-4 h-4 rounded bg-white/90 hover:bg-indigo-600 text-slate-600 hover:text-white flex items-center justify-center shadow-md active:scale-90 transition-all cursor-pointer"
+                        @click.stop="handleStoryboardImageClick(idx)"
+                        title="编辑分镜历史"
+                      >
+                        <el-icon :size="10"><Edit /></el-icon>
+                      </div>
+
+                      <!-- Delete Button -->
                       <el-popconfirm
                          title="确认删除该分镜？"
                          confirm-button-text="删除"
@@ -709,7 +743,7 @@
                       ></div>
                     </div>
 
-                    <div class="flex items-center justify-center w-full h-full relative z-10" @click.stop="handleStoryboardImageClick(idx)">
+                    <div class="flex items-center justify-center w-full h-full relative z-10" @click.stop="toggleSceneSelection(idx)">
                       <div v-if="scene.status === 'script_generating'" class="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
                         <el-icon class="is-loading text-purple-600" :size="20"><Loading /></el-icon>
                         <span class="text-[9px] font-black text-purple-600 uppercase tracking-widest animate-pulse text-center px-1">分镜脚本生成</span>
@@ -749,6 +783,19 @@
               </template>
             </draggable>
             
+            <!-- Empty Timeline Add Button -->
+            <div v-if="timelineScenes.length === 0" class="flex items-center h-full pl-2">
+              <div 
+                class="w-[70px] h-[95px] rounded-[14px] border-2 border-dashed border-purple-200 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-slate-800 transition-all group"
+                @click="addTimelineScene"
+              >
+                <div class="w-6 h-6 rounded-full bg-purple-100 dark:bg-slate-800 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                  <el-icon><Plus /></el-icon>
+                </div>
+                <span class="text-[10px] text-purple-400 dark:text-slate-500 font-bold group-hover:text-purple-600 transition-colors">添加分镜</span>
+              </div>
+            </div>
+
             <!-- Final Spacer to ensure last item can be seen fully -->
             <div class="w-10 shrink-0 h-1"></div>
           </div>
@@ -1316,6 +1363,93 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Manual Import Storyboard Dialog -->
+    <el-dialog
+      v-model="showManualImportDialog"
+      :title="`导入分镜脚本 - ${episode?.title || '当前剧集'}`"
+      width="1600px"
+      :close-on-click-modal="false"
+      class="modern-dialog manual-import-dialog"
+      top="4vh"
+    >
+      <div class="flex flex-col gap-4">
+        <!-- 1. Input Area (Top) -->
+        <el-input
+          v-model="manualImportText"
+          type="textarea"
+          :rows="22"
+          placeholder="请将本集的分镜内容粘贴至此..."
+          class="custom-textarea import-textarea text-[16px]"
+        />
+
+        <!-- 2. Simplified Instructions (Bottom) -->
+        <div class="bg-indigo-50/30 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100/30 dark:border-indigo-800/20 flex items-center justify-between">
+          <div class="flex items-center gap-8">
+            <!-- 2.1 Import Requirements -->
+            <el-popover
+              placement="top-start"
+              :width="320"
+              trigger="hover"
+              popper-class="modern-popover"
+            >
+              <template #reference>
+                <div class="flex items-center gap-2 text-indigo-600 cursor-help hover:opacity-80 transition-opacity">
+                  <el-icon :size="20"><InfoFilled /></el-icon>
+                  <span class="text-[13px] font-bold tracking-wide">导入要求说明</span>
+                </div>
+              </template>
+              <div class="p-1">
+                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-3">
+                  <el-icon><InfoFilled /></el-icon>
+                  <span>导入具体要求</span>
+                </div>
+                <div class="flex flex-col gap-3 text-[12px] text-indigo-900/80 dark:text-indigo-200/80 leading-relaxed">
+                  <p>• <strong>空行分隔</strong>：不同分镜内容之间必须保留<strong>至少一行空行</strong>。</p>
+                  <p>• <strong>内容不限</strong>：单个分镜内部可以包含多行文字，只要分镜之间有空行即可。</p>
+                </div>
+              </div>
+            </el-popover>
+
+            <!-- 2.2 Format Example -->
+            <el-popover
+              placement="top"
+              :width="450"
+              trigger="hover"
+              popper-class="modern-popover"
+            >
+              <template #reference>
+                <div class="flex items-center gap-2 text-indigo-500 cursor-help hover:text-indigo-600 transition-colors px-1">
+                  <el-icon :size="20"><Picture /></el-icon>
+                  <span class="text-[13px] font-bold tracking-wide">查看格式示例</span>
+                </div>
+              </template>
+              <div class="p-2">
+                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-4">
+                  <el-icon><Picture /></el-icon>
+                  <span>分镜导入标准格式示例</span>
+                </div>
+                <div class="font-mono text-[10px] bg-indigo-50/30 dark:bg-black/30 p-4 rounded-xl border border-indigo-100/50 leading-relaxed text-slate-600 dark:text-slate-300 shadow-inner">
+                  <p class="font-black text-indigo-600 text-[12px]">分镜1</p>
+                  <p class="font-bold text-slate-800 dark:text-slate-200">内容：这里是分镜1的详细内容描述...</p>
+                  <div class="h-5 my-2 bg-indigo-100/30 dark:bg-indigo-900/50 border border-dashed border-indigo-300 dark:border-indigo-700 rounded flex items-center justify-center">
+                    <span class="text-[10px] text-indigo-500 font-black tracking-widest">此处需空行（按两次回车）</span>
+                  </div>
+                  <p class="font-black text-indigo-600 text-[12px]">分镜2</p>
+                  <p class="font-bold text-slate-800 dark:text-slate-200">内容：这里是分镜2的详细内容描述...</p>
+                </div>
+              </div>
+            </el-popover>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-4 pb-2">
+          <el-button @click="showManualImportDialog = false" class="!rounded-xl !px-10 !h-11">取消</el-button>
+          <el-button type="primary" @click="handleManualImportConfirm" class="theme-primary-btn !rounded-xl !px-16 !h-11 font-black shadow-lg shadow-indigo-500/20">确认导入本集</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -1427,6 +1561,8 @@ const episodeStore = useEpisodeStore();
 const modelStore = useModelStore();
 
 // UI States
+const showManualImportDialog = ref(false);
+const manualImportText = ref('');
 const isSubtitled = ref(true);
 const isWatermarkRemoved = ref(false);
 const resolution = ref('1080'); // 分辨率：480, 720, 1080, 4k
@@ -1444,7 +1580,7 @@ const showGuide = ref(true);
 const currentSceneIdx = ref(0);
 const timelineContainer = ref<HTMLElement | null>(null);
 const showLibraryModal = ref(false);
-const isEditingScript = ref(true);
+const isEditingScript = ref(false);
 const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
@@ -3317,6 +3453,68 @@ const addTimelineScene = () => {
   });
 };
 
+const handleManualImportConfirm = () => {
+  if (!manualImportText.value.trim()) {
+    ElMessage.warning('请输入分镜内容');
+    return;
+  }
+  
+  // 按连续的空行分割块，过滤掉纯序号行（如 "分镜1" 或 "第1集"）
+  const rawBlocks = manualImportText.value.split(/\n\s*\n/).map(b => b.trim()).filter(b => b !== '');
+  
+  if (rawBlocks.length === 0) {
+    ElMessage.warning('未能识别出有效的分镜内容');
+    return;
+  }
+
+  const EP_REGEX = /^第\s*(\d+)\s*集/;
+  const SCENE_REGEX = /^分镜\s*(\d+)/;
+
+  // 过滤掉纯标识行，只保留实际内容
+  const validScenes = rawBlocks.filter(block => {
+    // 如果这一行只包含 "第x集" 或 "分镜x"，且没有后续内容，则认为是标识行，予以忽略
+    if (EP_REGEX.test(block) && block.replace(EP_REGEX, '').trim() === '') return false;
+    if (SCENE_REGEX.test(block) && block.replace(SCENE_REGEX, '').trim() === '') return false;
+    return true;
+  }).map(block => {
+    // 去掉内容开头的 "分镜x" 或 "内容：" 等前缀
+    let cleanContent = block.replace(SCENE_REGEX, '').replace(/^内容[:：]/, '').trim();
+    return cleanContent || block; // 如果清理后为空，则保留原样（防止误删）
+  });
+
+  if (validScenes.length === 0) {
+    ElMessage.warning('解析失败，请确保分镜内容非空且有空行分隔');
+    return;
+  }
+
+  // 统一导入到当前剧集
+  const newScenes = validScenes.map((content, index) => ({
+    id: `scene-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    status: 'pending',
+    video: null,
+    image: '',
+    progress: 0,
+    modified: false,
+    script: content.split('\n').map(line => `<p>${line}</p>`).join('')
+  }));
+
+  timelineScenes.value = [...timelineScenes.value, ...newScenes];
+  currentSceneIdx.value = timelineScenes.value.length - newScenes.length; // 选中新导入的第一条
+  
+  persistStoryboardForEpisode(episodeId.value);
+  
+  // 强制同步编辑器
+  nextTick(() => {
+    if (currentScript.value) {
+      editor.value?.commands.setContent(currentScript.value);
+    }
+  });
+
+  showManualImportDialog.value = false;
+  manualImportText.value = '';
+  ElMessage.success(`成功导入 ${newScenes.length} 个分镜至本集`);
+};
+
 const handleDeleteScene = (idx: number) => {
   // 如果正在生成，提示不可删除或先停止生成
   const scene = timelineScenes.value[idx];
@@ -3379,18 +3577,28 @@ onMounted(async () => {
   }
 
   // Check for interrupted generation
-  const restored = restoreStoryboardForEpisode(episodeId.value);
   if (episodeStore.generationStatus.isGenerating && episodeStore.generationStatus.type === 'storyboard') {
     recoveryConfirmTitle.value = '恢复生成';
     recoveryConfirmMessage.value = `检测到分镜脚本生成意外中断，是否恢复生成？`;
     recoveryConfirmVisible.value = true;
-  } else if (!restored) {
-    // Trigger sequential generation for storyboard only when no cached data
-    await startStoryboardSequentialGeneration();
+  } else {
+    // 优先从 Store 恢复已导入或已生成的分镜
+    const hasData = restoreStoryboardForEpisode(episodeId.value);
+    if (!hasData) {
+      timelineScenes.value = [];
+      episodeStore.updateEpisode(episodeId.value, { storyboardScenes: [] });
+    }
   }
 
   if (currentScript.value) {
     editor.value?.commands.setContent(currentScript.value);
+  }
+});
+
+watch(currentSceneIdx, (newIdx) => {
+  if (timelineScenes.value[newIdx]) {
+    const script = timelineScenes.value[newIdx].script || '';
+    editor.value?.commands.setContent(script);
   }
 });
 
@@ -3415,9 +3623,11 @@ watch(episodeId, async (newId, oldId) => {
   isMultiSelectMode.value = false;
   currentSceneIdx.value = 0;
 
-  if (!restoreStoryboardForEpisode(newId)) {
+  // 优先加载 Store 中的分镜数据（支持批量导入后的展示）
+  const hasData = restoreStoryboardForEpisode(newId);
+  if (!hasData) {
     timelineScenes.value = [];
-    await startStoryboardSequentialGeneration();
+    episodeStore.updateEpisode(newId, { storyboardScenes: [] });
   }
 });
 
@@ -3528,7 +3738,7 @@ const startStoryboardSequentialGeneration = async () => {
         timelineScenes.value[i].script = currentHtml;
         
         // Update editor content in real-time if this is the currently viewed scene
-        if (i === currentSceneIdx.value && !isEditingScript.value) {
+        if (i === currentSceneIdx.value) {
           editor.value?.commands.setContent(timelineScenes.value[i].script);
         }
       }
