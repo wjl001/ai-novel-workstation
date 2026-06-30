@@ -210,6 +210,34 @@
           批量下载
         </button>
 
+        <!-- 分辨率选择器 -->
+        <el-dropdown
+          trigger="click"
+          :disabled="!canSynthesizeAll"
+          class="resolution-dropdown"
+        >
+          <button
+            type="button"
+            :disabled="!canSynthesizeAll"
+            class="h-9 px-4 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <span>{{ resolution === '4k' ? '4K' : resolution + 'p' }}</span>
+            <el-icon class="text-[12px]"><ArrowDown /></el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu class="resolution-menu">
+              <el-dropdown-item
+                v-for="option in resolutionOptions"
+                :key="option.value"
+                :class="{ 'is-active': resolution === option.value }"
+                @click="resolution = option.value"
+              >
+                {{ option.label }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
         <button 
           @click="handleSynthesis"
           :disabled="!canSynthesizeAll"
@@ -462,7 +490,7 @@
                       title="将脚本中的主体名称同步为胶囊样式"
                     >
                       <el-icon class="group-hover:rotate-180 transition-transform duration-500"><RefreshRight /></el-icon>
-                      <span>同步主体</span>
+                      <span>关联主体</span>
                     </button>
                   </div>
                   <div class="flex items-center gap-3">
@@ -740,7 +768,12 @@
       >
         <template #header>
           <div class="flex items-center justify-between px-2">
-            <span class="text-[18px] font-bold text-slate-800">{{ isSynthesizing ? '合成全集' : '预览全集' }}</span>
+            <span class="text-[18px] font-bold text-slate-800">
+              {{ isSynthesizing ? '合成全集' : '预览全集' }}
+              <span class="text-[14px] font-normal text-slate-500 ml-2">
+                ({{ resolution === '4k' ? '4K' : resolution + 'p' }})
+              </span>
+            </span>
           </div>
         </template>
         
@@ -1394,9 +1427,15 @@ const episodeStore = useEpisodeStore();
 const modelStore = useModelStore();
 
 // UI States
-const synthesisModel = ref('seedance-fast'); // Legacy for compatibility
 const isSubtitled = ref(true);
 const isWatermarkRemoved = ref(false);
+const resolution = ref('1080'); // 分辨率：480, 720, 1080, 4k
+const resolutionOptions = [
+  { label: '480p', value: '480' },
+  { label: '720p', value: '720' },
+  { label: '1080p', value: '1080' },
+  { label: '4K', value: '4k' }
+];
 const activeAssetTab = ref('roles');
 const isSynthesizing = ref(false);
 const synthesisProgress = ref(0);
@@ -3075,9 +3114,10 @@ const handleGenerateSingleScene = (idx: number) => {
     
     // 模拟参数传递
     const params = {
-      model: synthesisModel.value,
+      model: modelStore.selectedVideoModel,
       withSubtitle: isSubtitled.value,
-      removeWatermark: isWatermarkRemoved.value
+      removeWatermark: isWatermarkRemoved.value,
+      resolution: resolution.value // 应用分辨率设置
     };
     console.log(`Generating scene ${idx + 1} with:`, params);
 
@@ -3091,7 +3131,7 @@ const handleGenerateSingleScene = (idx: number) => {
         timelineScenes.value[idx].image = `https://picsum.photos/seed/${idx}_${Date.now()}/600/338`;
         persistStoryboardForEpisode(episodeId.value);
         
-        let successMsg = `分镜 ${idx + 1} 生成成功 (模型: ${synthesisModel.value})`;
+        let successMsg = `分镜 ${idx + 1} 生成成功 (模型: ${modelStore.selectedVideoModel}, 分辨率: ${resolution.value})`;
         if (isSubtitled.value) successMsg += ' [含字幕]';
         if (isWatermarkRemoved.value) successMsg += ' [已去水印]';
         ElMessage.success(successMsg);
@@ -3203,6 +3243,10 @@ const handleSynthesis = () => {
   synthesisProgress.value = 0;
   showSynthesisConfig.value = true;
   
+  // 获取当前选择的分辨率
+  const selectedResolution = resolution.value;
+  console.log(`开始合成全集视频，分辨率: ${selectedResolution}p`);
+  
   const timer = setInterval(() => {
     synthesisProgress.value += 1;
     if (synthesisProgress.value >= 100) {
@@ -3210,7 +3254,7 @@ const handleSynthesis = () => {
       isSynthesizing.value = false;
       isSynthesisCompleted.value = true;
       fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];
-      ElMessage.success('全集视频合成成功');
+      ElMessage.success(`全集视频合成成功 (${selectedResolution === '4k' ? '4K' : selectedResolution + 'p'})`);
     }
   }, 50);
 };

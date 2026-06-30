@@ -9,13 +9,25 @@
     >
       <template #reference>
         <div class="current-model-trigger group">
-          <div class="flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-500/20 hover:border-indigo-500/50 transition-all cursor-pointer shadow-lg shadow-indigo-500/5 group-hover:shadow-indigo-500/20">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-              <el-icon :size="20"><Cpu v-if="type === 'text'" /><Picture v-else-if="type === 'image'" /><VideoCamera v-else /></el-icon>
+          <div 
+            class="flex items-center rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-500/20 hover:border-indigo-500/50 transition-all cursor-pointer shadow-lg shadow-indigo-500/5 group-hover:shadow-indigo-500/20"
+            :class="compact ? 'gap-2 px-3 py-1' : 'gap-3 px-4 py-2'"
+          >
+            <div 
+              class="rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] group-hover:scale-110 group-hover:rotate-3 transition-all duration-500"
+              :class="compact ? 'w-7 h-7' : 'w-9 h-9'"
+            >
+              <el-icon :size="compact ? 16 : 20"><Cpu v-if="type === 'text'" /><Picture v-else-if="type === 'image'" /><VideoCamera v-else /></el-icon>
             </div>
-            <div class="flex flex-col">
-              <span class="text-[9px] uppercase tracking-[0.2em] opacity-60 font-black text-indigo-600 dark:text-indigo-400">AI Engine</span>
-              <span class="text-sm font-black flex items-center gap-2 text-slate-800 dark:text-slate-100">
+            <div class="flex flex-col min-w-0">
+              <span 
+                class="uppercase tracking-[0.2em] opacity-60 font-black text-indigo-600 dark:text-indigo-400"
+                :class="compact ? 'text-[7px]' : 'text-[9px]'"
+              >AI Engine</span>
+              <span 
+                class="font-black flex items-center gap-2 text-slate-800 dark:text-slate-100 truncate"
+                :class="compact ? 'text-[12px]' : 'text-sm'"
+              >
                 {{ selectedModel?.name || '选择模型' }}
                 <el-icon class="text-indigo-500 transition-transform group-hover:translate-y-0.5"><ArrowDown /></el-icon>
               </span>
@@ -100,6 +112,7 @@ import { useModelStore } from '@/store/models';
 const props = defineProps<{
   modelValue: string;
   type: 'text' | 'image' | 'video';
+  compact?: boolean;
 }>();
 
 const emit = defineEmits(['update:modelValue', 'change']);

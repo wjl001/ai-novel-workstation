@@ -3,7 +3,7 @@ export interface AIModel {
   name: string;
   description: string;
   tags: string[];
-  provider: 'openai' | 'anthropic' | 'google' | 'deepseek' | 'midjourney' | 'stability' | 'flux' | 'kling' | 'runway' | 'luma' | 'pika' | 'sora' | 'doubao' | 'kimi' | 'nano_banana' | 'seedance';
+  provider: 'openai' | 'anthropic' | 'google' | 'deepseek' | 'midjourney' | 'stability' | 'flux' | 'kling' | 'runway' | 'luma' | 'pika' | 'sora' | 'doubao' | 'kimi' | 'nano_banana' | 'seedance' | 'wan' | 'happyhorse';
   cost: number; // 消耗算力豆数量
 }
 
@@ -81,30 +81,31 @@ export const IMAGE_MODELS: ModelVendor[] = [
 
 export const VIDEO_MODELS: ModelVendor[] = [
   {
-    id: 'doubao_seedream',
-    name: 'Doubao-Seedream',
+    id: 'doubao_seedance',
+    name: '豆包 Seedance',
     logo: '',
     models: [
-      { id: 'doubao-seedream-5-0-lite', name: 'Doubao-Seedream 5.0 lite', description: '极速生成高清短视频，画面动感极佳', provider: 'doubao', tags: ['极速', '动感'], cost: 30 },
-      { id: 'doubao-seedream-4-5', name: 'Doubao-Seedream 4.5', description: '经典版本，画面稳定性与连贯性的平衡点', provider: 'doubao', tags: ['稳定', '经典'], cost: 40 },
-      { id: 'doubao-seedream-4-0', name: 'Doubao-Seedream 4.0', description: '基础版本，适合快速预览视频效果', provider: 'doubao', tags: ['基础', '预览'], cost: 20 },
+      { id: 'doubao-seedance-2-0', name: 'Doubao-Seedance 2.0', description: '新一代视频生成模型，画面质感与动感大幅提升', provider: 'doubao', tags: ['新一代', '高质感'], cost: 50 },
+      { id: 'doubao-seedance-2-0-fast', name: 'Doubao-Seedance 2.0 Fast', description: '极速生成，保持高水准画面的同时大幅缩短等待时间', provider: 'doubao', tags: ['极速', '高效'], cost: 35 },
     ]
   },
   {
-    id: 'seedance',
-    name: 'Seedance',
+    id: 'happyhorse',
+    name: 'Happy Horse',
     logo: '',
     models: [
-      { id: 'seedance-2-0', name: 'Seedance 2.0', description: '好莱坞级视觉质感，物理模拟真实', provider: 'seedance', tags: ['电影级', '真实'], cost: 60 },
-      { id: 'seedance-1-5', name: 'Seedance 1.5', description: '高效率视频生成，适合批量创作', provider: 'seedance', tags: ['高效', '批量'], cost: 45 },
+      { id: 'happyhorse-1.0-i2v', name: 'HappyHorse 1.0 I2V', description: '专业图生视频模型，完美还原图片细节与意境', provider: 'happyhorse', tags: ['图生视频', '高还原'], cost: 45 },
+      { id: 'happyhorse-1.0-r2v', name: 'HappyHorse 1.0 R2V', description: '实时视频生成，适合快速迭代预览效果', provider: 'happyhorse', tags: ['实时', '流畅'], cost: 40 },
+      { id: 'happyhorse-1.0-t2v', name: 'HappyHorse 1.0 T2V', description: '强大的文生视频能力，精准理解剧本意图', provider: 'happyhorse', tags: ['文生视频', '精准'], cost: 45 },
     ]
   },
   {
-    id: 'kling_happy_horse',
-    name: '可灵 Kling',
+    id: 'wan',
+    name: 'Wan',
     logo: '',
     models: [
-      { id: 'kling-happy-horse-1-1', name: '可灵Happy Horse 1.1', description: '极致灵动，擅长捕捉自然运动瞬间', provider: 'kling', tags: ['灵动', '自然'], cost: 50 },
+      { id: 'wan2.7-r2v', name: 'Wan 2.7 R2V', description: '旗舰级视频生成，极致的物理模拟与动态表现', provider: 'wan', tags: ['旗舰', '物理模拟'], cost: 60 },
+      { id: 'wan2.7-t2v', name: 'Wan 2.7 T2V', description: '文生视频领域的巅峰之作，构图与叙事感极佳', provider: 'wan', tags: ['巅峰', '叙事感'], cost: 60 },
     ]
   }
 ];

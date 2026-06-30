@@ -307,11 +307,9 @@
         <div class="absolute -bottom-32 left-1/4 w-[350px] h-[350px] bg-pink-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         
         <!-- Header: Immersive Hero Style -->
-        <div class="relative px-10 pt-2 pb-1 shrink-0 overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-purple-600/10 to-transparent dark:from-indigo-400/15 dark:via-purple-400/10"></div>
-          
+        <div class="relative pl-10 pr-14 pt-2 pb-1 shrink-0 overflow-hidden">
           <!-- Close Button: Premium Style -->
-          <div class="absolute top-3 right-10 z-50 flex items-center gap-3">
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 z-[9999] flex items-center pointer-events-auto">
             <button 
               @click="showHotTopicDialog = false" 
               class="w-8 h-8 flex items-center justify-center rounded-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-700 transition-all duration-500 shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700 hover:rotate-90"
@@ -319,7 +317,8 @@
               <el-icon :size="16"><Close /></el-icon>
             </button>
           </div>
-
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-purple-600/10 to-transparent dark:from-indigo-400/15 dark:via-purple-400/10"></div>
+          
           <div class="relative flex items-center gap-4">
             <div class="w-10 h-10 rounded-[16px] bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-[0_8px_30px_rgba(79,70,229,0.3)] ring-2 ring-white dark:ring-slate-900 transition-all hover:scale-110 hover:rotate-6 duration-500 group">
               <el-icon :size="20" class="group-hover:animate-pulse"><MagicStick /></el-icon>

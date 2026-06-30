@@ -11,13 +11,19 @@
     <div class="flex items-start justify-between gap-4 mb-6 px-2">
       <div class="space-y-2">
         <h2 class="text-[24px] font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ title }}</h2>
-        <div class="flex items-center gap-3 text-[12px]">
-          <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 font-black border border-indigo-100 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-300">
-            {{ typeLabel }}图片管理
-          </span>
-          <span class="text-slate-400 dark:text-slate-500 font-semibold">
-            历史图片 {{ localSubject.imageHistory.length }} 张，默认选中最新生成图
-          </span>
+        <div class="flex items-center gap-4 text-[12px]">
+          <div class="flex items-center gap-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 font-black border border-indigo-100 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-300">
+              {{ typeLabel }}图片管理
+            </span>
+            <span class="text-slate-400 dark:text-slate-500 font-semibold">
+              历史图片 {{ localSubject.imageHistory.length }} 张，默认选中最新生成图
+            </span>
+          </div>
+          <div class="flex items-center gap-2 ml-2">
+            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" compact />
+            <AIModelSelector v-model="modelStore.selectedImageModel" type="image" compact />
+          </div>
         </div>
       </div>
       <button
@@ -177,7 +183,6 @@
                     {{ type === 'character' ? '形象描述' : (type === 'storyboard' ? '分镜脚本' : '详细描述') }}
                   </label>
                   <div class="flex items-center gap-3">
-                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
                     <button
                       @click="polishText"
                       class="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-[11px] font-black transition-all disabled:opacity-50"
