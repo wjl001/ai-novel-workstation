@@ -22,10 +22,10 @@
 
       <!-- Main Body -->
       <div class="flex-1 flex overflow-hidden p-4 gap-4">
-        <!-- Left: Subject Library (主体库) -->
+        <!-- Left: Subject Library (资产库) -->
         <div class="w-[280px] bg-white rounded-xl border border-slate-100 flex flex-col overflow-hidden">
           <div class="p-4 border-b border-slate-50 flex justify-between items-center">
-            <span class="font-bold text-slate-800">主体库</span>
+            <span class="font-bold text-slate-800">资产库</span>
             <el-icon class="cursor-pointer text-slate-400"><Plus /></el-icon>
           </div>
           <el-tabs v-model="activeAssetTab" class="asset-tabs flex-1 flex flex-col overflow-hidden">

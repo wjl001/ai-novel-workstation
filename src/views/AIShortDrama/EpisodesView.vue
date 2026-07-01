@@ -71,7 +71,7 @@
         <!-- Bulk Import Button (Only shown in Storyboard Video tab) -->
         <button 
           v-if="activeTab === 'processing'"
-          @click="showManualImportDialog = true"
+          @click="showImportMethodDialog = true"
           class="h-10 px-6 flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-500/30 rounded-full font-black text-[13px] transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
         >
           <el-icon :size="16"><Plus /></el-icon>
@@ -416,6 +416,68 @@
       :groups="episodesUIDesignGroups"
     />
 
+    <!-- 导入方式选择弹窗 -->
+    <el-dialog
+      v-model="showImportMethodDialog"
+      title="选择导入方式"
+      width="600px"
+      center
+      destroy-on-close
+      class="modern-dialog-v2 rounded-[32px] overflow-hidden"
+      append-to-body
+    >
+      <div class="py-6 px-4">
+        <div class="grid grid-cols-2 gap-6">
+          <!-- 文件上传 -->
+          <div 
+            @click="$refs.fileInputBulk?.click()"
+            class="group relative p-8 rounded-[24px] bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border-2 border-indigo-100 dark:border-indigo-800 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all cursor-pointer flex flex-col items-center gap-4"
+          >
+            <div class="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+              <el-icon :size="40"><Document /></el-icon>
+            </div>
+            <div class="text-center">
+              <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-1">文件导入</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">支持 txt, docx, md 格式</p>
+            </div>
+            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <el-icon class="text-indigo-500"><CircleCheck /></el-icon>
+            </div>
+          </div>
+
+          <!-- 手动粘贴 -->
+          <div 
+            @click="showImportMethodDialog = false; showManualImportDialog = true"
+            class="group relative p-8 rounded-[24px] bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-100 dark:border-purple-800 hover:border-purple-500 hover:shadow-2xl hover:shadow-purple-500/20 transition-all cursor-pointer flex flex-col items-center gap-4"
+          >
+            <div class="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
+              <el-icon :size="40"><Edit /></el-icon>
+            </div>
+            <div class="text-center">
+              <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-1">手动粘贴</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">直接粘贴脚本内容</p>
+            </div>
+            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <el-icon class="text-purple-500"><CircleCheck /></el-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- 隐藏的文件输入框 -->
+        <input 
+          ref="fileInputBulk"
+          type="file"
+          accept=".txt,.md,.docx,.doc"
+          class="hidden"
+          @change="(e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) handleFileImport(file);
+            (e.target as HTMLInputElement).value = '';
+          }"
+        />
+      </div>
+    </el-dialog>
+
     <!-- Manual Import Storyboard Dialog (Multi-Episode Support) -->
     <el-dialog
       v-model="showManualImportDialog"
@@ -458,10 +520,9 @@
                   <span>批量导入详细要求</span>
                 </div>
                 <div class="flex flex-col gap-3 text-[12px] text-indigo-900/80 dark:text-indigo-200/80 leading-relaxed">
-                  <p>• <strong>剧集识别</strong>：系统通过“<strong>第x集</strong>”关键字自动识别并分发分镜内容。</p>
+                  <p>• <strong>分镜识别</strong>：系统通过“<strong>第x集</strong>”和“<strong>分镜1/分镜一</strong>”等标识自动分发内容。</p>
+                  <!-- <p>• <strong>换行保留</strong>：分镜内部的换行将完整保留，不再作为拆分分镜的依据。</p> -->
                   <p>• <strong>主体校验</strong>：仅支持导入已完成“<strong>主体设置</strong>”的剧集。</p>
-                  <p>• <strong>覆盖逻辑</strong>：若目标剧集已有分镜，导入将覆盖原有内容。</p>
-                  <p>• <strong>空行分隔</strong>：不同分镜内容之间必须保留<strong>至少一行空行</strong>。</p>
                 </div>
               </div>
             </el-popover>
@@ -488,27 +549,24 @@
                   <div class="flex flex-col gap-0">
                     <!-- Episode 1 -->
                     <p class="font-black text-indigo-600 text-[13px]">第1集</p>
-                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
-                    
+                    <div class="h-2"></div>
                     <p class="font-bold text-slate-800 dark:text-slate-200">分镜1</p>
-                    <p>内容：描述内容（分镜内不空行）</p>
-                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
-
+                    <p>这是分镜1的内容，可以包含多行。</p>
+                    <p>换行会被保留。</p>
+                    <div class="h-2"></div>
                     <p class="font-bold text-slate-800 dark:text-slate-200">分镜2</p>
-                    <p>内容：描述内容（分镜内不空行）</p>
+                    <p>这是分镜2的内容...</p>
                     
-                    <!-- Episode Separator -->
-                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
+                    <div class="h-4"></div>
 
                     <!-- Episode 2 -->
                     <p class="font-black text-indigo-600 text-[13px]">第2集</p>
-                    <div class="h-4 my-1 flex items-center justify-center bg-indigo-50/50 dark:bg-indigo-900/20 border border-dashed border-indigo-100 dark:border-indigo-800 rounded text-[9px] text-indigo-300 font-bold">空行</div>
-                    
-                    <p class="font-bold text-slate-800 dark:text-slate-200">分镜1</p>
-                    <p>内容：描述内容...</p>
+                    <div class="h-2"></div>
+                    <p class="font-bold text-slate-800 dark:text-slate-200">分镜一</p>
+                    <p>第二集的分镜一内容...</p>
                   </div>
                 </div>
-                <p class="mt-4 text-[11px] text-slate-400 text-center italic">温馨提示：分镜标题与内容间不空行，整体分镜之间必须有空行隔开</p>
+                <p class="mt-4 text-[11px] text-slate-400 text-center italic">温馨提示：分镜标题与内容间不空行，系统会自动识别“分镜”标识</p>
               </div>
             </el-popover>
           </div>
@@ -531,9 +589,12 @@ import {
   ArrowLeft, InfoFilled, Search, User, Location, Box, VideoCamera, 
   Document, Picture, Film, MagicStick, Loading, VideoPlay, Check, Download,
   EditPen,
-  Monitor
+  Monitor,
+  Plus,
+  CircleCheck
 } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
+import JSZip from 'jszip';
 import { useEpisodeStore } from '@/store/episode';
 import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
 
@@ -553,29 +614,225 @@ const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showAIDialog = ref(false);
 const showManualImportDialog = ref(false);
+const showImportMethodDialog = ref(false);
 const manualImportText = ref('');
-const aiPrompt = ref('');
-const isGenerating = ref(false);
-const generatedImages = ref<string[]>([]);
-const selectedImage = ref('');
-const currentEpisodeForAI = ref<any>(null);
+const overwriteConfirmVisible = ref(false);
+const overwriteConfirmData = ref<any>(null);
 
-// Default cover gallery
-const defaultCovers = [
-  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=600&h=375&auto=format&fit=crop', // Sci-fi
-  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=600&h=375&auto=format&fit=crop', // Ancient
-  'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&h=375&auto=format&fit=crop', // Movie
-  'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&h=375&auto=format&fit=crop', // Forest/Mystery
-  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&h=375&auto=format&fit=crop', // Cyberpunk
-  'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&h=375&auto=format&fit=crop', // Cinema
-  'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600&h=375&auto=format&fit=crop', // City Night
-  'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&h=375&auto=format&fit=crop'  // Vintage
-];
+const executeImport = (items: any[]) => {
+  items.forEach(item => {
+    const { episode, scenes } = item;
+    const newScenes = scenes.map((content: string) => ({
+      id: `scene-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      status: 'pending',
+      video: null,
+      image: '',
+      progress: 0,
+      modified: false,
+      script: content.split('\n').map((line: string) => `<p>${line}</p>`).join('')
+    }));
+    
+    episodeStore.updateEpisode(episode.id, {
+      storyboardScenes: newScenes,
+      storyboardStatus: 'success',
+      storyboardGenerated: true
+    });
+  });
 
-const drawerVisible = ref(false);
-const editingEpisode = ref<any>(null);
+  const totalImported = items.length;
+  ElMessage.success(`成功导入 ${totalImported} 集分镜脚本。`);
+  showManualImportDialog.value = false;
+  showImportMethodDialog.value = false;
+  manualImportText.value = '';
+};
 
-const episodesUIDesignGroups = {
+const handleOverwriteConfirm = () => {
+  if (overwriteConfirmData.value) {
+    executeImport(overwriteConfirmData.value.items);
+    overwriteConfirmVisible.value = false;
+    overwriteConfirmData.value = null;
+  }
+};
+
+const processImportText = (text: string) => {
+  if (!text.trim()) {
+    ElMessage.warning('请输入分镜内容');
+    return;
+  }
+
+  // 1. 识别剧集标识：支持 "第1集"、"第一集" 等
+  const EP_MARKER_REGEX = /\n?\s*(第\s*[\d一二三四五六七八九十]+\s*集)\s*/g;
+  const SCENE_MARKER_REGEX = /\n?\s*(分镜\s*[\d一二三四五六七八九十]+)\s*[:：]?\s*/g;
+
+  // 使用剧集标识分割全文
+  const epParts = text.split(EP_MARKER_REGEX);
+  const episodeDataMap = new Map<number, string[]>();
+
+  // 辅助函数：将中文数字转阿拉伯数字
+  const cnToNum = (cn: string) => {
+    const map: any = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+    if (map[cn]) return map[cn];
+    const match = cn.match(/\d+/);
+    return match ? parseInt(match[0]) : -1;
+  };
+
+  // epParts 结构: [之前内容, 第1集标识, 内容1, 第2集标识, 内容2, ...]
+  for (let i = 1; i < epParts.length; i += 2) {
+    const epMarker = epParts[i];
+    const epContent = epParts[i + 1]?.trim();
+    if (!epContent) continue;
+
+    const epNumMatch = epMarker.match(/[\d一二三四五六七八九十]+/);
+    if (!epNumMatch) continue;
+    const epIdx = cnToNum(epNumMatch[0]);
+    if (epIdx === -1) continue;
+
+    // 在每一集的内容中，再识别分镜标识
+    const sceneParts = epContent.split(SCENE_MARKER_REGEX);
+    const scenes: string[] = [];
+    
+    // 如果该集开头没分镜标识，把开头到第一个标识前的内容作为一个分镜（可选逻辑，根据用户习惯）
+    // 但根据用户要求“直接识别分镜1...”，我们只保留匹配到的标识后的内容
+    for (let j = 1; j < sceneParts.length; j += 2) {
+      const sceneContent = sceneParts[j + 1]?.trim();
+      if (sceneContent) {
+        let cleanContent = sceneContent.replace(/^内容[:：]\s*/, '').trim();
+        scenes.push(cleanContent);
+      }
+    }
+
+    if (scenes.length > 0) {
+      episodeDataMap.set(epIdx, scenes);
+    }
+  }
+
+  if (episodeDataMap.size === 0) {
+    ElMessage.warning('未能识别到“第x集”及对应的“分镜x”标识，请检查格式');
+    return;
+  }
+
+  // 3. 校验逻辑
+  const episodesToImport: any[] = [];
+  const episodesToConfirm: any[] = [];
+  const episodesSkippedNoAssets: number[] = [];
+
+  episodeDataMap.forEach((contents, epIdx) => {
+    const targetEp = episodeStore.episodes.find(e => e.index === epIdx);
+    if (!targetEp) return;
+
+    if (targetEp.assetsStatus !== 'success') {
+      episodesSkippedNoAssets.push(epIdx);
+      return;
+    }
+
+    const hasExisting = targetEp.storyboardScenes && targetEp.storyboardScenes.length > 0;
+    const item = { episode: targetEp, scenes: contents };
+    
+    if (hasExisting) {
+      episodesToConfirm.push(item);
+    } else {
+      episodesToImport.push(item);
+    }
+  });
+
+  if (episodesToImport.length === 0 && episodesToConfirm.length === 0) {
+    let msg = '没有符合条件的剧集可供导入。';
+    if (episodesSkippedNoAssets.length > 0) {
+      msg += `第 ${episodesSkippedNoAssets.join(', ')} 集未完成主体设置，已忽略。`;
+    }
+    ElMessage.warning(msg);
+    return;
+  }
+
+  // 4. 处理导入与确认逻辑
+  if (episodesToConfirm.length > 0) {
+    const epIndices = episodesToConfirm.map(i => i.episode.index).join('、');
+    overwriteConfirmData.value = { 
+      items: [...episodesToImport, ...episodesToConfirm],
+      indices: epIndices 
+    };
+    overwriteConfirmVisible.value = true;
+  } else {
+    executeImport(episodesToImport);
+  }
+};
+
+const handleManualImportConfirm = async () => {
+  processImportText(manualImportText.value);
+};
+
+const handleFileImport = async (file: File) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在解析文件...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
+  try {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    let text = '';
+
+    if (extension === 'txt' || extension === 'md') {
+      text = await file.text();
+    } else if (extension === 'docx') {
+      const arrayBuffer = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(arrayBuffer);
+      const docXml = await zip.file('word/document.xml')?.async('text');
+      if (docXml) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(docXml, 'text/xml');
+        const paragraphs = xmlDoc.getElementsByTagName('w:p');
+        const lines = [];
+        for (let i = 0; i < paragraphs.length; i++) {
+          const texts = paragraphs[i].getElementsByTagName('w:t');
+          let pText = '';
+          for (let j = 0; j < texts.length; j++) {
+            pText += texts[j].textContent;
+          }
+          lines.push(pText);
+        }
+        text = lines.join('\n');
+      }
+    } else if (extension === 'doc') {
+      throw new Error('暂不支持旧版 .doc 格式，请转换为 .docx 后再试');
+    } else {
+      throw new Error('不支持的文件格式');
+    }
+
+    if (text) {
+      processImportText(text);
+    } else {
+      throw new Error('未能从文件中提取到文字内容');
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '文件解析失败');
+  } finally {
+     loading.close();
+   }
+ };
+ 
+ const aiPrompt = ref('');
+ const isGenerating = ref(false);
+ const generatedImages = ref<string[]>([]);
+ const selectedImage = ref('');
+ const currentEpisodeForAI = ref<any>(null);
+ 
+ // Default cover gallery
+ const defaultCovers = [
+   'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=600&h=375&auto=format&fit=crop', // Sci-fi
+   'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=600&h=375&auto=format&fit=crop', // Ancient
+   'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&h=375&auto=format&fit=crop', // Movie
+   'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&h=375&auto=format&fit=crop', // Forest/Mystery
+   'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&h=375&auto=format&fit=crop', // Cyberpunk
+   'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&h=375&auto=format&fit=crop', // Cinema
+   'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600&h=375&auto=format&fit=crop', // City Night
+   'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&h=375&auto=format&fit=crop'  // Vintage
+ ];
+ 
+ const drawerVisible = ref(false);
+ const editingEpisode = ref<any>(null);
+ 
+ const episodesUIDesignGroups = {
   layout: [
     {
       id: 'episodes-view-page',
@@ -1013,129 +1270,6 @@ const handleUploadCover = (ep: any) => {
   // Add real upload logic here
 };
 
-// --- Manual Import Logic Start ---
-const overwriteConfirmVisible = ref(false);
-const overwriteConfirmData = ref<{ items: any[]; indices: string } | null>(null);
-
-const executeImport = (items: any[]) => {
-  const SCENE_REGEX = /^分镜\s*(\d+)/;
-  items.forEach(({ episode: ep, scenes }) => {
-    const formattedScenes = scenes.map((content: string) => ({
-      id: `scene-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      status: 'pending',
-      video: null,
-      image: '',
-      progress: 0,
-      modified: false,
-      script: content.replace(SCENE_REGEX, '').replace(/^内容[:：]/, '').trim().split('\n').map(line => `<p>${line}</p>`).join('')
-    }));
-
-    episodeStore.updateEpisode(ep.id, {
-      storyboardScenes: formattedScenes,
-      storyboardGenerated: true,
-      storyboardStatus: 'success'
-    });
-  });
-
-  const totalImported = items.length;
-  ElMessage.success(`成功导入 ${totalImported} 集分镜脚本。`);
-  showManualImportDialog.value = false;
-  manualImportText.value = '';
-};
-
-const handleOverwriteConfirm = () => {
-  if (overwriteConfirmData.value) {
-    executeImport(overwriteConfirmData.value.items);
-    overwriteConfirmVisible.value = false;
-    overwriteConfirmData.value = null;
-  }
-};
-
-const handleManualImportConfirm = async () => {
-  if (!manualImportText.value.trim()) {
-    ElMessage.warning('请输入分镜内容');
-    return;
-  }
-
-  // 1. 按连续空行拆分块
-  const rawBlocks = manualImportText.value.split(/\n\s*\n/).map(b => b.trim()).filter(b => b !== '');
-  if (rawBlocks.length === 0) {
-    ElMessage.warning('未能识别出有效内容');
-    return;
-  }
-
-  const EP_REGEX = /^第\s*(\d+)\s*集/;
-
-  const episodeDataMap = new Map<number, string[]>();
-  let currentEpIdx = -1;
-
-  // 2. 解析分镜归属
-  rawBlocks.forEach(block => {
-    const epMatch = block.match(EP_REGEX);
-    if (epMatch) {
-      currentEpIdx = parseInt(epMatch[1]);
-      if (!episodeDataMap.has(currentEpIdx)) {
-        episodeDataMap.set(currentEpIdx, []);
-      }
-      const remaining = block.replace(EP_REGEX, '').trim();
-      if (remaining) {
-        episodeDataMap.get(currentEpIdx)?.push(remaining);
-      }
-    } else if (currentEpIdx !== -1) {
-      episodeDataMap.get(currentEpIdx)?.push(block);
-    }
-  });
-
-  if (episodeDataMap.size === 0) {
-    ElMessage.warning('未能识别到“第x集”标识，请检查格式');
-    return;
-  }
-
-  // 3. 校验逻辑
-  const episodesToImport: any[] = [];
-  const episodesToConfirm: any[] = [];
-  const episodesSkippedNoAssets: number[] = [];
-
-  episodeDataMap.forEach((contents, epIdx) => {
-    const targetEp = episodeStore.episodes.find(e => e.index === epIdx);
-    if (!targetEp) return;
-
-    if (targetEp.assetsStatus !== 'success') {
-      episodesSkippedNoAssets.push(epIdx);
-      return;
-    }
-
-    const hasExisting = targetEp.storyboardScenes && targetEp.storyboardScenes.length > 0;
-    const item = { episode: targetEp, scenes: contents };
-    
-    if (hasExisting) {
-      episodesToConfirm.push(item);
-    } else {
-      episodesToImport.push(item);
-    }
-  });
-
-  if (episodesToImport.length === 0 && episodesToConfirm.length === 0) {
-    let msg = '没有符合条件的剧集可供导入。';
-    if (episodesSkippedNoAssets.length > 0) {
-      msg += `第 ${episodesSkippedNoAssets.join(', ')} 集未完成主体设置，已忽略。`;
-    }
-    ElMessage.warning(msg);
-    return;
-  }
-
-  // 4. 处理导入与确认逻辑
-  if (episodesToConfirm.length > 0) {
-    const epIndices = episodesToConfirm.map(i => i.episode.index).join('、');
-    overwriteConfirmData.value = { 
-      items: [...episodesToImport, ...episodesToConfirm],
-      indices: epIndices 
-    };
-    overwriteConfirmVisible.value = true;
-  } else {
-    executeImport(episodesToImport);
-  }
-};
 // --- Manual Import Logic End ---
 
 const handleAIGenerateCover = (ep: any) => {
@@ -1266,6 +1400,34 @@ const cancelNext = () => {
 </script>
 
 <style scoped>
+/* Modern Dialog Styles */
+:deep(.modern-dialog-v2) {
+  border-radius: 32px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__header) {
+  padding: 24px 24px 0 !important;
+  margin-right: 0 !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__title) {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.025em !important;
+}
+
+.dark :deep(.modern-dialog-v2 .el-dialog__title) {
+  color: #f1f5f9 !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__body) {
+  padding: 0 !important;
+}
+
 /* Pagination Customization (Match DramaWorks) */
 .custom-pagination-v2 :deep(.el-pagination__total),
 .custom-pagination-v2 :deep(.el-pagination__jump) {

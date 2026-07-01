@@ -620,6 +620,33 @@
               </div>
             </div>
 
+            <!-- 统计信息卡片 -->
+            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 shrink-0 px-1">
+              <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-300 flex items-center justify-center shadow-inner">
+                  <el-icon class="text-2xl"><Coin /></el-icon>
+                </div>
+                <div>
+                  <div class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">总计消耗算力豆</div>
+                  <div class="mt-1 text-2xl font-black text-slate-900 dark:text-white font-mono">
+                    {{ consumptionStats.totalPoints.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 flex items-center justify-center shadow-inner">
+                  <el-icon class="text-2xl"><Money /></el-icon>
+                </div>
+                <div>
+                  <div class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">总计消耗金额</div>
+                  <div class="mt-1 text-2xl font-black text-slate-900 dark:text-white font-mono">
+                    ¥{{ consumptionStats.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 shrink-0 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-2xl">
               <div class="flex flex-col gap-1.5">
                 <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">请求流水号</span>
@@ -665,7 +692,7 @@
                 </div>
 
                 <div v-else class="flex flex-col gap-3">
-                  <div v-for="c in filteredConsumptionList" :key="c.id" class="rounded-3xl border border-slate-700 bg-slate-950/20 overflow-hidden">
+                  <div v-for="c in paginatedConsumptionList" :key="c.id" class="rounded-3xl border border-slate-700 bg-slate-950/20 overflow-hidden">
                     <button
                       type="button"
                       class="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-white/5 transition-colors"
@@ -752,7 +779,7 @@
 
               <template v-else>
                 <el-table
-                  :data="filteredConsumptionList"
+                  :data="paginatedConsumptionList"
                   height="100%"
                   class="modern-table"
                   :header-cell-style="{
@@ -803,6 +830,18 @@
                   </el-table-column>
                 </el-table>
               </template>
+            </div>
+
+            <div class="mt-6 flex justify-center px-2 shrink-0">
+              <el-pagination
+                v-model:current-page="consumptionCurrentPage"
+                v-model:page-size="consumptionPageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="filteredConsumptionList.length"
+                layout="total, sizes, prev, pager, next, jumper"
+                class="modern-pagination"
+                background
+              />
             </div>
           </section>
 
@@ -1121,6 +1160,7 @@ import {
   Headset,
   Iphone,
   InfoFilled,
+  Money,
   Picture,
   Phone,
   Reading,
@@ -1208,46 +1248,48 @@ const themeStore = useThemeStore()
 
 const showDesignDialog = ref(false)
 
-const consumptionList = ref<ConsumptionDetail[]>([
-  {
-    id: 'IMG202606240012',
-    userId: 'U20001',
-    modelCategory: '图片',
-    modelCode: 'seedance-image-xl',
-    modelName: 'Seedance 超清文生图',
-    sceneCode: 'scene_playlist_storyboard',
-    sceneName: '短剧分镜生成',
-    billingDimension: '按图片张数计费',
-    billingBase: '生成 4K 高清分镜图 1 张',
-    dramaName: '都市逆袭之我当老板',
-    episodeName: '第 3 集：职场反转',
-    deductPoints: 12.5,
-    finalDeduct: 13,
-    amount: 0.089,
-    balanceBefore: 5680,
-    balanceAfter: 5667,
-    createdAt: 1782285817000 // 2026/6/24 14:12
-  },
-  {
-    id: 'TXT202606240007',
-    userId: 'U20001',
-    modelCategory: '文本',
-    modelCode: 'doubao-pro-32k',
-    modelName: '豆包专业版 32K',
-    sceneCode: 'scene_playlist_script',
-    sceneName: '短剧剧本生成',
-    billingDimension: '按 Token 计费',
-    billingBase: '输入 8000token / 输出 3500token / 计费 token:11500',
-    dramaName: '都市逆袭之我当老板',
-    episodeName: '第 3 集：职场反转',
-    deductPoints: 16.1,
-    finalDeduct: 17,
-    amount: 0.115,
-    balanceBefore: 5667,
-    balanceAfter: 5650,
-    createdAt: 1782285817000 - 3600000 // 1 hour before
+const generateMockData = (count: number): ConsumptionDetail[] => {
+  const data: ConsumptionDetail[] = []
+  const categories = ['图片', '文本']
+  const models = {
+    '图片': ['Seedance 超清文生图', 'Midjourney V6', 'DALL-E 3'],
+    '文本': ['豆包专业版 32K', 'GPT-4o', 'Claude 3.5 Sonnet']
   }
-])
+  const dramas = ['都市逆袭之我当老板', '重生之我在古代搞基建', '霸总的落跑甜心']
+  
+  for (let i = 0; i < count; i++) {
+    const category = categories[Math.floor(Math.random() * categories.length)]
+    const modelName = models[category as keyof typeof models][Math.floor(Math.random() * 3)]
+    const dramaName = dramas[Math.floor(Math.random() * dramas.length)]
+    const deductPoints = Number((Math.random() * 20 + 5).toFixed(1))
+    
+    data.push({
+      id: `${category === '图片' ? 'IMG' : 'TXT'}20260701${String(i + 1).padStart(4, '0')}`,
+      userId: 'U20001',
+      modelCategory: category,
+      modelCode: `${category === '图片' ? 'img' : 'txt'}-model-${i}`,
+      modelName: modelName,
+      sceneCode: 'scene_playlist_gen',
+      sceneName: category === '图片' ? '短剧分镜生成' : '短剧剧本生成',
+      billingDimension: category === '图片' ? '按图片张数计费' : '按 Token 计费',
+      billingBase: category === '图片' ? '生成 4K 高清分镜图 1 张' : `消耗 ${Math.floor(Math.random() * 10000)} tokens`,
+      dramaName: dramaName,
+      episodeName: `第 ${Math.floor(Math.random() * 10) + 1} 集`,
+      deductPoints: deductPoints,
+      finalDeduct: Math.ceil(deductPoints),
+      amount: deductPoints * 0.007,
+      balanceBefore: 10000 - i * 20,
+      balanceAfter: 10000 - (i + 1) * 20,
+      createdAt: Date.now() - i * 3600000 * 2
+    })
+  }
+  return data
+}
+
+const consumptionList = ref<ConsumptionDetail[]>(generateMockData(50))
+
+const consumptionCurrentPage = ref(1)
+const consumptionPageSize = ref(10)
 
 const consumptionFilter = reactive({
   id: '',
@@ -1275,6 +1317,23 @@ const filteredConsumptionList = computed(() => {
     
     return matchId && matchCategory && matchModelName && matchDramaName && matchEpisodeName && matchDate
   })
+})
+
+const paginatedConsumptionList = computed(() => {
+  const start = (consumptionCurrentPage.value - 1) * consumptionPageSize.value
+  const end = start + consumptionPageSize.value
+  return filteredConsumptionList.value.slice(start, end)
+})
+
+const consumptionStats = computed(() => {
+  return filteredConsumptionList.value.reduce(
+    (acc, item) => {
+      acc.totalPoints += item.deductPoints
+      acc.totalAmount += item.amount
+      return acc
+    },
+    { totalPoints: 0, totalAmount: 0 }
+  )
 })
 
 const exportConsumption = () => {

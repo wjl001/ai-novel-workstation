@@ -109,6 +109,11 @@ const router = createRouter({
       component: () => import('../views/MemberCenter/MemberCenterView.vue')
     },
     {
+      path: '/member-center/consumption',
+      name: 'consumption-details',
+      component: () => import('../views/MemberCenter/ConsumptionView.vue')
+    },
+    {
       path: '/ai-short-drama-creator',
       component: DramaCreatorLayout,
       children: [

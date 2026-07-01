@@ -258,7 +258,7 @@
       >
         <div class="flex-1 flex flex-col overflow-hidden" v-show="!isLeftCollapsed">
           <div class="p-4 border-b border-indigo-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-            <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">主体库</span>
+            <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">资产库</span>
             <button 
               @click="showLibraryModal = true"
               class="w-7 h-7 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center justify-center shadow-lg shadow-indigo-200"
@@ -562,27 +562,118 @@
               </div>
             </div>
             <!-- Empty State -->
-            <div v-else class="flex-1 flex flex-col items-center justify-center bg-white/50 dark:bg-slate-900/50 m-6 rounded-[24px] border border-dashed border-blue-200 dark:border-slate-700">
-              <el-icon :size="80" class="text-indigo-200 dark:text-indigo-900 mb-6"><Film /></el-icon>
-              <h2 class="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">暂无分镜内容</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 text-center max-w-md">
-                当前剧集的分镜尚未生成或导入。您可以选择手动粘贴分镜脚本，或者由系统自动智能生成。
-              </p>
-              <div class="flex items-center gap-6">
-                <button 
-                  @click="showManualImportDialog = true"
-                  class="h-12 px-8 bg-white dark:bg-slate-800 text-indigo-600 border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 rounded-full font-black text-[14px] transition-all flex items-center gap-2 group"
-                >
-                  <el-icon class="group-hover:-translate-y-0.5 transition-transform"><Edit /></el-icon>
-                  手动粘贴分镜
-                </button>
-                <button 
-                  @click="startStoryboardSequentialGeneration"
-                  class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  <el-icon class="animate-pulse"><MagicStick /></el-icon>
-                  系统智能生成
-                </button>
+            <div v-else 
+              class="flex-1 flex flex-col bg-white/50 dark:bg-slate-900/50 relative overflow-hidden transition-all duration-300"
+              :class="[
+                !isManualPasteActive ? 'items-center justify-center m-6 rounded-[24px] border border-dashed border-blue-200 dark:border-slate-700' : 'm-0 rounded-none border-none'
+              ]"
+            >
+              <template v-if="!isManualPasteActive">
+                <el-icon :size="80" class="text-indigo-200 dark:text-indigo-900 mb-6"><Film /></el-icon>
+                <h2 class="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">暂无分镜内容</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 text-center max-w-md">
+                  当前剧集的分镜尚未生成或导入。您可以选择由系统自动智能生成，或者手动粘贴、上传分镜脚本。
+                </p>
+                <div class="flex items-center gap-6">
+                  <button 
+                    @click="startStoryboardSequentialGeneration"
+                    class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    <el-icon class="animate-pulse"><MagicStick /></el-icon>
+                    <span>系统智能生成</span>
+                  </button>
+
+                  <button 
+                    @click="isManualPasteActive = true"
+                    class="h-12 px-8 bg-white dark:bg-slate-800 text-indigo-600 border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 rounded-full font-black text-[14px] transition-all flex items-center gap-2 group"
+                  >
+                    <el-icon class="group-hover:-translate-y-0.5 transition-transform"><Edit /></el-icon>
+                    手动粘贴
+                  </button>
+
+                  <button 
+                    @click="() => fileInput?.click()"
+                    class="h-12 px-8 bg-white dark:bg-slate-800 text-blue-600 border-2 border-blue-100 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 rounded-full font-black text-[14px] transition-all flex items-center gap-2 group"
+                  >
+                    <el-icon class="group-hover:-translate-y-0.5 transition-transform"><Document /></el-icon>
+                    文件上传
+                  </button>
+                </div>
+              </template>
+
+              <!-- Inline Manual Paste Area -->
+              <div v-else class="flex-1 w-full p-4 flex flex-col min-h-0 animate-in fade-in zoom-in duration-500">
+                <div class="flex items-center justify-between mb-2 shrink-0 px-1">
+                  <h3 class="text-base font-black text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                    <el-icon class="text-indigo-500"><Edit /></el-icon>
+                    导入分镜脚本 - {{ episode?.title || '当前剧集' }}
+                  </h3>
+                  <div class="flex items-center gap-4">
+                    <!-- Import Requirements -->
+                    <el-popover placement="top-start" :width="320" trigger="hover" popper-class="modern-popover">
+                      <template #reference>
+                        <div class="flex items-center gap-2 text-indigo-600 cursor-help hover:opacity-80 transition-opacity">
+                          <el-icon :size="16"><InfoFilled /></el-icon>
+                          <span class="text-[11px] font-bold tracking-wide">导入要求</span>
+                        </div>
+                      </template>
+                      <div class="p-1">
+                        <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-3">
+                          <el-icon><InfoFilled /></el-icon>
+                          <span>导入具体要求</span>
+                        </div>
+                        <div class="flex flex-col gap-3 text-[12px] text-indigo-900/80 dark:text-indigo-200/80 leading-relaxed">
+                          <p>• <strong>分镜识别</strong>：系统通过“<strong>分镜1、分镜2...</strong>”或“<strong>分镜一、分镜二...</strong>”关键字自动识别分镜。</p>
+                        </div>
+                      </div>
+                    </el-popover>
+
+                    <!-- Format Example -->
+                    <el-popover placement="top" :width="450" trigger="hover" popper-class="modern-popover">
+                      <template #reference>
+                        <div class="flex items-center gap-2 text-indigo-500 cursor-help hover:text-indigo-600 transition-colors px-1">
+                          <el-icon :size="16"><Picture /></el-icon>
+                          <span class="text-[11px] font-bold tracking-wide">查看示例</span>
+                        </div>
+                      </template>
+                      <div class="p-2">
+                        <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-4">
+                          <el-icon><Picture /></el-icon>
+                          <span>分镜导入标准格式示例</span>
+                        </div>
+                        <div class="font-mono text-[10px] bg-indigo-50/30 dark:bg-black/30 p-4 rounded-xl border border-indigo-100/50 leading-relaxed text-slate-600 dark:text-slate-300 shadow-inner">
+                          <p class="font-black text-indigo-600 text-[12px]">分镜1</p>
+                          <p class="font-bold text-slate-800 dark:text-slate-200">这是第一个分镜的内容，</p>
+                          <p class="font-bold text-slate-800 dark:text-slate-200">即使这里换行了，也会被识别为同一个分镜。</p>
+                          <div class="h-2"></div>
+                          <p class="font-black text-indigo-600 text-[12px]">分镜2</p>
+                          <p class="font-bold text-slate-800 dark:text-slate-200">分镜2的描述内容...</p>
+                        </div>
+                      </div>
+                    </el-popover>
+                  </div>
+                </div>
+
+                <div class="flex-1 min-h-0 mb-2">
+                  <el-input
+                    v-model="manualImportText"
+                    type="textarea"
+                    placeholder="请将本集的分镜内容粘贴至此..."
+                    class="custom-textarea import-textarea text-[15px] h-full"
+                    input-style="height: 100%; padding: 20px; border-radius: 12px;"
+                  />
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                  <el-button @click="isManualPasteActive = false" class="!rounded-xl !px-8 !h-8 !text-[12px]">取消</el-button>
+                  <el-button 
+                    type="primary" 
+                    @click="handleManualImportConfirm" 
+                    class="theme-primary-btn !rounded-xl !px-12 !h-8 !text-[12px] font-black shadow-lg shadow-indigo-500/20"
+                  >
+                    确认导入本集
+                  </el-button>
+                </div>
               </div>
             </div>
           </div>
@@ -1081,7 +1172,7 @@
           '- **分镜 (Storyboard)：** 将文字剧本拆解后的最小视觉单位，对应一段 3-10 秒的画面。',
           '- **合成全集 (Combine Episode)：** 将本集内所有生成完毕的分镜视频拼接成一段完整的短剧视频。',
           '**界面布局：**',
-          '- **左侧主体库：** 快速查阅和插入角色、场景、道具。支持从主题库直接导入，或在当前页面直接新增。',
+          '- **左侧资产库：** 快速查阅和插入角色、场景、道具。支持从主题库直接导入，或在当前页面直接新增。',
           '- **中间编辑区：** 核心展示区。左侧为分镜脚本编辑，支持“@”快捷引用主体；修改后可重新生成分镜视频。',
           '- **底部时间轴：** 分镜队列管理。展示缩略图、时长，并支持多选批量操作。'
         ],
@@ -1364,92 +1455,18 @@
       </template>
     </el-dialog>
 
-    <!-- Manual Import Storyboard Dialog -->
-    <el-dialog
-      v-model="showManualImportDialog"
-      :title="`导入分镜脚本 - ${episode?.title || '当前剧集'}`"
-      width="1600px"
-      :close-on-click-modal="false"
-      class="modern-dialog manual-import-dialog"
-      top="4vh"
-    >
-      <div class="flex flex-col gap-4">
-        <!-- 1. Input Area (Top) -->
-        <el-input
-          v-model="manualImportText"
-          type="textarea"
-          :rows="22"
-          placeholder="请将本集的分镜内容粘贴至此..."
-          class="custom-textarea import-textarea text-[16px]"
-        />
-
-        <!-- 2. Simplified Instructions (Bottom) -->
-        <div class="bg-indigo-50/30 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100/30 dark:border-indigo-800/20 flex items-center justify-between">
-          <div class="flex items-center gap-8">
-            <!-- 2.1 Import Requirements -->
-            <el-popover
-              placement="top-start"
-              :width="320"
-              trigger="hover"
-              popper-class="modern-popover"
-            >
-              <template #reference>
-                <div class="flex items-center gap-2 text-indigo-600 cursor-help hover:opacity-80 transition-opacity">
-                  <el-icon :size="20"><InfoFilled /></el-icon>
-                  <span class="text-[13px] font-bold tracking-wide">导入要求说明</span>
-                </div>
-              </template>
-              <div class="p-1">
-                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-3">
-                  <el-icon><InfoFilled /></el-icon>
-                  <span>导入具体要求</span>
-                </div>
-                <div class="flex flex-col gap-3 text-[12px] text-indigo-900/80 dark:text-indigo-200/80 leading-relaxed">
-                  <p>• <strong>空行分隔</strong>：不同分镜内容之间必须保留<strong>至少一行空行</strong>。</p>
-                  <p>• <strong>内容不限</strong>：单个分镜内部可以包含多行文字，只要分镜之间有空行即可。</p>
-                </div>
-              </div>
-            </el-popover>
-
-            <!-- 2.2 Format Example -->
-            <el-popover
-              placement="top"
-              :width="450"
-              trigger="hover"
-              popper-class="modern-popover"
-            >
-              <template #reference>
-                <div class="flex items-center gap-2 text-indigo-500 cursor-help hover:text-indigo-600 transition-colors px-1">
-                  <el-icon :size="20"><Picture /></el-icon>
-                  <span class="text-[13px] font-bold tracking-wide">查看格式示例</span>
-                </div>
-              </template>
-              <div class="p-2">
-                <div class="flex items-center gap-2 text-indigo-600 font-black text-[14px] mb-4">
-                  <el-icon><Picture /></el-icon>
-                  <span>分镜导入标准格式示例</span>
-                </div>
-                <div class="font-mono text-[10px] bg-indigo-50/30 dark:bg-black/30 p-4 rounded-xl border border-indigo-100/50 leading-relaxed text-slate-600 dark:text-slate-300 shadow-inner">
-                  <p class="font-black text-indigo-600 text-[12px]">分镜1</p>
-                  <p class="font-bold text-slate-800 dark:text-slate-200">内容：这里是分镜1的详细内容描述...</p>
-                  <div class="h-5 my-2 bg-indigo-100/30 dark:bg-indigo-900/50 border border-dashed border-indigo-300 dark:border-indigo-700 rounded flex items-center justify-center">
-                    <span class="text-[10px] text-indigo-500 font-black tracking-widest">此处需空行（按两次回车）</span>
-                  </div>
-                  <p class="font-black text-indigo-600 text-[12px]">分镜2</p>
-                  <p class="font-bold text-slate-800 dark:text-slate-200">内容：这里是分镜2的详细内容描述...</p>
-                </div>
-              </div>
-            </el-popover>
-          </div>
-        </div>
-      </div>
-      <template #footer>
-        <div class="flex justify-end gap-4 pb-2">
-          <el-button @click="showManualImportDialog = false" class="!rounded-xl !px-10 !h-11">取消</el-button>
-          <el-button type="primary" @click="handleManualImportConfirm" class="theme-primary-btn !rounded-xl !px-16 !h-11 font-black shadow-lg shadow-indigo-500/20">确认导入本集</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <!-- 隐藏的文件输入框 -->
+    <input 
+      ref="fileInput"
+      type="file"
+      accept=".txt,.md,.docx,.doc"
+      class="hidden"
+      @change="(e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) handleFileImport(file);
+        (e.target as HTMLInputElement).value = '';
+      }"
+    />
   </div>
 </template>
 
@@ -1540,7 +1557,8 @@ import {
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
-  Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom
+  Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom,
+  CircleCheck, Document
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useDramaStore } from '@/store/drama';
@@ -1561,8 +1579,9 @@ const episodeStore = useEpisodeStore();
 const modelStore = useModelStore();
 
 // UI States
-const showManualImportDialog = ref(false);
+const isManualPasteActive = ref(false);
 const manualImportText = ref('');
+const fileInput = ref<HTMLInputElement | null>(null);
 const isSubtitled = ref(true);
 const isWatermarkRemoved = ref(false);
 const resolution = ref('1080'); // 分辨率：480, 720, 1080, 4k
@@ -1591,15 +1610,15 @@ const uiDesignGroups = {
     {
       id: 'storyboardView',
       title: '分镜视频页 (StoryboardView)',
-      description: '分镜视频工作台：顶部全局操作 + 左侧主体库 + 中间脚本编辑/预览 + 底部时间轴。',
+      description: '分镜视频工作台：顶部全局操作 + 左侧资产库 + 中间脚本编辑/预览 + 底部时间轴。',
       items: [
         { name: '页面主容器', value: 'h-full flex flex-col overflow-hidden', description: '背景：bg-[#F8FAFC]（暗色：dark:bg-slate-900）' },
         { name: '顶部栏高度', value: 'h-14', description: 'header 固定高度' },
         { name: '全屏生成遮罩', value: 'fixed inset-0 z-[10000]', description: '分镜规划中 Loading Overlay（teleport 到 body）' },
         { name: '主工作区内边距', value: 'p-3', description: 'main 区域 padding' },
         { name: '主工作区列间距', value: 'gap-3', description: '左侧栏与右侧工作区间距' },
-        { name: '左侧主体库宽度', value: '220px', description: '折叠时 width=0 + marginRight=-12px' },
-        { name: '左侧栏圆角', value: 'rounded-[32px]', description: '主体库容器' },
+        { name: '左侧资产库宽度', value: '220px', description: '折叠时 width=0 + marginRight=-12px' },
+        { name: '左侧栏圆角', value: 'rounded-[32px]', description: '资产库容器' },
         { name: '中间编辑区圆角', value: 'rounded-[32px]', description: '脚本+预览容器' },
         { name: '脚本/预览卡圆角', value: 'rounded-[24px]', description: '脚本卡与预览卡统一圆角' },
         { name: '底部时间轴高度', value: 'h-[140px]', description: 'Timeline 固定高度' },
@@ -1636,7 +1655,7 @@ const uiDesignGroups = {
         { name: '装饰光晕', value: 'indigo/purple/blue 低透明 blur' },
         { name: '顶部栏底色', value: 'bg-white/80 dark:bg-slate-800/80 + backdrop-blur-xl' },
         { name: '全屏生成遮罩', value: 'bg-white/40 dark:bg-slate-900/40 + backdrop-blur-md' },
-        { name: '左侧主体库', value: 'bg-indigo-50/80 dark:bg-slate-800/80 + border-indigo-100' },
+        { name: '左侧资产库', value: 'bg-indigo-50/80 dark:bg-slate-800/80 + border-indigo-100' },
         { name: '中间编辑区底色', value: 'bg-[#F0F7FF] dark:bg-slate-800/80 + border-blue-100' },
         { name: '预览区底色', value: 'bg-slate-900 + border-slate-800' },
         { name: '底部时间轴底色', value: 'bg-[#F5F3FF] dark:bg-slate-900/50 + border-purple-100' },
@@ -1658,8 +1677,8 @@ const uiDesignGroups = {
         { name: '产品设计说明按钮', tag: 'button', classes: 'h-8 px-4 bg-slate-50 dark:bg-slate-700/50 rounded-full border border-slate-200/50 text-slate-500 hover:text-indigo-600', notes: ['位于顶部栏中间，InfoFilled 图标'] },
         { name: '合成全集 (主 CTA)', tag: 'button', classes: 'h-9 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-[13px] font-bold shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50', notes: ['顶部栏右侧；disabled：pointer-events-none'] },
         { name: '预览全集', tag: 'button', classes: 'h-9 px-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-full text-[13px] font-bold hover:bg-indigo-100', notes: ['仅合成完成后出现'] },
-        { name: '主体库容器', tag: 'aside', classes: 'bg-indigo-50/80 dark:bg-slate-800/80 rounded-[32px] border border-indigo-100 shadow-xl overflow-hidden', notes: ['折叠时 width=0 + opacity=0'] },
-        { name: '主体库-新增按钮', tag: 'button', classes: 'w-7 h-7 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-200', notes: ['主体库标题行右侧 + 号（导入/管理）'] },
+        { name: '资产库容器', tag: 'aside', classes: 'bg-indigo-50/80 dark:bg-slate-800/80 rounded-[32px] border border-indigo-100 shadow-xl overflow-hidden', notes: ['折叠时 width=0 + opacity=0'] },
+        { name: '资产库-新增按钮', tag: 'button', classes: 'w-7 h-7 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-200', notes: ['资产库标题行右侧 + 号（导入/管理）'] },
         { name: '分类新增按钮(角色/场景/道具)', tag: 'button', classes: 'w-6 h-6 rounded-lg bg-*-50 text-*-600 hover:bg-*-600 hover:text-white border border-*-100', notes: ['按分类切换颜色：indigo / emerald / amber'] },
         { name: '主体卡片-悬停编辑', tag: 'div', classes: 'absolute inset-0 bg-gradient-to-t from-*-600/40 opacity-0 group-hover:opacity-100', notes: ['Hover 显示编辑按钮：bg-white/90 hover:bg-*-600 hover:text-white'] },
         { name: '左侧栏折叠把手', tag: 'div', classes: 'absolute w-6 h-16 rounded-full bg-indigo-600 shadow-[0_4px_20px_rgba(99,102,241,0.3)]', notes: ['Hover: bg-indigo-700 + scale-y-110'] },
@@ -1679,7 +1698,7 @@ const uiDesignGroups = {
         { name: '合成弹窗', tag: 'el-dialog', classes: 'rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden', notes: ['进度态：遮罩 + 进度条；成功态：Video Player + 导出面板'] },
         { name: 'BGM 配置弹窗', tag: 'el-dialog', classes: 'rounded-[24px] !bg-[#f8fafc] dark:!bg-slate-900 overflow-hidden', notes: ['AI 生成 / 热门标签 / 本地上传'] },
         { name: '主体编辑弹窗', tag: 'SubjectEditDialog', classes: 'v-model="showSubjectEdit"', notes: ['角色/场景/道具统一编辑'] },
-        { name: '主体库弹窗', tag: 'SubjectLibraryModal', classes: 'v-model="showLibraryModal"', notes: ['从主题库批量导入主体'] },
+        { name: '资产库弹窗', tag: 'SubjectLibraryModal', classes: 'v-model="showLibraryModal"', notes: ['从主题库批量导入主体'] },
         { name: '恢复确认弹窗', tag: 'ConfirmDialog', classes: 'v-model="recoveryConfirmVisible"', notes: ['用于断点续生成确认'] }
       ]
     }
@@ -2254,7 +2273,6 @@ const insertBlankScene = (idx: number) => {
   timelineScenes.value = scenes;
   currentSceneIdx.value = idx;
   persistStoryboardForEpisode(episodeId.value);
-  ElMessage.success('已插入空白分镜');
 };
 
 const saveStoryboardScene = (data: any) => {
@@ -2367,7 +2385,7 @@ const handleLibraryConfirm = (selectedItems: any[]) => {
   const endTime = performance.now();
   console.log(`Selection import took ${endTime - startTime}ms`);
   
-  ElMessage.success(`成功导入 ${selectedItems.length} 个主体`);
+  ElMessage.success(`成功导入 ${selectedItems.length} 个资产`);
   showLibraryModal.value = false;
 };
 
@@ -3454,36 +3472,41 @@ const addTimelineScene = () => {
 };
 
 const handleManualImportConfirm = () => {
-  if (!manualImportText.value.trim()) {
-    ElMessage.warning('请输入分镜内容');
+  processImportText(manualImportText.value);
+};
+
+const processImportText = (text: string, isAllEpisodes: boolean = false) => {
+  if (!text.trim()) {
+    ElMessage.warning('内容为空');
     return;
   }
   
-  // 按连续的空行分割块，过滤掉纯序号行（如 "分镜1" 或 "第1集"）
-  const rawBlocks = manualImportText.value.split(/\n\s*\n/).map(b => b.trim()).filter(b => b !== '');
+  // 识别分镜标识：支持 "分镜1"、"分镜一"、"分镜 1" 等格式
+  const SCENE_MARKER_REGEX = /\n?\s*(分镜\s*[\d一二三四五六七八九十]+)\s*[:：]?\s*/g;
   
-  if (rawBlocks.length === 0) {
-    ElMessage.warning('未能识别出有效的分镜内容');
-    return;
+  // 如果开头没有分镜标识，尝试补充一个，方便统一分割
+  let processedText = text.trim();
+  if (!processedText.match(/^分镜\s*[\d一二三四五六七八九十]+/)) {
+    processedText = '分镜1：' + processedText;
   }
 
-  const EP_REGEX = /^第\s*(\d+)\s*集/;
-  const SCENE_REGEX = /^分镜\s*(\d+)/;
+  // 使用正则分割内容
+  const parts = processedText.split(SCENE_MARKER_REGEX);
+  const validScenes: string[] = [];
 
-  // 过滤掉纯标识行，只保留实际内容
-  const validScenes = rawBlocks.filter(block => {
-    // 如果这一行只包含 "第x集" 或 "分镜x"，且没有后续内容，则认为是标识行，予以忽略
-    if (EP_REGEX.test(block) && block.replace(EP_REGEX, '').trim() === '') return false;
-    if (SCENE_REGEX.test(block) && block.replace(SCENE_REGEX, '').trim() === '') return false;
-    return true;
-  }).map(block => {
-    // 去掉内容开头的 "分镜x" 或 "内容：" 等前缀
-    let cleanContent = block.replace(SCENE_REGEX, '').replace(/^内容[:：]/, '').trim();
-    return cleanContent || block; // 如果清理后为空，则保留原样（防止误删）
-  });
+  // parts 数组的结构是 [之前的内容, 捕获的标识1, 内容1, 捕获的标识2, 内容2, ...]
+  for (let i = 1; i < parts.length; i += 2) {
+    const marker = parts[i];
+    const content = parts[i + 1]?.trim();
+    if (content) {
+      // 去掉内容开头的 "内容：" 等冗余前缀
+      let cleanContent = content.replace(/^内容[:：]\s*/, '').trim();
+      validScenes.push(cleanContent);
+    }
+  }
 
   if (validScenes.length === 0) {
-    ElMessage.warning('解析失败，请确保分镜内容非空且有空行分隔');
+    ElMessage.warning('解析失败，请确保内容包含“分镜1”、“分镜一”等标识');
     return;
   }
 
@@ -3510,9 +3533,60 @@ const handleManualImportConfirm = () => {
     }
   });
 
-  showManualImportDialog.value = false;
+  isManualPasteActive.value = false;
   manualImportText.value = '';
   ElMessage.success(`成功导入 ${newScenes.length} 个分镜至本集`);
+};
+
+const handleFileImport = async (file: File) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在解析文件...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
+  try {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    let text = '';
+
+    if (extension === 'txt' || extension === 'md') {
+      text = await file.text();
+    } else if (extension === 'docx') {
+      const arrayBuffer = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(arrayBuffer);
+      const docXml = await zip.file('word/document.xml')?.async('text');
+      if (docXml) {
+        // Simple XML to text extraction for .docx
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(docXml, 'text/xml');
+        const paragraphs = xmlDoc.getElementsByTagName('w:p');
+        const lines = [];
+        for (let i = 0; i < paragraphs.length; i++) {
+          const texts = paragraphs[i].getElementsByTagName('w:t');
+          let pText = '';
+          for (let j = 0; j < texts.length; j++) {
+            pText += texts[j].textContent;
+          }
+          lines.push(pText);
+        }
+        text = lines.join('\n');
+      }
+    } else if (extension === 'doc') {
+      throw new Error('暂不支持旧版 .doc 格式，请转换为 .docx 后再试');
+    } else {
+      throw new Error('不支持的文件格式');
+    }
+
+    if (text) {
+      processImportText(text);
+    } else {
+      throw new Error('未能从文件中提取到文字内容');
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '文件解析失败');
+  } finally {
+    loading.close();
+  }
 };
 
 const handleDeleteScene = (idx: number) => {
@@ -3784,6 +3858,33 @@ const startStoryboardSequentialGeneration = async () => {
 }
 :deep(.ProseMirror p) {
   margin: 0;
+}
+
+:deep(.modern-dialog-v2) {
+  border-radius: 32px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__header) {
+  padding: 24px 24px 0 !important;
+  margin-right: 0 !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__title) {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.025em !important;
+}
+
+.dark :deep(.modern-dialog-v2 .el-dialog__title) {
+  color: #f1f5f9 !important;
+}
+
+:deep(.modern-dialog-v2 .el-dialog__body) {
+  padding: 0 !important;
 }
 
 /* Mention Pill Styles */

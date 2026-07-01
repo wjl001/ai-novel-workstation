@@ -126,7 +126,7 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Multi-select Toggle -->
@@ -201,7 +201,7 @@
                 class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
               >
                 <el-icon><Menu /></el-icon>
-                从主体库导入
+                从资产库导入
               </button>
               <button 
                 @click="addAsset('character')"
@@ -316,7 +316,7 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Multi-select Toggle -->
@@ -391,7 +391,7 @@
                 class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
               >
                 <el-icon><Menu /></el-icon>
-                从主体库导入
+                从资产库导入
               </button>
               <button 
                 @click="addAsset('scene')"
@@ -506,7 +506,7 @@
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">主体库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
+              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
             <div class="flex items-center gap-3">
               <!-- Multi-select Toggle -->
@@ -581,7 +581,7 @@
                 class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
               >
                 <el-icon><Menu /></el-icon>
-                从主体库导入
+                从资产库导入
               </button>
               <button 
                 @click="addAsset('prop')"
@@ -951,7 +951,7 @@ const uiDesignGroups = {
       description: '页内标题、Tab、卡片与按钮的字号/字重规范。',
       items: [
         { name: 'Tab 文本', style: { fontSize: '15px', fontWeight: '600' }, description: '.modern-tabs el-tabs__item（默认态）' },
-        { name: '模块标题', style: { fontSize: '18px', fontWeight: '800' }, description: 'text-[18px] font-extrabold（主体库 · 角色/场景/道具）' },
+        { name: '模块标题', style: { fontSize: '18px', fontWeight: '800' }, description: 'text-[18px] font-extrabold（资产库 · 角色/场景/道具）' },
         { name: '计数弱化', style: { fontSize: '14px', fontWeight: '400', opacity: '0.7' }, description: '标题后计数：text-slate-400/500 font-normal' },
         { name: '卡片名称', style: { fontSize: '15-16px', fontWeight: '700' }, description: '角色 text-[16px]；场景/道具 text-[15px]（truncate）' },
         { name: '卡片描述', style: { fontSize: '12-13px', fontWeight: '400', lineHeight: '1.5' }, description: 'line-clamp-2 leading-relaxed' },

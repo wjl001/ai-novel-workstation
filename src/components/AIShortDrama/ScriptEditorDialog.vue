@@ -102,7 +102,7 @@
           <div class="mt-4 p-3 bg-white/60 rounded-lg border border-indigo-50 flex items-start gap-2">
             <el-icon class="text-indigo-400 mt-0.5"><InfoFilled /></el-icon>
             <div class="text-[12px] text-slate-500 leading-relaxed">
-              输入 <span class="px-1 py-0.5 bg-indigo-50 text-indigo-600 rounded font-bold">@</span> 引用主体库内容，或通过快捷菜单调整参数。
+              输入 <span class="px-1 py-0.5 bg-indigo-50 text-indigo-600 rounded font-bold">@</span> 引用资产库内容，或通过快捷菜单调整参数。
             </div>
           </div>
         </div>

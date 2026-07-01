@@ -9,7 +9,7 @@
   >
     <!-- Custom Header -->
     <div class="flex justify-between items-center mb-6 px-2">
-      <h2 class="text-[20px] font-bold text-slate-900 dark:text-slate-100">主体库</h2>
+      <h2 class="text-[20px] font-bold text-slate-900 dark:text-slate-100">资产库</h2>
       <button @click="visible = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors">
         <el-icon size="16"><Close /></el-icon>
       </button>
@@ -153,7 +153,7 @@ watch(visible, (newVal) => {
   }
 });
 
-// 模拟所有作品的主体库数据
+// 模拟所有作品的资产库数据
 const allLibrarySubjects = ref([
   // 当前作品的主体 - 更多未导入的选项
   { id: 'lib_20', name: '沈念安-职场装', type: 'character', projectName: props.currentProjectName, image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400', description: '干练的职业装束。' },

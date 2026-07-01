@@ -79,6 +79,12 @@
                     <span>会员中心</span>
                   </div>
                 </el-dropdown-item>
+                <el-dropdown-item command="consumption">
+                  <div class="menu-item-inner">
+                    <div class="icon-box amber"><el-icon><Coin /></el-icon></div>
+                    <span>算力消耗明细</span>
+                  </div>
+                </el-dropdown-item>
                 <div class="divider"></div>
                 <el-dropdown-item command="logout" class="logout-item">
                   <div class="menu-item-inner">
@@ -238,6 +244,8 @@ const handleCommand = (command: string) => {
     router.push('/team-management')
   } else if (command === 'member-center') {
     router.push('/member-center')
+  } else if (command === 'consumption') {
+    router.push('/member-center/consumption')
   }
 }
 
@@ -526,6 +534,7 @@ onErrorCaptured((error) => {
           &.blue { background-color: #3b82f6; color: white; }
           &.purple { background-color: #8b5cf6; color: white; }
           &.gold { background-color: #f59e0b; color: white; }
+          &.amber { background-color: #f59e0b; color: white; }
           &.red { background-color: #ef4444; color: white; }
         }
       }
@@ -559,6 +568,7 @@ onErrorCaptured((error) => {
       &.blue { background-color: #eff6ff; color: #3b82f6; }
       &.purple { background-color: #f5f3ff; color: #8b5cf6; }
       &.gold { background-color: #fffbeb; color: #f59e0b; }
+      &.amber { background-color: #fffbeb; color: #f59e0b; }
       &.red { background-color: #fef2f2; color: #ef4444; }
 
       .el-icon {
@@ -834,6 +844,7 @@ onErrorCaptured((error) => {
         &.blue { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
         &.purple { background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; }
         &.gold { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+        &.amber { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
         &.red { background-color: rgba(239, 68, 68, 0.15); color: #f87171; }
       }
     }
@@ -859,6 +870,7 @@ onErrorCaptured((error) => {
             &.blue { background-color: #3b82f6 !important; color: #ffffff !important; }
             &.purple { background-color: #8b5cf6 !important; color: #ffffff !important; }
             &.gold { background-color: #f59e0b !important; color: #ffffff !important; }
+            &.amber { background-color: #f59e0b !important; color: #ffffff !important; }
             &.red { background-color: #ef4444 !important; color: #ffffff !important; }
           }
         }
