@@ -430,7 +430,7 @@
         <div class="grid grid-cols-2 gap-6">
           <!-- 文件上传 -->
           <div 
-            @click="$refs.fileInputBulk?.click()"
+            @click="fileInputBulk?.click()"
             class="group relative p-8 rounded-[24px] bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border-2 border-indigo-100 dark:border-indigo-800 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all cursor-pointer flex flex-col items-center gap-4"
           >
             <div class="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
@@ -832,7 +832,8 @@ const handleFileImport = async (file: File) => {
  const drawerVisible = ref(false);
  const editingEpisode = ref<any>(null);
  
- const episodesUIDesignGroups = {
+ const fileInputBulk = ref<HTMLInputElement | null>(null);
+const episodesUIDesignGroups = {
   layout: [
     {
       id: 'episodes-view-page',

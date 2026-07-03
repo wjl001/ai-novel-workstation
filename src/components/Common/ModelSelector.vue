@@ -110,7 +110,7 @@ import { TEXT_MODELS, IMAGE_MODELS, VIDEO_MODELS, type AIModel } from '@/config/
 import { useModelStore } from '@/store/models';
 
 const props = defineProps<{
-  modelValue: string;
+  modelValue?: string;
   type: 'text' | 'image' | 'video';
   compact?: boolean;
 }>();

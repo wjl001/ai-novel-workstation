@@ -891,7 +891,8 @@ import {
   Loading,
   Crop,
   CircleCheck,
-  FullScreen
+  FullScreen,
+  Connection
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
@@ -1243,7 +1244,7 @@ const handleGenreConfirm = () => {
 
 const audienceOptions = ['男频', '女频', '大众'];
 
-const handleAIFeature = (field: 'title' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount', action: 'generate' | 'polish') => {
+const handleAIFeature = (field: 'title' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount' | 'protagonistDesc', action: 'generate' | 'polish') => {
   isGeneratingField[field] = true;
   
   // Mock AI behavior
