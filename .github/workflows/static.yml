@@ -1,0 +1,63 @@
+name: Deploy 2.7 Docs to Pages
+# 仅在2.7分支推送时触发构建
+on:
+  push:
+    branches: [ "2.7" ]
+  # 手动触发按钮
+  workflow_dispatch:
+
+# 权限：允许读写仓库、部署Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 并发：新推送覆盖旧构建
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 拉取2.7分支代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: 2.7 # 固定拉取2.7分支
+
+      # ========== 这里替换成你的文档构建命令 ==========
+      # 示例1：VitePress 文档
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      # - run: npm install
+      # - run: npm run docs:build # 输出到 ./docs/.vitepress/dist
+
+      # 示例2：MkDocs 文档
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.11"
+      # - run: pip install mkdocs
+      # - run: mkdocs build -d ./docs/site
+      # ===============================================
+
+      # 2. 上传打包后的静态文件（目录改成你构建输出的文件夹）
+      - name: Upload static files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs # 你的静态文档输出目录
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
