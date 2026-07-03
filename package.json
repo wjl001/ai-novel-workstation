@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run tests/",
     "test:e2e": "playwright test",
-    "deploy": "npm run build && copy dist\\index.html dist\\404.html"
+    "deploy": "npm run build && copy dist\\index.html dist\\404.html",
+    "docs:build": "vitepress build docs"
   },
   "dependencies": {
     "@tiptap/extension-bubble-menu": "^2.2.4",
@@ -22,6 +23,7 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "pinia": "^2.1.7",
+    "puppeteer": "^25.3.0",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5",
     "vuedraggable": "^4.1.0"
