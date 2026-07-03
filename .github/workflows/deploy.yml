@@ -1,55 +1,36 @@
-name: Deploy 2.7 Branch Docs
-# 仅推送2.7分支时触发构建，其他分支不执行
+name: Deploy to gh-pages branch
 on:
   push:
     branches: ["2.7"]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages-2.7"
-  cancel-in-progress: true
+  contents: write
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. 强制拉取2.7分支代码
-      - name: Checkout source code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: 2.7
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm install
-      - run: npm run docs:build
 
-      # 3. 关键：写入CNAME，防止自定义域名配置丢失
-      - name: Inject custom domain CNAME
-        run: echo "ai-novel-2.7.taokedan.cn" > docs/.vitepress/dist/CNAME
+      - run: npm ci
+      - run: npm run build
 
-      # 4. 上传打包后的静态页面
-      - name: Upload static site files
-        uses: actions/upload-pages-artifact@v3
+      # 写入CNAME域名文件
+      - run: echo "ai-novel-2.7.taokedan.cn" > dist/CNAME
+
+      # 推送dist到gh-pages分支
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-  # 部署到gh-pages分支
-  deploy-site:
-    needs: build-docs
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
