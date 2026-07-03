@@ -1,4 +1,5 @@
-name: Deploy 2.7 Branch Front
+name: Deploy 2.7 Branch Docs
+#仅推送2.7分支时触发构建，其他分支不执行
 on:
   push:
     branches: ["2.7"]
@@ -17,7 +18,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      # 1. 强制拉取2.7分支代码
+      - name: Checkout source code
         uses: actions/checkout@v4
         with:
           ref: 2.7
@@ -27,25 +29,22 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install
+      - run: npm run docs:build
 
-      - name: Install dependencies
-        run: npm ci
+      # 3. 关键：写入CNAME，防止自定义域名配置丢失
+      - name: Inject custom domain CNAME
+        run: echo "ai-novel-2.7.taokedan.cn" > docs/.vitepress/dist/CNAME
 
-      # 使用你package.json里原生的前端打包命令
-      - name: Build front project
-        run: npm run build
-
-      # 写入自定义域名，静态输出目录为dist
-      - name: Add custom domain CNAME
-        run: echo "ai-novel-2.7.taokedan.cn" > dist/CNAME
-
-      - name: Upload static files
+      # 4. 上传打包后的静态页面
+      - name: Upload static site files
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
-    needs: build
+  # 部署到gh-pages分支
+  deploy-site:
+    needs: build-docs
     runs-on: ubuntu-latest
     environment:
       name: github-pages
