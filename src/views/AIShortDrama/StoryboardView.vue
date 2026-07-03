@@ -258,7 +258,7 @@
       >
         <div class="flex-1 flex flex-col overflow-hidden" v-show="!isLeftCollapsed">
           <div class="p-4 border-b border-indigo-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-            <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">资产库</span>
+            <span class="font-black text-[14px] text-indigo-900 dark:text-white tracking-wide">主体库</span>
             <button 
               @click="showLibraryModal = true"
               class="w-7 h-7 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center justify-center shadow-lg shadow-indigo-200"
@@ -580,7 +580,7 @@
                     class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
                   >
                     <el-icon class="animate-pulse"><MagicStick /></el-icon>
-                    <span>系统智能生成</span>
+                    <span>智能生成</span>
                   </button>
 
                   <button 

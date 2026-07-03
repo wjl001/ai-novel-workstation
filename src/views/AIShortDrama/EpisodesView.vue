@@ -438,7 +438,7 @@
             </div>
             <div class="text-center">
               <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-1">文件导入</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">支持 txt, docx, md 格式</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">支持 txt, docx格式</p>
             </div>
             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
               <el-icon class="text-indigo-500"><CircleCheck /></el-icon>
