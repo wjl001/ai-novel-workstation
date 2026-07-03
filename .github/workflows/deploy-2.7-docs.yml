@@ -1,0 +1,59 @@
+name: Deploy 2.7 Branch Docs
+# 仅推送2.7分支时触发构建，其他分支不执行
+on:
+  push:
+    branches: ["2.7"]
+  # 支持手动点按钮重新部署
+  workflow_dispatch:
+
+# 所需权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 并发控制，新构建自动取消旧任务
+concurrency:
+  group: "pages-2.7"
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 强制拉取2.7分支代码
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: 2.7
+
+      # 2. 安装Node环境，构建VitePress文档
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run docs:build
+
+      # 3. 关键：写入CNAME，防止自定义域名配置丢失
+      - name: Inject custom domain CNAME
+        run: echo "ai-novel-2.7.taokedan.cn" > docs/.vitepress/dist/CNAME
+
+      # 4. 上传打包后的静态页面
+      - name: Upload static site files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  # 部署到gh-pages分支
+  deploy-site:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
