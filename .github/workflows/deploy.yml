@@ -1,5 +1,5 @@
 name: Deploy 2.7 Branch Docs
-# 仅推送2.7分支时触发构建，其他分支不执行
+#仅推送2.7分支时触发构建，其他分支不执行
 on:
   push:
     branches: ["2.7"]
