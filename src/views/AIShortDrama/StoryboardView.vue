@@ -580,9 +580,19 @@
               <template v-if="!isManualPasteActive">
                 <el-icon :size="80" class="text-indigo-200 dark:text-indigo-900 mb-6"><Film /></el-icon>
                 <h2 class="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">暂无分镜内容</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 text-center max-w-md">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 text-center max-w-md">
                   当前剧集的分镜尚未生成或导入。您可以选择由系统自动智能生成，或者手动粘贴、上传分镜脚本。
                 </p>
+
+                <!-- 自动关联选项 (空态视图) -->
+                <div class="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 px-5 py-2.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 mb-8 hover:border-indigo-500/30 transition-all cursor-pointer shadow-sm group" @click="autoAssociateOnImport = !autoAssociateOnImport">
+                  <el-checkbox v-model="autoAssociateOnImport" @click.stop />
+                  <div class="flex flex-col">
+                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">导入后自动关联主体</span>
+                    <span class="text-[10px] text-slate-400 font-medium">开启后，系统将自动为新分镜匹配角色与场景主体</span>
+                  </div>
+                </div>
+
                 <div class="flex items-center gap-6">
                   <button 
                     @click="startStoryboardSequentialGeneration"
@@ -673,7 +683,13 @@
                   />
                 </div>
 
-                <div class="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                <div class="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 shrink-0 items-center">
+                  <!-- 自动关联选项 -->
+                  <div class="flex-1 flex items-center gap-2 px-3">
+                    <el-checkbox v-model="autoAssociateOnImport" />
+                    <span class="text-[12px] font-bold text-slate-500 dark:text-slate-400">导入后自动关联主体</span>
+                  </div>
+                  
                   <el-button @click="isManualPasteActive = false" class="!rounded-xl !px-8 !h-8 !text-[12px]">取消</el-button>
                   <el-button 
                     type="primary" 
@@ -1589,6 +1605,7 @@ const modelStore = useModelStore();
 
 // UI States
 const isManualPasteActive = ref(false);
+const autoAssociateOnImport = ref(true);
 const manualImportText = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
 const isSubtitled = ref(true);
@@ -3574,6 +3591,11 @@ const processImportText = (text: string, isAllEpisodes: boolean = false) => {
   
   persistStoryboardForEpisode(episodeId.value);
   
+  // 自动关联主体逻辑
+  if (autoAssociateOnImport.value && episode.value) {
+    episodeStore.autoAssociateSubjects(episode.value.index);
+  }
+
   // 强制同步编辑器
   nextTick(() => {
     if (currentScript.value) {
@@ -3583,7 +3605,12 @@ const processImportText = (text: string, isAllEpisodes: boolean = false) => {
 
   isManualPasteActive.value = false;
   manualImportText.value = '';
-  ElMessage.success(`成功导入 ${newScenes.length} 个分镜至本集`);
+  
+  let msg = `成功导入 ${newScenes.length} 个分镜至本集`;
+  if (autoAssociateOnImport.value) {
+    msg += ' 并自动关联最新主体';
+  }
+  ElMessage.success(msg);
 };
 
 const handleFileImport = async (file: File) => {

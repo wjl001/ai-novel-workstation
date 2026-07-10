@@ -444,6 +444,17 @@
       append-to-body
     >
       <div class="py-6 px-4">
+        <!-- 自动关联选项 -->
+        <div class="flex justify-center mb-8">
+          <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 group hover:border-indigo-500/30 transition-all cursor-pointer" @click="autoAssociateOnImport = !autoAssociateOnImport">
+            <el-checkbox v-model="autoAssociateOnImport" @click.stop />
+            <div class="flex flex-col">
+              <span class="text-[14px] font-black text-slate-700 dark:text-slate-200">导入后自动关联主体</span>
+              <span class="text-[11px] text-slate-400 font-medium">开启后，系统将自动为新导入的剧集匹配角色与场景主体</span>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-6">
           <!-- 文件上传 -->
           <div 
@@ -587,6 +598,12 @@
               </div>
             </el-popover>
           </div>
+
+          <!-- 自动关联选项 (手动粘贴弹窗) -->
+          <div class="flex items-center gap-2 bg-white/50 dark:bg-slate-800/50 px-4 py-2 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30">
+            <el-checkbox v-model="autoAssociateOnImport" />
+            <span class="text-[13px] font-bold text-slate-600 dark:text-slate-300">导入后自动关联主体</span>
+          </div>
         </div>
       </div>
       <template #footer>
@@ -632,6 +649,7 @@ const showUIDesignSpecsDialog = ref(false);
 const showAIDialog = ref(false);
 const showManualImportDialog = ref(false);
 const showImportMethodDialog = ref(false);
+const autoAssociateOnImport = ref(true);
 const manualImportText = ref('');
 const overwriteConfirmVisible = ref(false);
 const overwriteConfirmData = ref<any>(null);
@@ -665,10 +683,19 @@ const executeImport = (items: any[]) => {
       storyboardStatus: 'success',
       storyboardGenerated: true
     });
+
+    // 自动关联主体逻辑
+    if (autoAssociateOnImport.value) {
+      episodeStore.autoAssociateSubjects(episode.index);
+    }
   });
 
   const totalImported = items.length;
-  ElMessage.success(`成功导入 ${totalImported} 集分镜脚本。`);
+  let msg = `成功导入 ${totalImported} 集分镜脚本。`;
+  if (autoAssociateOnImport.value) {
+    msg += ' 已自动关联最新主体设置。';
+  }
+  ElMessage.success(msg);
   showManualImportDialog.value = false;
   showImportMethodDialog.value = false;
   manualImportText.value = '';
