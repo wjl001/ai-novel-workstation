@@ -116,7 +116,7 @@
 
       <!-- Model Selector Overlay - Aligned with Script Title Row -->
       <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
-        <AIModelSelector v-model="modelStore.selectedImageModel" type="image" />
+        <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="assets-view-image" />
       </div>
 
       <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">

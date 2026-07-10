@@ -396,7 +396,7 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
-              <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+              <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="short-drama-outline" />
               <transition name="fade">
                 <span 
                   v-if="editorTextContent"
@@ -1015,6 +1015,11 @@ const isSequentiallyGenerating = ref(false);
 const currentGeneratingIndex = ref(-1);
 const generationProgress = ref(0);
 const totalEpisodesToGenerate = ref(100);
+
+// 监听生成状态并同步到模型 store
+watch([isGeneratingOutline, isSequentiallyGenerating], ([gen1, gen2]) => {
+  modelStore.setGenerating('short-drama-outline', gen1 || gen2);
+});
 
 // 全局剧本锁定逻辑 (2.2版本已放开)：
 // 2.2版本：支持持续编辑，不再锁定剧本

@@ -14,15 +14,27 @@
         <div class="flex items-center gap-4 text-[12px]">
           <div class="flex items-center gap-3">
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 font-black border border-indigo-100 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-300">
-              {{ typeLabel }}图片管理
+              {{ typeLabel }}{{ type === 'storyboard' ? '视频' : '图片' }}管理
             </span>
             <span class="text-slate-400 dark:text-slate-500 font-semibold">
-              历史图片 {{ localSubject.imageHistory.length }} 张，默认选中最新生成图
+              历史{{ type === 'storyboard' ? '视频' : '图片' }} {{ localSubject.imageHistory.length }} 张，默认选中最新生成
             </span>
           </div>
           <div class="flex items-center gap-2 ml-2">
-            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" compact />
-            <AIModelSelector v-model="modelStore.selectedImageModel" type="image" compact />
+            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" compact moduleId="subject-edit-text" />
+            <AIModelSelector 
+              :model-value="type === 'storyboard' ? modelStore.selectedVideoModel : modelStore.selectedImageModel" 
+              :type="type === 'storyboard' ? 'video' : 'image'" 
+              compact
+              moduleId="subject-edit-visual"
+              @update:model-value="(val) => {
+                if (type === 'storyboard') {
+                  modelStore.setVideoModel(val);
+                } else {
+                  modelStore.setImageModel(val);
+                }
+              }"
+            />
           </div>
         </div>
       </div>
@@ -40,9 +52,9 @@
           <div class="shrink-0 px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl">
             <div class="flex items-center justify-between gap-3">
               <div class="min-w-0">
-                <div class="text-[13px] font-black text-slate-800 dark:text-slate-100 truncate">历史图片</div>
+                <div class="text-[13px] font-black text-slate-800 dark:text-slate-100 truncate">历史{{ type === 'storyboard' ? '视频' : '图片' }}</div>
                 <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-                  {{ localSubject.imageHistory.length }} 张 · 每张可单独配置
+                  {{ localSubject.imageHistory.length }} {{ type === 'storyboard' ? '个' : '张' }} · 每{{ type === 'storyboard' ? '个' : '张' }}可单独配置
                 </div>
               </div>
               <div class="flex items-center gap-1.5 shrink-0">

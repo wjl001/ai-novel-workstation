@@ -79,7 +79,7 @@
            <el-tag v-if="isAutoWriting" type="success" size="small" :effect="isLight ? 'light' : 'dark'" class="animate-pulse" :class="isLight ? '!bg-green-50 !border-green-200 !text-green-600' : '!bg-green-900/50 !border-green-800 !text-green-300'">AI 正在撰写中...</el-tag>
         </div>
         <div class="flex items-center gap-4">
-           <ModelSelector v-model="loreStore.currentNovel.textModel" type="text" />
+           <ModelSelector v-model="loreStore.currentNovel.textModel" type="text" moduleId="ai-script-editor-text" />
            <el-tooltip content="字数统计" placement="bottom">
               <span class="flex items-center gap-1"><el-icon><DataLine /></el-icon> {{ editor?.storage.characterCount.words() || 0 }} 字</span>
            </el-tooltip>

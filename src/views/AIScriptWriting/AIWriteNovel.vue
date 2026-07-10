@@ -35,7 +35,7 @@
           <div class="flex-1 max-w-2xl mx-8 flex items-center gap-6">
              <StepIndicator :active-index="0" class="!mb-0 scale-90 origin-center flex-1" />
              <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-             <AIModelSelector v-model="form.textModel" type="text" />
+             <AIModelSelector v-model="form.textModel" type="text" moduleId="ai-write-novel-text" />
           </div>
 
           <div class="flex items-center gap-2">

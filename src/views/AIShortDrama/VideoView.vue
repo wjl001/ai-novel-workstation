@@ -135,7 +135,7 @@
               <!-- Model Selection -->
               <div>
                 <div class="text-[14px] font-bold text-slate-800 mb-3 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 模型选择</div>
-                <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" class="w-full" />
+                <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" class="w-full" moduleId="video-view-video" />
               </div>
             </div>
 

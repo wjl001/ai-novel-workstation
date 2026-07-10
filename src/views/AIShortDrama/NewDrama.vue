@@ -149,7 +149,7 @@
                          <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
                            <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
                          </span>
-                         <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+                         <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
                          <button 
                           class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                           :disabled="!aiPrompt.trim() || isGenerating"
@@ -338,7 +338,7 @@
             </div>
             <!-- Model Selector for Inspiration Door -->
             <div class="flex items-center gap-2 ml-auto">
-               <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+               <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-hot" />
             </div>
           </div>
         </div>

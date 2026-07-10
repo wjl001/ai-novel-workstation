@@ -1,0 +1,16 @@
+# Ignore binary files for Trae AI analysis
+*.docx
+*.pdf
+*.xlsx
+*.pptx
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.so
+
+# Ignore output directories
+output_copyright/
+dist/
+node_modules/
+.git/

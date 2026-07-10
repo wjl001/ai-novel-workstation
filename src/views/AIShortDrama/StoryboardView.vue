@@ -137,7 +137,7 @@
         <!-- AI Generation Config Group (C-End Premium Design) -->
         <div class="flex items-center gap-2 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-2xl border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all">
           <!-- Video Model -->
-          <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" />
+          <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" moduleId="short-drama-storyboard-video" />
           
           <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
           
@@ -494,7 +494,7 @@
                     </button>
                   </div>
                   <div class="flex items-center gap-3">
-                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" />
+                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="short-drama-storyboard-text" />
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
@@ -1723,6 +1723,14 @@ const handleRecoveryCancel = () => {
 };
 const currentStoryboardInfo = ref('');
 const isSequentiallyGeneratingStoryboard = ref(false);
+
+// 监听生成状态并同步到模型 store
+watch(isGeneratingStoryboardText, (val) => {
+  modelStore.setGenerating('short-drama-storyboard-text', val);
+});
+watch(isSequentiallyGeneratingStoryboard, (val) => {
+  modelStore.setGenerating('short-drama-storyboard-video', val);
+});
 
 const centerVideoRef = ref<HTMLVideoElement | null>(null);
 const isSequentialPlaying = ref(false);

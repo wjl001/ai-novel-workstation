@@ -59,3 +59,14 @@ Thumbs.db
 *.zip
 *.rar
 *.7z
+
+# 软著输出目录及文档
+output_copyright/
+*.docx
+*.pdf
+*.xlsx
+*.pptx
+~$*.docx
+
+# Trae 规则 (确保不被忽略以便 AI 读取)
+!.trae/rules/
