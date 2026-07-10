@@ -210,6 +210,15 @@
           批量下载
         </button>
 
+        <!-- Associate Entity Button -->
+        <button 
+          @click="handleAssociateEntity"
+          class="h-9 px-4 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm"
+        >
+          <el-icon><User /></el-icon>
+          关联主体
+        </button>
+
         <!-- 分辨率选择器 -->
         <el-dropdown
           trigger="click"
@@ -1605,6 +1614,14 @@ const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 
+// Subject Association Logic
+const handleAssociateEntity = () => {
+  if (episode.value) {
+    episodeStore.autoAssociateSubjects(episode.value.index);
+    ElMessage.success(`第 ${episode.value.index} 集已自动关联最新主体`);
+  }
+};
+
 const uiDesignGroups = {
   layout: [
     {
@@ -2158,7 +2175,21 @@ const handleSyncSubjects = () => {
 
   if (hasChanged) {
     editor.value.commands.setContent(doc.body.innerHTML);
-    ElMessage.success('主体同步完成（仅处理手写文本）');
+    
+    // 同时自动更新当前剧集的主体关联
+    const detectedSubjectIds: string[] = [];
+    subjects.value.forEach(s => {
+      if (doc.body.innerHTML.includes(s.name)) {
+        detectedSubjectIds.push(s.id);
+      }
+    });
+
+    if (detectedSubjectIds.length > 0 && episode.value) {
+      episodeStore.setLastUsedSubjectIds(detectedSubjectIds);
+      episodeStore.autoAssociateSubjects(episode.value.index);
+    }
+
+    ElMessage.success('主体同步完成，并已自动关联至本集');
   } else {
     ElMessage.info('未发现需要同步的手写主体名称');
   }
@@ -2201,6 +2232,15 @@ const insertMention = (item: any) => {
       editor.value.chain().focus().deleteRange({ from: from - match[0].length, to: from }).insertContent(html).run();
     } else {
       editor.value.chain().focus().insertContent(html).run();
+    }
+
+    // 自动更新当前剧集的主体关联
+    if (['character', 'scene', 'prop'].includes(item.type) && episode.value) {
+      // 将当前主体加入“最新使用”并同步到本集
+      const currentLastUsed = new Set(episodeStore.lastUsedSubjectIds);
+      currentLastUsed.add(item.id);
+      episodeStore.setLastUsedSubjectIds(Array.from(currentLastUsed));
+      episodeStore.autoAssociateSubjects(episode.value.index);
     }
   }
   

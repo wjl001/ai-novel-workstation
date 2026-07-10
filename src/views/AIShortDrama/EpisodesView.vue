@@ -78,6 +78,15 @@
           <span>批量导入分镜</span>
         </button>
 
+        <!-- Associate Entity Button (Global) -->
+        <button 
+          @click="handleGlobalAssociate"
+          class="h-10 px-6 flex items-center gap-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:shadow-lg hover:shadow-indigo-500/10 rounded-full font-black text-[13px] border-2 border-indigo-50 dark:border-indigo-900/30 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
+        >
+          <el-icon :size="16"><User /></el-icon>
+          <span>关联主体</span>
+        </button>
+
         <!-- Product Design Info Button -->
         <button 
           @click="showDesignDialog = true"
@@ -145,6 +154,14 @@
               >
                 <el-icon><EditPen /></el-icon>
                 <span>编辑</span>
+              </button>
+              <button 
+                class="flex items-center justify-center h-7 px-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg font-black text-[11px] hover:bg-indigo-600 hover:text-white transition-all duration-300"
+                @click.stop="handleEpisodeAssociate(ep)"
+                title="关联主体"
+              >
+                <el-icon class="mr-1"><User /></el-icon>
+                <span>关联主体</span>
               </button>
               <button 
                 :class="[s.stepBtn, s.preview]"
@@ -618,6 +635,17 @@ const showImportMethodDialog = ref(false);
 const manualImportText = ref('');
 const overwriteConfirmVisible = ref(false);
 const overwriteConfirmData = ref<any>(null);
+
+// Subject Association Logic
+const handleGlobalAssociate = () => {
+  episodeStore.autoAssociateSubjects();
+  ElMessage.success('已自动关联所有主体到全剧');
+};
+
+const handleEpisodeAssociate = (ep: any) => {
+  episodeStore.autoAssociateSubjects(ep.index);
+  ElMessage.success(`第 ${ep.index} 集已自动关联最新主体`);
+};
 
 const executeImport = (items: any[]) => {
   items.forEach(item => {

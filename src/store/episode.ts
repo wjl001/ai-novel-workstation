@@ -57,6 +57,7 @@ export const useEpisodeStore = defineStore('episode', {
     isGeneratingBatch: false,
     batchProgress: 0,
     currentDramaTitle: '未命名剧本',
+    lastUsedSubjectIds: [] as string[],
     generationStatus: {
       isGenerating: false,
       type: '' as 'storyboard' | 'synthesis' | '',
@@ -117,6 +118,67 @@ export const useEpisodeStore = defineStore('episode', {
       this.generationStatus = { ...this.generationStatus, ...status };
       this.saveToLocalStorage();
     },
+    setLastUsedSubjectIds(ids: string[]) {
+      this.lastUsedSubjectIds = ids;
+      this.saveToLocalStorage();
+    },
+    autoAssociateSubjects(targetEpisodeIndex?: number) {
+      const allIndices = Array.from({ length: this.episodes.length }, (_, i) => i + 1);
+      
+      let sourceSubjectIds = [...this.lastUsedSubjectIds];
+
+      if (targetEpisodeIndex) {
+        // 单集关联
+        if (sourceSubjectIds.length === 0) {
+          // 如果没有记录“最新使用”，查找最近一个有主体的集数
+          for (let i = targetEpisodeIndex - 1; i >= 1; i--) {
+            const subs = this.subjects.filter(s => s.appeared_episodes?.includes(i));
+            if (subs.length > 0) {
+              sourceSubjectIds = subs.map(s => s.id);
+              break;
+            }
+          }
+        }
+        
+        // 如果还是没找到，则使用全部主体
+        if (sourceSubjectIds.length === 0) {
+          sourceSubjectIds = this.subjects.map(s => s.id);
+        }
+        
+        // 更新主体关联
+        this.subjects.forEach(s => {
+          let appeared = [...(s.appeared_episodes || [])];
+          if (sourceSubjectIds.includes(s.id)) {
+            if (!appeared.includes(targetEpisodeIndex)) {
+              appeared.push(targetEpisodeIndex);
+            }
+          } else {
+            appeared = appeared.filter(idx => idx !== targetEpisodeIndex);
+          }
+          s.appeared_episodes = appeared;
+        });
+
+        // 更新“最新使用”记录
+        this.lastUsedSubjectIds = [...sourceSubjectIds];
+      } else {
+        // 全局关联
+        if (sourceSubjectIds.length === 0) {
+          sourceSubjectIds = this.subjects.map(s => s.id);
+        }
+
+        this.subjects.forEach(s => {
+          if (sourceSubjectIds.includes(s.id)) {
+            s.appeared_episodes = [...allIndices];
+          } else {
+            s.appeared_episodes = [];
+          }
+        });
+
+        this.lastUsedSubjectIds = [...sourceSubjectIds];
+      }
+      
+      this.saveToLocalStorage();
+    },
     saveToLocalStorage() {
       const stateToSave = {
         episodes: this.episodes,
@@ -125,6 +187,7 @@ export const useEpisodeStore = defineStore('episode', {
         isGeneratingBatch: this.isGeneratingBatch,
         batchProgress: this.batchProgress,
         currentDramaTitle: this.currentDramaTitle,
+        lastUsedSubjectIds: this.lastUsedSubjectIds,
         generationStatus: this.generationStatus
       };
       localStorage.setItem('episode_store', JSON.stringify(stateToSave));
@@ -140,6 +203,7 @@ export const useEpisodeStore = defineStore('episode', {
           this.isGeneratingBatch = parsed.isGeneratingBatch || false;
           this.batchProgress = parsed.batchProgress || 0;
           this.currentDramaTitle = parsed.currentDramaTitle || '未命名剧本';
+          this.lastUsedSubjectIds = parsed.lastUsedSubjectIds || [];
           this.generationStatus = parsed.generationStatus || this.generationStatus;
         } catch (e) {
           console.error('Failed to parse episode_store from localStorage', e);
