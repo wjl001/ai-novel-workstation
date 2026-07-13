@@ -273,12 +273,24 @@
                     <span class="text-[14px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="char.image && !generatingAssetImages.has(`char-${char.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      title="编辑主体"
                       @click.stop="openEditModal(char, 'character')"
                     >
-                      <el-icon size="20"><Edit /></el-icon>
+                      <el-icon size="18"><Edit /></el-icon>
+                    </div>
+                    <div 
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-indigo-600 shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      :class="{ 'pointer-events-none opacity-50': syncingAssetId === char.id }"
+                      title="同步厂商资产库"
+                      @click.stop="handleSyncVendorAssets(char)"
+                    >
+                      <el-icon size="18" :class="{ 'is-loading': syncingAssetId === char.id }">
+                        <Refresh v-if="syncingAssetId !== char.id" />
+                        <Loading v-else />
+                      </el-icon>
                     </div>
                     <el-popconfirm
                       width="180"
@@ -291,10 +303,11 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white cursor-pointer"
+                          title="删除主体"
                           @click.stop
                         >
-                          <el-icon size="20"><Delete /></el-icon>
+                          <el-icon size="18"><Delete /></el-icon>
                         </div>
                       </template>
                     </el-popconfirm>
@@ -463,12 +476,24 @@
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="scene.image && !generatingAssetImages.has(`scene-${scene.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      title="编辑主体"
                       @click.stop="openEditModal(scene, 'scene')"
                     >
-                      <el-icon size="20"><Edit /></el-icon>
+                      <el-icon size="18"><Edit /></el-icon>
+                    </div>
+                    <div 
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-indigo-600 shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      :class="{ 'pointer-events-none opacity-50': syncingAssetId === scene.id }"
+                      title="同步厂商资产库"
+                      @click.stop="handleSyncVendorAssets(scene)"
+                    >
+                      <el-icon size="18" :class="{ 'is-loading': syncingAssetId === scene.id }">
+                        <Refresh v-if="syncingAssetId !== scene.id" />
+                        <Loading v-else />
+                      </el-icon>
                     </div>
                     <el-popconfirm
                       width="180"
@@ -481,10 +506,11 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white cursor-pointer"
+                          title="删除主体"
                           @click.stop
                         >
-                          <el-icon size="20"><Delete /></el-icon>
+                          <el-icon size="18"><Delete /></el-icon>
                         </div>
                       </template>
                     </el-popconfirm>
@@ -653,12 +679,24 @@
                     <span class="text-[13px]">暂无画面</span>
                   </div>
                   <!-- 编辑/删除功能 -->
-                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                  <div v-if="prop.image && !generatingAssetImages.has(`prop-${prop.id}`) && !isMultiSelect" class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
                     <div 
-                      class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95"
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-[#1890ff] shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      title="编辑主体"
                       @click.stop="openEditModal(prop, 'prop')"
                     >
-                      <el-icon size="20"><Edit /></el-icon>
+                      <el-icon size="18"><Edit /></el-icon>
+                    </div>
+                    <div 
+                      class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-indigo-600 shadow-lg transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                      :class="{ 'pointer-events-none opacity-50': syncingAssetId === prop.id }"
+                      title="同步厂商资产库"
+                      @click.stop="handleSyncVendorAssets(prop)"
+                    >
+                      <el-icon size="18" :class="{ 'is-loading': syncingAssetId === prop.id }">
+                        <Refresh v-if="syncingAssetId !== prop.id" />
+                        <Loading v-else />
+                      </el-icon>
                     </div>
                     <el-popconfirm
                       width="180"
@@ -671,10 +709,11 @@
                     >
                       <template #reference>
                         <div 
-                          class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white"
+                          class="w-9 h-9 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/10 transform scale-90 group-hover:scale-100 transition-all hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white cursor-pointer"
+                          title="删除主体"
                           @click.stop
                         >
-                          <el-icon size="20"><Delete /></el-icon>
+                          <el-icon size="18"><Delete /></el-icon>
                         </div>
                       </template>
                     </el-popconfirm>
@@ -806,8 +845,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useModelStore } from '@/store/models';
+import { VIDEO_MODELS } from '@/config/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
-import { Plus, Picture, Edit, MagicStick, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Refresh, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu } from '@element-plus/icons-vue';
 
 const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -826,6 +866,25 @@ const activeTab = ref('characters');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showLibraryModal = ref(false);
+const syncingAssetId = ref<string | null>(null);
+
+const handleSyncVendorAssets = async (asset: any) => {
+  syncingAssetId.value = asset.id;
+  const currentModel = modelStore.selectedVideoModel;
+  const vendorName = VIDEO_MODELS.find(v => v.models.some(m => m.id === currentModel))?.name || '当前视频厂商';
+  
+  ElMessage({
+    message: `正在为 ${asset.name} 从 ${vendorName} 同步预置资产库...`,
+    type: 'info',
+    duration: 2000
+  });
+
+  // 模拟同步过程
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  syncingAssetId.value = null;
+  ElMessage.success(`${asset.name} 已成功同步 ${vendorName} 的最新资产数据`);
+};
 
 const handleLibraryConfirm = (selectedItems: any[]) => {
   selectedItems.forEach(item => {
@@ -994,9 +1053,9 @@ const uiDesignGroups = {
       items: [
         { name: '产品设计说明', tag: 'button', classes: 'h-10 px-4 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200', notes: ['右上角入口；打开产品设计说明弹窗'] },
         { name: '批量生成主体按钮', tag: 'button', classes: 'h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 flex items-center gap-2', notes: ['角色/场景/道具三处一致；MagicStick 图标 + 文案'] },
-        { name: '新增主体按钮', tag: 'button', classes: 'h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 flex items-center gap-2', notes: ['角色/场景/道具三处一致；Plus 图标 + 文案'] },
-        { name: '卡片-编辑', tag: 'div', classes: 'w-10 h-10 rounded-full bg-white text-[#1890ff] shadow-lg scale-90 group-hover:scale-100 hover:scale-110 active:scale-95', notes: ['卡片 hover 时显示；点击打开编辑弹窗'] },
-        { name: '卡片-删除', tag: 'div', classes: 'w-10 h-10 rounded-2xl bg-white text-red-500 shadow-xl shadow-red-500/10 scale-90 group-hover:scale-100 hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white', notes: ['卡片 hover 时显示；带 Popconfirm 二次确认'] },
+        { name: '卡片-同步', tag: 'div', classes: 'w-9 h-9 rounded-full bg-white text-indigo-600 shadow-lg scale-90 group-hover:scale-100 hover:scale-110 active:scale-95', notes: ['新增功能；从当前视频生成厂商同步该主体的预置资产'] },
+        { name: '卡片-编辑', tag: 'div', classes: 'w-9 h-9 rounded-full bg-white text-[#1890ff] shadow-lg scale-90 group-hover:scale-100 hover:scale-110 active:scale-95', notes: ['卡片 hover 时显示；点击打开编辑弹窗'] },
+        { name: '卡片-删除', tag: 'div', classes: 'w-9 h-9 rounded-full bg-white text-red-500 shadow-xl shadow-red-500/10 scale-90 group-hover:scale-100 hover:scale-110 active:scale-95 hover:bg-red-500 hover:text-white', notes: ['卡片 hover 时显示；带 Popconfirm 二次确认'] },
         { name: '下一步：分镜视频', tag: 'button', classes: 'h-12 px-10 bg-indigo-600 text-white rounded-full text-[15px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2', notes: ['禁用态由 isAssetsComplete 控制；外层 tooltip 提示未完成原因'] },
         { name: '未保存确认-取消', tag: 'button', classes: 'h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold border border-slate-200', notes: ['关闭 confirmVisible'] },
         { name: '未保存确认-确定', tag: 'button', classes: 'h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95', notes: ['跳转至分镜视频页'] },

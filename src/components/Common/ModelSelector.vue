@@ -23,7 +23,7 @@
               ]"
             >
               <!-- Lock Indicator -->
-              <div v-if="isLocked" class="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full p-1 shadow-sm z-20">
+              <div v-if="isLocked || isGlobalLocked" class="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full p-1 shadow-sm z-20">
                 <el-icon :size="10"><Lock /></el-icon>
               </div>
 
@@ -39,7 +39,8 @@
                     class="uppercase tracking-[0.2em] opacity-60 font-black text-indigo-600 dark:text-indigo-400"
                     :class="compact ? 'text-[7px]' : 'text-[9px]'"
                   >AI Engine</span>
-                  <span v-if="isLocked" class="text-[8px] font-bold text-amber-600 uppercase tracking-tighter">(Locked)</span>
+                  <span v-if="isGlobalLocked" class="text-[8px] font-bold text-amber-600 uppercase tracking-tighter">(Global Locked)</span>
+                  <span v-else-if="isLocked" class="text-[8px] font-bold text-amber-600 uppercase tracking-tighter">(Locked)</span>
                 </div>
                 <span 
                   class="font-black flex items-center gap-2 text-slate-800 dark:text-slate-100 truncate"
@@ -61,12 +62,22 @@
               <div class="w-2 h-6 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full mr-1"></div>
               智能引擎切换
             </h4>
-            <div v-if="moduleId" class="flex items-center gap-2 mt-1">
-              <el-switch
-                v-model="isLockedInternal"
-                size="small"
-                active-text="锁定此模块模型"
-              />
+            <div class="flex items-center gap-4 mt-1">
+              <div v-if="moduleId" class="flex items-center gap-2">
+                <el-switch
+                  v-model="isLockedInternal"
+                  size="small"
+                  active-text="锁定此模块模型"
+                  :disabled="isGlobalLocked"
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                <el-switch
+                  v-model="isGlobalLockedInternal"
+                  size="small"
+                  active-text="锁定全局模型"
+                />
+              </div>
             </div>
           </div>
           <el-tag size="small" effect="dark" round class="!bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-none !px-3 !font-black !text-[10px] shadow-sm">
@@ -184,6 +195,23 @@ const isLockedInternal = computed({
 });
 
 const isLocked = computed(() => props.moduleId ? modelStore.isLocked(props.moduleId) : false);
+const isGlobalLocked = computed(() => modelStore.isGlobalLocked(props.type));
+
+// 内部全局锁定状态
+const isGlobalLockedInternal = computed({
+  get: () => modelStore.isGlobalLocked(props.type),
+  set: (val) => {
+    modelStore.setGlobalLock(props.type, val);
+    if (val) {
+      // 开启全局锁定时，立即同步全局模型
+      const globalModelId = props.type === 'text' ? modelStore.selectedTextModel : 
+                            props.type === 'image' ? modelStore.selectedImageModel : 
+                            modelStore.selectedVideoModel;
+      emit('update:modelValue', globalModelId);
+    }
+  }
+});
+
 const isGenerating = computed(() => props.moduleId ? modelStore.isGenerating(props.moduleId) : false);
 
 const vendors = computed(() => {
@@ -201,12 +229,7 @@ const typeLabel = computed(() => {
 // 当前生效的模型 ID
 const currentModelId = computed(() => {
   if (props.modelValue) return props.modelValue;
-  if (props.moduleId && modelStore.isLocked(props.moduleId)) {
-    return modelStore.getModelForModule(props.moduleId, props.type);
-  }
-  return props.type === 'text' ? modelStore.selectedTextModel : 
-         props.type === 'image' ? modelStore.selectedImageModel : 
-         modelStore.selectedVideoModel;
+  return modelStore.getModelForModule(props.moduleId || '', props.type);
 });
 
 const selectedModel = computed(() => {
@@ -218,13 +241,13 @@ const selectedModel = computed(() => {
   return vendors.value[0]?.models[0];
 });
 
-// 监听全局模型变化 (仅在未锁定时同步)
+// 监听全局模型变化 (在未锁定或全局锁定时同步)
 watch(() => {
   if (props.type === 'text') return modelStore.selectedTextModel;
   if (props.type === 'image') return modelStore.selectedImageModel;
   return modelStore.selectedVideoModel;
 }, (newVal) => {
-  if (!isLocked.value && newVal !== props.modelValue) {
+  if ((isGlobalLocked.value || !isLocked.value) && newVal !== props.modelValue) {
     emit('update:modelValue', newVal);
   }
 });
@@ -237,7 +260,12 @@ const selectModel = (model: AIModel) => {
     emit('change', model);
     
     // 同步到 Store
-    if (!isLocked.value) {
+    if (isGlobalLocked.value) {
+      // 全局锁定时，切换模型即更新全局模型
+      if (props.type === 'text') modelStore.setTextModel(model.id);
+      else if (props.type === 'image') modelStore.setImageModel(model.id);
+      else modelStore.setVideoModel(model.id);
+    } else if (!isLocked.value) {
       if (props.type === 'text') modelStore.setTextModel(model.id);
       else if (props.type === 'image') modelStore.setImageModel(model.id);
       else modelStore.setVideoModel(model.id);
