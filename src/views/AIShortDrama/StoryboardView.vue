@@ -584,16 +584,7 @@
                   当前剧集的分镜尚未生成或导入。您可以选择由系统自动智能生成，或者手动粘贴、上传分镜脚本。
                 </p>
 
-                <!-- 自动关联选项 (空态视图) -->
-                <div class="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 px-5 py-2.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 mb-8 hover:border-indigo-500/30 transition-all cursor-pointer shadow-sm group" @click="autoAssociateOnImport = !autoAssociateOnImport">
-                  <el-checkbox v-model="autoAssociateOnImport" @click.stop />
-                  <div class="flex flex-col">
-                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">导入后自动关联主体</span>
-                    <span class="text-[10px] text-slate-400 font-medium">开启后，系统将自动为新分镜匹配角色与场景主体</span>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-6">
+                <div class="flex items-center gap-6 mb-8">
                   <button 
                     @click="startStoryboardSequentialGeneration"
                     class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
@@ -617,6 +608,15 @@
                     <el-icon class="group-hover:-translate-y-0.5 transition-transform"><Document /></el-icon>
                     文件上传
                   </button>
+                </div>
+
+                <!-- 自动关联选项 (空态视图) -->
+                <div class="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 px-5 py-2.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-500/30 transition-all cursor-pointer shadow-sm group" @click="autoAssociateOnImport = !autoAssociateOnImport">
+                  <el-checkbox v-model="autoAssociateOnImport" @click.stop />
+                  <div class="flex flex-col">
+                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-200">导入后自动关联主体</span>
+                    <span class="text-[10px] text-slate-400 font-medium">开启后，系统将自动为新分镜匹配角色与场景主体</span>
+                  </div>
                 </div>
               </template>
 
