@@ -136,6 +136,11 @@
       <div class="flex items-center gap-3">
         <!-- AI Generation Config Group (C-End Premium Design) -->
         <div class="flex items-center gap-2 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-2xl border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all">
+          <!-- Text Model -->
+          <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="short-drama-storyboard-text" />
+          
+          <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
+
           <!-- Video Model -->
           <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" moduleId="short-drama-storyboard-video" />
           
@@ -503,7 +508,6 @@
                     </button>
                   </div>
                   <div class="flex items-center gap-3">
-                    <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="short-drama-storyboard-text" />
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
@@ -585,13 +589,15 @@
                 </p>
 
                 <div class="flex items-center gap-6 mb-8">
-                  <button 
-                    @click="startStoryboardSequentialGeneration"
-                    class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
-                  >
-                    <el-icon class="animate-pulse"><MagicStick /></el-icon>
-                    <span>智能生成</span>
-                  </button>
+                  <div class="flex items-center gap-3">
+                    <button 
+                      @click="startStoryboardSequentialGeneration"
+                      class="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-black text-[14px] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
+                    >
+                      <el-icon class="animate-pulse"><MagicStick /></el-icon>
+                      <span>智能生成</span>
+                    </button>
+                  </div>
 
                   <button 
                     @click="isManualPasteActive = true"
@@ -1586,6 +1592,7 @@ import {
   CircleCheck, Document
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
+import { useUserStore } from '@/store/user';
 import { useDramaStore } from '@/store/drama';
 import { useEpisodeStore } from '@/store/episode';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
@@ -1599,6 +1606,7 @@ import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 
 const router = useRouter();
+const userStore = useUserStore();
 const dramaStore = useDramaStore();
 const episodeStore = useEpisodeStore();
 const modelStore = useModelStore();
@@ -3328,6 +3336,11 @@ const downloadVideo = () => {
 // --- Single Scene Generation Mock ---
 const handleGenerateSingleScene = (idx: number) => {
   if (timelineScenes.value[idx]) {
+    // 检查余额
+    if (userStore.balance < 100) {
+      return ElMessage.error('算力豆余额不足，请先充值');
+    }
+
     timelineScenes.value[idx].status = 'generating';
     timelineScenes.value[idx].progress = 0;
     
@@ -3344,6 +3357,9 @@ const handleGenerateSingleScene = (idx: number) => {
       timelineScenes.value[idx].progress += 5;
       if (timelineScenes.value[idx].progress >= 100) {
         clearInterval(interval);
+        // 扣除算力豆
+        userStore.deductBalance(100);
+        
         timelineScenes.value[idx].status = 'success';
         timelineScenes.value[idx].video = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
         // 同时设置预览图，确保时间轴能看到画面 (使用随机图片避免加载失败)
@@ -3458,6 +3474,11 @@ const handleBatchDownload = async () => {
 };
 
 const handleSynthesis = () => {
+  // 检查余额
+  if (userStore.balance < 500) {
+    return ElMessage.error('算力豆余额不足，请先充值');
+  }
+
   isSynthesizing.value = true;
   synthesisProgress.value = 0;
   showSynthesisConfig.value = true;
@@ -3470,6 +3491,9 @@ const handleSynthesis = () => {
     synthesisProgress.value += 1;
     if (synthesisProgress.value >= 100) {
       clearInterval(timer);
+      // 扣除算力豆
+      userStore.deductBalance(500);
+      
       isSynthesizing.value = false;
       isSynthesisCompleted.value = true;
       fullSynthesisVideoUrl.value = synthesisVideoCandidates[0];

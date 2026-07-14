@@ -148,7 +148,7 @@
               <div class="text-sm font-black text-slate-800 dark:text-slate-100">算力管理</div>
               <div class="text-xs font-black text-slate-400 dark:text-slate-500">总可用算力豆</div>
             </div>
-            <div class="mt-3 text-3xl font-black text-slate-900 dark:text-white">{{ pointsCompact }}</div>
+            <div class="mt-3 text-3xl font-black text-slate-900 dark:text-white">{{ formatPointsCompact(userStore.balance) }}</div>
             <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
               <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
                 <span>赠送算力豆</span>
@@ -279,7 +279,7 @@
                         <div class="text-xs font-black text-slate-300">可用算力豆</div>
                         <el-icon class="text-amber-300"><Coin /></el-icon>
                       </div>
-                      <div class="mt-4 text-4xl font-black text-cyan-300">{{ pointsCompact }}</div>
+                      <div class="mt-4 text-4xl font-black text-cyan-300">{{ formatPointsCompact(userStore.balance) }}</div>
                       <div class="mt-2 text-xs text-slate-300/80">可用算力豆</div>
                     </div>
                   </div>
@@ -1057,7 +1057,7 @@
                   <el-icon class="text-2xl text-slate-300 dark:text-slate-600"><ArrowRight /></el-icon>
                   <div class="text-right">
                     <div class="text-xs text-slate-500 dark:text-slate-400">总可用算力豆</div>
-                    <div class="text-2xl font-black text-cyan-500 mt-1">{{ memberState.points }}</div>
+                    <div class="text-2xl font-black text-cyan-500 mt-1">{{ userStore.balance }}</div>
                   </div>
                 </div>
                 <el-button
@@ -1216,7 +1216,6 @@ interface LocalInvoice {
 }
 
 interface MemberState {
-  points: number
   superExpireAt: number
   planExpireAt: Record<string, number>
   orders: LocalOrder[]
@@ -1423,7 +1422,7 @@ const openPurchaseTier = (tier: any) => {
     amount: price,
     bonusPoints: tier.points,
     effect: () => {
-      memberState.points += tier.points
+      userStore.setBalance(userStore.balance + tier.points)
       ElMessage.success(`成功开通 ${mt} ${tier.name}`)
     }
   }
@@ -1448,7 +1447,7 @@ const claimPendingBeans = () => {
   if (pendingBeans.value <= 0) return
   const gainedBeans = pendingBeans.value
   pendingBeans.value = 0
-  memberState.points += gainedBeans
+  userStore.setBalance(userStore.balance + gainedBeans)
   ElMessage.success(`成功领取了 ${gainedBeans} 算力豆`)
   saveState()
 }
@@ -1460,7 +1459,6 @@ const selectedMemberKey = ref<'music' | 'short-drama' | 'super'>('super')
 const isDark = computed(() => themeStore.isDark)
 
 const memberState = reactive<MemberState>({
-  points: 0,
   superExpireAt: 0,
   planExpireAt: {},
   orders: [],
@@ -1498,8 +1496,6 @@ const formatPointsCompact = (points: number) => {
   }
   return points.toLocaleString()
 }
-
-const pointsCompact = computed(() => formatPointsCompact(memberState.points))
 
 const giftPointsTotal = computed(() => memberState.orders.filter(o => o.type === 'member').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
 const rechargePointsTotal = computed(() => memberState.orders.filter(o => o.type === 'recharge').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
@@ -1609,7 +1605,6 @@ const loadState = () => {
   const raw = localStorage.getItem(STORAGE_KEY)
   if (!raw) {
     const monthMs = 30 * 24 * 60 * 60 * 1000
-    memberState.points = 11000
     memberState.superExpireAt = Date.now() + monthMs
     memberState.planExpireAt = {
       'short-drama': Date.now() + monthMs,
@@ -1622,13 +1617,11 @@ const loadState = () => {
 
   try {
     const parsed = JSON.parse(raw) as Partial<MemberState>
-    memberState.points = typeof parsed.points === 'number' ? parsed.points : 0
     memberState.superExpireAt = typeof parsed.superExpireAt === 'number' ? parsed.superExpireAt : 0
     memberState.planExpireAt = parsed.planExpireAt && typeof parsed.planExpireAt === 'object' ? (parsed.planExpireAt as Record<string, number>) : {}
     memberState.orders = Array.isArray(parsed.orders) ? (parsed.orders as LocalOrder[]) : []
     memberState.invoices = Array.isArray(parsed.invoices) ? (parsed.invoices as LocalInvoice[]) : []
   } catch {
-    memberState.points = 0
     memberState.superExpireAt = 0
     memberState.planExpireAt = {}
     memberState.orders = []
@@ -1637,8 +1630,7 @@ const loadState = () => {
 }
 
 const saveState = () => {
-  const toSave: MemberState = {
-    points: memberState.points,
+  const toSave: Omit<MemberState, 'points'> = {
     superExpireAt: memberState.superExpireAt,
     planExpireAt: memberState.planExpireAt,
     orders: memberState.orders,
@@ -1697,7 +1689,7 @@ const openPurchaseSuper = () => {
     effect: () => {
       memberState.superExpireAt = Math.max(memberState.superExpireAt, Date.now())
       memberState.superExpireAt = memberState.superExpireAt + 30 * 24 * 60 * 60 * 1000
-      memberState.points += bonusPoints
+      userStore.setBalance(userStore.balance + bonusPoints)
       if (memberState.superExpireAt < nextExpireAt) memberState.superExpireAt = nextExpireAt
     }
   }
@@ -1717,7 +1709,7 @@ const openPurchasePlan = (plan: MemberPlan) => {
       const monthMs = 30 * 24 * 60 * 60 * 1000
       const currentExpireAt = getPlanExpireAt(plan.id)
       memberState.planExpireAt[plan.id] = Math.max(currentExpireAt, Date.now()) + monthMs
-      memberState.points += plan.bonusPoints
+      userStore.setBalance(userStore.balance + plan.bonusPoints)
     }
   }
   purchaseDialog.visible = true
@@ -1733,7 +1725,7 @@ const openRechargePackage = (pkg: RechargePackage) => {
     amount: pkg.price,
     bonusPoints: pkg.points,
     effect: () => {
-      memberState.points += pkg.points
+      userStore.setBalance(userStore.balance + pkg.points)
     }
   }
   purchaseDialog.visible = true

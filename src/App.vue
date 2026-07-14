@@ -58,6 +58,10 @@
                 <div class="user-info-wrapper">
                   <h4 class="name">{{ userStore.userInfo?.name }}</h4>
                   <p class="role">{{ userStore.userInfo?.teamRole || '标准创作者' }}</p>
+                  <div class="balance-tag">
+                    <el-icon><Coin /></el-icon>
+                    <span>{{ userStore.balance.toLocaleString() }} 豆</span>
+                  </div>
                 </div>
               </div>
               <div class="dropdown-content">
@@ -509,6 +513,25 @@ onErrorCaptured((error) => {
       color: #94a3b8;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+    }
+
+    .balance-tag {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      color: #d97706;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.1);
+      
+      .el-icon {
+        font-size: 16px;
+      }
     }
   }
 }

@@ -25,7 +25,19 @@
         </div>
 
         <!-- 统计信息卡片 -->
-        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 shrink-0 px-1">
+        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 shrink-0 px-1">
+          <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 flex items-center justify-center shadow-inner">
+              <el-icon class="text-2xl"><Coin /></el-icon>
+            </div>
+            <div>
+              <div class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">总可用算力豆</div>
+              <div class="mt-1 text-2xl font-black text-slate-900 dark:text-white font-mono">
+                {{ userStore.balance.toLocaleString() }}
+              </div>
+            </div>
+          </div>
+
           <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
             <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-300 flex items-center justify-center shadow-inner">
               <el-icon class="text-2xl"><Coin /></el-icon>
@@ -257,6 +269,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useThemeStore } from '@/store/theme'
+import { useUserStore } from '@/store/user'
 import {
   ArrowDown,
   ArrowLeft,
@@ -288,6 +301,7 @@ interface ConsumptionDetail {
 
 const router = useRouter()
 const themeStore = useThemeStore()
+const userStore = useUserStore()
 const isDark = computed(() => themeStore.isDark)
 
 const generateMockData = (count: number): ConsumptionDetail[] => {

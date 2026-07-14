@@ -8,17 +8,20 @@ interface UserInfo {
   roles: string[]
   teamId?: string
   teamRole?: 'owner' | 'admin' | 'member'
+  balance?: number
 }
 
 interface UserState {
   token: string | null
   userInfo: UserInfo | null
+  balance: number
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: localStorage.getItem('token') || null,
-    userInfo: JSON.parse(localStorage.getItem('userInfo') || 'null')
+    userInfo: JSON.parse(localStorage.getItem('userInfo') || 'null'),
+    balance: Number(localStorage.getItem('user_balance')) || 1000000
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,
@@ -33,6 +36,14 @@ export const useUserStore = defineStore('user', {
     setUserInfo(info: UserInfo) {
       this.userInfo = info
       localStorage.setItem('userInfo', JSON.stringify(info))
+    },
+    setBalance(balance: number) {
+      this.balance = balance
+      localStorage.setItem('user_balance', balance.toString())
+    },
+    deductBalance(amount: number) {
+      this.balance -= amount
+      localStorage.setItem('user_balance', this.balance.toString())
     },
     clearAuth() {
       this.token = null
