@@ -64,9 +64,13 @@ export const useEpisodeStore = defineStore('episode', {
       progress: 0,
       currentIndex: -1,
       totalCount: 0
-    }
+    },
+    tasks: [] as any[]
   }),
   actions: {
+    setTasks(tasks: any[]) {
+      this.tasks = tasks;
+    },
     setEpisodes(episodes: Episode[]) {
       this.episodes = episodes;
       this.saveToLocalStorage();

@@ -19,6 +19,24 @@
       <div id="header-center" class="flex-1 flex justify-center mx-4"></div>
 
       <div class="flex items-center gap-3">
+        <!-- Global Task Center Button -->
+        <button 
+          @click="showTaskList = true"
+          class="group relative flex items-center gap-2.5 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-500/50 transition-all duration-300"
+        >
+          <div class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300">
+            <el-icon :size="16"><List /></el-icon>
+          </div>
+          <span class="text-[13px] font-black tracking-tight">任务中心</span>
+          
+          <div v-if="activeTaskCount > 0" class="absolute -top-1.5 -right-1.5 flex items-center justify-center">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <div class="relative w-5 h-5 bg-indigo-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg">
+              {{ activeTaskCount }}
+            </div>
+          </div>
+        </button>
+
         <button
           v-if="userStore.isLoggedIn"
           type="button"
@@ -201,18 +219,144 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Task List Drawer: Redesigned for C-end -->
+    <el-drawer
+      v-model="showTaskList"
+      direction="rtl"
+      size="480px"
+      custom-class="c-end-drawer"
+      :with-header="false"
+    >
+      <div class="flex flex-col h-full relative px-6 pt-6 pb-4">
+        <!-- Close Button -->
+        <button 
+          @click="showTaskList = false"
+          class="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-all z-20"
+        >
+          <el-icon :size="16"><Close /></el-icon>
+        </button>
+
+        <!-- Header Info -->
+        <div class="mb-5">
+          <div class="flex items-baseline gap-2 mb-1">
+            <h2 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">任务中心</h2>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">TASK CENTER</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">共 <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ episodeStore.tasks.length }}</span> 项任务</p>
+        </div>
+
+        <!-- Task List Area -->
+        <div class="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-2">
+          <div v-if="episodeStore.tasks.length === 0" class="flex flex-col items-center justify-center py-20 opacity-20 dark:opacity-10">
+            <el-icon :size="48"><Box /></el-icon>
+            <p class="mt-3 text-sm font-black tracking-widest uppercase">暂无任务</p>
+          </div>
+          
+          <div 
+            v-for="task in paginatedTasks" 
+            :key="task.id" 
+            class="group relative p-3 rounded-xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-indigo-500/30 transition-all duration-300"
+          >
+            <!-- Left Status Bar -->
+            <div 
+              class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-all duration-700"
+              :class="task.status === 'processing' ? 'bg-indigo-500' : task.status === 'failed' ? 'bg-red-500' : task.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'"
+            ></div>
+
+            <div class="relative z-10 pl-2">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 truncate">{{ task.dramaTitle }}</span>
+                  <span class="text-[10px] font-black text-slate-400">|</span>
+                  <span class="text-[11px] font-black text-slate-700 dark:text-slate-200">第 {{ task.episodeIndex }} 集</span>
+                </div>
+                <div :class="[
+                  'px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0',
+                  task.status === 'processing' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 animate-pulse' :
+                  task.status === 'queued' ? 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' :
+                  task.status === 'completed' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' :
+                  'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400'
+                ]">
+                  {{ task.status === 'processing' ? '生成中' : task.status === 'queued' ? '排队中' : task.status === 'completed' ? '已完成' : '异常' }}
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex flex-col gap-1 min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider">
+                      {{ task.type === 'storyboard' ? '分镜视频' : '全集合成' }}
+                    </span>
+                    <span v-if="task.sceneIndex !== undefined" class="text-[9px] font-bold text-slate-400">
+                      分镜 #{{ task.sceneIndex }}
+                    </span>
+                  </div>
+                  
+                  <!-- Mini Progress Bar -->
+                  <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div 
+                      class="h-full rounded-full transition-all duration-1000"
+                      :class="[
+                        task.status === 'processing' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : 
+                        task.status === 'completed' ? 'bg-emerald-500' : 
+                        task.status === 'failed' ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'
+                      ]"
+                      :style="{ width: task.progress + '%' }"
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-[10px] font-black text-slate-400 tabular-nums">{{ task.progress }}%</span>
+                  <button 
+                    v-if="task.status === 'completed' || task.status === 'failed'"
+                    @click="handleRegenerate(task)"
+                    class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all"
+                    title="重新生成"
+                  >
+                    <el-icon :size="14"><RefreshRight /></el-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Error Message -->
+              <div v-if="task.status === 'failed' && task.error" class="mt-2 pl-2 border-l-2 border-red-300 dark:border-red-800">
+                <p class="text-[9px] text-red-500 dark:text-red-400 font-bold truncate">{{ task.error }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="episodeStore.tasks.length > taskPageSize" class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+          <el-pagination
+            v-model:current-page="taskCurrentPage"
+            v-model:page-size="taskPageSize"
+            layout="prev, pager, next"
+            :total="episodeStore.tasks.length"
+            size="small"
+            class="c-end-pagination"
+          />
+        </div>
+      </div>
+    </el-drawer>
   </el-container>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, provide, computed, onErrorCaptured, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, Edit, Check, Refresh, Sunny, Moon, GoldMedal } from '@element-plus/icons-vue'
+import { 
+  VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, 
+  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin
+} from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useDramaStore } from '@/store/drama'
 import { useEpisodeStore } from '@/store/episode'
 import { useUserStore } from '@/store/user'
 import { useThemeStore } from '@/store/theme'
+import { taskQueueManager } from '@/utils/taskQueue'
 
 const runtimeError = ref<string | null>(null)
 const router = useRouter()
@@ -226,6 +370,116 @@ const episodeStore = useEpisodeStore()
 const userStore = useUserStore()
 const themeStore = useThemeStore()
 const isLight = computed(() => themeStore.isLight)
+
+// Task Center State
+const showTaskList = ref(false)
+const taskCurrentPage = ref(1)
+const taskPageSize = ref(10)
+const activeTaskCount = computed(() => episodeStore.tasks.filter(t => t.status === 'processing' || t.status === 'queued').length)
+
+const paginatedTasks = computed(() => {
+  const start = (taskCurrentPage.value - 1) * taskPageSize.value
+  return episodeStore.tasks.slice().reverse().slice(start, start + taskPageSize.value)
+})
+
+const getPosterUrl = (ep: any) => {
+  if (!ep) return 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=cinematic+movie+poster+placeholder&image_size=portrait_4_3'
+  return ep.poster || `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(ep.title + ' cinematic movie poster')}&image_size=portrait_4_3`
+}
+
+const handleRegenerate = (task: any) => {
+  const ep = episodeStore.episodes.find(e => e.id === task.episodeId)
+  if (!ep) return
+
+  ElMessage.info(`重新提交任务：第 ${ep.index} 集 ${task.type === 'storyboard' ? '分镜生成' : '全集合成'}`)
+  
+  taskQueueManager.addTask({
+    id: `task-${ep.id}-${task.type}-${Date.now()}`,
+    episodeId: ep.id,
+    dramaTitle: task.dramaTitle || episodeStore.currentDramaTitle,
+    episodeIndex: ep.index,
+    type: task.type,
+    priority: 1,
+    execute: async () => {
+      if (task.type === 'storyboard') {
+        await handleGenerate(ep)
+      } else {
+        await handleSynthesis(ep)
+      }
+    }
+  })
+}
+
+const handleGenerate = async (ep: any) => {
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id && t.type === 'storyboard')
+  
+  episodeStore.updateEpisode(ep.id, { 
+    status: 'generating',
+    storyboardStatus: 'generating' 
+  })
+  
+  try {
+    const steps = 5
+    for (let i = 1; i <= steps; i++) {
+      if (task) task.sceneIndex = i
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (i === 3 && Math.random() < 0.1) {
+            reject(new Error('AI 模型计算资源紧张，请重试'))
+          } else {
+            resolve(true)
+          }
+        }, 1200)
+      })
+      const progress = Math.round((i / steps) * 100)
+      if (task) task.progress = progress
+    }
+    
+    episodeStore.updateEpisode(ep.id, { 
+      status: 'success', 
+      storyboardStatus: 'success',
+      storyboardGenerated: true 
+    })
+    if (task) task.sceneIndex = undefined
+  } catch (error: any) {
+    episodeStore.updateEpisode(ep.id, { 
+      status: 'failed', 
+      storyboardStatus: 'failed',
+      errorReason: error.message 
+    })
+    throw error
+  }
+}
+
+const handleSynthesis = async (ep: any) => {
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id && t.type === 'synthesis')
+  episodeStore.updateEpisode(ep.id, { synthesisStatus: 'synthesizing' })
+  
+  try {
+    const steps = 5
+    for (let i = 1; i <= steps; i++) {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (i === 4 && Math.random() < 0.15) {
+            reject(new Error('视频渲染引擎连接超时，请重试'))
+          } else {
+            resolve(true)
+          }
+        }, 1000)
+      })
+      const progress = Math.round((i / steps) * 100)
+      if (task) task.progress = progress
+    }
+    
+    episodeStore.updateEpisode(ep.id, { 
+      synthesisStatus: 'success',
+      synthesisVideo: 'https://www.w3schools.com/html/movie.mp4'
+    })
+  } catch (error: any) {
+    episodeStore.updateEpisode(ep.id, { synthesisStatus: 'failed' })
+    throw error
+  }
+}
 
 const showProfileDialog = ref(false)
 const isGeneratingAvatar = ref(false)
@@ -833,6 +1087,59 @@ onErrorCaptured((error) => {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes progress-bar-stripes {
+  from { background-position: 20px 0; }
+  to { background-position: 0 0; }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+:deep(.c-end-drawer) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: -20px 0 80px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark :deep(.c-end-drawer) {
+  background: rgba(15, 23, 42, 0.7) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.c-end-pagination :deep(.el-pager li) {
+  background: white !important;
+  border-radius: 10px;
+  margin: 0 3px;
+  font-weight: 800;
+  color: #64748b;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: all 0.3s;
+}
+
+.dark .c-end-pagination :deep(.el-pager li) {
+  background: #1e293b !important;
+  color: #94a3b8;
+}
+
+.c-end-pagination :deep(.el-pager li.is-active) {
+  background: #6366f1 !important;
+  color: white !important;
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
 }
 
 .dark {

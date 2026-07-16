@@ -1595,6 +1595,7 @@ import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useUserStore } from '@/store/user';
 import { useDramaStore } from '@/store/drama';
 import { useEpisodeStore } from '@/store/episode';
+import { taskQueueManager } from '@/utils/taskQueue';
 import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
 import JSZip from 'jszip';

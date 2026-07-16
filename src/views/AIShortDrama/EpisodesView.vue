@@ -70,6 +70,24 @@
 
         <!-- Bulk Import Button (Only shown in Storyboard Video tab) -->
         <button 
+          v-if="activeTab === 'assets'"
+          @click="handleBatchStoryboard"
+          class="h-10 px-6 flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 rounded-full font-black text-[13px] transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 mr-2"
+        >
+          <el-icon :size="16"><MagicStick /></el-icon>
+          <span>批量生成分镜</span>
+        </button>
+
+        <button 
+          v-if="activeTab === 'processing'"
+          @click="handleBatchSynthesis"
+          class="h-10 px-6 flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-600 text-white hover:shadow-lg hover:shadow-orange-500/30 rounded-full font-black text-[13px] transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 mr-2"
+        >
+          <el-icon :size="16"><VideoCamera /></el-icon>
+          <span>批量生成视频</span>
+        </button>
+
+        <button 
           v-if="activeTab === 'processing'"
           @click="showImportMethodDialog = true"
           class="h-10 px-6 flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-500/30 rounded-full font-black text-[13px] transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
@@ -154,6 +172,15 @@
               >
                 <el-icon><EditPen /></el-icon>
                 <span>编辑</span>
+              </button>
+              <button 
+                v-if="ep.assetsStatus === 'success'"
+                class="flex items-center justify-center h-7 px-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-black text-[11px] hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300"
+                @click.stop="handleSingleBatchStoryboard(ep)"
+                title="批量生成分镜"
+              >
+                <el-icon class="mr-1"><MagicStick /></el-icon>
+                <span>批量生成</span>
               </button>
               <button 
                 class="flex items-center justify-center h-7 px-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg font-black text-[11px] hover:bg-indigo-600 hover:text-white transition-all duration-300"
@@ -417,6 +444,13 @@
       @confirm="handleOverwriteConfirm"
     />
 
+    <GlobalUIDesignSpecsDialog
+      v-model="showUIDesignSpecsDialog"
+      title="剧集管理｜UI 设计标注"
+      subtitle="Episodes View UI Specs"
+      :groups="episodesUIDesignGroups"
+    />
+
     <button
       type="button"
       class="fixed bottom-6 right-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
@@ -625,12 +659,17 @@ import {
   EditPen,
   Monitor,
   Plus,
-  CircleCheck
+  CircleCheck,
+  Close,
+  Delete,
+  Warning,
+  RefreshRight
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import JSZip from 'jszip';
 import { useEpisodeStore } from '@/store/episode';
 import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
+import { taskQueueManager } from '@/utils/taskQueue';
 
 // Components
 import EpisodesEditDrawer from '@/components/episode/EpisodesEditDrawer.vue';
@@ -1120,6 +1159,9 @@ watch([currentTabTotal, pageSize], () => {
 });
 
 const getSingleStatusType = (ep: any) => {
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id);
+  if (task && (task.status === 'queued' || task.status === 'processing')) return 'processing';
+  
   if (ep.synthesisStatus === 'success') return 'completed';
   if (ep.assetsStatus === 'success') return 'processing';
   if (ep.scriptStatus === 'success') return 'assets';
@@ -1127,6 +1169,13 @@ const getSingleStatusType = (ep: any) => {
 };
 
 const getSingleStatusLabel = (ep: any) => {
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id);
+  if (task) {
+    if (task.status === 'queued') return `排队中 (第${episodeStore.tasks.filter(t => t.status === 'queued' && t.createdAt <= task.createdAt).length}位)`;
+    if (task.status === 'processing') return '生成中...';
+    if (task.status === 'failed') return '生成失败';
+  }
+
   if (ep.synthesisStatus === 'success') return '已完成';
   if (ep.synthesisStatus === 'synthesizing') return '合成中...';
   if (ep.storyboardStatus === 'generating') return '分镜生成中...';
@@ -1136,104 +1185,107 @@ const getSingleStatusLabel = (ep: any) => {
   return '剧本创作';
 };
 
+const concurrency = ref(2);
+// 移除 handleConcurrencyChange，并发数由调度器内部控制
+
+const handleSingleBatchStoryboard = (ep: any) => {
+  if (ep.storyboardStatus === 'success') {
+    ElMessage.warning(`第 ${ep.index} 集已生成分镜，无需重复生成`);
+    return;
+  }
+
+  ElMessage.success(`已开始为第 ${ep.index} 集批量生成分镜视频`);
+  
+  taskQueueManager.addTask({
+    id: `task-${ep.id}-storyboard-single`,
+    episodeId: ep.id,
+    dramaTitle: episodeStore.currentDramaTitle,
+    episodeIndex: ep.index,
+    type: 'storyboard',
+    priority: 2, // Higher priority for single episode trigger
+    execute: async () => {
+      await handleGenerate(ep);
+    }
+  });
+};
+
+const handleBatchStoryboard = () => {
+  const targetEpisodes = currentTabEpisodes.value.filter(ep => ep.storyboardStatus !== 'success');
+  if (targetEpisodes.length === 0) {
+    ElMessage.warning('没有需要生成分镜的剧集');
+    return;
+  }
+
+  ElMessage.success(`已将 ${targetEpisodes.length} 个任务加入生成队列`);
+  
+  targetEpisodes.forEach(ep => {
+    taskQueueManager.addTask({
+      id: `task-${ep.id}-storyboard`,
+      episodeId: ep.id,
+      dramaTitle: episodeStore.currentDramaTitle,
+      episodeIndex: ep.index,
+      type: 'storyboard',
+      priority: 1,
+      execute: async () => {
+        await handleGenerate(ep);
+      }
+    });
+  });
+};
+
+const handleBatchSynthesis = () => {
+  const targetEpisodes = currentTabEpisodes.value.filter(ep => ep.synthesisStatus !== 'success');
+  if (targetEpisodes.length === 0) {
+    ElMessage.warning('没有需要合成的剧集');
+    return;
+  }
+
+  ElMessage.success(`已将 ${targetEpisodes.length} 个任务加入生成队列`);
+  
+  targetEpisodes.forEach(ep => {
+    taskQueueManager.addTask({
+      id: `task-${ep.id}-synthesis`,
+      episodeId: ep.id,
+      dramaTitle: episodeStore.currentDramaTitle,
+      episodeIndex: ep.index,
+      type: 'synthesis',
+      priority: 1,
+      execute: async () => {
+        await handleSynthesis(ep);
+      }
+    });
+  });
+};
+
 // Initialize mock data if empty
 onMounted(() => {
   episodeStore.loadFromLocalStorage();
 
-  // 强制加载模拟数据以修复“分镜视频”Tab 不显示的问题
+  // 强制加载 30 集真实模拟数据以供测试
   if (episodes.value.length <= 1) {
-    episodeStore.setEpisodes([
-      {
-        id: '1',
-        index: 1,
-        title: '第 1 集：命运抉择',
-        poster: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      },
-      {
-        id: '2',
-        index: 2,
-        title: '第 2 集：重生归来',
-        poster: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      },
-      {
-        id: '3',
-        index: 3,
-        title: '第 3 集：商战风云',
-        poster: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      },
-      {
-        id: '4',
-        index: 4,
-        title: '第 4 集：真相大白',
-        poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      },
-      {
-        id: '5',
-        index: 5,
-        title: '第 5 集：暗流涌动',
-        poster: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'success',
-        assetsStatus: 'success',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      },
-      {
-        id: '6',
-        index: 6,
-        title: '第 6 集：最后对决',
-        poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=400',
-        scriptStatus: 'pending',
-        assetsStatus: 'pending',
-        storyboardStatus: 'pending',
-        synthesisStatus: 'pending',
-        storyboardGenerated: false,
-        duration: '00:00',
-        storyboardScenes: [],
-        gif: '',
-        status: 'pending'
-      }
-    ]);
+    const mockEpisodes = Array.from({ length: 30 }, (_, i) => ({
+      id: `${i + 1}`,
+      index: i + 1,
+      title: `第 ${i + 1} 集：${['命运抉择', '重生归来', '商战风云', '真相大白', '暗流涌动', '最后对决'][i % 6]}`,
+      poster: `https://images.unsplash.com/photo-${[
+        '1618005182384-a83a8bd57fbe',
+        '1614850523296-d8c1af93d400',
+        '1620641788421-7a1c342ea42e',
+        '1536440136628-849c177e76a1',
+        '1509248961158-e54f6934749c',
+        '1478720568477-152d9b164e26'
+      ][i % 6]}?auto=format&fit=crop&q=80&w=400`,
+      scriptStatus: 'success' as const,
+      assetsStatus: 'success' as const,
+      storyboardStatus: 'pending' as const,
+      synthesisStatus: 'pending' as const,
+      storyboardGenerated: false,
+      duration: '00:00',
+      storyboardScenes: [],
+      gif: '',
+      status: 'pending' as const
+    }));
+    episodeStore.setEpisodes(mockEpisodes);
   }
 
   // Check for interrupted synthesis
@@ -1299,24 +1351,65 @@ const navigateToAssets = (ep: any) => {
   });
 };
 
+const handleRegenerate = (task: any) => {
+  const ep = episodeStore.episodes.find(e => e.id === task.episodeId);
+  if (!ep) return;
+
+  ElMessage.info(`重新提交任务：第 ${ep.index} 集 ${task.type === 'storyboard' ? '分镜生成' : '全集合成'}`);
+  
+  taskQueueManager.addTask({
+    id: `task-${ep.id}-${task.type}-${Date.now()}`,
+    episodeId: ep.id,
+    dramaTitle: task.dramaTitle || episodeStore.currentDramaTitle,
+    episodeIndex: ep.index,
+    type: task.type,
+    priority: 1,
+    execute: async () => {
+      if (task.type === 'storyboard') {
+        await handleGenerate(ep);
+      } else {
+        await handleSynthesis(ep);
+      }
+    }
+  });
+};
+
 const handleSynthesis = async (ep: any) => {
   if (ep.synthesisStatus === 'success') {
     handlePreview(ep);
-  } else {
-    // Start synthesis simulation
-    episodeStore.updateEpisode(ep.id, { synthesisStatus: 'synthesizing' });
-    ElMessage.info(`正在开始合成《${ep.title}》...`);
-    
-    // Simulate synthesis process
-    setTimeout(() => {
-      episodeStore.updateEpisode(ep.id, { 
-        synthesisStatus: 'success',
-        synthesisVideo: 'https://www.w3schools.com/html/movie.mp4'
+    return;
+  }
+  
+  // Update task status if it's part of a queue
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id && t.type === 'synthesis');
+  
+  episodeStore.updateEpisode(ep.id, { synthesisStatus: 'synthesizing' });
+  
+  try {
+    // Simulate synthesis process with steps
+    const steps = 5;
+    for (let i = 1; i <= steps; i++) {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate random failure
+          if (i === 4 && Math.random() < 0.15) {
+            reject(new Error('视频渲染引擎连接超时，请重试'));
+          } else {
+            resolve(true);
+          }
+        }, 1000);
       });
-      ElMessage.success(`《${ep.title}》合成完成！`);
-      // After success, show the preview dialog automatically
-      handlePreview(episodeStore.episodes.find(e => e.id === ep.id));
-    }, 2000);
+      const progress = Math.round((i / steps) * 100);
+      if (task) task.progress = progress;
+    }
+    
+    episodeStore.updateEpisode(ep.id, { 
+      synthesisStatus: 'success',
+      synthesisVideo: 'https://www.w3schools.com/html/movie.mp4'
+    });
+  } catch (error: any) {
+    episodeStore.updateEpisode(ep.id, { synthesisStatus: 'failed' });
+    throw error;
   }
 };
 
@@ -1372,32 +1465,45 @@ const handleCardClick = (ep: any) => {
 };
 
 const handleGenerate = async (ep: any) => {
+  const task = episodeStore.tasks.find(t => t.episodeId === ep.id && t.type === 'storyboard');
+  
   episodeStore.updateEpisode(ep.id, { 
     status: 'generating',
     storyboardStatus: 'generating' 
   });
   
-  // Track event
-  trackEvent('shortDrama_generate_storyboard', { episodeId: ep.id });
-
   try {
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulate generation with steps (representing scenes)
+    const steps = 5;
+    for (let i = 1; i <= steps; i++) {
+      if (task) task.sceneIndex = i;
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate random failure
+          if (i === 3 && Math.random() < 0.1) {
+            reject(new Error('AI 模型计算资源紧张，请重试'));
+          } else {
+            resolve(true);
+          }
+        }, 1200); // Slower for more realistic feeling
+      });
+      const progress = Math.round((i / steps) * 100);
+      if (task) task.progress = progress;
+    }
     
     episodeStore.updateEpisode(ep.id, { 
       status: 'success', 
       storyboardStatus: 'success',
       storyboardGenerated: true 
     });
-    
-    ElMessage.success('分镜脚本生成成功');
-  } catch (error) {
+    if (task) task.sceneIndex = undefined; // Clear after completion
+  } catch (error: any) {
     episodeStore.updateEpisode(ep.id, { 
       status: 'failed', 
       storyboardStatus: 'failed',
-      errorReason: '网络超时，请稍后重试' 
+      errorReason: error.message 
     });
-    ElMessage.error('分镜脚本生成失败');
+    throw error;
   }
 };
 
@@ -1591,5 +1697,28 @@ const cancelNext = () => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.custom-number-input :deep(.el-input__wrapper) {
+  padding: 0 4px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+.dark .custom-number-input :deep(.el-input__wrapper) {
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 </style>
