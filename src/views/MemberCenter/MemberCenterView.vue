@@ -119,14 +119,6 @@
               <button
                 type="button"
                 class="px-3 py-1.5 rounded-2xl text-xs font-black border transition-all"
-                :class="selectedMemberKey === 'music' ? 'border-transparent bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 dark:border-cyan-500/30' : 'border-slate-200/70 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'"
-                @click="selectedMemberKey = 'music'"
-              >
-                AI音乐会员
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-2xl text-xs font-black border transition-all"
                 :class="selectedMemberKey === 'short-drama' ? 'border-transparent bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 dark:border-indigo-500/30' : 'border-slate-200/70 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'"
                 @click="selectedMemberKey = 'short-drama'"
               >
@@ -138,7 +130,7 @@
                 :class="selectedMemberKey === 'super' ? 'border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-300 dark:border-amber-500/30' : 'border-slate-200/70 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'"
                 @click="selectedMemberKey = 'super'"
               >
-                super
+                超级会员
               </button>
             </div>
           </div>
@@ -253,7 +245,6 @@
                       <span class="text-xs font-black text-slate-500 dark:text-slate-400">已解锁 3 项权益 · 折扣率 {{ superDiscount.toFixed(1) }} 折</span>
                     </div>
                     <div class="mt-3 flex flex-wrap gap-2">
-                      <span class="px-3 py-1 rounded-full text-xs font-black bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25">AI音乐会员</span>
                       <span class="px-3 py-1 rounded-full text-xs font-black bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25">AI短剧会员</span>
                       <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">超级会员</span>
                     </div>
@@ -293,42 +284,9 @@
                   <div class="text-lg font-black text-slate-900 dark:text-white">AI会员套餐</div>
                   <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">选择不同类型的会员以解锁对应的专属模型和并发额度</div>
                 </div>
-                
-                <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 shrink-0">
-                  <button 
-                    type="button" 
-                    class="px-4 py-1.5 rounded-xl text-sm font-black transition-all"
-                    :class="billingCycle === 'monthly' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
-                    @click="billingCycle = 'monthly'"
-                  >
-                    连续包月
-                  </button>
-                  <button 
-                    type="button" 
-                    class="px-4 py-1.5 rounded-xl text-sm font-black transition-all flex items-center gap-1"
-                    :class="billingCycle === 'yearly' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
-                    @click="billingCycle = 'yearly'"
-                  >
-                    按年购买
-                    <span class="px-1.5 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] whitespace-nowrap">限时8折</span>
-                  </button>
-                </div>
               </div>
 
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button
-                  v-for="mt in membershipTypes"
-                  :key="mt.id"
-                  type="button"
-                  class="px-4 py-2 rounded-2xl text-sm font-black border transition-all"
-                  :class="membershipType === mt.id ? 'border-transparent bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 dark:border-indigo-500/30' : 'border-slate-200/70 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'"
-@click="membershipType = mt.id as 'short-drama' | 'short-video' | 'music' | 'novel' | 'batch'"
-                >
-                  {{ mt.name }}
-                </button>
-              </div>
-
-              <div class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 <div
                   v-for="tier in activeTiers"
                   :key="tier.id"
@@ -336,14 +294,14 @@
                   :class="[
                     selectedTierId === tier.id 
                       ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-indigo-50/30 dark:bg-indigo-950/20 shadow-xl shadow-indigo-500/10' 
-                      : (tier.id === 'pro' || tier.id === 'flagship' 
+                      : (tier.id === 'pro' || tier.id === 'studio' 
                           ? 'border-indigo-500/30 bg-gradient-to-b from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-slate-900 shadow-lg shadow-indigo-500/5' 
                           : 'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900')
                   ]"
                   @click="selectedTierId = tier.id"
                 >
                   <div v-if="tier.badge" class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[11px] font-black shadow-sm"
-                    :class="tier.id === 'flagship' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'">
+                    :class="tier.id === 'studio' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'">
                     {{ tier.badge }}
                   </div>
                   
@@ -365,14 +323,14 @@
                     <el-button
                       round
                       class="mt-5 w-full !h-11 !rounded-2xl !font-black !border-none transition-all"
-                      :class="tier.id === 'pro' || tier.id === 'flagship' ? '!bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white shadow-lg shadow-indigo-500/15' : '!bg-slate-100 dark:!bg-slate-800 !text-slate-800 dark:!text-slate-100 hover:!bg-slate-200 dark:hover:!bg-slate-700'"
+                      :class="tier.id === 'pro' || tier.id === 'studio' ? '!bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white shadow-lg shadow-indigo-500/15' : '!bg-slate-100 dark:!bg-slate-800 !text-slate-800 dark:!text-slate-100 hover:!bg-slate-200 dark:hover:!bg-slate-700'"
                       @click="openPurchaseTier(tier)"
                     >
                       选择计划
                     </el-button>
                     
                     <div class="mt-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 p-3 text-center">
-                      <span class="text-sm font-black" :class="tier.id === 'flagship' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'">{{ tier.points }}</span>
+                      <span class="text-sm font-black" :class="tier.id === 'studio' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'">{{ tier.points }}</span>
                       <span class="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1">算力豆/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
                     </div>
                   </div>
@@ -1103,6 +1061,7 @@
       </template>
 
       <div class="rounded-3xl border border-slate-200/70 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-950/20 p-5">
+        <!-- 金额信息 -->
         <div class="flex items-center justify-between">
           <div class="text-sm font-black text-slate-800 dark:text-slate-100">支付金额</div>
           <div class="text-2xl font-black text-slate-900 dark:text-white">¥{{ purchaseDialog.amount }}</div>
@@ -1111,8 +1070,59 @@
           <div class="text-sm font-black text-slate-800 dark:text-slate-100">赠送算力豆</div>
           <div class="text-sm font-black text-amber-600 dark:text-amber-300">+{{ purchaseDialog.bonusPoints.toLocaleString() }}</div>
         </div>
-        <div class="mt-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          演示版支付：点击“完成支付”将自动生成一条本地订单，并更新会员/算力豆状态。
+
+        <!-- 支付方式选择 -->
+        <div class="mt-5">
+          <div class="text-sm font-black text-slate-800 dark:text-slate-100 mb-3">选择支付方式</div>
+          <div class="flex gap-3">
+            <button
+              type="button"
+              class="flex-1 py-3 rounded-2xl border-2 text-sm font-black transition-all flex items-center justify-center gap-2"
+              :class="payMethod === 'alipay' ? 'border-indigo-500 bg-indigo-50/50 text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-300 dark:border-indigo-500' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'"
+              @click="payMethod = 'alipay'"
+            >
+              <el-icon><Iphone /></el-icon>
+              支付宝
+            </button>
+            <button
+              type="button"
+              class="flex-1 py-3 rounded-2xl border-2 text-sm font-black transition-all flex items-center justify-center gap-2"
+              :class="payMethod === 'wechat' ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-300 dark:border-emerald-500' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'"
+              @click="payMethod = 'wechat'"
+            >
+              <el-icon><ChatDotRound /></el-icon>
+              微信支付
+            </button>
+          </div>
+        </div>
+
+        <!-- 二维码区域 -->
+        <div class="mt-5 flex flex-col items-center">
+          <div class="w-48 h-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 flex items-center justify-center relative overflow-hidden">
+            <!-- 固定二维码方块图案 -->
+            <div class="w-full h-full relative">
+              <div class="absolute inset-0 grid grid-cols-6 grid-rows-6 gap-1">
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-span-2 row-span-2"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-4 col-span-2 row-span-1"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-3 row-start-2 col-span-1 row-span-1"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-5 row-start-2 col-span-1 row-span-2"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-1 row-start-3 col-span-1 row-span-3"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-3 row-start-3 col-span-2 row-span-2"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-6 row-start-3 col-span-1 row-span-1"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-4 row-start-4 col-span-1 row-span-2"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-6 row-start-4 col-span-1 row-span-3"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-2 row-start-5 col-span-1 row-span-1"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-3 row-start-6 col-span-3 row-span-1"></div>
+                <div class="bg-slate-900 dark:bg-slate-100 rounded-sm col-start-5 row-start-5 col-span-1 row-span-1"></div>
+              </div>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-lg border border-slate-200 dark:border-slate-700">
+                <div class="text-xs font-black text-slate-800 dark:text-slate-100">{{ payMethod === 'alipay' ? '支付宝' : '微信' }}扫码</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500 dark:text-slate-400 text-center">请使用{{ payMethod === 'alipay' ? '支付宝' : '微信' }}扫描上方二维码完成支付</div>
         </div>
       </div>
 
@@ -1352,7 +1362,7 @@ const memberCenterDesign = {
   ],
   interactions: [
     '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',
-    '**支付确认弹窗**：点击“选择计划”或“立即充值”触发确认支付弹窗，展示金额及赠送算力豆详情。',
+    '**支付确认弹窗**：点击"选择计划"或"立即充值"触发确认支付弹窗，展示金额及赠送算力豆详情。',
     '**充值记录详情**：点击充值列表项可展开查看详细订单号及开票入口。',
     '**消耗明细查看**：支持横向滚动查看完整的消耗字段，并提供报表导出功能。',
     '**算力豆领取**：在邀请返利页面，支持用户将获得的算力豆奖励领取到可用余额。'
@@ -1364,48 +1374,60 @@ const orderFilter = ref<OrderType | 'all'>('all')
 const rechargeSearchQuery = ref('')
 
 const billingCycle = ref<'monthly' | 'yearly'>('monthly')
-const membershipType = ref<'short-drama' | 'short-video' | 'music' | 'novel' | 'batch'>('short-drama')
-const selectedTierId = ref('pro')
+const membershipType = ref<'short-drama'>('short-drama')
+const selectedTierId = ref('basic')
 
 const membershipTypes = [
-  { id: 'short-drama', name: 'AI短剧会员' },
-  { id: 'short-video', name: 'AI短视频会员' },
-  { id: 'music', name: 'AI音乐会员' },
-  { id: 'novel', name: 'AI小说会员' },
-  { id: 'batch', name: '四合一批量开通' }
+  { id: 'short-drama', name: 'AI短剧会员' }
 ]
 
 const activeTiers = computed(() => {
-  const isBatch = membershipType.value === 'batch'
-  const multiplier = isBatch ? 3 : 1
   return [
-    { id: 'starter', name: '入门版', priceMonthly: 112 * multiplier, priceYearly: Math.floor(112 * 12 * 0.8 * multiplier), points: 1600 * multiplier, concurrent: 8 * multiplier, badge: '' },
-    { id: 'basic', name: '基础版', priceMonthly: 203 * multiplier, priceYearly: Math.floor(203 * 12 * 0.8 * multiplier), points: 2900 * multiplier, concurrent: 10 * multiplier, badge: '' },
-    { id: 'pro', name: '专业版', priceMonthly: 483 * multiplier, priceYearly: Math.floor(483 * 12 * 0.8 * multiplier), points: 6900 * multiplier, concurrent: 20 * multiplier, badge: '最受欢迎' },
-    { id: 'flagship', name: '旗舰版', priceMonthly: 1393 * multiplier, priceYearly: Math.floor(1393 * 12 * 0.8 * multiplier), points: 20500 * multiplier, concurrent: 40 * multiplier, badge: '最超值' }
+    { id: 'basic', name: '基础版', priceMonthly: 99, priceYearly: Math.floor(99 * 12 * 0.8), points: 9900, concurrent: 2, badge: '' },
+    { id: 'pro', name: '专业版', priceMonthly: 299, priceYearly: Math.floor(299 * 12 * 0.8), points: 29900, concurrent: 4, badge: '最受欢迎' },
+    { id: 'studio', name: '工作室版', priceMonthly: 999, priceYearly: Math.floor(999 * 12 * 0.8), points: 99900, concurrent: 8, badge: '最超值' }
   ]
 })
 
 const getTierFeatures = (tier: any) => {
-  const isVideoOrDrama = ['short-drama', 'short-video', 'batch'].includes(membershipType.value)
-  const baseFeatures = [
-    `${tier.concurrent}个并发任务`,
-    '每日签到可领取算力豆',
-    '支持创建与管理团队，并可分配团队算力豆',
-    '去水印导出',
-    '访问所有图片模型',
-    '图片批量导出',
-    '支持 1080P',
-    '包含商用授权（Commercial License）',
-    '支持每月自动续费'
-  ]
-  
-  if (isVideoOrDrama) {
-    baseFeatures.splice(1, 0, '解锁 Seedance 2.0 Pro 视频模型', '解锁 Seedance 2.0 Fast 视频模型')
-    baseFeatures.splice(7, 0, '访问所有视频模型', '视频批量导出')
+  if (tier.id === 'basic') {
+    return [
+      '月度算力豆包：9,900 算力豆',
+      '算力豆有效期：当月有效，逾期清零',
+      '视频分辨率：480P / 720P',
+      '并发任务数：2',
+      '生成队列：标准',
+      '水印/授权：带水印，个人用途',
+      'API 接入：不支持',
+      '支持服务：工单',
+      '月产能参照(720P标准视频)：约 100 秒'
+    ]
+  } else if (tier.id === 'pro') {
+    return [
+      '月度算力豆包：29,900 算力豆',
+      '算力豆有效期：当月有效，逾期清零',
+      '视频分辨率：+ 1080P',
+      '并发任务数：4',
+      '生成队列：优先',
+      '水印/授权：去水印 + 商用授权',
+      'API 接入：不支持',
+      '支持服务：工单优先',
+      '月产能参照(720P标准视频)：约 300 秒'
+    ]
+  } else if (tier.id === 'studio') {
+    return [
+      '月度算力豆包：99,900 算力豆',
+      '算力豆有效期：当月有效，逾期清零',
+      '视频分辨率：+ 1080P / 离线推理档',
+      '并发任务数：8',
+      '生成队列：最高优先',
+      '水印/授权：去水印 + 商用授权',
+      'API 接入：支持',
+      '支持服务：专属对接',
+      '月产能参照(720P标准视频)：约 1,000 秒'
+    ]
   }
-  
-  return baseFeatures
+  return []
 }
 
 const openPurchaseTier = (tier: any) => {
@@ -1454,7 +1476,7 @@ const claimPendingBeans = () => {
 
 const expandedOrders = reactive<Record<string, boolean>>({})
 const expandedConsumption = reactive<Record<string, boolean>>({})
-const selectedMemberKey = ref<'music' | 'short-drama' | 'super'>('super')
+const selectedMemberKey = ref<'short-drama' | 'super'>('short-drama')
 
 const isDark = computed(() => themeStore.isDark)
 
@@ -1513,38 +1535,11 @@ const memberPlans = computed<MemberPlan[]>(() => {
     {
       id: 'short-drama',
       title: 'AI短剧会员',
-      priceMonthly: 98,
-      bonusPoints: 1000,
+      priceMonthly: 99,
+      bonusPoints: 9900,
       icon: GoldMedal,
       accent: 'indigo',
       features: ['无限AI短剧生成', '高质量视频输出', '自定义角色风格']
-    },
-    {
-      id: 'music',
-      title: 'AI音乐会员',
-      priceMonthly: 88,
-      bonusPoints: 1000,
-      icon: Headset,
-      accent: 'sky',
-      features: ['无限AI音乐生成', '多风格音乐创作', '高品质音频导出']
-    },
-    {
-      id: 'copywriting',
-      title: 'AI图文会员',
-      priceMonthly: 78,
-      bonusPoints: 1000,
-      icon: Document,
-      accent: 'emerald',
-      features: ['无限AI图文生成', 'AI绘画全功能', '多格式内容输出']
-    },
-    {
-      id: 'image',
-      title: 'AI碎片会员',
-      priceMonthly: 68,
-      bonusPoints: 1000,
-      icon: Picture,
-      accent: 'amber',
-      features: ['专属AI角色定制', '无限互动对话', '情绪记忆保存']
     }
   ]
 })
@@ -1564,10 +1559,10 @@ const planCards = computed(() => {
 
 const rechargePackages = computed<RechargePackage[]>(() => {
   return [
-    { points: 100, price: 10, note: '标准价' },
-    { points: 500, price: 45, note: '9折' },
-    { points: 1200, price: 96, note: '8折', badge: '热门' },
-    { points: 3000, price: 210, note: '7折', badge: '最划算' }
+    { points: 100, price: 1, note: '1元=100算力豆' },
+    { points: 500, price: 5, note: '1元=100算力豆' },
+    { points: 1000, price: 10, note: '1元=100算力豆', badge: '常用' },
+    { points: 5000, price: 50, note: '1元=100积分', badge: '高效' }
   ]
 })
 
@@ -1594,6 +1589,8 @@ const purchaseDialog = reactive<{
   payload: null
 })
 
+const payMethod = ref<'alipay' | 'wechat'>('alipay')
+
 const invoiceForm = reactive({
   orderId: '',
   title: '',
@@ -1603,6 +1600,16 @@ const invoiceForm = reactive({
 
 const loadState = () => {
   const raw = localStorage.getItem(STORAGE_KEY)
+  if (!raw) {
+    const monthMs = 30 * 24 * 60 * 60 * 1000
+    memberState.superExpireAt = Date.now() + monthMs
+    memberState.planExpireAt = {
+      'short-drama': Date.now() + monthMs
+    }
+    memberState.orders = []
+    memberState.invoices = []
+    return
+  }
   if (!raw) {
     const monthMs = 30 * 24 * 60 * 60 * 1000
     memberState.superExpireAt = Date.now() + monthMs
