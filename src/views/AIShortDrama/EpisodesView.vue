@@ -105,6 +105,14 @@
           <span>关联主体</span>
         </button>
 
+        <!-- AI Video Model Selector (Only in 分镜视频 tab) -->
+        <div 
+          v-if="activeTab === 'processing'"
+          class="flex items-center gap-2 p-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-2xl border border-white/60 dark:border-slate-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-all"
+        >
+          <AIModelSelector v-model="modelStore.selectedVideoModel" type="video" moduleId="short-drama-episodes-video" />
+        </div>
+
         <!-- Product Design Info Button -->
         <button 
           @click="showDesignDialog = true"
@@ -478,8 +486,14 @@
       append-to-body
     >
       <div class="py-6 px-4">
-        <!-- 自动关联选项 -->
-        <div class="flex justify-center mb-8">
+        <!-- 模型切换和自动关联选项（放在上面） -->
+        <div class="flex items-center justify-center gap-4 mb-6">
+          <!-- 文生文模型选择（无标签无图标） -->
+          <div class="bg-slate-50 dark:bg-slate-900/50 px-5 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
+            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="short-drama-episodes-import-text" />
+          </div>
+
+          <!-- 自动关联选项 -->
           <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 group hover:border-indigo-500/30 transition-all cursor-pointer" @click="autoAssociateOnImport = !autoAssociateOnImport">
             <el-checkbox v-model="autoAssociateOnImport" @click.stop />
             <div class="flex flex-col">
@@ -489,6 +503,7 @@
           </div>
         </div>
 
+        <!-- 文件导入和手动粘贴（放在下面） -->
         <div class="grid grid-cols-2 gap-6">
           <!-- 文件上传 -->
           <div 
@@ -668,6 +683,7 @@ import {
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import JSZip from 'jszip';
 import { useEpisodeStore } from '@/store/episode';
+import { useModelStore } from '@/store/models';
 import s from '@/styles/AIShortDrama/EpisodesView.module.scss';
 import { taskQueueManager } from '@/utils/taskQueue';
 
@@ -678,9 +694,11 @@ import ProgressModal from '@/components/episode/ProgressModal.vue';
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
 
 const router = useRouter();
 const episodeStore = useEpisodeStore();
+const modelStore = useModelStore();
 
 // State
 const showDesignDialog = ref(false);
