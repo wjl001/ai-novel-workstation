@@ -269,7 +269,7 @@
                 <div class="flex items-center gap-2 min-w-0">
                   <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 truncate">{{ task.dramaTitle }}</span>
                   <span class="text-[10px] font-black text-slate-400">|</span>
-                  <span class="text-[11px] font-black text-slate-700 dark:text-slate-200">第 {{ task.episodeIndex }} 集</span>
+                  <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 truncate">{{ task.episodeTitle }}</span>
                 </div>
                 <div :class="[
                   'px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0',
@@ -397,6 +397,7 @@ const handleRegenerate = (task: any) => {
     id: `task-${ep.id}-${task.type}-${Date.now()}`,
     episodeId: ep.id,
     dramaTitle: task.dramaTitle || episodeStore.currentDramaTitle,
+    episodeTitle: task.episodeTitle || ep.title || `第 ${ep.index} 集`,
     episodeIndex: ep.index,
     type: task.type,
     priority: 1,

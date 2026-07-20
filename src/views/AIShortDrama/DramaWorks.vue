@@ -377,20 +377,17 @@
     <!-- AI Generator Dialog -->
     <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="95%" class="ai-generator-dialog !max-w-[700px]" append-to-body>
       <div class="space-y-4 sm:space-y-6">
-        <!-- Prompt Input -->
+        <!-- Prompt & Generate -->
         <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 sm:p-5 transition-colors focus-within:border-indigo-500/50 shadow-inner">
-           <div class="text-xs sm:text-sm mb-2 sm:mb-3 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-             <el-icon class="text-indigo-500"><Edit /></el-icon>
-             生成描述词 (Prompt)
-           </div>
            <el-input 
              v-model="aiPrompt"
              type="textarea" 
              :rows="3"
              placeholder="例如：古风武侠，边境战火，义军首领手持重锤，背景是燃烧的村庄..."
-             class="custom-textarea"
+             class="custom-textarea mb-3 sm:mb-4"
            />
-           <div class="flex justify-end mt-3 sm:mt-4">
+           <div class="flex justify-end items-center gap-2 sm:gap-3">
+             <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="cover-gen-dramaworks" compact />
              <el-button type="primary" :loading="isGenerating" class="!rounded-lg sm:!rounded-xl px-4 sm:px-6 h-9 sm:h-11 text-xs sm:text-sm shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
                <el-icon class="mr-1 sm:mr-2"><MagicStick /></el-icon> 开始生成
              </el-button>
@@ -403,11 +400,49 @@
            <div class="flex items-center gap-4 mb-1 sm:mb-2">
              <div class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">可选封面素材</div>
              <div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+             <!-- Tab Switcher -->
+             <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+               <button 
+                 @click="coverTab = 'history'"
+                 :class="['px-3 py-1.5 text-xs font-bold rounded-md transition-all', coverTab === 'history' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300']"
+               >
+                 历史记录 ({{ workCoverHistory.length }})
+               </button>
+               <button 
+                 @click="coverTab = 'recommend'"
+                 :class="['px-3 py-1.5 text-xs font-bold rounded-md transition-all', coverTab === 'recommend' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300']"
+               >
+                 推荐素材
+               </button>
+             </div>
            </div>
 
            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 min-h-[150px] sm:min-h-[200px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-2 sm:p-4 transition-colors">
-              <!-- Default Gallery (Always shown initially or when not generating) -->
-              <template v-if="generatedImages.length === 0 && !isGenerating">
+              <!-- History Tab -->
+              <template v-if="coverTab === 'history' && workCoverHistory.length > 0">
+                <div 
+                  v-for="(img, idx) in workCoverHistory" 
+                  :key="'history-' + idx"
+                  class="relative group cursor-pointer rounded-lg sm:rounded-xl overflow-hidden border-2 sm:border-4 transition-all aspect-[16/10] shadow-md"
+                  :class="selectedImage === img.url ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
+                  @click="selectedImage = img.url"
+                >
+                  <img :src="img.url" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img.url"></div>
+                  <div class="absolute top-1 sm:top-2 right-1 sm:right-2" v-if="selectedImage === img.url">
+                    <div class="w-5 h-5 sm:w-8 sm:h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border sm:border-2 border-white">
+                      <el-icon :size="10" class="sm:size-[16px]"><Check /></el-icon>
+                    </div>
+                  </div>
+                  <div class="absolute bottom-0 inset-x-0 p-0.5 sm:p-1 bg-black/40 backdrop-blur-sm text-[8px] sm:text-[10px] text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {{ img.label }}
+                  </div>
+                </div>
+                <div v-for="idx in Math.max(0, 8 - workCoverHistory.length)" :key="'empty-' + idx" class="relative rounded-lg sm:rounded-xl overflow-hidden border-2 sm:border-4 border-transparent aspect-[16/10] bg-slate-100 dark:bg-slate-800"></div>
+              </template>
+              
+              <!-- Recommend Tab -->
+              <template v-else>
                 <div 
                   v-for="(img, idx) in defaultCovers" 
                   :key="'default-' + idx"
@@ -422,13 +457,12 @@
                       <el-icon :size="10" class="sm:size-[16px]"><Check /></el-icon>
                     </div>
                   </div>
-                  <!-- Label for default -->
                   <div class="absolute bottom-0 inset-x-0 p-0.5 sm:p-1 bg-black/40 backdrop-blur-sm text-[8px] sm:text-[10px] text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">推荐素材</div>
                 </div>
               </template>
               
-              <!-- AI Generated Image (Single Mode) -->
-              <template v-else-if="generatedImages.length > 0">
+              <!-- AI Generated Image -->
+              <template v-if="generatedImages.length > 0 && coverTab === 'recommend'">
                 <div class="col-span-full flex justify-center py-1 sm:py-2">
                   <div 
                     class="relative group cursor-pointer rounded-xl sm:rounded-2xl overflow-hidden border-2 sm:border-4 transition-all aspect-[16/10] shadow-2xl w-full max-w-[480px]"
@@ -479,13 +513,16 @@
 import { ref, computed } from 'vue';
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star, Check } from '@element-plus/icons-vue';
+import { Plus, Search, Grid, List, MoreFilled, VideoCamera, Clock, Edit, Delete, ArrowRight, ArrowLeft, InfoFilled, Close, Document, Location, Monitor, Pointer, Upload, MagicStick, View, Star, Check, Picture } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { UploadFile } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
+import AIModelSelector from '@/components/Common/ModelSelector.vue';
+import { useModelStore } from '@/store/models';
 
 const router = useRouter();
+const modelStore = useModelStore();
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showAIDialog = ref(false);
@@ -494,6 +531,26 @@ const isGenerating = ref(false);
 const generatedImages = ref<string[]>([]);
 const selectedImage = ref('');
 const currentWorkForAI = ref<any>(null);
+const coverTab = ref<'history' | 'recommend'>('recommend');
+
+// Work cover history
+const workCoverHistory = computed(() => {
+  if (!currentWorkForAI.value) return [];
+  const work = currentWorkForAI.value;
+  const history: { url: string; label: string }[] = [];
+  
+  if (work.cover) {
+    history.push({ url: work.cover, label: '当前封面' });
+  }
+  
+  generatedImages.value.forEach(img => {
+    if (!history.find(h => h.url === img)) {
+      history.push({ url: img, label: 'AI生成' });
+    }
+  });
+  
+  return history;
+});
 
 // Default cover gallery
 const defaultCovers = [
@@ -683,6 +740,7 @@ const openAIGenerator = (work: any) => {
   aiPrompt.value = `${work.title}，短剧海报风格，高清，唯美`;
   generatedImages.value = [];
   selectedImage.value = '';
+  coverTab.value = 'recommend';
   showAIDialog.value = true;
 };
 

@@ -7,6 +7,7 @@ export interface Task {
   id: string;
   episodeId: string;
   dramaTitle: string;
+  episodeTitle: string;
   episodeIndex: number;
   sceneIndex?: number;
   type: TaskType;

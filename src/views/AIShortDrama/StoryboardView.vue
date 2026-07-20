@@ -147,35 +147,74 @@
           <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
           
           <!-- Toggle Badges -->
-          <div class="flex items-center gap-1 pr-1">
-            <!-- Subtitle Toggle -->
-            <div 
-              @click="isSubtitled = !isSubtitled"
-              :class="[
-                'flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all duration-300 border',
-                isSubtitled 
-                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-500/20' 
-                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700'
-              ]"
-            >
-              <el-icon :size="14" :class="isSubtitled ? 'animate-pulse' : ''"><ChatDotRound /></el-icon>
-              <span class="text-[11px] font-black uppercase tracking-wider">字幕</span>
+          <el-dropdown trigger="click" class="storyboard-config-dropdown" :hide-on-click="false">
+            <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20">
+              <el-icon :size="14" class="group-hover:rotate-90 transition-transform duration-500"><Setting /></el-icon>
+              <span class="text-[11px] font-black uppercase tracking-wider">分镜配置</span>
+              <el-icon class="text-[12px] opacity-70 group-hover:translate-y-0.5 transition-transform"><ArrowDown /></el-icon>
             </div>
-
-            <!-- Watermark Toggle -->
-            <div 
-              @click="isWatermarkRemoved = !isWatermarkRemoved"
-              :class="[
-                'flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all duration-300 border',
-                isWatermarkRemoved 
-                  ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-500/20' 
-                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700'
-              ]"
-            >
-              <el-icon :size="14" :class="isWatermarkRemoved ? 'animate-pulse' : ''"><CircleClose /></el-icon>
-              <span class="text-[11px] font-black uppercase tracking-wider">去水印</span>
-            </div>
-          </div>
+            <template #dropdown>
+              <el-dropdown-menu class="storyboard-config-menu">
+                <div class="config-menu-body">
+                  <!-- Resolution Selection -->
+                  <div class="config-section">
+                    <div class="config-section-label">
+                      <el-icon :size="13"><Monitor /></el-icon>
+                      <span>分辨率</span>
+                    </div>
+                    <div class="resolution-grid">
+                      <div 
+                        v-for="option in resolutionOptions"
+                        :key="option.value"
+                        @click="resolution = option.value"
+                        class="resolution-option"
+                        :class="{ active: resolution === option.value }"
+                      >
+                        <div class="resolution-check" v-if="resolution === option.value">
+                          <el-icon :size="10"><Select /></el-icon>
+                        </div>
+                        <span class="resolution-label">{{ option.label }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="config-divider"></div>
+                  
+                  <!-- Subtitle Toggle -->
+                  <div class="config-section">
+                    <div class="config-toggle-item" @click="isSubtitled = !isSubtitled">
+                      <div class="toggle-icon-wrapper" :class="{ active: isSubtitled }">
+                        <el-icon :size="14" :class="{ 'animate-pulse': isSubtitled }"><ChatDotRound /></el-icon>
+                      </div>
+                      <div class="toggle-info">
+                        <span class="toggle-title">字幕</span>
+                        <span class="toggle-desc">视频叠加字幕</span>
+                      </div>
+                      <div class="toggle-switch" :class="{ active: isSubtitled }">
+                        <div class="toggle-knob"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Watermark Toggle -->
+                  <div class="config-section">
+                    <div class="config-toggle-item" @click="isWatermarkRemoved = !isWatermarkRemoved">
+                      <div class="toggle-icon-wrapper watermark" :class="{ active: isWatermarkRemoved }">
+                        <el-icon :size="14" :class="{ 'animate-pulse': isWatermarkRemoved }"><CircleClose /></el-icon>
+                      </div>
+                      <div class="toggle-info">
+                        <span class="toggle-title">去水印</span>
+                        <span class="toggle-desc">移除平台水印</span>
+                      </div>
+                      <div class="toggle-switch" :class="{ active: isWatermarkRemoved }">
+                        <div class="toggle-knob"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         
         <button 
@@ -223,34 +262,6 @@
           <el-icon><User /></el-icon>
           关联主体
         </button>
-
-        <!-- 分辨率选择器 -->
-        <el-dropdown
-          trigger="click"
-          :disabled="!canSynthesizeAll"
-          class="resolution-dropdown"
-        >
-          <button
-            type="button"
-            :disabled="!canSynthesizeAll"
-            class="h-9 px-4 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full text-[13px] font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:pointer-events-none"
-          >
-            <span>{{ resolution === '4k' ? '4K' : resolution + 'p' }}</span>
-            <el-icon class="text-[12px]"><ArrowDown /></el-icon>
-          </button>
-          <template #dropdown>
-            <el-dropdown-menu class="resolution-menu">
-              <el-dropdown-item
-                v-for="option in resolutionOptions"
-                :key="option.value"
-                :class="{ 'is-active': resolution === option.value }"
-                @click="resolution = option.value"
-              >
-                {{ option.label }}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
 
         <button 
           @click="handleSynthesis"
@@ -496,34 +507,23 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-2 flex justify-end gap-3 shrink-0 border-t border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
-                  <div class="flex-1 flex items-center">
-                    <button 
-                      @click="handleSyncSubjects"
-                      class="h-8 px-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-full text-[12px] font-black hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-2 group"
-                      title="将脚本中的主体名称同步为胶囊样式"
-                    >
-                      <el-icon class="group-hover:rotate-180 transition-transform duration-500"><RefreshRight /></el-icon>
-                      <span>关联主体</span>
-                    </button>
-                  </div>
+                <div class="px-6 py-3 flex justify-end items-center gap-3 shrink-0 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50/80 to-white/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-md">
                   <div class="flex items-center gap-3">
+                    <!-- Auto-save Status Indicator -->
+                    <div v-if="isAutoSaving" class="flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-500/30 rounded-full shadow-sm animate-pulse">
+                      <el-icon :size="12" class="is-loading text-amber-600 dark:text-amber-400"><Loading /></el-icon>
+                      <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">自动保存中...</span>
+                    </div>
                     <button 
                       @click="handleBatchGenerate"
                       :disabled="!timelineScenes[currentSceneIdx]?.modified"
-                      class="h-8 px-8 rounded-full text-[13px] font-black transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                      class="h-8 px-6 rounded-full text-[12px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.modified ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
                       <el-icon class="animate-pulse"><MagicStick /></el-icon>
                       <span>重新生成分镜</span>
                     </button>
                   </div>
-                  <button 
-                    @click="handleSaveScriptInline"
-                    class="h-8 px-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-full text-[13px] font-black shadow-xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all"
-                  >
-                    确认保存
-                  </button>
                 </div>
               </div>
 
@@ -1502,7 +1502,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick, watch, inject } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useModelStore } from '@/store/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
@@ -1589,7 +1589,7 @@ import {
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
   Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom,
-  CircleCheck, Document
+  CircleCheck, Document, Setting
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useUserStore } from '@/store/user';
@@ -1933,6 +1933,8 @@ const selectedMentionIndex = ref(0);
 
 // TipTap Editor
 const activeMentionNodePos = ref<{from: number, to: number} | null>(null);
+const autoSaveTimer = ref<ReturnType<typeof setTimeout> | null>(null);
+const isAutoSaving = ref(false);
 
 const editor = useEditor({
   content: '',
@@ -1943,9 +1945,24 @@ const editor = useEditor({
     PillIcon,
     PillImage,
   ],
-  onUpdate: ({ editor }) => {
-    // 检查光标前是否有 @ 符号
-    const { state } = editor;
+  onUpdate: ({ editor: edt }) => {
+    // 实时更新 currentScript
+    currentScript.value = edt.getHTML();
+    
+    // 防抖自动保存（1.5秒无操作后保存）
+    if (autoSaveTimer.value) {
+      clearTimeout(autoSaveTimer.value);
+    }
+    // 标记为保存中
+    isAutoSaving.value = true;
+    autoSaveTimer.value = setTimeout(() => {
+      persistStoryboardForEpisode(episodeId.value);
+      // 保存完成后隐藏状态指示器
+      isAutoSaving.value = false;
+    }, 1500);
+    
+    // 检查 @ 符号触发 mention 菜单
+    const { state } = edt;
     const { selection } = state;
     const { from } = selection;
     const textBefore = state.doc.textBetween(Math.max(0, from - 20), from, '\n');
@@ -1957,7 +1974,7 @@ const editor = useEditor({
         selectedMentionIndex.value = 0;
         
         // 更新位置 (Teleported to body, use fixed coordinates)
-        const view = editor.view;
+        const view = edt.view;
         // 计算 @ 符号起始位置的坐标，而不是当前光标位置
         const anchorPos = from - match[0].length;
         const coords = view.coordsAtPos(anchorPos);
@@ -3805,6 +3822,18 @@ watch(episodeId, async (newId, oldId) => {
   }
 });
 
+// 组件卸载时清理自动保存定时器
+onBeforeUnmount(() => {
+  if (autoSaveTimer.value) {
+    clearTimeout(autoSaveTimer.value);
+    autoSaveTimer.value = null;
+  }
+  // 最终保存一次
+  if (episodeId.value) {
+    persistStoryboardForEpisode(episodeId.value);
+  }
+});
+
 const startStoryboardSequentialGeneration = async () => {
   const sessionId = ++generationSessionId.value;
   isGeneratingStoryboardText.value = true;
@@ -4582,5 +4611,331 @@ const startStoryboardSequentialGeneration = async () => {
   padding: 0 10px !important;
   border-radius: 6px !important;
 }
-</style>
+
+/* ============================================ */
+/* Storyboard Config Dropdown - C-End Premium Design */
+/* ============================================ */
+
+:deep(.storyboard-config-dropdown .el-dropdown-link) {
+  cursor: pointer;
+}
+
+:deep(.storyboard-config-menu) {
+  margin-top: 8px !important;
+  border-radius: 20px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.15), 0 8px 20px -8px rgba(99, 102, 241, 0.1) !important;
+  overflow: hidden;
+  min-width: 280px;
+  backdrop-filter: blur(20px);
+}
+
+.dark :deep(.storyboard-config-menu) {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(99, 102, 241, 0.15) !important;
+  background: rgba(30, 41, 59, 0.95) !important;
+}
+
+/* Menu Header */
+.config-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.dark .config-menu-header {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.config-header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.config-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.config-header-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.dark .config-header-title {
+  color: #f1f5f9;
+}
+
+.config-header-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.dark .config-header-sub {
+  color: #94a3b8;
+}
+
+/* Menu Body */
+.config-menu-body {
+  padding: 8px;
+}
+
+/* Section */
+.config-section {
+  padding: 4px 0;
+}
+
+.config-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dark .config-section-label {
+  color: #94a3b8;
+}
+
+.config-section-label .el-icon {
+  color: #6366f1;
+}
+
+/* Resolution Grid */
+.resolution-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 4px 10px 8px;
+}
+
+.resolution-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.dark .resolution-option {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(71, 85, 105, 0.5);
+}
+
+.resolution-option:hover {
+  border-color: #a5b4fc;
+  background: #eef2ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.dark .resolution-option:hover {
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+
+.resolution-option.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.resolution-option.active .resolution-label {
+  color: white;
+  font-weight: 800;
+}
+
+.resolution-option.active .resolution-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.resolution-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  transition: all 0.25s ease;
+}
+
+.dark .resolution-label {
+  color: #cbd5e1;
+}
+
+.resolution-check {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Divider */
+.config-divider {
+  height: 1px;
+  margin: 8px 10px;
+  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.15) 50%, transparent 100%);
+}
+
+.dark .config-divider {
+  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.25) 50%, transparent 100%);
+}
+
+/* Toggle Item */
+.config-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.config-toggle-item:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.dark .config-toggle-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.toggle-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.dark .toggle-icon-wrapper {
+  background: rgba(51, 65, 85, 0.5);
+  color: #94a3b8;
+}
+
+.toggle-icon-wrapper.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transform: scale(1.05);
+}
+
+.toggle-icon-wrapper.watermark.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.toggle-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.toggle-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.dark .toggle-title {
+  color: #f1f5f9;
+}
+
+.toggle-desc {
+  font-size: 10px;
+  font-weight: 500;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.dark .toggle-switch {
+  background: rgba(71, 85, 105, 0.5);
+}
+
+.toggle-switch.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.toggle-switch.watermark-switch.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch.active .toggle-knob {
+  left: 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for dropdown menu entrance */
+:deep(.storyboard-config-menu .el-dropdown-menu__item) {
+  padding: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+  .resolution-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}</style>
 

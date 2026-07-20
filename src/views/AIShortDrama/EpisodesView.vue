@@ -1,5 +1,8 @@
 <template>
   <div :class="s.page" class="relative">
+    <!-- Floating Model Switcher -->
+    <FloatingModelSwitcher :is-light="true" />
+    
     <!-- Header: Title and Batch Action -->
     <div :class="s.header">
       <div :class="s.left" class="flex items-center gap-4">
@@ -188,7 +191,7 @@
                 title="批量生成分镜"
               >
                 <el-icon class="mr-1"><MagicStick /></el-icon>
-                <span>批量生成</span>
+                <span>生成分镜</span>
               </button>
               <button 
                 class="flex items-center justify-center h-7 px-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg font-black text-[11px] hover:bg-indigo-600 hover:text-white transition-all duration-300"
@@ -345,20 +348,17 @@
     <!-- AI Generator Dialog -->
     <el-dialog v-model="showAIDialog" title="AI 封面生成工坊" width="700px" append-to-body class="ai-generator-dialog">
       <div class="space-y-6">
-        <!-- Prompt Input -->
+        <!-- Prompt & Generate -->
         <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-5 transition-colors focus-within:border-indigo-500/50 shadow-inner">
-           <div class="text-sm mb-3 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-             <el-icon class="text-indigo-500"><EditPen /></el-icon>
-             生成描述词 (Prompt)
-           </div>
            <el-input 
              v-model="aiPrompt"
              type="textarea" 
              :rows="4"
              placeholder="例如：古风武侠，边境战火，义军首领手持重锤，背景是燃烧的村庄..."
-             class="custom-textarea"
+             class="custom-textarea mb-4"
            />
-           <div class="flex justify-end mt-4">
+           <div class="flex justify-end items-center gap-3">
+             <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="cover-gen-episodes" compact />
              <el-button type="primary" :loading="isGenerating" class="!rounded-xl px-6 h-11 shadow-lg shadow-indigo-500/20" @click="generateCoverImages">
                <el-icon class="mr-2"><MagicStick /></el-icon> 开始生成
              </el-button>
@@ -371,11 +371,51 @@
            <div class="flex items-center gap-4 mb-2">
              <div class="text-sm font-bold text-slate-700 dark:text-slate-300">可选封面素材</div>
              <div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+             <!-- Tab Switcher -->
+             <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+               <button 
+                 @click="coverTab = 'history'"
+                 :class="['px-3 py-1.5 text-xs font-bold rounded-md transition-all', coverTab === 'history' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300']"
+               >
+                 历史记录 ({{ episodeCoverHistory.length }})
+               </button>
+               <button 
+                 @click="coverTab = 'recommend'"
+                 :class="['px-3 py-1.5 text-xs font-bold rounded-md transition-all', coverTab === 'recommend' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300']"
+               >
+                 推荐素材
+               </button>
+             </div>
            </div>
 
            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 min-h-[200px] relative rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-4 transition-colors">
-              <!-- Default Gallery (Always shown initially or when not generating) -->
-              <template v-if="generatedImages.length === 0 && !isGenerating">
+              <!-- History Tab: Show previously generated/applied covers -->
+              <template v-if="coverTab === 'history' && episodeCoverHistory.length > 0">
+                <div 
+                  v-for="(img, idx) in episodeCoverHistory" 
+                  :key="'history-' + idx"
+                  class="relative group cursor-pointer rounded-xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-md"
+                  :class="selectedImage === img.url ? 'border-indigo-500 shadow-xl shadow-indigo-500/20 scale-[1.05]' : 'border-transparent hover:border-indigo-300/50'"
+                  @click="selectedImage = img.url"
+                >
+                  <img :src="img.url" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity" v-if="selectedImage !== img.url"></div>
+                  <div class="absolute top-2 right-2" v-if="selectedImage === img.url">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white">
+                      <el-icon :size="16"><Check /></el-icon>
+                    </div>
+                  </div>
+                  <!-- Label -->
+                  <div class="absolute bottom-0 inset-x-0 p-1 bg-black/40 backdrop-blur-sm text-[10px] text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {{ img.label }}
+                  </div>
+                </div>
+                <!-- Fill remaining slots with placeholders -->
+                <div v-for="idx in Math.max(0, 8 - episodeCoverHistory.length)" :key="'empty-' + idx" class="relative rounded-xl overflow-hidden border-4 border-transparent aspect-[16/10] bg-slate-100 dark:bg-slate-800"></div>
+              </template>
+              
+              <!-- Default Gallery (Recommend Tab) -->
+              <template v-else>
                 <div 
                   v-for="(img, idx) in defaultCovers" 
                   :key="'default-' + idx"
@@ -396,7 +436,7 @@
               </template>
               
               <!-- AI Generated Image (Single Mode) -->
-              <template v-else-if="generatedImages.length > 0">
+              <template v-if="generatedImages.length > 0 && coverTab === 'recommend'">
                 <div class="col-span-full flex justify-center py-2">
                   <div 
                     class="relative group cursor-pointer rounded-2xl overflow-hidden border-4 transition-all aspect-[16/10] shadow-2xl w-full max-w-[480px]"
@@ -695,6 +735,7 @@ import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
 import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
+import FloatingModelSwitcher from '@/components/Common/FloatingModelSwitcher.vue';
 
 const router = useRouter();
 const episodeStore = useEpisodeStore();
@@ -928,6 +969,28 @@ const handleFileImport = async (file: File) => {
  const generatedImages = ref<string[]>([]);
  const selectedImage = ref('');
  const currentEpisodeForAI = ref<any>(null);
+ const coverTab = ref<'history' | 'recommend'>('recommend');
+ 
+ // Episode cover history
+ const episodeCoverHistory = computed(() => {
+   if (!currentEpisodeForAI.value) return [];
+   const ep = currentEpisodeForAI.value;
+   const history: { url: string; label: string }[] = [];
+   
+   // Add current poster
+   if (ep.poster) {
+     history.push({ url: ep.poster, label: '当前封面' });
+   }
+   
+   // Add generated images
+   generatedImages.value.forEach(img => {
+     if (!history.find(h => h.url === img)) {
+       history.push({ url: img, label: 'AI生成' });
+     }
+   });
+   
+   return history;
+ });
  
  // Default cover gallery
  const defaultCovers = [
@@ -1218,6 +1281,7 @@ const handleSingleBatchStoryboard = (ep: any) => {
     id: `task-${ep.id}-storyboard-single`,
     episodeId: ep.id,
     dramaTitle: episodeStore.currentDramaTitle,
+    episodeTitle: ep.title || `第 ${ep.index} 集`,
     episodeIndex: ep.index,
     type: 'storyboard',
     priority: 2, // Higher priority for single episode trigger
@@ -1241,6 +1305,7 @@ const handleBatchStoryboard = () => {
       id: `task-${ep.id}-storyboard`,
       episodeId: ep.id,
       dramaTitle: episodeStore.currentDramaTitle,
+      episodeTitle: ep.title || `第 ${ep.index} 集`,
       episodeIndex: ep.index,
       type: 'storyboard',
       priority: 1,
@@ -1265,6 +1330,7 @@ const handleBatchSynthesis = () => {
       id: `task-${ep.id}-synthesis`,
       episodeId: ep.id,
       dramaTitle: episodeStore.currentDramaTitle,
+      episodeTitle: ep.title || `第 ${ep.index} 集`,
       episodeIndex: ep.index,
       type: 'synthesis',
       priority: 1,
@@ -1379,6 +1445,7 @@ const handleRegenerate = (task: any) => {
     id: `task-${ep.id}-${task.type}-${Date.now()}`,
     episodeId: ep.id,
     dramaTitle: task.dramaTitle || episodeStore.currentDramaTitle,
+    episodeTitle: task.episodeTitle || ep.title || `第 ${ep.index} 集`,
     episodeIndex: ep.index,
     type: task.type,
     priority: 1,
@@ -1444,6 +1511,7 @@ const handleAIGenerateCover = (ep: any) => {
   aiPrompt.value = `${ep.title}，短剧海报风格，高清，唯美`;
   generatedImages.value = [];
   selectedImage.value = '';
+  coverTab.value = 'recommend';
   showAIDialog.value = true;
 };
 
