@@ -20,6 +20,7 @@ export const TEXT_MODELS: ModelVendor[] = [
     name: '豆包 (Doubao)',
     logo: '',
     models: [
+      { id: 'doubao-seed-character-260628', name: 'doubao-seed-character-260628', description: 'Seed-Character 面向角色扮演与故事叙事场景定向优化，强化虚拟陪伴、多模态理解与剧情演绎，提供更细腻的情绪表达与更规范的输出控制', provider: 'doubao', tags: ['首推', '角色扮演'], cost: 10 },
       { id: 'doubao-seed-2.1-pro', name: 'doubao-seed-2.1-pro', description: '豆包旗舰模型，逻辑与创意双重巅峰', provider: 'doubao', tags: ['旗舰', '推荐'], cost: 10 },
       { id: 'doubao-seed-2.0-pro', name: 'doubao-seed-2.0-pro', description: '高性能创作模型，擅长复杂剧情构建', provider: 'doubao', tags: ['高性能', '专业'], cost: 8 },
       { id: 'doubao-seed-2.0-mini', name: 'doubao-seed-2.0-mini', description: '极速响应，适合灵感捕捉与快速迭代', provider: 'doubao', tags: ['极速', '高效'], cost: 2 },

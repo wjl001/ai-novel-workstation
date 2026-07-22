@@ -1,0 +1,118 @@
+@use "@/styles/tokens" as *;
+
+.list {
+  flex: 1;
+  overflow: hidden;
+  background-color: $skylark-color-surface;
+
+  &.isMobile {
+    height: auto;
+  }
+}
+
+.scrollContent {
+  padding: $skylark-space-2;
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-2;
+  scroll-snap-type: y proximity;
+}
+
+.item {
+  display: flex;
+  gap: $skylark-space-2;
+  padding: $skylark-space-1;
+  border-radius: $skylark-radius-md;
+  cursor: pointer;
+  transition: all $skylark-transition-duration $skylark-ease-out;
+  scroll-snap-align: center;
+  position: relative;
+  background-color: transparent;
+
+  &:hover {
+    background-color: $skylark-color-bg;
+    transform: scale(1.02);
+    box-shadow: $skylark-shadow-md;
+
+    .thumb {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    background-color: #e6f7ff;
+    
+    .title {
+      color: $skylark-color-primary;
+      font-weight: 700;
+    }
+
+    .index {
+      color: $skylark-color-primary;
+    }
+  }
+}
+
+.thumbWrapper {
+  width: 120px;
+  height: 68px;
+  border-radius: $skylark-radius-sm;
+  overflow: hidden;
+  position: relative;
+  background-color: $skylark-color-skeleton;
+  flex-shrink: 0;
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s $skylark-ease-out;
+}
+
+.duration {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background-color: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.playingOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  items-center: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  gap: 2px;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.index {
+  font-size: $skylark-font-size-xs;
+  color: $skylark-color-text-secondary;
+  margin-bottom: 2px;
+}
+
+.title {
+  font-size: $skylark-font-size-sm;
+  color: $skylark-color-text-main;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

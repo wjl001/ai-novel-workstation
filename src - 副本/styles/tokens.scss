@@ -1,0 +1,60 @@
+// Little Skylark Design Tokens
+// -----------------------------------------------------------------------------
+
+// 1. Color System (色彩体系)
+$skylark-color-primary: #1890ff;       // 主色: 小云雀蓝
+$skylark-color-secondary: #5B5CFF;     // 辅色
+$skylark-color-success: #52c41a;       // 功能色: 成功
+$skylark-color-warning: #faad14;       // 功能色: 警告
+$skylark-color-danger: #ff4d4f;        // 功能色: 危险
+$skylark-color-info: #1890ff;          // 功能色: 信息
+
+// Neutral Colors (中性色)
+$skylark-color-bg: #f8fafc;            // 背景色
+$skylark-color-surface: #ffffff;       // 容器色
+$skylark-color-border: #f1f5f9;        // 描边色
+$skylark-color-text-main: #1e293b;     // 正文色
+$skylark-color-text-secondary: #64748b;// 次级文本
+$skylark-color-text-muted: #94a3b8;    // 辅助文本
+$skylark-color-skeleton: #f1f5f9;      // 骨架屏色
+
+// 2. Typography (字体家族)
+$skylark-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
+// Font Sizes (字号梯度)
+$skylark-font-size-xs: 12px;
+$skylark-font-size-sm: 14px;
+$skylark-font-size-md: 16px;
+$skylark-font-size-lg: 18px;
+$skylark-font-size-xl: 20px;
+$skylark-font-size-2xl: 24px;
+$skylark-font-size-3xl: 30px;
+
+// 3. Border Radius (圆角规则)
+$skylark-radius-sm: 4px;
+$skylark-radius-md: 8px;
+$skylark-radius-lg: 12px;
+$skylark-radius-xl: 16px;
+$skylark-radius-full: 9999px;
+
+// 4. Shadow System (投影层级)
+$skylark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$skylark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$skylark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$skylark-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+// 5. Spacing System (留白比例 - 8n)
+$skylark-space-1: 8px;
+$skylark-space-2: 16px;
+$skylark-space-3: 24px;
+$skylark-space-4: 32px;
+$skylark-space-5: 40px;
+$skylark-space-6: 48px;
+
+// 6. Animation (动效曲线)
+$skylark-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+$skylark-transition-duration: 0.2s;
+
+// 7. Breakpoints (响应式断点)
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1200px;

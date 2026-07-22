@@ -1,0 +1,183 @@
+<template>
+...
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue'
+import { ArrowLeft, ArrowRight, Setting, Document, MagicStick, Plus, Delete, Loading, VideoPause, VideoPlay, Refresh, Check, Edit, DocumentAdd, Top, ArrowDown, User } from '@element-plus/icons-vue'
+
+// Panel States
+const isLeftCollapsed = ref(false)
+const leftPanelWidth = ref(320)
+const isRightPanelVisible = ref(true)
+const rightPanelWidth = ref(320)
+const activeLeftTab = ref('basic-settings')
+
+// Settings
+const isQuickSettingsExpanded = ref(true)
+const isAIAssistantExpanded = ref(true)
+const wordCountMin = ref(500)
+const wordCountMax = ref(1500)
+const isPreviewEnabled = ref(false)
+
+// Data
+const isInfoLoading = ref(false)
+const GENRES = ['现代都市', '古装言情', '悬疑推理', '科幻未来', '青春校园', '玄幻仙侠']
+
+const form = reactive({
+  scriptType: 'short_drama',
+  genre: '现代都市',
+  eraBackground: '',
+  targetAudience: '',
+  episodesCount: 20,
+  expectedDuration: 180,
+  background: '',
+  synopsis: '',
+  episodesData: [
+    { id: 1, title: '初次相遇', summary: '男主和女主在咖啡厅相遇', scenes: '咖啡厅', characters: '男主，女主' }
+  ]
+})
+
+const errors = reactive<Record<string, string>>({})
+const aiPromptPopoverVisible = reactive<Record<string, boolean>>({
+  background: false,
+  synopsis: false
+})
+
+// Validation
+const validateField = (field: string) => {
+  // Mock validation
+  errors[field] = ''
+}
+
+const getWordCountColor = (field: string) => {
+  return 'text-slate-500'
+}
+
+// Episode Actions
+const addEpisode = () => {
+  form.episodesData.push({
+    id: Date.now(),
+    title: `第 ${form.episodesData.length + 1} 集`,
+    summary: '',
+    scenes: '',
+    characters: ''
+  })
+}
+
+const removeEpisode = (index: number) => {
+  form.episodesData.splice(index, 1)
+}
+
+const onDragStartEpisode = (event: DragEvent, index: number) => {
+  if (event.dataTransfer) {
+    event.dataTransfer.setData('text/plain', index.toString())
+  }
+}
+
+const onDropEpisode = (event: DragEvent, index: number) => {
+  const fromIndex = parseInt(event.dataTransfer?.getData('text/plain') || '-1')
+  if (fromIndex >= 0 && fromIndex !== index) {
+    const item = form.episodesData.splice(fromIndex, 1)[0]
+    form.episodesData.splice(index, 0, item)
+  }
+}
+
+const validatePlotNode = (index: number) => {
+  // Mock validation
+}
+
+// Editor State
+const tiptapEditor = ref<any>(null)
+const isGenerating = ref(false)
+const isPaused = ref(false)
+const editorTextContent = ref('')
+const showEmptyPlaceholder = ref(true)
+const isSavingScript = ref(false)
+
+const generateScriptBody = () => {
+  isGenerating.value = true
+  showEmptyPlaceholder.value = false
+  setTimeout(() => {
+    isGenerating.value = false
+    editorTextContent.value = '这是自动生成的剧本正文...'
+  }, 2000)
+}
+
+// Context Menu
+const contextMenuVisible = ref(false)
+const contextMenuX = ref(0)
+const contextMenuY = ref(0)
+const aiPromptInput = ref('')
+
+const applyAIAction = (action: string) => {
+  console.log('AI Action:', action)
+  contextMenuVisible.value = false
+}
+
+// AI Assistant Chat
+const rightPanelChatRef = ref<any>(null)
+const chatMessages = ref([
+  { id: 1, role: 'ai', content: '我随时可以协助您生成内容 or 润色剧本。' }
+])
+
+const handleAIGenerateAction = (type: string, action: string) => {
+  if (!aiPromptInput.value) return
+  chatMessages.value.push({
+    id: Date.now(),
+    role: 'user',
+    content: aiPromptInput.value
+  })
+  aiPromptInput.value = ''
+  
+  setTimeout(() => {
+    chatMessages.value.push({
+      id: Date.now(),
+      role: 'ai',
+      content: '正在处理您的请求...'
+    })
+  }, 500)
+}
+
+// Resize handlers
+const startResizeLeftPanel = (e: MouseEvent) => {
+  const startX = e.clientX
+  const startWidth = leftPanelWidth.value
+  
+  const onMouseMove = (e: MouseEvent) => {
+    leftPanelWidth.value = Math.max(200, Math.min(600, startWidth + e.clientX - startX))
+  }
+  
+  const onMouseUp = () => {
+    document.removeElementListener('mousemove', onMouseMove)
+    document.removeElementListener('mouseup', onMouseUp)
+  }
+  
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
+
+const startResizeRightPanel = (e: MouseEvent) => {
+  const startX = e.clientX
+  const startWidth = rightPanelWidth.value
+  
+  const onMouseMove = (e: MouseEvent) => {
+    rightPanelWidth.value = Math.max(200, Math.min(600, startWidth - (e.clientX - startX)))
+  }
+  
+  const onMouseUp = () => {
+    document.removeElementListener('mousemove', onMouseMove)
+    document.removeElementListener('mouseup', onMouseUp)
+  }
+  
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
+
+// Close context menu on click outside
+onMounted(() => {
+  document.addEventListener('click', () => {
+    contextMenuVisible.value = false
+  })
+})
+</script>

@@ -1,0 +1,88 @@
+@use "@/styles/tokens" as *;
+
+.comments {
+  background-color: $skylark-color-surface;
+  padding: $skylark-space-3;
+  border-radius: $skylark-radius-lg;
+  border: 1px solid $skylark-color-border;
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-3;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-2;
+}
+
+.title {
+  font-size: $skylark-font-size-md;
+  font-weight: 700;
+  color: $skylark-color-text-main;
+  margin: 0;
+}
+
+.count {
+  font-size: $skylark-font-size-sm;
+  color: $skylark-color-text-muted;
+  font-weight: 400;
+}
+
+.inputArea {
+  margin-top: $skylark-space-1;
+}
+
+.input :deep(.el-input-group__append) {
+  background-color: $skylark-color-primary;
+  border-color: $skylark-color-primary;
+  color: #fff;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-3;
+}
+
+.item {
+  display: flex;
+  gap: $skylark-space-2;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.author {
+  font-size: $skylark-font-size-sm;
+  font-weight: 700;
+  color: $skylark-color-text-main;
+}
+
+.time {
+  font-size: $skylark-font-size-xs;
+  color: $skylark-color-text-muted;
+  font-weight: 400;
+  margin-left: $skylark-space-1;
+}
+
+.text {
+  font-size: $skylark-font-size-sm;
+  color: $skylark-color-text-secondary;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: $skylark-space-2;
+}
+
+.footer {
+  text-align: center;
+  padding-top: $skylark-space-1;
+}

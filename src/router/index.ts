@@ -17,6 +17,7 @@ import NewDrama from '../views/AIShortDrama/NewDrama.vue'
 import DramaCreatorLayout from '../views/AIShortDrama/DramaCreatorLayout.vue'
 import StoryboardView from '../views/AIShortDrama/StoryboardView.vue'
 import TeamManagementView from '../views/TeamManagement/TeamManagementView.vue'
+import FreeCanvas from '../views/FreeCanvas/index.vue'
 
 // Placeholder component for the new workflow
 const UnderConstruction = { template: '<div class="p-8 text-center text-lg">正在建设中...</div>' };
@@ -102,6 +103,11 @@ const router = createRouter({
       path: '/team-management',
       name: 'team-management',
       component: TeamManagementView
+    },
+    {
+      path: '/free-canvas',
+      name: 'free-canvas',
+      component: FreeCanvas
     },
     {
       path: '/member-center',

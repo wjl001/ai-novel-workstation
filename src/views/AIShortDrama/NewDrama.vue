@@ -90,6 +90,15 @@
             >
               <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
             </button>
+            <button 
+              class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+              :class="activeTab === 'canvas'
+                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+              @click="router.push('/free-canvas')"
+            >
+              <el-icon :size="16"><Monitor /></el-icon> 自由画布
+            </button>
           </div>
 
           <div class="px-6 py-3 md:px-8 md:py-4 pt-1">

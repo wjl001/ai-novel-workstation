@@ -1061,14 +1061,32 @@
       </template>
 
       <div class="rounded-3xl border border-slate-200/70 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-950/20 p-5">
-        <!-- 金额信息 -->
-        <div class="flex items-center justify-between">
-          <div class="text-sm font-black text-slate-800 dark:text-slate-100">支付金额</div>
-          <div class="text-2xl font-black text-slate-900 dark:text-white">¥{{ purchaseDialog.amount }}</div>
-        </div>
-        <div v-if="purchaseDialog.bonusPoints" class="mt-3 flex items-center justify-between">
-          <div class="text-sm font-black text-slate-800 dark:text-slate-100">赠送算力豆</div>
-          <div class="text-sm font-black text-amber-600 dark:text-amber-300">+{{ purchaseDialog.bonusPoints.toLocaleString() }}</div>
+        <!-- 订单信息 -->
+        <div class="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900/40 p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-slate-500 dark:text-slate-400">订单号</div>
+              <div class="mt-1 text-sm font-black text-slate-800 dark:text-slate-200 font-mono">{{ purchaseOrderInfo.orderId }}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-black text-slate-500 dark:text-slate-400">创建时间</div>
+              <div class="mt-1 text-sm font-black text-slate-800 dark:text-slate-200">{{ purchaseOrderInfo.createdAt }}</div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-slate-500 dark:text-slate-400">商品</div>
+              <div class="mt-1 text-sm font-black text-slate-800 dark:text-slate-200 truncate max-w-64">{{ purchaseDialog.summary }}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-black text-slate-500 dark:text-slate-400">支付金额</div>
+              <div class="mt-1 text-2xl font-black bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">¥{{ purchaseDialog.amount }}</div>
+            </div>
+          </div>
+          <div v-if="purchaseDialog.bonusPoints" class="mt-3 flex items-center justify-between">
+            <div class="text-sm font-black text-slate-700 dark:text-slate-300">充值算力豆</div>
+            <div class="text-sm font-black text-amber-600 dark:text-amber-300">+{{ purchaseDialog.bonusPoints.toLocaleString() }}</div>
+          </div>
         </div>
 
         <!-- 支付方式选择 -->
@@ -1098,6 +1116,30 @@
 
         <!-- 二维码区域 -->
         <div class="mt-5 flex flex-col items-center">
+          <!-- 倒计时 + 刷新按钮 -->
+          <div class="w-full flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full" :class="qrExpired ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500 animate-pulse'"></div>
+              <span v-if="!qrExpired" class="text-sm font-black text-slate-600 dark:text-slate-300">
+                二维码将在 <span class="text-amber-500">{{ qrCountdownText }}</span> 后失效
+              </span>
+              <span v-else class="text-sm font-black text-rose-500">
+                二维码已失效，请刷新
+              </span>
+            </div>
+            <el-button
+              size="small"
+              :loading="qrRefreshing"
+              round
+              class="!rounded-2xl !font-black !h-8"
+              :type="qrExpired ? 'danger' : 'default'"
+              @click="refreshQrCode"
+            >
+              <el-icon><Refresh /></el-icon>
+              {{ qrExpired ? '已失效·点击刷新' : '刷新二维码' }}
+            </el-button>
+          </div>
+
           <div class="w-48 h-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 flex items-center justify-center relative overflow-hidden">
             <!-- 固定二维码方块图案 -->
             <div class="w-full h-full relative">
@@ -1127,17 +1169,7 @@
       </div>
 
       <template #footer>
-        <div class="flex items-center justify-end gap-2">
-          <el-button round class="!rounded-2xl !font-black" @click="purchaseDialog.visible = false">取消</el-button>
-          <el-button
-            round
-            type="primary"
-            class="!rounded-2xl !border-none !bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white !font-black shadow-lg shadow-indigo-500/15"
-            @click="confirmPurchase()"
-          >
-            完成支付
-          </el-button>
-        </div>
+        <span></span>
       </template>
     </el-dialog>
 
@@ -1151,7 +1183,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
@@ -1174,6 +1206,7 @@ import {
   Picture,
   Phone,
   Reading,
+  Refresh,
   Search,
   StarFilled,
   Share,
@@ -1590,6 +1623,75 @@ const purchaseDialog = reactive<{
 })
 
 const payMethod = ref<'alipay' | 'wechat'>('alipay')
+
+// 二维码倒计时相关
+const qrCountdown = ref<number>(180)
+const qrRefreshing = ref<boolean>(false)
+let qrTimer: ReturnType<typeof setInterval> | null = null
+
+const purchaseOrderInfo = reactive<{ orderId: string; createdAt: string }>({
+  orderId: '',
+  createdAt: ''
+})
+
+const qrExpired = computed(() => qrCountdown.value <= 0)
+
+const qrCountdownText = computed(() => {
+  if (qrCountdown.value <= 0) return '已失效'
+  const min = Math.floor(qrCountdown.value / 60)
+  const sec = qrCountdown.value % 60
+  return `${min}:${String(sec).padStart(2, '0')}`
+})
+
+const startQrCountdown = () => {
+  stopQrCountdown()
+  qrCountdown.value = 180
+  qrTimer = setInterval(() => {
+    qrCountdown.value--
+    if (qrCountdown.value <= 0) {
+      stopQrCountdown()
+    }
+  }, 1000)
+}
+
+const stopQrCountdown = () => {
+  if (qrTimer) {
+    clearInterval(qrTimer)
+    qrTimer = null
+  }
+}
+
+const refreshQrCode = () => {
+  qrRefreshing.value = true
+  // 模拟刷新接口调用
+  setTimeout(() => {
+    qrRefreshing.value = false
+    startQrCountdown()
+  }, 800)
+}
+
+const closePurchaseDialog = () => {
+  stopQrCountdown()
+  purchaseDialog.visible = false
+}
+
+// 监听弹窗打开/关闭，自动管理倒计时
+watch(
+  () => purchaseDialog.visible,
+  (visible) => {
+    if (visible) {
+      purchaseOrderInfo.orderId = genOrderId()
+      purchaseOrderInfo.createdAt = formatDateTime(Date.now())
+      startQrCountdown()
+    } else {
+      stopQrCountdown()
+    }
+  }
+)
+
+onUnmounted(() => {
+  stopQrCountdown()
+})
 
 const invoiceForm = reactive({
   orderId: '',

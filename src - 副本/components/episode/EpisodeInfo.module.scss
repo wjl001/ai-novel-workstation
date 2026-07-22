@@ -1,0 +1,82 @@
+@use "@/styles/tokens" as *;
+
+.info {
+  background-color: $skylark-color-surface;
+  padding: $skylark-space-3;
+  border-radius: $skylark-radius-lg;
+  border: 1px solid $skylark-color-border;
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-2;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $skylark-space-1;
+}
+
+.title {
+  font-size: $skylark-font-size-xl;
+  font-weight: 700;
+  color: $skylark-color-text-main;
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-2;
+  font-size: $skylark-font-size-xs;
+  color: $skylark-color-text-secondary;
+}
+
+.rating {
+  color: $skylark-color-warning;
+  font-weight: 600;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $skylark-space-1;
+  margin: $skylark-space-1 0;
+}
+
+.tag {
+  border-radius: $skylark-radius-sm;
+  color: $skylark-color-text-secondary;
+}
+
+.actions {
+  display: flex;
+  items-center: center;
+  gap: $skylark-space-3;
+  padding: $skylark-space-2 0;
+  border-top: 1px solid $skylark-color-border;
+  border-bottom: 1px solid $skylark-color-border;
+}
+
+.actionText {
+  font-size: $skylark-font-size-sm;
+  color: $skylark-color-text-main;
+  margin-left: 4px;
+}
+
+.intro {
+  margin-top: $skylark-space-1;
+}
+
+.introTitle {
+  font-size: $skylark-font-size-sm;
+  font-weight: 700;
+  color: $skylark-color-text-main;
+  margin-bottom: $skylark-space-1;
+}
+
+.introText {
+  font-size: $skylark-font-size-sm;
+  color: $skylark-color-text-secondary;
+  line-height: 1.6;
+  margin: 0;
+}
