@@ -61,12 +61,12 @@ const props = defineProps<{
 const emit = defineEmits<{
   select: []
   delete: []
-  dragStart: [event: MouseEvent]
+  dragStart: [event: MouseEvent, nodeId: string]
   updateName: [name: string]
 }>()
 
 const videoUrl = computed(() => props.node.data.videoUrl || '')
-const thumbnail = computed(() => props.node.data.thumbnail || '')
+const thumbnail = computed(() => (props.node.data as Record<string, unknown>).thumbnail as string || '')
 const videoName = ref(props.node.data.name || '')
 
 const nodeStyle = computed(() => ({

@@ -72,6 +72,11 @@ export interface CanvasNode {
     description?: string
     avatar?: string
     prompt?: string
+    imageName?: string
+    voiceDescription?: string
+    voiceType?: string
+    episodeCount?: number
+    thumbnail?: string
     // 场景数据
     sceneName?: string
     sceneDescription?: string

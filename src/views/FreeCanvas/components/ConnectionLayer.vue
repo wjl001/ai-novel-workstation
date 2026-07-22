@@ -18,7 +18,7 @@
       fill="none"
       stroke-linecap="round"
       stroke-linejoin="round"
-      :class="['connection-line', { 'is-active': conn.isActive }]"
+      :class="['connection-line', { 'is-active': (conn as any).isActive }]"
       style="filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.25));"
     />
     
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import type { CanvasNode, NodeConnection } from '../types'
 
 const props = defineProps<{
@@ -67,14 +67,10 @@ const props = defineProps<{
   offset?: { x: number; y: number }
 }>()
 
-// 画布尺寸
-const canvasWidth = ref(1920)
-const canvasHeight = ref(1080)
-
 // 安全解包 ref 或数组
 const unrefValue = <T>(val: T | { value: T } | undefined): T | undefined => {
   if (!val) return undefined
-  if ('value' in val) return (val as any).value
+  if (typeof val === 'object' && val !== null && 'value' in val) return (val as any).value
   return val
 }
 
@@ -87,6 +83,21 @@ const nodesArray = computed<CanvasNode[]>(() => {
 const connectionsArray = computed<NodeConnection[]>(() => {
   const connections = unrefValue(props.connections)
   return Array.isArray(connections) ? connections : []
+})
+
+// 画布尺寸 - 动态计算
+const canvasWidth = computed(() => {
+  const nodes = nodesArray.value
+  if (nodes.length === 0) return 1920
+  const maxRight = Math.max(...nodes.map(n => n.position.x + n.size.width))
+  return maxRight + 400
+})
+
+const canvasHeight = computed(() => {
+  const nodes = nodesArray.value
+  if (nodes.length === 0) return 1080
+  const maxBottom = Math.max(...nodes.map(n => n.position.y + n.size.height))
+  return maxBottom + 400
 })
 
 // 获取连接线起点（源节点右侧中心）
@@ -137,10 +148,6 @@ const getArrowPoints = (conn: NodeConnection) => {
   // 指向左侧的箭头
   return `${end.x - size} ${end.y},${end.x} ${end.y - size / 2},${end.x} ${end.y + size / 2}`
 }
-
-// 调试输出
-console.log('ConnectionLayer - Connections:', connectionsArray.value)
-console.log('ConnectionLayer - Nodes:', nodesArray.value)
 </script>
 
 <style scoped>

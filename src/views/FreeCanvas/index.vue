@@ -14,7 +14,7 @@
         <ConnectionLayer
           :connections="canvasStore.connections"
           :nodes="canvasStore.nodes"
-          :scale="canvasStore.scale"
+          :scale="canvasStore.scale.value"
           :offset="canvasStore.offset"
         />
 
@@ -23,7 +23,7 @@
           v-for="node in canvasStore.getNodesByType('role')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -37,7 +37,7 @@
           v-for="node in canvasStore.getNodesByType('scene')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -49,7 +49,7 @@
           v-for="node in canvasStore.getNodesByType('text')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -60,7 +60,7 @@
           v-for="node in canvasStore.getNodesByType('image')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -71,7 +71,7 @@
           v-for="node in canvasStore.getNodesByType('video')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -82,7 +82,7 @@
           v-for="node in canvasStore.getNodesByType('audio')"
           :key="node.id"
           :node="node"
-          :is-selected="canvasStore.selectedNodeId === node.id"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
           :is-dragging="draggingNodeId === node.id"
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
@@ -123,7 +123,7 @@
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
           </svg>
         </button>
-        <span class="zoom-level">{{ Math.round(canvasStore.scale * 100) }}%</span>
+        <span class="zoom-level">{{ Math.round(canvasStore.scale.value * 100) }}%</span>
         <button class="toolbar-btn" @click="canvasStore.zoomIn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
@@ -147,7 +147,7 @@
     </div>
 
     <!-- 信息提示 -->
-    <div v-if="canvasStore.nodes.length === 0" class="canvas-hint">
+    <div class="canvas-hint">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/>
         <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
@@ -203,12 +203,12 @@ const dialogNode = computed(() => {
 })
 
 const viewportStyle = computed(() => ({
-  transform: `translate(${canvasStore.offset.x}px, ${canvasStore.offset.y}px) scale(${canvasStore.scale})`
+  transform: `translate(${canvasStore.offset.x}px, ${canvasStore.offset.y}px) scale(${canvasStore.scale.value})`
 }))
 
 const gridStyle = computed(() => ({
   backgroundImage: `radial-gradient(circle, #e2e8f0 1px, transparent 1px)`,
-  backgroundSize: `${20 * canvasStore.scale}px ${20 * canvasStore.scale}px`,
+  backgroundSize: `${20 * canvasStore.scale.value}px ${20 * canvasStore.scale.value}px`,
   backgroundPosition: `${canvasStore.offset.x}px ${canvasStore.offset.y}px`
 }))
 
@@ -234,8 +234,8 @@ const updateDialogPosition = (node: CanvasNode) => {
   if (!canvasAreaRef.value) return
   const canvasRect = canvasAreaRef.value.getBoundingClientRect()
   // 将画布坐标转换为屏幕坐标：(画布坐标 * scale + offset) + canvasArea位置
-  const dialogX = (node.position.x + node.size.width + 16) * canvasStore.scale + canvasStore.offset.x + canvasRect.left
-  const dialogY = (node.position.y + 30) * canvasStore.scale + canvasStore.offset.y + canvasRect.top
+  const dialogX = (node.position.x + node.size.width + 16) * canvasStore.scale.value + canvasStore.offset.x + canvasRect.left
+  const dialogY = (node.position.y + 30) * canvasStore.scale.value + canvasStore.offset.y + canvasRect.top
   dialogPosition.value = { x: dialogX, y: dialogY }
 }
 
@@ -276,9 +276,10 @@ const startDrag = (event: MouseEvent, nodeId: string) => {
   const node = canvasStore.getNode(nodeId)
   if (!node) return
   draggingNodeId.value = nodeId
+  // 屏幕坐标 → 画布局部坐标的偏移
   dragOffset.value = {
-    x: event.clientX - node.position.x,
-    y: event.clientY - node.position.y
+    x: event.clientX - (node.position.x * canvasStore.scale.value + canvasStore.offset.x),
+    y: event.clientY - (node.position.y * canvasStore.scale.value + canvasStore.offset.y)
   }
   // 如果对话框打开的是当前节点，关闭它避免干扰
   if (dialogNodeId.value === nodeId) {
@@ -290,9 +291,10 @@ const startDrag = (event: MouseEvent, nodeId: string) => {
 
 const onDrag = (event: MouseEvent) => {
   if (!draggingNodeId.value) return
+  // 屏幕坐标 → 画布局部坐标
   canvasStore.updateNodePosition(draggingNodeId.value, {
-    x: event.clientX - dragOffset.value.x,
-    y: event.clientY - dragOffset.value.y
+    x: (event.clientX - dragOffset.value.x - canvasStore.offset.x) / canvasStore.scale.value,
+    y: (event.clientY - dragOffset.value.y - canvasStore.offset.y) / canvasStore.scale.value
   })
 }
 
@@ -305,7 +307,8 @@ const stopDrag = () => {
 // 画布操作
 const onCanvasMouseDown = (event: MouseEvent) => {
   // 点击空白处取消选择并关闭对话框
-  if ((event.target as HTMLElement).closest('.canvas-viewport') && !(event.target as HTMLElement).closest('[class*="-node"]')) {
+  const target = event.target as HTMLElement
+  if (!target.closest('[class*="-node"]')) {
     canvasStore.selectNode(null)
     closeNodeDialog()
   }
@@ -441,11 +444,7 @@ const handleContextMenu = (event: MouseEvent) => {
 const handleContextMenuSelect = (item: MenuItem) => {
   const params: AddNodeParams = {
     type: item.type,
-    label: item.label,
-    position: {
-      x: contextMenu.value.position.x - canvasStore.offset.x,
-      y: contextMenu.value.position.y - canvasStore.offset.y
-    }
+    label: item.label
   }
   canvasStore.addNode(params)
   closeContextMenu()
@@ -463,7 +462,7 @@ const saveCanvas = () => {
 // 键盘事件
 const onKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Delete' && canvasStore.selectedNodeId && !showNodeDialog.value) {
-    canvasStore.removeNode(canvasStore.selectedNodeId)
+    canvasStore.removeNode(canvasStore.selectedNodeId.value!)
   }
   if (event.key === 'Escape') {
     canvasStore.selectNode(null)

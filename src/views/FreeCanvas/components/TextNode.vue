@@ -46,7 +46,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   select: []
   delete: []
-  dragStart: [event: MouseEvent]
+  dragStart: [event: MouseEvent, nodeId: string]
   updateContent: [content: string]
 }>()
 

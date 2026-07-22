@@ -41,7 +41,7 @@
     <!-- 角色信息 -->
     <div class="role-info">
       <div class="info-row">
-        <span class="info-label">{{ node.data.imageName || '基础形象' }}</span>
+        <span class="info-label">{{ node.data.name || '基础形象' }}</span>
         <span class="info-badge pending">{{ node.data.avatar ? '已补充' : '待补充' }}</span>
       </div>
     </div>

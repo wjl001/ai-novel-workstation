@@ -77,13 +77,13 @@
             <div class="section-title">上下文与生成</div>
             <div v-if="node.contexts && node.contexts.length > 0" class="item-list">
               <div class="item-chip" v-for="(ctx, i) in node.contexts" :key="i" :class="'item-' + ctx.type">
-                <span>{{ ctx.name || ctx.type }}</span>
+                <span>{{ ctx.content?.name || ctx.type }}</span>
                 <button @click="removeContext(i)">×</button>
               </div>
             </div>
             <div v-if="node.generations && node.generations.length > 0" class="item-list">
               <div class="item-chip" v-for="(gen, i) in node.generations" :key="i" :class="'item-' + gen.type">
-                <span>{{ gen.name || gen.type }}</span>
+                <span>{{ gen.content?.name || gen.type }}</span>
                 <button @click="removeGeneration(i)">×</button>
               </div>
             </div>
@@ -149,9 +149,9 @@ const nodeTypeLabel = computed(() => {
 
 const editData = ref({
   roleName: props.node.label || '未命名角色',
-  imageName: props.node.data.imageName || '基础形象',
-  episodeCount: props.node.data.episodeCount || 1,
-  voiceDescription: props.node.data.voiceDescription || '',
+  imageName: (props.node.data as any).imageName || '基础形象',
+  episodeCount: (props.node.data as any).episodeCount || 1,
+  voiceDescription: (props.node.data as any).voiceDescription || '',
   name: props.node.label || '',
   description: props.node.data.description || ''
 })

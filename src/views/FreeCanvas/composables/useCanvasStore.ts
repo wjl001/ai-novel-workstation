@@ -1,5 +1,5 @@
 import { ref, reactive, computed } from 'vue'
-import type { CanvasNode, NodeConnection, NodePosition, NodeType, AddNodeParams, UpdateNodeParams, ContextEntry, GenerateResult, ContextType, GenerateType, MediaContent } from './types'
+import type { CanvasNode, NodeConnection, NodePosition, NodeType, AddNodeParams, UpdateNodeParams, ContextEntry, GenerateResult, ContextType, GenerateType, MediaContent } from '../types'
 
 // 生成唯一 ID
 const generateId = (): string => {
