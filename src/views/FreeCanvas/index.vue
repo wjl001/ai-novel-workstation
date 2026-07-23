@@ -91,6 +91,79 @@
       </div>
     </div>
 
+    <!-- 模型选择器弹窗 -->
+    <div v-if="showModelPicker" class="picker-overlay" @click="showModelPicker = false">
+      <div class="picker-panel" @click.stop>
+        <div class="picker-header">
+          <span class="picker-title">选择模型</span>
+          <button class="picker-close" @click="showModelPicker = false">&times;</button>
+        </div>
+        <div class="picker-body">
+          <div
+            v-for="model in currentModels"
+            :key="model.value"
+            class="picker-item"
+            :class="{ active: model.value === currentModel }"
+            @click="currentModel = model.value; showModelPicker = false"
+          >
+            <span class="picker-item-icon">{{ model.icon }}</span>
+            <div class="picker-item-info">
+              <div class="picker-item-name">{{ model.name }}</div>
+              <div class="picker-item-desc">{{ model.desc }}</div>
+            </div>
+            <svg v-if="model.value === currentModel" class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 比例选择器弹窗 -->
+    <div v-if="showRatioPicker" class="picker-overlay" @click="showRatioPicker = false">
+      <div class="picker-panel" @click.stop>
+        <div class="picker-header">
+          <span class="picker-title">画面比例</span>
+          <button class="picker-close" @click="showRatioPicker = false">&times;</button>
+        </div>
+        <div class="picker-body ratio-grid">
+          <div
+            v-for="ratio in ratioOptions"
+            :key="ratio.value"
+            class="picker-item ratio-item"
+            :class="{ active: ratio.value === selectedRatio }"
+            @click="selectedRatio = ratio.value; showRatioPicker = false"
+          >
+            <div class="ratio-preview" :style="getRatioPreviewStyle(ratio.value)"></div>
+            <div class="ratio-label">{{ ratio.label }}</div>
+            <div class="ratio-desc">{{ ratio.desc }}</div>
+            <svg v-if="ratio.value === selectedRatio" class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 清晰度选择器弹窗 -->
+    <div v-if="showQualityPicker" class="picker-overlay" @click="showQualityPicker = false">
+      <div class="picker-panel" @click.stop>
+        <div class="picker-header">
+          <span class="picker-title">清晰度</span>
+          <button class="picker-close" @click="showQualityPicker = false">&times;</button>
+        </div>
+        <div class="picker-body">
+          <div
+            v-for="quality in qualityOptions"
+            :key="quality.value"
+            class="picker-item"
+            :class="{ active: quality.value === selectedQuality }"
+            @click="selectedQuality = quality.value; showQualityPicker = false"
+          >
+            <span class="picker-item-name quality-name">{{ quality.label }}</span>
+            <div class="picker-item-desc">{{ quality.desc }}</div>
+            <svg v-if="quality.value === selectedQuality" class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 右键菜单 -->
     <ContextMenu
       v-if="contextMenu.visible"
@@ -101,7 +174,7 @@
       @close="closeContextMenu"
     />
 
-    <!-- 节点对话框 -->
+    <!-- 节点对话框 - 通过点击三个点打开 -->
     <NodeDialog
       v-if="showNodeDialog && dialogNode"
       :node="dialogNode"
@@ -115,50 +188,60 @@
       @remove-generation="handleRemoveGeneration(dialogNode.id, $event)"
     />
 
-    <!-- 底部工具栏 -->
-    <div class="bottom-toolbar">
-      <div class="toolbar-center">
-        <button class="toolbar-btn" @click="canvasStore.zoomOut">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
-        <span class="zoom-level">{{ Math.round(canvasStore.scale.value * 100) }}%</span>
-        <button class="toolbar-btn" @click="canvasStore.zoomIn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
+    <!-- 底部输入栏 - 选中节点时显示 -->
+    <div v-if="selectedNode" class="input-bar">
+      <div class="input-bar-content">
+        <textarea
+          class="input-bar-textarea"
+          :placeholder="inputPlaceholder"
+          v-model="inputContent"
+          rows="3"
+        />
+        <!-- 左侧操作按钮 -->
+        <div class="input-bar-left">
+          <button class="action-btn" title="添加">+</button>
+          <button class="action-btn" title="引用">@</button>
+          <select class="style-select" v-model="selectedStyle">
+            <option value="">{styleLabel}</option>
+            <option v-for="s in styleOptions" :key="s.value" :value="s.value">{{ s.label }}</option>
+          </select>
+          <button class="model-select" @click="showModelPicker = true">
+            <span class="model-icon">{{ currentModelConfig.icon }}</span>
+            <span>{{ currentModelConfig.name }}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button class="settings-btn" @click="showRatioPicker = true">
+            <span>{{ ratioLabel }}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button class="settings-btn" @click="showQualityPicker = true">
+            <span>{{ qualityLabel }}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button class="upload-btn" @click="handleUpload">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            上传
+          </button>
+          <button class="polish-btn" @click="handlePolish">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2 5 5 0-4 3 1 5-4-3-4 3 1-5-4-3 5 0z"/></svg>
+            润色
+          </button>
+          <button class="book-btn" title="素材库">📖</button>
+        </div>
+        <!-- 右侧提交按钮 -->
+        <div class="input-bar-right">
+          <button class="submit-btn" @click="handleGenerate">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>{{ submitLabel }}</span>
+          </button>
+        </div>
       </div>
-
-      <div class="toolbar-right">
-        <button class="toolbar-btn" @click="canvasStore.clearCanvas" title="清空画布">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-          </svg>
-        </button>
-        <button class="toolbar-btn toolbar-btn-primary" @click="saveCanvas" title="保存">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-          </svg>
-          <span>保存</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- 信息提示 -->
-    <div class="canvas-hint">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/>
-        <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
-      <span>点击左侧工具添加节点到画布</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useCanvasStore } from './composables/useCanvasStore'
 import type { NodePosition, ContextType, GenerateType, MenuItem, AddNodeParams, CanvasNode } from './types'
 import NodePanel from './components/NodePanel.vue'
@@ -197,9 +280,141 @@ const contextMenu = ref<{
 })
 
 // 计算属性
+const selectedNode = computed(() => {
+  if (!canvasStore.selectedNodeId.value) return null
+  return canvasStore.getNode(canvasStore.selectedNodeId.value)
+})
 const dialogNode = computed(() => {
   if (!dialogNodeId.value) return null
   return canvasStore.getNode(dialogNodeId.value)
+})
+
+const inputContent = ref('')
+const selectedStyle = ref('')
+const showModelPicker = ref(false)
+const showRatioPicker = ref(false)
+const showQualityPicker = ref(false)
+
+// 节点类型对应的生成模式
+const nodeTypeToMode = (type: string | undefined): 'image' | 'video' | 'role' | 'scene' | 'other' => {
+  if (!type) return 'other'
+  if (type === 'video') return 'video'
+  if (type === 'role' || type === 'image' || type === 'scene') return 'image'
+  return 'other'
+}
+
+// 当前模式
+const currentMode = computed(() => nodeTypeToMode(selectedNode.value?.type))
+
+// 模型配置
+const modelConfigs: Record<string, Array<{ value: string; name: string; icon: string; desc: string }>> = {
+  image: [
+    { value: 'anycook', name: '小云雀 AnyCook', icon: '🎨', desc: '图片生成' },
+    { value: 'flux', name: 'Flux Dev', icon: '✨', desc: '高精度生图' },
+    { value: 'sd3', name: 'Stable Diffusion 3', icon: '🖼️', desc: '通用生图' },
+    { value: 'dalle3', name: 'DALL-E 3', icon: '🎭', desc: '创意生图' },
+  ],
+  video: [
+    { value: 'anycook', name: '小云雀 AnyCook', icon: '🎬', desc: '视频生成' },
+    { value: 'kling', name: 'Kling 可灵', icon: '🎥', desc: '文生视频' },
+    { value: 'runway', name: 'Runway Gen-3', icon: '📽️', desc: '视频生成' },
+    { value: 'pika', name: 'Pika 1.5', icon: '🎞️', desc: '视频生成' },
+  ],
+  role: [
+    { value: 'anycook', name: '小云雀 AnyCook', icon: '👤', desc: '角色生成' },
+    { value: 'character', name: 'Character Gen', icon: '🎭', desc: '角色设计' },
+  ],
+}
+
+const currentModels = computed(() => modelConfigs[currentMode.value] || modelConfigs.image)
+
+const currentModel = ref('anycook')
+const currentModelConfig = computed(() => {
+  const modeModels = modelConfigs[currentMode.value] || modelConfigs.image
+  return modeModels.find(m => m.value === currentModel.value) || modeModels[0]
+})
+
+const ratioOptions = [
+  { value: '16:9', label: '16:9', desc: '横屏宽屏' },
+  { value: '9:16', label: '9:16', desc: '竖屏手机' },
+  { value: '1:1', label: '1:1', desc: '正方形' },
+  { value: '4:3', label: '4:3', desc: '标准比例' },
+  { value: '3:4', label: '3:4', desc: '竖版标准' },
+]
+const selectedRatio = ref('9:16')
+const ratioLabel = computed(() => {
+  const r = ratioOptions.find(o => o.value === selectedRatio.value)
+  return r ? `${r.label} · ${r.desc}` : '9:16 · 竖屏手机'
+})
+
+const qualityOptions = [
+  { value: '1k', label: '1K', desc: '标清' },
+  { value: '2k', label: '2K', desc: '高清' },
+  { value: '3k', label: '3K', desc: '超清' },
+  { value: '4k', label: '4K', desc: '极清' },
+]
+const selectedQuality = ref('3k')
+const qualityLabel = computed(() => {
+  const q = qualityOptions.find(o => o.value === selectedQuality.value)
+  return q ? `${q.label}` : '3K'
+})
+
+const styleOptions = computed(() => {
+  if (currentMode.value === 'video') {
+    return [
+      { value: 'cinematic', label: '电影风格', desc: '高质感电影画面' },
+      { value: 'anime', label: '动漫风格', desc: '日系动漫' },
+      { value: 'realistic', label: '写实风格', desc: '真实摄影' },
+      { value: 'cartoon', label: '卡通风格', desc: '卡通动画' },
+      { value: 'cyberpunk', label: '赛博朋克', desc: '未来科技' },
+    ]
+  }
+  return [
+    { value: 'realistic', label: '写实风格', desc: '真实摄影感' },
+    { value: 'anime', label: '动漫风格', desc: '日系动漫' },
+    { value: 'oil', label: '油画风格', desc: '经典油画' },
+    { value: 'watercolor', label: '水彩风格', desc: '清新水彩' },
+    { value: 'cyberpunk', label: '赛博朋克', desc: '未来科技' },
+    { value: 'fantasy', label: '奇幻风格', desc: '魔幻世界' },
+  ]
+})
+
+const styleLabel = computed(() => {
+  const s = styleOptions.value.find(o => o.value === selectedStyle.value)
+  return s ? `${s.label}` : '风格'
+})
+
+const submitLabel = computed(() => {
+  if (currentMode.value === 'video') return '生成视频'
+  if (currentMode.value === 'role') return '生成角色'
+  return '生成图片'
+})
+
+const inputPlaceholder = computed(() => {
+  if (currentMode.value === 'video') return '描述你想要生成的视频内容，@引用素材'
+  if (currentMode.value === 'role') return '描述你想要生成的角色形象，@引用素材'
+  if (currentMode.value === 'scene') return '描述你想要生成的场景画面，@引用素材'
+  return '描述你想要生成的图片内容，@引用素材'
+})
+
+// 比例预览样式
+const getRatioPreviewStyle = (ratio: string) => {
+  const styles: Record<string, string> = {
+    '16:9': 'width:40px;height:23px',
+    '9:16': 'width:23px;height:40px',
+    '1:1': 'width:32px;height:32px',
+    '4:3': 'width:36px;height:27px',
+    '3:4': 'width:27px;height:36px',
+  }
+  return styles[ratio] || 'width:32px;height:32px'
+}
+
+// 切换模式时重置模型
+watch(currentMode, (newMode) => {
+  const modeModels = modelConfigs[newMode] || modelConfigs.image
+  if (!modeModels.find(m => m.value === currentModel.value)) {
+    currentModel.value = modeModels[0].value
+  }
 })
 
 const viewportStyle = computed(() => ({
@@ -212,11 +427,34 @@ const gridStyle = computed(() => ({
   backgroundPosition: `${canvasStore.offset.x}px ${canvasStore.offset.y}px`
 }))
 
-// 节点选择 - 显示对话框
+// 节点选择 - 只选中，不打开对话框
 const handleNodeSelect = (nodeId: string) => {
   canvasStore.selectNode(nodeId)
-  // 点击节点时显示对话框
-  openNodeDialog(nodeId)
+}
+
+// 生成/提交
+const handleGenerate = () => {
+  console.log('生成内容', {
+    mode: currentMode.value,
+    model: currentModel.value,
+    style: selectedStyle.value,
+    ratio: selectedRatio.value,
+    quality: selectedQuality.value,
+    content: inputContent.value,
+    node: selectedNode.value
+  })
+}
+
+// 上传
+const handleUpload = () => {
+  console.log('上传素材')
+}
+
+// 润色
+const handlePolish = () => {
+  if (!inputContent.value) {
+    inputContent.value = '请描述你想要生成的内容...'
+  }
 }
 
 // 打开对话框
@@ -517,62 +755,236 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-.bottom-toolbar {
+.input-bar {
   position: absolute;
-  bottom: 16px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
+  width: 920px;
+  max-width: calc(100% - 48px);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  padding: 16px 20px;
+  z-index: 200;
+  border: 1px solid #e2e8f0;
+}
+
+.input-bar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-bar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: white;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.input-bar-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.input-bar-textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  z-index: 100;
+  font-size: 14px;
+  color: #1e293b;
+  resize: none;
+  background: #f8fafc;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.toolbar-center, .toolbar-right {
+.input-bar-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background: #ffffff;
+}
+
+.input-bar-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.toolbar-btn {
+.action-btn {
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  background: transparent;
-  color: #64748b;
+  background: #f1f5f9;
+  color: #475569;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
   transition: all 0.2s;
 }
 
-.toolbar-btn:hover {
+.action-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.style-select {
+  height: 32px;
+  padding: 0 8px;
+  border: none;
   background: #f1f5f9;
   color: #475569;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
 }
 
-.toolbar-btn-primary {
-  background: #6366f1;
+.model-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.model-select:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.model-icon {
+  font-size: 14px;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.settings-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.polish-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.polish-btn:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.book-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.book-btn:hover {
+  background: #e2e8f0;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: #e2e8f0;
+  margin: 0 4px;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 36px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
-.toolbar-btn-primary:hover {
-  background: #4f46e5;
-}
-
-.zoom-level {
-  font-size: 12px;
-  font-weight: 700;
-  color: #64748b;
-  padding: 0 8px;
-  min-width: 50px;
-  text-align: center;
+.submit-btn:hover {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
 }
 
 .canvas-hint {
@@ -591,5 +1003,199 @@ onUnmounted(() => {
 .canvas-hint span {
   font-size: 14px;
   font-weight: 600;
+}
+
+/* Picker 弹窗通用样式 */
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.picker-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  min-width: 320px;
+  max-width: 420px;
+  overflow: hidden;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.picker-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.picker-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+
+.picker-close:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.picker-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.picker-item:hover {
+  background: #f1f5f9;
+}
+
+.picker-item.active {
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+}
+
+.picker-item-icon {
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.picker-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker-item-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.check-icon {
+  color: #6366f1;
+  flex-shrink: 0;
+}
+
+/* 清晰度选择器 */
+.quality-name {
+  font-size: 15px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: #f1f5f9;
+  min-width: 48px;
+  text-align: center;
+}
+
+/* 比例选择器网格 */
+.ratio-grid {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px;
+}
+
+.ratio-item {
+  flex: 0 0 calc(20% - 6px);
+  min-width: 60px;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.ratio-item:hover {
+  background: #f1f5f9;
+}
+
+.ratio-item.active {
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+}
+
+.ratio-preview {
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc;
+  transition: all 0.15s;
+}
+
+.ratio-item.active .ratio-preview {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+}
+
+.ratio-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ratio-desc {
+  font-size: 11px;
+  color: #94a3b8;
 }
 </style>
