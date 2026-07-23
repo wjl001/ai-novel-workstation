@@ -492,6 +492,105 @@
       @confirm="handleOverwriteConfirm"
     />
 
+    <!-- Batch Synthesis Selection Dialog -->
+    <el-dialog
+      v-model="showBatchSynthesisSelectDialog"
+      title="批量生成视频｜选择剧集"
+      width="600px"
+      center
+      destroy-on-close
+      class="modern-dialog-v2 rounded-[32px] overflow-hidden"
+      append-to-body
+    >
+      <div class="py-4 px-2">
+        <!-- Select All Checkbox -->
+        <div class="flex items-center justify-between mb-4 px-2">
+          <div class="flex items-center gap-2">
+            <el-checkbox
+              :model-value="synthesisAllSelected"
+              @change="toggleSynthesisSelectAll"
+              class="synthesis-select-checkbox"
+            />
+            <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">全选</span>
+            <span class="text-[12px] text-slate-400">（共 {{ synthesisSelectEpisodes.length }} 集）</span>
+          </div>
+          <span class="text-[12px] text-slate-500">已选 {{ synthesisSelectedIds.size }} 集</span>
+        </div>
+
+        <!-- Episode List -->
+        <div class="max-h-[420px] overflow-y-auto custom-scrollbar rounded-2xl border border-slate-100 dark:border-slate-700">
+          <div
+            v-for="ep in synthesisSelectEpisodes"
+            :key="ep.id"
+            class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-b-0"
+            @click="toggleSynthesisEpisodeSelection(ep)"
+          >
+            <el-checkbox
+              :model-value="synthesisSelectedIds.has(ep.id)"
+              @change="toggleSynthesisEpisodeSelection(ep)"
+              class="synthesis-select-checkbox"
+            />
+            <span class="flex-1 text-[13px] text-slate-700 dark:text-slate-300">第 {{ ep.index }} 集</span>
+            <span class="text-[12px] text-slate-500 truncate max-w-[200px]" :title="ep.title">{{ ep.title }}</span>
+            <!-- Show storyboard video details if any -->
+            <div v-if="getStoryboardVideoIndices(ep).length > 0" class="flex items-center gap-1">
+              <el-popover
+                v-for="index in getStoryboardVideoIndices(ep)"
+                :key="index"
+                placement="top"
+                :width="150"
+                trigger="hover"
+              >
+                <template #reference>
+                  <span class="px-2 py-1 text-[10px] font-bold text-orange-600 bg-orange-50 rounded-full dark:text-orange-400 dark:bg-orange-900/30">
+                    分镜{{ index }}
+                  </span>
+                </template>
+                <div class="text-[12px] text-slate-600 dark:text-slate-300">
+                  分镜{{ index }}视频已生成
+                </div>
+              </el-popover>
+            </div>
+            <!-- Show "全集已合成" badge if synthesisVideo exists -->
+            <span
+              v-else-if="ep.synthesisVideo"
+              class="px-2 py-1 text-[10px] font-bold text-green-600 bg-green-50 rounded-full dark:text-green-400 dark:bg-green-900/30"
+            >
+              全集已合成
+            </span>
+            <!-- Show pending status if no videos -->
+            <span v-else class="px-2 py-1 text-[10px] font-bold text-slate-400 bg-slate-100 rounded-full dark:text-slate-500 dark:bg-slate-800">
+              待生成
+            </span>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-4 pb-2">
+          <el-button @click="showBatchSynthesisSelectDialog = false" class="!rounded-xl !px-10 !h-11">取消</el-button>
+          <el-button
+            type="primary"
+            :disabled="synthesisSelectedIds.size === 0"
+            @click="confirmBatchSynthesisSelection"
+            class="theme-primary-btn !rounded-xl !px-12 !h-11 font-black shadow-lg shadow-indigo-500/20"
+          >
+            确认生成（{{ synthesisSelectedIds.size }} 集）
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- Video Synthesis Overwrite Confirm Dialog -->
+    <ConfirmDialog
+      v-model="videoOverwriteConfirmVisible"
+      title="分镜视频覆盖确认"
+      :message="videoOverwriteConfirmData?.detail || ''"
+      confirm-text="继续生成"
+      cancel-text="取消"
+      @confirm="handleVideoOverwriteConfirm"
+      @cancel="videoOverwriteConfirmVisible = false"
+    />
+
     <GlobalUIDesignSpecsDialog
       v-model="showUIDesignSpecsDialog"
       title="剧集管理｜UI 设计标注"
@@ -751,6 +850,16 @@ const autoAssociateOnImport = ref(true);
 const manualImportText = ref('');
 const overwriteConfirmVisible = ref(false);
 const overwriteConfirmData = ref<any>(null);
+
+// Video synthesis overwrite confirmation state
+const videoOverwriteConfirmVisible = ref(false);
+const videoOverwriteConfirmData = ref<any>(null);
+
+// Batch synthesis selection dialog state
+const showBatchSynthesisSelectDialog = ref(false);
+const synthesisSelectEpisodes = ref<any[]>([]);
+const synthesisSelectedIds = ref<Set<string>>(new Set());
+const synthesisAllSelected = ref(false);
 
 // Subject Association Logic
 const handleGlobalAssociate = () => {
@@ -1317,28 +1426,146 @@ const handleBatchStoryboard = () => {
 };
 
 const handleBatchSynthesis = () => {
-  const targetEpisodes = currentTabEpisodes.value.filter(ep => ep.synthesisStatus !== 'success');
-  if (targetEpisodes.length === 0) {
-    ElMessage.warning('没有需要合成的剧集');
+  // Get all episodes in current tab that have assets completed (主体已设置)
+  const allEpisodes = currentTabEpisodes.value.filter(ep => ep.assetsStatus === 'success');
+  if (allEpisodes.length === 0) {
+    ElMessage.warning('没有可生成分镜视频的剧集');
     return;
   }
 
-  ElMessage.success(`已将 ${targetEpisodes.length} 个任务加入生成队列`);
+  // Open selection dialog with all episodes
+  // Pre-select episodes that don't have ALL storyboard videos generated
+  synthesisSelectEpisodes.value = allEpisodes;
+  synthesisSelectedIds.value = new Set();
+  allEpisodes.forEach(ep => {
+    const sceneCount = ep.storyboardScenes?.length || 0;
+    const generatedCount = ep.storyboardScenes?.filter((s: any) => s.video).length || 0;
+    // Pre-select if not all scenes have videos (has pending scenes)
+    if (sceneCount > 0 && generatedCount < sceneCount) {
+      synthesisSelectedIds.value.add(ep.id);
+    } else if (sceneCount === 0) {
+      // No scenes at all - also select
+      synthesisSelectedIds.value.add(ep.id);
+    }
+  });
+  synthesisAllSelected.value = synthesisSelectedIds.value.size === allEpisodes.length;
+  showBatchSynthesisSelectDialog.value = true;
+};
+
+// Toggle select all in batch synthesis dialog
+const toggleSynthesisSelectAll = () => {
+  if (synthesisAllSelected.value) {
+    synthesisSelectedIds.value.clear();
+  } else {
+    synthesisSelectEpisodes.value.forEach(ep => synthesisSelectedIds.value.add(ep.id));
+  }
+  synthesisAllSelected.value = !synthesisAllSelected.value;
+};
+
+// Toggle single episode selection
+const toggleSynthesisEpisodeSelection = (ep: any) => {
+  if (synthesisSelectedIds.value.has(ep.id)) {
+    synthesisSelectedIds.value.delete(ep.id);
+  } else {
+    synthesisSelectedIds.value.add(ep.id);
+  }
+  synthesisAllSelected.value = synthesisSelectedIds.value.size === synthesisSelectEpisodes.value.length;
+};
+
+// Get indices of storyboards that have videos
+const getStoryboardVideoIndices = (ep: any) => {
+  if (!ep.storyboardScenes) return [];
+  return ep.storyboardScenes
+    .map((scene: any, index: number) => scene.video ? index + 1 : null)
+    .filter((index: number | null) => index !== null);
+};
+
+// Get indices of storyboards that don't have videos
+const getPendingStoryboardIndices = (ep: any) => {
+  if (!ep.storyboardScenes) return [];
+  return ep.storyboardScenes
+    .map((scene: any, index: number) => scene.video ? null : index + 1)
+    .filter((index: number | null) => index !== null);
+};
+
+// Confirm batch synthesis selection and check for overwrite
+const confirmBatchSynthesisSelection = () => {
+  const selectedEpisodes = synthesisSelectEpisodes.value.filter(ep => synthesisSelectedIds.value.has(ep.id));
   
-  targetEpisodes.forEach(ep => {
+  if (selectedEpisodes.length === 0) {
+    ElMessage.warning('请至少选择一集');
+    return;
+  }
+
+  showBatchSynthesisSelectDialog.value = false;
+
+  // Check for episodes with some existing storyboard videos among selected
+  const episodesWithPartialVideos: any[] = [];
+  const episodesWithoutVideos: any[] = [];
+
+  selectedEpisodes.forEach(ep => {
+    const sceneCount = ep.storyboardScenes?.length || 0;
+    const generatedCount = ep.storyboardScenes?.filter((s: any) => s.video).length || 0;
+    
+    if (generatedCount > 0) {
+      episodesWithPartialVideos.push(ep);
+    } else {
+      episodesWithoutVideos.push(ep);
+    }
+  });
+
+  // If some selected episodes already have some videos, show overwrite/skip confirmation
+  if (episodesWithPartialVideos.length > 0) {
+    const detail = episodesWithPartialVideos.map(ep => {
+      const done = getStoryboardVideoIndices(ep).join('、');
+      const pending = getPendingStoryboardIndices(ep).join('、');
+      return `第${ep.index}集（已生成分镜${done}，待生成分镜${pending}）`;
+    }).join('；');
+    
+    videoOverwriteConfirmData.value = {
+      items: [...episodesWithPartialVideos, ...episodesWithoutVideos],
+      detail: detail
+    };
+    videoOverwriteConfirmVisible.value = true;
+    return;
+  }
+
+  // No existing videos, proceed directly
+  executeBatchStoryboardGeneration(selectedEpisodes);
+};
+
+// Execute batch storyboard video generation for the given episodes
+const executeBatchStoryboardGeneration = (episodes: any[]) => {
+  const totalScenes = episodes.reduce((sum, ep) => {
+    const pending = getPendingStoryboardIndices(ep);
+    return sum + (pending.length > 0 ? pending.length : (ep.storyboardScenes?.length || 6));
+  }, 0);
+  
+  ElMessage.success(`已将 ${episodes.length} 集的分镜视频生成任务加入队列（共 ${totalScenes} 个分镜）`);
+  
+  episodes.forEach(ep => {
     taskQueueManager.addTask({
-      id: `task-${ep.id}-synthesis`,
+      id: `task-${ep.id}-storyboard-video`,
       episodeId: ep.id,
       dramaTitle: episodeStore.currentDramaTitle,
       episodeTitle: ep.title || `第 ${ep.index} 集`,
       episodeIndex: ep.index,
-      type: 'synthesis',
+      type: 'storyboard',
       priority: 1,
       execute: async () => {
-        await handleSynthesis(ep);
+        await handleGenerate(ep);
       }
     });
   });
+};
+
+// Handle video overwrite confirmation
+const handleVideoOverwriteConfirm = () => {
+  if (videoOverwriteConfirmData.value) {
+    executeBatchStoryboardGeneration(videoOverwriteConfirmData.value.items);
+    videoOverwriteConfirmVisible.value = false;
+    videoOverwriteConfirmData.value = null;
+  }
 };
 
 // Initialize mock data if empty
@@ -1347,28 +1574,104 @@ onMounted(() => {
 
   // 强制加载 30 集真实模拟数据以供测试
   if (episodes.value.length <= 1) {
-    const mockEpisodes = Array.from({ length: 30 }, (_, i) => ({
-      id: `${i + 1}`,
-      index: i + 1,
-      title: `第 ${i + 1} 集：${['命运抉择', '重生归来', '商战风云', '真相大白', '暗流涌动', '最后对决'][i % 6]}`,
-      poster: `https://images.unsplash.com/photo-${[
-        '1618005182384-a83a8bd57fbe',
-        '1614850523296-d8c1af93d400',
-        '1620641788421-7a1c342ea42e',
-        '1536440136628-849c177e76a1',
-        '1509248961158-e54f6934749c',
-        '1478720568477-152d9b164e26'
-      ][i % 6]}?auto=format&fit=crop&q=80&w=400`,
-      scriptStatus: 'success' as const,
-      assetsStatus: 'success' as const,
-      storyboardStatus: 'pending' as const,
-      synthesisStatus: 'pending' as const,
-      storyboardGenerated: false,
-      duration: '00:00',
-      storyboardScenes: [],
-      gif: '',
-      status: 'pending' as const
-    }));
+    const titles = ['命运抉择', '重生归来', '商战风云', '真相大白', '暗流涌动', '最后对决'];
+    const posters = [
+      '1618005182384-a83a8bd57fbe',
+      '1614850523296-d8c1af93d400',
+      '1620641788421-7a1c342ea42e',
+      '1536440136628-849c177e76a1',
+      '1509248961158-e54f6934749c',
+      '1478720568477-152d9b164e26'
+    ];
+
+    const mockEpisodes = Array.from({ length: 30 }, (_, i) => {
+      const epIndex = i + 1;
+      const base = {
+        id: `${epIndex}`,
+        index: epIndex,
+        title: `第 ${epIndex} 集：${titles[epIndex % 6]}`,
+        poster: `https://images.unsplash.com/photo-${posters[epIndex % 6]}?auto=format&fit=crop&q=80&w=400`,
+        scriptStatus: 'success' as const,
+        assetsStatus: 'success' as const,
+        storyboardStatus: 'pending' as const,
+        synthesisStatus: 'pending' as const,
+        storyboardGenerated: false,
+        duration: '00:00',
+        storyboardScenes: [],
+        gif: '',
+        status: 'pending' as const
+      };
+
+      // 模拟部分剧集已生成分镜视频（分镜1、分镜2等），但未合成全集
+      // 分镜视频tab会显示这些剧集（assetsStatus成功，synthesisStatus未完成）
+      if (epIndex <= 6) {
+        // 第1-6集：全部生成分镜视频，未合成全集
+        return {
+          ...base,
+          storyboardStatus: 'success' as const,
+          storyboardGenerated: true,
+          storyboardScenes: [
+            { id: `scene-${epIndex}-1`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜1内容', progress: 100 },
+            { id: `scene-${epIndex}-2`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜2内容', progress: 100 },
+            { id: `scene-${epIndex}-3`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜3内容', progress: 100 },
+            { id: `scene-${epIndex}-4`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜4内容', progress: 100 },
+            { id: `scene-${epIndex}-5`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜5内容', progress: 100 },
+            { id: `scene-${epIndex}-6`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜6内容', progress: 100 },
+          ]
+        };
+      } else if (epIndex <= 12) {
+        // 第7-12集：只生成了部分分镜（分镜1、分镜2）
+        return {
+          ...base,
+          storyboardStatus: 'success' as const,
+          storyboardGenerated: true,
+          storyboardScenes: [
+            { id: `scene-${epIndex}-1`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜1内容', progress: 100 },
+            { id: `scene-${epIndex}-2`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜2内容', progress: 100 },
+            { id: `scene-${epIndex}-3`, status: 'pending', video: null, image: '', script: '分镜3内容', progress: 0 },
+            { id: `scene-${epIndex}-4`, status: 'pending', video: null, image: '', script: '分镜4内容', progress: 0 },
+            { id: `scene-${epIndex}-5`, status: 'pending', video: null, image: '', script: '分镜5内容', progress: 0 },
+            { id: `scene-${epIndex}-6`, status: 'pending', video: null, image: '', script: '分镜6内容', progress: 0 },
+          ]
+        };
+      } else if (epIndex <= 18) {
+        // 第13-18集：只生成了分镜1
+        return {
+          ...base,
+          storyboardStatus: 'success' as const,
+          storyboardGenerated: true,
+          storyboardScenes: [
+            { id: `scene-${epIndex}-1`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜1内容', progress: 100 },
+            { id: `scene-${epIndex}-2`, status: 'pending', video: null, image: '', script: '分镜2内容', progress: 0 },
+            { id: `scene-${epIndex}-3`, status: 'pending', video: null, image: '', script: '分镜3内容', progress: 0 },
+            { id: `scene-${epIndex}-4`, status: 'pending', video: null, image: '', script: '分镜4内容', progress: 0 },
+            { id: `scene-${epIndex}-5`, status: 'pending', video: null, image: '', script: '分镜5内容', progress: 0 },
+            { id: `scene-${epIndex}-6`, status: 'pending', video: null, image: '', script: '分镜6内容', progress: 0 },
+          ]
+        };
+      } else if (epIndex <= 24) {
+        // 第19-24集：已合成全集
+        return {
+          ...base,
+          storyboardStatus: 'success' as const,
+          storyboardGenerated: true,
+          synthesisStatus: 'success' as const,
+          duration: '01:12',
+          synthesisVideo: 'https://www.w3schools.com/html/movie.mp4',
+          storyboardScenes: [
+            { id: `scene-${epIndex}-1`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜1内容', progress: 100 },
+            { id: `scene-${epIndex}-2`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜2内容', progress: 100 },
+            { id: `scene-${epIndex}-3`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜3内容', progress: 100 },
+            { id: `scene-${epIndex}-4`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜4内容', progress: 100 },
+            { id: `scene-${epIndex}-5`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜5内容', progress: 100 },
+            { id: `scene-${epIndex}-6`, status: 'success', video: 'https://www.w3schools.com/html/movie.mp4', image: '', script: '分镜6内容', progress: 100 },
+          ]
+        };
+      } else {
+        // 第25-30集：没有任何视频
+        return base;
+      }
+    });
     episodeStore.setEpisodes(mockEpisodes);
   }
 

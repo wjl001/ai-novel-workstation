@@ -1,4 +1,4 @@
-<template>
+﻿﻿<template>
   <div class="free-canvas-container" @contextmenu.prevent="handleContextMenu">
     <!-- 左侧节点面板 -->
     <NodePanel ref="panelRef" @add-node="handleAddNode" />
@@ -88,6 +88,17 @@
           @delete="canvasStore.removeNode(node.id)"
           @drag-start="startDrag"
         />
+        <Scene3DNode
+          v-for="node in canvasStore.getNodesByType('scene3d')"
+          :key="node.id"
+          :node="node"
+          :is-selected="canvasStore.selectedNodeId.value === node.id"
+          :is-dragging="draggingNodeId === node.id"
+          @select="handleNodeSelect(node.id)"
+          @delete="canvasStore.removeNode(node.id)"
+          @drag-start="startDrag"
+          @open-edit="openScene3DEditPanel(node.id)"
+        />
       </div>
     </div>
 
@@ -175,6 +186,16 @@
     />
 
     <!-- 节点对话框 - 通过点击三个点打开 -->
+    <!-- 3D 导演台编辑面板 -->
+    <Scene3DEditPanel
+      v-if="showScene3DFullEditor && scene3dFullEditData"
+      :show="true"
+      :node-data="scene3dFullEditData"
+      @close="closeScene3DFullEditor"
+      @save="handleScene3DFullEditorSave"
+    />
+
+
     <NodeDialog
       v-if="showNodeDialog && dialogNode"
       :node="dialogNode"
@@ -253,6 +274,10 @@ import TextNode from './components/TextNode.vue'
 import ImageNode from './components/ImageNode.vue'
 import VideoNode from './components/VideoNode.vue'
 import AudioNode from './components/AudioNode.vue'
+import Scene3DNode from './components/Scene3DNode.vue'
+import Scene3DEditPanel from './components/Scene3DEditPanel.vue'
+import type { Scene3DDirectorData } from './types'
+import { createDefaultDirectorData } from './utils/Scene3DPreview'
 import NodeDialog from './components/NodeDialog.vue'
 
 const canvasStore = useCanvasStore()
@@ -265,6 +290,16 @@ const dragOffset = ref<NodePosition>({ x: 0, y: 0 })
 const showNodeDialog = ref(false)
 const dialogNodeId = ref<string | null>(null)
 const dialogPosition = ref<NodePosition>({ x: 0, y: 0 })
+
+// 3D 导演台编辑面板状态
+const showScene3DEditPanel = ref(false)
+const scene3dEditNodeId = ref<string | null>(null)
+const scene3dEditData = ref<Scene3DDirectorData | null>(null)
+
+// 3D 导演台全屏编辑状态
+const showScene3DFullEditor = ref(false)
+const scene3dFullEditNodeId = ref<string | null>(null)
+const scene3dFullEditData = ref<Scene3DDirectorData | null>(null)
 
 // 右键菜单状态
 const contextMenu = ref<{
@@ -457,13 +492,65 @@ const handlePolish = () => {
   }
 }
 
+// 打开 3D 导演台编辑面板
+const openScene3DEditPanel = (nodeId: string) => {
+  const node = canvasStore.getNode(nodeId)
+  if (!node || !node.data.directorData) return
+  scene3dEditNodeId.value = nodeId
+  scene3dEditData.value = { ...node.data.directorData }
+  showScene3DEditPanel.value = true
+}
+
+const closeScene3DEditPanel = () => {
+  showScene3DEditPanel.value = false
+  scene3dEditNodeId.value = null
+  scene3dEditData.value = null
+}
+
+const handleScene3DEditSave = (data: Scene3DDirectorData) => {
+  if (!scene3dEditNodeId.value) return
+  canvasStore.updateNode({
+    id: scene3dEditNodeId.value,
+    data: { directorData: data }
+  })
+  closeScene3DEditPanel()
+}
+
+// 打开 3D 导演台全屏编辑器
+const openScene3DFullEditor = (nodeId: string) => {
+  const node = canvasStore.getNode(nodeId)
+  if (!node || !node.data.directorData) return
+  scene3dFullEditNodeId.value = nodeId
+  scene3dFullEditData.value = { ...node.data.directorData }
+  showScene3DFullEditor.value = true
+}
+
+const closeScene3DFullEditor = () => {
+  showScene3DFullEditor.value = false
+  scene3dFullEditNodeId.value = null
+  scene3dFullEditData.value = null
+}
+
+const handleScene3DFullEditorSave = (data: Scene3DDirectorData) => {
+  if (!scene3dFullEditNodeId.value) return
+  canvasStore.updateNode({
+    id: scene3dFullEditNodeId.value,
+    data: { directorData: data }
+  })
+  closeScene3DFullEditor()
+}
+
 // 打开对话框
 const openNodeDialog = (nodeId: string) => {
   const node = canvasStore.getNode(nodeId)
   if (!node) return
+  if (node.type === 'scene3d') {
+    openScene3DEditPanel(nodeId)
+    return
+  }
   dialogNodeId.value = nodeId
   showNodeDialog.value = true
-  // 对话框跟随节点位置
+  // 对话板跟随节点位置
   updateDialogPosition(node)
 }
 
@@ -567,9 +654,11 @@ const handleAddNode = (type: string) => {
     type: type as any,
     label: type === 'role' ? '未命名角色' :
            type === 'scene' ? '新场景' :
+           type === 'scene3d' ? '新 3D 场景' :
            type === 'text' ? '新文本' :
            type === 'image' ? '新图片' :
-           type === 'video' ? '新视频' : '新音频'
+           type === 'video' ? '新视频' : '新音频',
+    data: type === 'scene3d' ? { directorData: createDefaultDirectorData() } : undefined
   }
   canvasStore.addNode(params)
 }
@@ -671,6 +760,7 @@ const handleContextMenu = (event: MouseEvent) => {
     items: [
       { id: 'role', label: '角色', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>', type: 'role' as any, action: 'addContext' },
       { id: 'scene', label: '场景', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', type: 'scene' as any, action: 'addContext' },
+      { id: 'scene3d', label: '3D 导演台', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3l10 6 10-6-10 6z"/><path d="M2 12l10 6 10-6"/><path d="M2 21l10 6 10-6"/></svg>', type: 'scene3d' as any, action: 'addContext' },
       { id: 'text', label: '文本', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>', type: 'text' as any, action: 'addContext' },
       { id: 'image', label: '图片', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', type: 'image' as any, action: 'addContext' },
       { id: 'video', label: '视频', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>', type: 'video' as any, action: 'addContext' },
@@ -682,7 +772,8 @@ const handleContextMenu = (event: MouseEvent) => {
 const handleContextMenuSelect = (item: MenuItem) => {
   const params: AddNodeParams = {
     type: item.type,
-    label: item.label
+    label: item.label,
+    data: (item.type as string) === 'scene3d' ? { directorData: createDefaultDirectorData() } : undefined
   }
   canvasStore.addNode(params)
   closeContextMenu()

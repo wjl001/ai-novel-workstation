@@ -13,7 +13,8 @@ const NODE_SIZES: Record<NodeType, { width: number; height: number }> = {
   text: { width: 260, height: 160 },
   image: { width: 240, height: 260 },
   video: { width: 240, height: 260 },
-  audio: { width: 240, height: 160 }
+  audio: { width: 240, height: 160 },
+  scene3d: { width: 320, height: 280 }
 }
 
 // 全局状态
@@ -42,7 +43,8 @@ const getNextPosition = (type: NodeType): NodePosition => {
       text: { x: 100, y: 400 },
       image: { x: 500, y: 400 },
       video: { x: 100, y: 700 },
-      audio: { x: 500, y: 700 }
+      audio: { x: 500, y: 700 },
+      scene3d: { x: 900, y: 100 }
     }
     return startPositions[type] || { x: baseX, y: baseY }
   }
