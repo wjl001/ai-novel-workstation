@@ -19,6 +19,13 @@
               <el-icon :size="12"><InfoFilled /></el-icon>
               <span>产品设计说明</span>
             </button>
+            <button 
+              @click="showRulesDialog = true"
+              class="ml-1 h-7 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800/50 hover:border-cyan-400 dark:hover:border-cyan-500/50"
+            >
+              <el-icon :size="12"><Reading /></el-icon>
+              <span>算力豆规则说明</span>
+            </button>
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">管理会员、算力豆与充值，解锁更强创作能力</p>
         </div>
@@ -138,25 +145,36 @@
           <div class="rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/85 dark:bg-slate-900/60 backdrop-blur-xl shadow-sm p-5">
             <div class="flex items-center justify-between">
               <div class="text-sm font-black text-slate-800 dark:text-slate-100">算力管理</div>
-              <div class="text-xs font-black text-slate-400 dark:text-slate-500">总可用算力豆</div>
+              <div class="text-xs font-black text-slate-400 dark:text-slate-500">总可用 {{ formatPointsCompact(totalAvailablePoints) }}</div>
             </div>
-            <div class="mt-3 text-3xl font-black text-slate-900 dark:text-white">{{ formatPointsCompact(userStore.balance) }}</div>
-            <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-              <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-                <span>赠送算力豆</span>
-                <span class="font-black text-slate-700 dark:text-slate-200">{{ giftPointsTotal.toLocaleString() }}</span>
+            <div class="mt-3 flex items-baseline gap-1">
+              <span class="text-3xl font-black text-slate-900 dark:text-white">{{ formatPointsCompact(totalAvailablePoints) }}</span>
+              <span class="text-xs font-bold text-slate-400 dark:text-slate-500">算力豆</span>
+            </div>
+            <div class="mt-4 flex flex-col gap-3">
+              <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100/70 dark:border-indigo-800/30">
+                <div class="w-8 h-8 rounded-xl bg-indigo-500/15 flex items-center justify-center shrink-0">
+                  <el-icon class="text-indigo-500 dark:text-indigo-300"><Calendar /></el-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-300">会员算力豆</span>
+                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatPointsCompact(memberPoints) }}</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">会员套餐赠送 · 随会员到期清零 · 升级时积分合并</div>
+                </div>
               </div>
-              <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-                <span>充值算力豆</span>
-                <span class="font-black text-slate-700 dark:text-slate-200">{{ rechargePointsTotal.toLocaleString() }}</span>
-              </div>
-              <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-                <span>今日消耗</span>
-                <span class="font-black text-amber-600 dark:text-amber-300">0</span>
-              </div>
-              <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-                <span>累计消耗</span>
-                <span class="font-black text-amber-600 dark:text-amber-300">0</span>
+              <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100/70 dark:border-emerald-800/30">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+                  <el-icon class="text-emerald-500 dark:text-emerald-300"><Coin /></el-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-300">充值算力豆</span>
+                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatPointsCompact(rechargeBalance) }}</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">充值购买 · 永久有效 · 会员过期后仍可继续使用</div>
+                </div>
               </div>
             </div>
           </div>
@@ -267,11 +285,24 @@
                   <div class="shrink-0 w-full md:w-[220px]">
                     <div class="rounded-3xl bg-slate-900/80 dark:bg-slate-950/70 border border-white/10 p-5">
                       <div class="flex items-center justify-between">
-                        <div class="text-xs font-black text-slate-300">可用算力豆</div>
+                        <div class="text-xs font-black text-slate-300">总可用算力豆</div>
                         <el-icon class="text-amber-300"><Coin /></el-icon>
                       </div>
-                      <div class="mt-4 text-4xl font-black text-cyan-300">{{ formatPointsCompact(userStore.balance) }}</div>
-                      <div class="mt-2 text-xs text-slate-300/80">可用算力豆</div>
+                      <div class="mt-4 text-4xl font-black text-cyan-300">{{ formatPointsCompact(totalAvailablePoints) }}</div>
+                      <div class="mt-3 space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                          <span class="text-slate-400 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>会员豆
+                          </span>
+                          <span class="text-cyan-300 font-black">{{ formatPointsCompact(memberPoints) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                          <span class="text-slate-400 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>充值豆
+                          </span>
+                          <span class="text-cyan-300 font-black">{{ formatPointsCompact(rechargeBalance) }}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -314,11 +345,10 @@
                       <span class="text-sm font-black text-slate-500 dark:text-slate-400">/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
                     </div>
                     
-                    <div class="mt-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 text-center">
-                      *实际价格以当前汇率为准
+                    <!-- <div class="mt-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 text-center">
                       <br/>
                       次{{ billingCycle === 'monthly' ? '月' : '年' }}按¥{{ billingCycle === 'monthly' ? tier.priceMonthly : tier.priceYearly }}/{{ billingCycle === 'monthly' ? '月' : '年' }}自动续费
-                    </div>
+                    </div> -->
 
                     <el-button
                       round
@@ -329,9 +359,12 @@
                       选择计划
                     </el-button>
                     
-                    <div class="mt-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 p-3 text-center">
-                      <span class="text-sm font-black" :class="tier.id === 'studio' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'">{{ tier.points }}</span>
-                      <span class="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1">算力豆/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
+                    <div class="mt-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 p-3 text-center border border-indigo-100 dark:border-indigo-800/30">
+                      <div class="flex items-center justify-center gap-1">
+                        <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 px-1.5 py-0.5 rounded">算力豆</span>
+                        <span class="text-sm font-black" :class="tier.id === 'studio' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'">{{ tier.points.toLocaleString() }}</span>
+                      </div>
+                      <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1">随会员周期发放，到期清零</div>
                     </div>
                   </div>
                   
@@ -351,7 +384,7 @@
               <div class="flex items-start justify-between gap-4">
                 <div>
                   <div class="text-lg font-black text-slate-900 dark:text-white">算力豆充值套餐</div>
-                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">即时到账；订单可在“充值记录”查看</div>
+                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">即时到账 · 充值获得「长效算力豆」永久有效 · 订单可在“充值记录”查看</div>
                 </div>
                 <button type="button" class="text-sm font-black text-cyan-600 dark:text-cyan-300 hover:underline" @click="ElMessage.info('演示版：可扩展完整充值包与支付方式')">
                   查看完整充值包
@@ -1084,7 +1117,11 @@
             </div>
           </div>
           <div v-if="purchaseDialog.bonusPoints" class="mt-3 flex items-center justify-between">
-            <div class="text-sm font-black text-slate-700 dark:text-slate-300">充值算力豆</div>
+            <div class="flex items-center gap-2">
+              <span v-if="purchaseDialog.pointType === 'monthly'" class="text-[10px] font-black text-indigo-500 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 px-1.5 py-0.5 rounded">月度</span>
+              <span v-else class="text-[10px] font-black text-emerald-500 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded">长效</span>
+              <span class="text-sm font-black text-slate-700 dark:text-slate-300">算力豆</span>
+            </div>
             <div class="text-sm font-black text-amber-600 dark:text-amber-300">+{{ purchaseDialog.bonusPoints.toLocaleString() }}</div>
           </div>
         </div>
@@ -1179,6 +1216,8 @@
       id="member-center"
       :default-content="memberCenterDesign"
     />
+    <!-- 算力豆规则说明弹窗 -->
+    <MemberRulesDialog v-model="showRulesDialog" />
   </div>
 </template>
 
@@ -1187,12 +1226,14 @@ import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
+import MemberRulesDialog from '@/components/MemberRulesDialog.vue'
 import { useUserStore } from '@/store/user'
 import { useThemeStore } from '@/store/theme'
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Calendar,
   ChatDotRound,
   Coin,
   CopyDocument,
@@ -1258,9 +1299,16 @@ interface LocalInvoice {
   createdAt: number
 }
 
+interface MemberPointsPool {
+  totalPoints: number    // 当前总积分（单一积分池）
+  expireAt: number       // 到期时间（开通日起算，升级时延长）
+  currentTier: string    // 当前权益档位
+}
+
 interface MemberState {
   superExpireAt: number
   planExpireAt: Record<string, number>
+  pointsPool: MemberPointsPool | null
   orders: LocalOrder[]
   invoices: LocalInvoice[]
 }
@@ -1289,6 +1337,7 @@ const userStore = useUserStore()
 const themeStore = useThemeStore()
 
 const showDesignDialog = ref(false)
+const showRulesDialog = ref(false)
 
 const generateMockData = (count: number): ConsumptionDetail[] => {
   const data: ConsumptionDetail[] = []
@@ -1388,14 +1437,18 @@ const memberCenterDesign = {
   layout: [
     '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
-    '**总览页头部**：展示超级会员状态、核心权益标签及可用算力豆大数值显示。',
-    '**会员套餐区**：支持“连续包月/按年购买”切换，并按业务线（短剧、视频、音乐、小说）分类展示不同档位套餐。',
-    '**算力包充值**：提供不同额度的算力豆充值包，并带有折扣标签提示。',
+    '**总览页头部**：展示超级会员状态、核心权益标签及总可用算力豆（会员算力豆 + 充值算力豆合并显示）。',
+    '**算力管理面板**：显示「会员算力豆」（会员套餐赠送，随会员到期清零，升级时积分合并）与「充值算力豆」（充值购买，永久有效），单一积分池模型。',
+    '**会员套餐区**：支持“按月/按年购买”切换，套餐赠送会员算力豆（随会员周期发放，到期清零），所有算力豆等值。',
+    '**算力豆充值套餐**：充值获得永久有效算力豆，直接写入用户余额，与会员算力豆独立存储。',
     '**算力消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
   ],
   interactions: [
-    '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',
-    '**支付确认弹窗**：点击"选择计划"或"立即充值"触发确认支付弹窗，展示金额及赠送算力豆详情。',
+    '**算力豆类型说明**：会员算力豆（会员套餐赠送，随会员周期发放，到期清零，升级时积分合并）与充值算力豆（充值购买，永久有效）为独立的两笔余额，无消耗优先级差异。',
+    '**会员过期规则**：会员算力豆随会员到期清零，不结转、不返还；充值算力豆全部保留、永久有效，无会员状态下可继续使用。',
+    '**跨档位升级规则**：采用“全额购买新档”，不做差价计算。升级时新档积分直接合并到现有积分池，到期时间延长，避免积分浪费。',
+    '**计费规则**：所有算力豆均按“1元=100积分”等面值发放，会员档位之间不存在赠送比例差异（溢价体现在功能权益，不在积分数量），不存在套利空间。',
+    '**支付确认弹窗**：点击"选择计划"或"立即充值"触发确认支付弹窗，展示金额、算力豆数量及有效期说明。',
     '**充值记录详情**：点击充值列表项可展开查看详细订单号及开票入口。',
     '**消耗明细查看**：支持横向滚动查看完整的消耗字段，并提供报表导出功能。',
     '**算力豆领取**：在邀请返利页面，支持用户将获得的算力豆奖励领取到可用余额。'
@@ -1425,39 +1478,35 @@ const activeTiers = computed(() => {
 const getTierFeatures = (tier: any) => {
   if (tier.id === 'basic') {
     return [
-      '月度算力豆包：9,900 算力豆',
-      '算力豆有效期：当月有效，逾期清零',
+      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
       '视频分辨率：480P / 720P',
       '并发任务数：2',
       '生成队列：标准',
-      '水印/授权：带水印，带字幕，个人用途',
-      'API 接入：不支持',
       '支持服务：工单',
-      '月产能参照(720P标准视频)：约 100 秒'
+      '月产能参照（720P标准视频）：约 100 秒',
+      '注：1080P/4K、去水印、商用授权、多并发、API 需升级专业版'
     ]
   } else if (tier.id === 'pro') {
     return [
-      '月度算力豆包：29,900 算力豆',
-      '算力豆有效期：当月有效，逾期清零',
-      '视频分辨率：+ 480P/720P/1080P/4k',
+      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
+      '视频分辨率：+ 1080P / 4K',
       '并发任务数：4',
       '生成队列：优先',
-      '水印/授权：去水印 +去字幕 + 商用授权',
+      '水印/授权：去水印 + 去字幕 + 商用授权',
       'API 接入：不支持',
       '支持服务：工单优先',
-      '月产能参照(720P标准视频)：约 300 秒'
+      '月产能参照（720P标准视频）：约 300 秒'
     ]
   } else if (tier.id === 'studio') {
     return [
-      '月度算力豆包：99,900 算力豆',
-      '算力豆有效期：当月有效，逾期清零',
-      '视频分辨率：+ 480P/720P/1080P/4k ',
+      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
+      '视频分辨率：+ 1080P / 4K',
       '并发任务数：8',
       '生成队列：最高优先',
-      '水印/授权：去水印 +去字幕 + 商用授权',
+      '水印/授权：去水印 + 去字幕 + 商用授权',
       'API 接入：支持',
       '支持服务：专属对接',
-      '月产能参照(720P标准视频)：约 1,000 秒'
+      '月产能参照（720P标准视频）：约 1,000 秒'
     ]
   }
   return []
@@ -1471,14 +1520,30 @@ const openPurchaseTier = (tier: any) => {
   purchaseDialog.summary = `${mt} - ${tier.name}（${cycleText}）`
   purchaseDialog.amount = price
   purchaseDialog.bonusPoints = tier.points
+  purchaseDialog.pointType = 'monthly'  // 会员套餐赠送的是会员算力豆
   purchaseDialog.payload = {
     type: 'member',
     title: `${mt} - ${tier.name}（${cycleText}）`,
     amount: price,
     bonusPoints: tier.points,
+    pointType: 'monthly',
     effect: () => {
-      userStore.setBalance(userStore.balance + tier.points)
-      ElMessage.success(`成功开通 ${mt} ${tier.name}`)
+      const dayMs = 24 * 60 * 60 * 1000
+      const periodDays = billingCycle.value === 'monthly' ? 30 : 365
+      if (memberState.pointsPool) {
+        // 积分池已存在，升级合并
+        memberState.pointsPool.totalPoints += tier.points
+        memberState.pointsPool.expireAt += periodDays * dayMs
+        memberState.pointsPool.currentTier = tier.id
+      } else {
+        // 首次开通，创建新积分池
+        memberState.pointsPool = {
+          totalPoints: tier.points,
+          expireAt: Date.now() + periodDays * dayMs,
+          currentTier: tier.id
+        }
+      }
+      ElMessage.success(`成功开通 ${mt} ${tier.name}，获得 ${tier.points.toLocaleString()} 会员算力豆`)
     }
   }
   purchaseDialog.visible = true
@@ -1516,6 +1581,7 @@ const isDark = computed(() => themeStore.isDark)
 const memberState = reactive<MemberState>({
   superExpireAt: 0,
   planExpireAt: {},
+  pointsPool: null,
   orders: [],
   invoices: []
 })
@@ -1554,6 +1620,26 @@ const formatPointsCompact = (points: number) => {
 
 const giftPointsTotal = computed(() => memberState.orders.filter(o => o.type === 'member').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
 const rechargePointsTotal = computed(() => memberState.orders.filter(o => o.type === 'recharge').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
+
+// 单一积分池：会员套餐积分 + 充值积分
+// 会员套餐积分（随会员到期清零）
+const memberPoints = computed(() => memberState.pointsPool ? memberState.pointsPool.totalPoints : 0)
+// 充值积分（永久有效，无会员状态下仍可用）
+const rechargeBalance = computed(() => userStore.balance)
+// 总可用积分 = 会员积分 + 充值积分
+const totalAvailablePoints = computed(() => memberPoints.value + rechargeBalance.value)
+
+// 当前会员积分池到期时间
+const pointsExpireAt = computed(() => memberState.pointsPool ? memberState.pointsPool.expireAt : 0)
+// 当前权益档位
+const currentTier = computed(() => memberState.pointsPool ? memberState.pointsPool.currentTier : '')
+// 剩余天数
+const remainingDays = computed(() => {
+  const expire = pointsExpireAt.value
+  if (!expire) return 0
+  const diff = expire - Date.now()
+  return Math.max(0, Math.ceil(diff / (24 * 60 * 60 * 1000)))
+})
 
 const getPlanExpireAt = (planId: string) => {
   return memberState.planExpireAt?.[planId] || 0
@@ -1613,12 +1699,14 @@ const purchaseDialog = reactive<{
   summary: string
   amount: number
   bonusPoints: number
-  payload: { type: OrderType; title: string; amount: number; bonusPoints: number; effect?: () => void } | null
+  pointType: 'monthly' | 'permanent'
+  payload: { type: OrderType; title: string; amount: number; bonusPoints: number; pointType: 'monthly' | 'permanent'; effect?: () => void } | null
 }>({
   visible: false,
   summary: '',
   amount: 0,
   bonusPoints: 0,
+  pointType: 'monthly',
   payload: null
 })
 
@@ -1708,17 +1796,7 @@ const loadState = () => {
     memberState.planExpireAt = {
       'short-drama': Date.now() + monthMs
     }
-    memberState.orders = []
-    memberState.invoices = []
-    return
-  }
-  if (!raw) {
-    const monthMs = 30 * 24 * 60 * 60 * 1000
-    memberState.superExpireAt = Date.now() + monthMs
-    memberState.planExpireAt = {
-      'short-drama': Date.now() + monthMs,
-      music: Date.now() + monthMs
-    }
+    memberState.pointsPool = null
     memberState.orders = []
     memberState.invoices = []
     return
@@ -1728,11 +1806,22 @@ const loadState = () => {
     const parsed = JSON.parse(raw) as Partial<MemberState>
     memberState.superExpireAt = typeof parsed.superExpireAt === 'number' ? parsed.superExpireAt : 0
     memberState.planExpireAt = parsed.planExpireAt && typeof parsed.planExpireAt === 'object' ? (parsed.planExpireAt as Record<string, number>) : {}
+    if (parsed.pointsPool && typeof parsed.pointsPool === 'object') {
+      const p = parsed.pointsPool as any
+      memberState.pointsPool = {
+        totalPoints: typeof p.totalPoints === 'number' ? p.totalPoints : 0,
+        expireAt: typeof p.expireAt === 'number' ? p.expireAt : 0,
+        currentTier: typeof p.currentTier === 'string' ? p.currentTier : ''
+      }
+    } else {
+      memberState.pointsPool = null
+    }
     memberState.orders = Array.isArray(parsed.orders) ? (parsed.orders as LocalOrder[]) : []
     memberState.invoices = Array.isArray(parsed.invoices) ? (parsed.invoices as LocalInvoice[]) : []
   } catch {
     memberState.superExpireAt = 0
     memberState.planExpireAt = {}
+    memberState.pointsPool = null
     memberState.orders = []
     memberState.invoices = []
   }
@@ -1742,6 +1831,7 @@ const saveState = () => {
   const toSave: Omit<MemberState, 'points'> = {
     superExpireAt: memberState.superExpireAt,
     planExpireAt: memberState.planExpireAt,
+    pointsPool: memberState.pointsPool,
     orders: memberState.orders,
     invoices: memberState.invoices
   }
@@ -1786,20 +1876,35 @@ const genOrderId = () => {
 const openPurchaseSuper = () => {
   const amount = 298
   const bonusPoints = 3000
-  const nextExpireAt = Date.now() + 30 * 24 * 60 * 60 * 1000
+  const dayMs = 24 * 60 * 60 * 1000
+  const periodDays = 30
   purchaseDialog.summary = '超级会员（按月）'
   purchaseDialog.amount = amount
   purchaseDialog.bonusPoints = bonusPoints
+  purchaseDialog.pointType = 'monthly'  // 超级会员赠送的也是会员算力豆
   purchaseDialog.payload = {
     type: 'member',
     title: '超级会员（按月）',
     amount,
     bonusPoints,
+    pointType: 'monthly',
     effect: () => {
       memberState.superExpireAt = Math.max(memberState.superExpireAt, Date.now())
       memberState.superExpireAt = memberState.superExpireAt + 30 * 24 * 60 * 60 * 1000
-      userStore.setBalance(userStore.balance + bonusPoints)
-      if (memberState.superExpireAt < nextExpireAt) memberState.superExpireAt = nextExpireAt
+      if (memberState.pointsPool) {
+        // 积分池已存在，升级合并
+        memberState.pointsPool.totalPoints += bonusPoints
+        memberState.pointsPool.expireAt += periodDays * dayMs
+        memberState.pointsPool.currentTier = 'super'
+      } else {
+        // 首次开通，创建新积分池
+        memberState.pointsPool = {
+          totalPoints: bonusPoints,
+          expireAt: Date.now() + periodDays * dayMs,
+          currentTier: 'super'
+        }
+      }
+      ElMessage.success(`成功开通超级会员，获得 ${bonusPoints.toLocaleString()} 会员算力豆`)
     }
   }
   purchaseDialog.visible = true
@@ -1825,15 +1930,18 @@ const openPurchasePlan = (plan: MemberPlan) => {
 }
 
 const openRechargePackage = (pkg: RechargePackage) => {
-  purchaseDialog.summary = `算力豆充值 ${pkg.points.toLocaleString()}`
+  purchaseDialog.summary = `长效算力豆充值 ${pkg.points.toLocaleString()}`
   purchaseDialog.amount = pkg.price
   purchaseDialog.bonusPoints = pkg.points
+  purchaseDialog.pointType = 'permanent'  // 充值购买的是长效算力豆
   purchaseDialog.payload = {
     type: 'recharge',
-    title: `算力豆充值 ${pkg.points.toLocaleString()}`,
+    title: `长效算力豆充值 ${pkg.points.toLocaleString()}`,
     amount: pkg.price,
     bonusPoints: pkg.points,
+    pointType: 'permanent',
     effect: () => {
+      // 长效算力豆：写入 userStore.balance，永久有效
       userStore.setBalance(userStore.balance + pkg.points)
     }
   }
