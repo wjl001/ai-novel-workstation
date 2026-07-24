@@ -3351,36 +3351,38 @@ const downloadVideo = () => {
   }, 1500);
 };
 
-// --- Single Scene Generation Mock ---
-const handleGenerateSingleScene = (idx: number) => {
-  if (timelineScenes.value[idx]) {
-    // 检查余额
-    if (userStore.balance < 100) {
-      return ElMessage.error('算力豆余额不足，请先充值');
-    }
+// --- Scene Generation Core (Async, Task-Registerable) ---
+// Core generation logic as an async function that returns a promise
+const executeGenerateSingleScene = async (idx: number) => {
+  if (!timelineScenes.value[idx]) throw new Error('分镜不存在');
+  if (userStore.balance < 100) throw new Error('算力豆余额不足，请先充值');
 
-    timelineScenes.value[idx].status = 'generating';
-    timelineScenes.value[idx].progress = 0;
-    
-    // 模拟参数传递
-    const params = {
-      model: modelStore.selectedVideoModel,
-      withSubtitle: isSubtitled.value,
-      removeWatermark: isWatermarkRemoved.value,
-      resolution: resolution.value // 应用分辨率设置
-    };
-    console.log(`Generating scene ${idx + 1} with:`, params);
+  timelineScenes.value[idx].status = 'generating';
+  timelineScenes.value[idx].progress = 0;
+  
+  // 模拟参数传递
+  const params = {
+    model: modelStore.selectedVideoModel,
+    withSubtitle: isSubtitled.value,
+    removeWatermark: isWatermarkRemoved.value,
+    resolution: resolution.value
+  };
+  console.log(`Generating scene ${idx + 1} with:`, params);
 
+  await new Promise<void>((resolve) => {
     const interval = setInterval(() => {
+      if (!timelineScenes.value[idx]) {
+        clearInterval(interval);
+        resolve();
+        return;
+      }
       timelineScenes.value[idx].progress += 5;
       if (timelineScenes.value[idx].progress >= 100) {
         clearInterval(interval);
-        // 扣除算力豆
         userStore.deductBalance(100);
         
         timelineScenes.value[idx].status = 'success';
         timelineScenes.value[idx].video = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-        // 同时设置预览图，确保时间轴能看到画面 (使用随机图片避免加载失败)
         timelineScenes.value[idx].image = `https://picsum.photos/seed/${idx}_${Date.now()}/600/338`;
         persistStoryboardForEpisode(episodeId.value);
         
@@ -3388,17 +3390,59 @@ const handleGenerateSingleScene = (idx: number) => {
         if (isSubtitled.value) successMsg += ' [含字幕]';
         if (isWatermarkRemoved.value) successMsg += ' [已去水印]';
         ElMessage.success(successMsg);
+        resolve();
       }
     }, 100);
+  });
+};
+
+// Task-registered wrapper: registers a task in Task Center before generating
+const handleGenerateSingleScene = (idx: number) => {
+  const scene = timelineScenes.value[idx];
+  if (!scene) return;
+  if (userStore.balance < 100) {
+    return ElMessage.error('算力豆余额不足，请先充值');
   }
+
+  // Register task in Task Center
+  taskQueueManager.addTask({
+    id: `task-${episodeId.value}-scene-${idx + 1}-${Date.now()}`,
+    episodeId: episodeId.value,
+    dramaTitle: episodeStore.currentDramaTitle,
+    episodeTitle: episode.value?.title || `第 ${episode.value?.index || 1} 集`,
+    episodeIndex: episode.value?.index || 1,
+    sceneIndex: idx + 1,
+    taskSource: 'storyboard-single',
+    type: 'storyboard-scene',
+    priority: 2,
+    execute: async () => {
+      await executeGenerateSingleScene(idx);
+    }
+  });
 };
 
 const handleBatchGenerate = () => {
   const targets = isMultiSelectMode.value ? selectedScenes.value : [currentSceneIdx.value];
   if (targets.length === 0) return ElMessage.warning('请先选择要生成的分镜');
   
-  ElMessage.success(`开始批量生成 ${targets.length} 个分镜...`);
-  targets.forEach(idx => handleGenerateSingleScene(idx));
+  ElMessage.success(`已将 ${targets.length} 个分镜视频任务加入生成队列`);
+  targets.forEach(idx => {
+    // Register each scene as a separate task
+    taskQueueManager.addTask({
+      id: `task-${episodeId.value}-scene-${idx + 1}-${Date.now()}`,
+      episodeId: episodeId.value,
+      dramaTitle: episodeStore.currentDramaTitle,
+      episodeTitle: episode.value?.title || `第 ${episode.value?.index || 1} 集`,
+      episodeIndex: episode.value?.index || 1,
+      sceneIndex: idx + 1,
+      taskSource: 'storyboard-batch',
+      type: 'storyboard-scene',
+      priority: 1,
+      execute: async () => {
+        await executeGenerateSingleScene(idx);
+      }
+    });
+  });
 };
 
 const handleBatchDownload = async () => {

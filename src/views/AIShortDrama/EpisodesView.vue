@@ -1384,19 +1384,61 @@ const handleSingleBatchStoryboard = (ep: any) => {
     return;
   }
 
-  ElMessage.success(`已开始为第 ${ep.index} 集批量生成分镜视频`);
+  // Register individual scene-level tasks instead of one aggregated task
+  const totalScenes = ep.storyboardScenes?.length || 6;
+  ElMessage.success(`已开始为第 ${ep.index} 集生成 ${totalScenes} 个分镜视频`);
   
-  taskQueueManager.addTask({
-    id: `task-${ep.id}-storyboard-single`,
-    episodeId: ep.id,
-    dramaTitle: episodeStore.currentDramaTitle,
-    episodeTitle: ep.title || `第 ${ep.index} 集`,
-    episodeIndex: ep.index,
-    type: 'storyboard',
-    priority: 2, // Higher priority for single episode trigger
-    execute: async () => {
-      await handleGenerate(ep);
-    }
+  for (let i = 1; i <= totalScenes; i++) {
+    taskQueueManager.addTask({
+      id: `task-${ep.id}-scene-${i}-single`,
+      episodeId: ep.id,
+      dramaTitle: episodeStore.currentDramaTitle,
+      episodeTitle: ep.title || `第 ${ep.index} 集`,
+      episodeIndex: ep.index,
+      sceneIndex: i,
+      taskSource: 'episodes-single',
+      type: 'storyboard-scene',
+      priority: 2,
+      execute: async () => {
+        await executeSceneGeneration(ep, i);
+      }
+    });
+  }
+};
+
+// Execute a single scene generation for an episode
+const executeSceneGeneration = async (ep: any, sceneNum: number) => {
+  // Update the episode's scene progress
+  if (!ep.storyboardScenes) {
+    ep.storyboardScenes = Array.from({ length: 6 }, (_, i) => ({
+      id: `${ep.id}-scene-${i + 1}`,
+      index: i + 1,
+      image: '',
+      video: '',
+      description: '',
+      status: 'pending',
+      progress: 0
+    }));
+  }
+  
+  const scene = ep.storyboardScenes[sceneNum - 1];
+  if (!scene) return;
+  
+  scene.status = 'generating';
+  scene.progress = 0;
+  
+  // Simulate generation (in real app this would call the API)
+  await new Promise<void>((resolve) => {
+    const interval = setInterval(() => {
+      scene.progress += 5;
+      if (scene.progress >= 100) {
+        clearInterval(interval);
+        scene.status = 'success';
+        scene.video = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        scene.image = `https://picsum.photos/seed/${ep.id}_${sceneNum}_${Date.now()}/600/338`;
+        resolve();
+      }
+    }, 100);
   });
 };
 
@@ -1407,21 +1449,28 @@ const handleBatchStoryboard = () => {
     return;
   }
 
-  ElMessage.success(`已将 ${targetEpisodes.length} 个任务加入生成队列`);
+  // Count total scenes
+  const totalScenes = targetEpisodes.reduce((sum, ep) => sum + (ep.storyboardScenes?.length || 6), 0);
+  ElMessage.success(`已将 ${targetEpisodes.length} 集共 ${totalScenes} 个分镜视频任务加入队列`);
   
   targetEpisodes.forEach(ep => {
-    taskQueueManager.addTask({
-      id: `task-${ep.id}-storyboard`,
-      episodeId: ep.id,
-      dramaTitle: episodeStore.currentDramaTitle,
-      episodeTitle: ep.title || `第 ${ep.index} 集`,
-      episodeIndex: ep.index,
-      type: 'storyboard',
-      priority: 1,
-      execute: async () => {
-        await handleGenerate(ep);
-      }
-    });
+    const totalScenes = ep.storyboardScenes?.length || 6;
+    for (let i = 1; i <= totalScenes; i++) {
+      taskQueueManager.addTask({
+        id: `task-${ep.id}-scene-${i}`,
+        episodeId: ep.id,
+        dramaTitle: episodeStore.currentDramaTitle,
+        episodeTitle: ep.title || `第 ${ep.index} 集`,
+        episodeIndex: ep.index,
+        sceneIndex: i,
+        taskSource: 'episodes-batch',
+        type: 'storyboard-scene',
+        priority: 1,
+        execute: async () => {
+          await executeSceneGeneration(ep, i);
+        }
+      });
+    }
   });
 };
 
@@ -1544,18 +1593,23 @@ const executeBatchStoryboardGeneration = (episodes: any[]) => {
   ElMessage.success(`已将 ${episodes.length} 集的分镜视频生成任务加入队列（共 ${totalScenes} 个分镜）`);
   
   episodes.forEach(ep => {
-    taskQueueManager.addTask({
-      id: `task-${ep.id}-storyboard-video`,
-      episodeId: ep.id,
-      dramaTitle: episodeStore.currentDramaTitle,
-      episodeTitle: ep.title || `第 ${ep.index} 集`,
-      episodeIndex: ep.index,
-      type: 'storyboard',
-      priority: 1,
-      execute: async () => {
-        await handleGenerate(ep);
-      }
-    });
+    const sceneCount = ep.storyboardScenes?.length || 6;
+    for (let i = 1; i <= sceneCount; i++) {
+      taskQueueManager.addTask({
+        id: `task-${ep.id}-scene-${i}-video`,
+        episodeId: ep.id,
+        dramaTitle: episodeStore.currentDramaTitle,
+        episodeTitle: ep.title || `第 ${ep.index} 集`,
+        episodeIndex: ep.index,
+        sceneIndex: i,
+        taskSource: 'episodes-batch',
+        type: 'storyboard-scene',
+        priority: 1,
+        execute: async () => {
+          await executeSceneGeneration(ep, i);
+        }
+      });
+    }
   });
 };
 

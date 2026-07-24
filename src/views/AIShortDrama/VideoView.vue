@@ -54,6 +54,7 @@
             <p class="text-sm text-slate-400 mt-1 font-medium">为分镜生成高质量视频内容，支持批量处理</p>
           </div>
           <button 
+            @click="handleBatchGenerate"
             class="h-10 px-8 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
           >
             <el-icon><VideoPlay /></el-icon>
@@ -142,6 +143,7 @@
             <!-- Generate Button -->
             <div class="pt-6 mt-6 border-t border-slate-100 dark:border-gray-700">
               <button 
+                @click="handleGenerateSingle"
                 class="w-full h-14 bg-indigo-600 text-white rounded-full text-lg font-bold shadow-xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <el-icon><MagicStick /></el-icon>
@@ -180,15 +182,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModelStore } from '@/store/models'
+import { useEpisodeStore } from '@/store/episode'
+import { taskQueueManager } from '@/utils/taskQueue'
+import { ElMessage } from 'element-plus'
 import AIModelSelector from '@/components/Common/ModelSelector.vue'
 import { ArrowLeft, ArrowRight, VideoPlay, VideoCamera, Headset, Plus, ArrowDown, MagicStick, InfoFilled, Close, Document, Location, Monitor, Pointer } from '@element-plus/icons-vue'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 
 const router = useRouter()
 const modelStore = useModelStore()
+const episodeStore = useEpisodeStore()
 const activeStoryboard = ref(0)
 const showDesignDialog = ref(false)
 const prompt = ref('一个唯美的极简剖面，展现故事的发生场景和主要人物。画面构图提取，色彩鲜明，具有强烈的视觉冲击力')
@@ -201,6 +207,75 @@ const storyboards = ref([
   { id: 4, name: '镜头 4' },
   { id: 5, name: '镜头 5' }
 ])
+
+// Task Center: Register scene-level storyboard video tasks
+// Get current episode info (default to first episode if none)
+const currentEpisodeId = computed(() => episodeStore.episodes[0]?.id || '1')
+const currentEpisodeTitle = computed(() => episodeStore.episodes[0]?.title || '第 1 集')
+const currentEpisodeIndex = computed(() => episodeStore.episodes[0]?.index || 1)
+
+// Simulated generation execution (same pattern as StoryboardView)
+const executeGenerateScene = async (sceneIdx: number) => {
+  await new Promise<void>((resolve) => {
+    let progress = 0
+    const interval = setInterval(() => {
+      progress += 5
+      if (progress >= 100) {
+        clearInterval(interval)
+        resolve()
+      }
+    }, 100)
+  })
+}
+
+// Generate single storyboard video (for current active storyboard)
+const handleGenerateSingle = () => {
+  const sceneIdx = activeStoryboard.value
+  taskQueueManager.addTask({
+    id: `task-video-${currentEpisodeId.value}-scene-${sceneIdx}-${Date.now()}`,
+    episodeId: currentEpisodeId.value,
+    dramaTitle: episodeStore.currentDramaTitle,
+    episodeTitle: currentEpisodeTitle.value,
+    episodeIndex: currentEpisodeIndex.value,
+    sceneIndex: sceneIdx + 1,
+    taskSource: 'video-single',
+    type: 'storyboard-scene',
+    priority: 2,
+    execute: async () => {
+      await executeGenerateScene(sceneIdx)
+      ElMessage.success(`分镜 ${sceneIdx + 1} 视频生成成功`)
+    }
+  })
+}
+
+// Batch generate all pending storyboard videos
+const handleBatchGenerate = () => {
+  const pendingScenes = storyboards.value
+    .map((s, i) => i)
+    .filter((i: number) => !(storyboards.value as any[])[i]?.video) // pending: no video yet
+  
+  if (pendingScenes.length === 0) {
+    return ElMessage.warning('所有分镜视频已生成完成')
+  }
+  
+  ElMessage.success(`已将 ${pendingScenes.length} 个分镜视频任务加入生成队列`)
+  pendingScenes.forEach(idx => {
+    taskQueueManager.addTask({
+      id: `task-video-${currentEpisodeId.value}-scene-${idx}-${Date.now()}`,
+      episodeId: currentEpisodeId.value,
+      dramaTitle: episodeStore.currentDramaTitle,
+      episodeTitle: currentEpisodeTitle.value,
+      episodeIndex: currentEpisodeIndex.value,
+      sceneIndex: idx + 1,
+      taskSource: 'video-batch',
+      type: 'storyboard-scene',
+      priority: 1,
+      execute: async () => {
+        await executeGenerateScene(idx)
+      }
+    })
+  })
+}
 </script>
 
 <style scoped>

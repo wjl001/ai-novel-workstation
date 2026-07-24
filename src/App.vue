@@ -243,101 +243,98 @@
             <h2 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">任务中心</h2>
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">TASK CENTER</span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">共 <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ episodeStore.tasks.length }}</span> 项任务</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">共 <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ groupedEpisodes.length }}</span> 集 · <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ episodeStore.tasks.length }}</span> 项任务</p>
         </div>
 
-        <!-- Task List Area -->
-        <div class="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-2">
+                <!-- Task List Area: Grouped by Episode -->
+        <div class="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-3">
           <div v-if="episodeStore.tasks.length === 0" class="flex flex-col items-center justify-center py-20 opacity-20 dark:opacity-10">
             <el-icon :size="48"><Box /></el-icon>
             <p class="mt-3 text-sm font-black tracking-widest uppercase">暂无任务</p>
           </div>
-          
-          <div 
-            v-for="task in paginatedTasks" 
-            :key="task.id" 
-            class="group relative p-3 rounded-xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-indigo-500/30 transition-all duration-300"
-          >
-            <!-- Left Status Bar -->
-            <div 
-              class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-all duration-700"
-              :class="task.status === 'processing' ? 'bg-indigo-500' : task.status === 'failed' ? 'bg-red-500' : task.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'"
-            ></div>
 
-            <div class="relative z-10 pl-2">
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 truncate">{{ task.dramaTitle }}</span>
-                  <span class="text-[10px] font-black text-slate-400">|</span>
-                  <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 truncate">{{ task.episodeTitle }}</span>
+          <!-- Episode Group Card -->
+          <div 
+            v-for="group in groupedEpisodes"
+            :key="group.episodeId"
+            class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 overflow-hidden"
+          >
+            <!-- Episode Header (clickable to expand) -->
+            <div 
+              @click="toggleEpisode(group.episodeId)"
+              class="relative p-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+            >
+              <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-all duration-700" :class="getEpisodeStatusColor(group)"></div>
+              <div class="relative z-10 pl-2">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 truncate">{{ group.dramaTitle }}</span>
+                    <span class="text-[10px] font-black text-slate-400">|</span>
+                    <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 truncate">{{ group.episodeTitle }}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <div :class="['px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider', getEpisodeStatusBadge(group)]">{{ getEpisodeStatusText(group) }}</div>
+                    <el-icon :size="12" class="text-slate-400 transition-transform duration-300" :class="{ 'rotate-90': expandedEpisodes.includes(group.episodeId) }"><ArrowRight /></el-icon>
+                  </div>
                 </div>
-                <div :class="[
-                  'px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0',
-                  task.status === 'processing' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 animate-pulse' :
-                  task.status === 'queued' ? 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' :
-                  task.status === 'completed' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' :
-                  'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400'
-                ]">
-                  {{ task.status === 'processing' ? '生成中' : task.status === 'queued' ? '排队中' : task.status === 'completed' ? '已完成' : '异常' }}
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500">{{ group.sceneTasks.length }} 个分镜</span>
+                  <div class="flex items-center gap-0.5 ml-1">
+                    <div v-for="i in group.completedCount" :key="'s'+i" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                    <div v-for="i in group.failedCount" :key="'f'+i" class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                    <div v-for="i in group.processingCount" :key="'p'+i" class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                    <div v-for="i in group.pendingCount" :key="'q'+i" class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                  </div>
+                </div>
+                <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-1.5">
+                  <div class="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-indigo-500 to-purple-500" :style="{ width: group.overallProgress + '%' }"></div>
                 </div>
               </div>
-              
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex flex-col gap-1 min-w-0 flex-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider">
-                      {{ task.type === 'storyboard' ? '分镜视频' : '全集合成' }}
-                    </span>
-                    <span v-if="task.sceneIndex !== undefined" class="text-[9px] font-bold text-slate-400">
-                      分镜 #{{ task.sceneIndex }}
-                    </span>
-                  </div>
-                  
-                  <!-- Mini Progress Bar -->
-                  <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div 
-                      class="h-full rounded-full transition-all duration-1000"
-                      :class="[
-                        task.status === 'processing' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : 
-                        task.status === 'completed' ? 'bg-emerald-500' : 
-                        task.status === 'failed' ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'
-                      ]"
-                      :style="{ width: task.progress + '%' }"
-                    ></div>
-                  </div>
-                </div>
+            </div>
 
-                <div class="flex items-center gap-2 shrink-0">
-                  <span class="text-[10px] font-black text-slate-400 tabular-nums">{{ task.progress }}%</span>
+            <!-- Expandable Scene Detail Panel -->
+            <div v-show="expandedEpisodes.includes(group.episodeId)" class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+              <div class="p-2 space-y-1.5">
+                <div 
+                  v-for="scene in group.sceneTasks" 
+                  :key="scene.id" 
+                  class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
+                >
+                  <div class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg text-[10px] font-black" :class="getSceneBadgeClass(scene)">{{ scene.sceneIndex }}</div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300">分镜 #{{ scene.sceneIndex }}</span>
+                      <span v-if="scene.taskSource" class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase">{{ getTaskSourceLabel(scene.taskSource) }}</span>
+                    </div>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-0.5">
+                      <div class="h-full rounded-full transition-all duration-700" :class="getSceneProgressColor(scene)" :style="{ width: scene.progress + '%' }"></div>
+                    </div>
+                  </div>
+                  <div :class="['px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider flex-shrink-0', getSceneStatusClass(scene)]">
+                    {{ scene.status === 'processing' ? '生成中' : scene.status === 'completed' ? '成功' : scene.status === 'failed' ? '失败' : '排队' }}
+                  </div>
                   <button 
-                    v-if="task.status === 'completed' || task.status === 'failed'"
-                    @click="handleRegenerate(task)"
-                    class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all"
+                    v-if="scene.status === 'completed' || scene.status === 'failed'" 
+                    @click.stop="handleRegenerateScene(scene)" 
+                    class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all flex-shrink-0"
                     title="重新生成"
                   >
-                    <el-icon :size="14"><RefreshRight /></el-icon>
+                    <el-icon :size="13"><RefreshRight /></el-icon>
                   </button>
                 </div>
-              </div>
-
-              <!-- Error Message -->
-              <div v-if="task.status === 'failed' && task.error" class="mt-2 pl-2 border-l-2 border-red-300 dark:border-red-800">
-                <p class="text-[9px] text-red-500 dark:text-red-400 font-bold truncate">{{ task.error }}</p>
+                <div class="flex items-center justify-between gap-2 px-2 py-1.5">
+                  <button @click="handleRegenerateFailed(group)" :disabled="group.failedCount === 0" class="text-[10px] font-bold text-red-500 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">重新生成失败分镜({{ group.failedCount }})</button>
+                  <button @click="handleRegenerateAll(group)" class="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 transition-colors">重新生成全部</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Pagination -->
-        <div v-if="episodeStore.tasks.length > taskPageSize" class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-center">
-          <el-pagination
-            v-model:current-page="taskCurrentPage"
-            v-model:page-size="taskPageSize"
-            layout="prev, pager, next"
-            :total="episodeStore.tasks.length"
-            size="small"
-            class="c-end-pagination"
-          />
+        <!-- Bottom Actions -->
+        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between">
+          <button @click="clearCompletedTasks" class="text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">清除已完成任务</button>
+          <button @click="clearAllTasks" class="text-[10px] font-bold text-red-400 hover:text-red-600 transition-colors">清除全部</button>
         </div>
       </div>
     </el-drawer>
@@ -349,7 +346,7 @@ import { ref, reactive, provide, computed, onErrorCaptured, onMounted } from 'vu
 import { useRouter } from 'vue-router'
 import { 
   VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, 
-  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin
+  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin, ArrowRight
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useDramaStore } from '@/store/drama'
@@ -373,14 +370,41 @@ const isLight = computed(() => themeStore.isLight)
 
 // Task Center State
 const showTaskList = ref(false)
-const taskCurrentPage = ref(1)
-const taskPageSize = ref(10)
+const expandedEpisodes = ref<string[]>([])
 const activeTaskCount = computed(() => episodeStore.tasks.filter(t => t.status === 'processing' || t.status === 'queued').length)
 
-const paginatedTasks = computed(() => {
-  const start = (taskCurrentPage.value - 1) * taskPageSize.value
-  return episodeStore.tasks.slice().reverse().slice(start, start + taskPageSize.value)
+const groupedEpisodes = computed(() => {
+  const groups: Record<string, any> = {}
+  for (const task of episodeStore.tasks) {
+    const key = task.episodeId
+    if (!groups[key]) {
+      groups[key] = { episodeId: task.episodeId, dramaTitle: task.dramaTitle, episodeTitle: task.episodeTitle, sceneTasks: [] }
+    }
+    groups[key].sceneTasks.push(task)
+  }
+  return Object.values(groups).map(group => {
+    group.sceneTasks.sort((a: any, b: any) => (a.sceneIndex || 0) - (b.sceneIndex || 0))
+    group.completedCount = group.sceneTasks.filter((t: any) => t.status === 'completed').length
+    group.failedCount = group.sceneTasks.filter((t: any) => t.status === 'failed').length
+    group.processingCount = group.sceneTasks.filter((t: any) => t.status === 'processing').length
+    group.pendingCount = group.sceneTasks.filter((t: any) => t.status === 'queued' || t.status === 'pending').length
+    const total = group.sceneTasks.length
+    group.overallProgress = total > 0 ? Math.round(group.sceneTasks.reduce((sum: number, t: any) => sum + t.progress, 0) / total) : 0
+    return group
+  })
 })
+
+const toggleEpisode = (episodeId: string) => {
+  const idx = expandedEpisodes.value.indexOf(episodeId)
+  if (idx > -1) { expandedEpisodes.value.splice(idx, 1) } else { expandedEpisodes.value.push(episodeId) }
+}
+const getEpisodeStatusColor = (g: any) => g.processingCount > 0 ? 'bg-indigo-500' : g.failedCount > 0 ? 'bg-red-500' : g.completedCount === g.sceneTasks.length ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+const getEpisodeStatusBadge = (g: any) => g.processingCount > 0 ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 animate-pulse' : g.failedCount > 0 ? 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400' : g.completedCount === g.sceneTasks.length ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+const getEpisodeStatusText = (g: any) => g.processingCount > 0 ? '生成中' : g.failedCount > 0 ? '部分失败' : g.completedCount === g.sceneTasks.length ? '已完成' : '排队中'
+const getSceneBadgeClass = (s: any) => s.status === 'completed' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' : s.status === 'failed' ? 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400' : s.status === 'processing' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+const getSceneProgressColor = (s: any) => s.status === 'processing' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : s.status === 'completed' ? 'bg-emerald-500' : s.status === 'failed' ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'
+const getSceneStatusClass = (s: any) => s.status === 'processing' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 animate-pulse' : s.status === 'completed' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' : s.status === 'failed' ? 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+const getTaskSourceLabel = (src: string) => ({'episodes-batch':'批量','episodes-single':'单集','storyboard-single':'单分镜','storyboard-batch':'批量分镜','storyboard-timeline':'时间轴','storyboard-history':'历史','video-batch':'视频批量','video-single':'视频单分镜','regenerate':'重新生成'})[src] || ''
 
 const getPosterUrl = (ep: any) => {
   if (!ep) return 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=cinematic+movie+poster+placeholder&image_size=portrait_4_3'
@@ -409,6 +433,73 @@ const handleRegenerate = (task: any) => {
       }
     }
   })
+}
+
+// Regenerate a single scene
+const handleRegenerateScene = (scene: any) => {
+  ElMessage.info(`重新生成分镜 #${scene.sceneIndex}`)
+  taskQueueManager.addTask({
+    id: `task-${scene.episodeId}-scene-${scene.sceneIndex}-${Date.now()}`,
+    episodeId: scene.episodeId,
+    dramaTitle: scene.dramaTitle || episodeStore.currentDramaTitle,
+    episodeTitle: scene.episodeTitle || `第 ${scene.episodeIndex || 1} 集`,
+    episodeIndex: scene.episodeIndex || 1,
+    sceneIndex: scene.sceneIndex,
+    taskSource: 'regenerate',
+    type: 'storyboard-scene',
+    priority: 2,
+    execute: async () => { await new Promise(r => setTimeout(r, 2000)) }
+  })
+}
+
+// Regenerate failed scenes
+const handleRegenerateFailed = (group: any) => {
+  if (group.failedCount === 0) return
+  ElMessage.info(`重新生成第 ${group.episodeIndex || 1} 集 ${group.failedCount} 个失败分镜`)
+  group.sceneTasks.filter((s: any) => s.status === 'failed').forEach((scene: any) => {
+    taskQueueManager.addTask({
+      id: `task-${scene.episodeId}-scene-${scene.sceneIndex}-${Date.now()}`,
+      episodeId: scene.episodeId,
+      dramaTitle: scene.dramaTitle || episodeStore.currentDramaTitle,
+      episodeTitle: scene.episodeTitle || `第 ${scene.episodeIndex || 1} 集`,
+      episodeIndex: scene.episodeIndex || 1,
+      sceneIndex: scene.sceneIndex,
+      taskSource: 'regenerate',
+      type: 'storyboard-scene',
+      priority: 2,
+      execute: async () => { await new Promise(r => setTimeout(r, 2000)) }
+    })
+  })
+}
+
+// Regenerate all scenes
+const handleRegenerateAll = (group: any) => {
+  ElMessage.info(`重新生成第 ${group.episodeIndex || 1} 集全部 ${group.sceneTasks.length} 个分镜`)
+  group.sceneTasks.forEach((scene: any) => {
+    taskQueueManager.addTask({
+      id: `task-${scene.episodeId}-scene-${scene.sceneIndex}-${Date.now()}`,
+      episodeId: scene.episodeId,
+      dramaTitle: scene.dramaTitle || episodeStore.currentDramaTitle,
+      episodeTitle: scene.episodeTitle || `第 ${scene.episodeIndex || 1} 集`,
+      episodeIndex: scene.episodeIndex || 1,
+      sceneIndex: scene.sceneIndex,
+      taskSource: 'regenerate',
+      type: 'storyboard-scene',
+      priority: 1,
+      execute: async () => { await new Promise(r => setTimeout(r, 2000)) }
+    })
+  })
+}
+
+// Clear tasks
+const clearCompletedTasks = () => {
+  const ids = episodeStore.tasks.filter((t: any) => t.status === 'completed').map((t: any) => t.id)
+  ids.forEach((id: string) => taskQueueManager.removeTask(id))
+  ElMessage.success(`已清除 ${ids.length} 个已完成任务`)
+}
+const clearAllTasks = () => {
+  episodeStore.tasks.slice().forEach((t: any) => taskQueueManager.removeTask(t.id))
+  ElMessage.success('已清除全部任务')
 }
 
 const handleGenerate = async (ep: any) => {
@@ -550,6 +641,26 @@ const updateProfile = () => {
 }
 
 onMounted(() => {
+  // Migrate legacy 'storyboard' type tasks to 'storyboard-scene' with sceneIndex
+  const legacyTasks = episodeStore.tasks.filter((t: any) => t.type === 'storyboard')
+  legacyTasks.forEach((task: any) => {
+    const idx = episodeStore.tasks.findIndex((t: any) => t.id === task.id)
+    if (idx > -1) episodeStore.tasks.splice(idx, 1)
+    for (let i = 1; i <= 6; i++) {
+      episodeStore.tasks.push({
+        ...task,
+        id: `task-${task.episodeId}-scene-${i}-migrated`,
+        sceneIndex: i,
+        taskSource: task.taskSource || 'episodes-batch',
+        type: 'storyboard-scene',
+        status: task.status === 'completed' ? 'completed' : task.status,
+        progress: task.status === 'completed' ? 100 : task.progress,
+        execute: async () => {}
+      })
+    }
+  })
+  episodeStore.saveToLocalStorage()
+
   // Save state before window closes or refreshes
   window.addEventListener('beforeunload', () => {
     dramaStore.saveToLocalStorage()

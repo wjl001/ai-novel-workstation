@@ -1,7 +1,9 @@
 import { useEpisodeStore } from '@/store/episode';
 import { ElMessage } from 'element-plus';
 
-export type TaskType = 'storyboard' | 'synthesis';
+export type TaskType = 'storyboard' | 'storyboard-scene' | 'synthesis';
+
+export type TaskSource = 'episodes-batch' | 'episodes-single' | 'storyboard-single' | 'storyboard-batch' | 'storyboard-timeline' | 'storyboard-history' | 'video-batch' | 'video-single' | 'regenerate';
 
 export interface Task {
   id: string;
@@ -9,7 +11,8 @@ export interface Task {
   dramaTitle: string;
   episodeTitle: string;
   episodeIndex: number;
-  sceneIndex?: number;
+  sceneIndex?: number;        // 分镜序号（仅 storyboard-scene 类型）
+  taskSource?: TaskSource;     // 任务来源
   type: TaskType;
   priority: number;
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'queued';
@@ -37,8 +40,15 @@ class TaskQueueManager {
       createdAt: Date.now()
     };
     
-    // Avoid duplicate tasks for same episode and type
-    const existing = this.queue.find(t => t.episodeId === task.episodeId && t.type === task.type);
+    // Avoid duplicate tasks: for scene-level tasks, match on episode+scene; for others, match on episode+type
+    const existing = this.queue.find(t => {
+      if (t.episodeId !== task.episodeId || t.type !== task.type) return false;
+      // Scene-level tasks: must match sceneIndex too
+      if (newTask.sceneIndex !== undefined || t.sceneIndex !== undefined) {
+        return t.sceneIndex === newTask.sceneIndex;
+      }
+      return true;
+    });
     if (existing) {
       if (existing.status === 'failed' || existing.status === 'completed') {
         this.removeTask(existing.id);
