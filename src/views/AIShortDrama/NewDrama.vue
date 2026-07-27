@@ -802,13 +802,15 @@
             <button 
               @click="finishConfig"
               :disabled="!isFormComplete"
-              class="group relative px-10 h-12 flex items-center justify-center gap-3 bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-[24px] font-[1000] text-lg shadow-[0_8px_15px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] transition-all duration-500 disabled:opacity-40 disabled:grayscale disabled:pointer-events-none overflow-hidden"
-              :class="{'hover:shadow-[0_12px_25px_-8px_rgba(79,70,229,0.5)] hover:-translate-y-0.5 animate-pulse-indigo': isFormComplete}"
+              class="group relative px-10 h-12 flex items-center justify-center gap-3 text-white rounded-[24px] font-[1000] text-lg shadow-[0_8px_15px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] transition-all duration-500 overflow-hidden"
+              :class="isFormComplete 
+                ? 'bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 hover:shadow-[0_12px_25px_-8px_rgba(79,70,229,0.5)] hover:-translate-y-0.5 animate-pulse-indigo' 
+                : 'bg-slate-300 dark:bg-slate-600 shadow-none pointer-events-none opacity-60'"
             >
-              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
-              <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <el-icon :size="22" class="group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 animate-float"><Lightning /></el-icon>
-              <span class="tracking-[0.1em] uppercase">开启创作</span>
+              <div v-if="isFormComplete" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+              <div v-if="isFormComplete" class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <el-icon :size="22" v-if="isFormComplete" class="group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 animate-float"><Lightning /></el-icon>
+              <span class="tracking-[0.1em] uppercase">{{ isFormComplete ? '开启创作' : '下一步' }}</span>
             </button>
           </div>
         </div>

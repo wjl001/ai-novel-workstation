@@ -114,8 +114,16 @@
 
       </div>
 
-      <!-- Model Selector Overlay - Aligned with Script Title Row -->
+      <!-- Model Selector & Batch Download Overlay - Aligned with Script Title Row -->
       <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
+        <button
+          @click="batchDownloadAssets"
+          class="h-10 px-5 flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full font-bold text-[13px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all duration-300 active:scale-95 mr-3"
+          title="批量下载主体图片（角色/道具/场景，含历史图）"
+        >
+          <el-icon :size="16"><Download /></el-icon>
+          <span>批量下载</span>
+        </button>
         <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="assets-view-image" />
       </div>
 
@@ -847,7 +855,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useModelStore } from '@/store/models';
 import { VIDEO_MODELS } from '@/config/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
-import { Plus, Picture, Edit, MagicStick, Refresh, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Refresh, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu, Download } from '@element-plus/icons-vue';
 
 const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -1270,6 +1278,8 @@ const createInstantAssetImage = (asset: any, variant = Date.now()) => {
 };
 
 import { generateImageAPI } from '@/utils/imageGenerator';
+import JSZip from 'jszip';
+import FileSaver from 'file-saver';
 
 const shouldRepairAssetImage = (url: string | undefined) => {
   if (!url || url === 'FAILED') return true;
@@ -1477,6 +1487,105 @@ const generateImagesForAssets = async (assets: any[], sessionId: number) => {
     
     generatingAssetImages.delete(loadingKey);
   }
+};
+
+const getTypeFolderLabel = (type: string) => {
+  if (type === 'character') return '角色道具';
+  if (type === 'scene') return '场景';
+  if (type === 'prop') return '道具';
+  return '其他';
+};
+
+const getFileNameSuffix = (url: string) => {
+  if (!url) return '.png';
+  if (url.startsWith('data:image/svg')) return '.svg';
+  const match = url.match(/\.([a-zA-Z0-9]+)(?:\?|$)/);
+  return match ? '.' + match[1] : '.png';
+};
+
+const downloadImage = async (url: string): Promise<Blob | null> => {
+  if (!url) return null;
+  try {
+    // Handle base64 data URLs
+    if (url.startsWith('data:')) {
+      const base64 = url.replace(/^data:image\/\w+;base64,/, '');
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new Blob([bytes]);
+    }
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    return await response.blob();
+  } catch {
+    return null;
+  }
+};
+
+const batchDownloadAssets = async () => {
+  const allAssets = [...characters.value, ...scenes.value, ...propsList.value];
+  if (allAssets.length === 0) {
+    ElMessage.warning('暂无可下载的主体');
+    return;
+  }
+
+  // 时间戳（生成时保持一致）
+  const now = new Date();
+  const timestamp = now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0');
+
+  const projectName = (dramaStore.outlineData?.title || '未命名剧本').replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, '_');
+  let grandSuccessCount = 0;
+  let grandTotalCount = 0;
+
+  // 三种类型打包进同一个 ZIP
+  const zip = new JSZip();
+  const typeConfigs = [
+    { label: '角色', assets: characters.value },
+    { label: '场景', assets: scenes.value },
+    { label: '道具', assets: propsList.value },
+  ];
+
+  for (const { label, assets } of typeConfigs) {
+    const withImages = assets.filter(a => (normalizeAssetImageState(a).imageHistory || []).length > 0);
+    if (withImages.length === 0) continue;
+
+    const typeFolder = zip.folder(label)!;
+
+    for (const asset of withImages) {
+      const safeName = asset.name?.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, '_') || '未命名';
+      const assetFolder = typeFolder.folder(safeName);
+      if (!assetFolder) continue;
+
+      const imageState = normalizeAssetImageState(asset);
+      const sorted = [...imageState.imageHistory].sort((a, b) => {
+        if (a.id === imageState.selectedImageId) return -1;
+        if (b.id === imageState.selectedImageId) return 1;
+        return (a.createdAt || 0) - (b.createdAt || 0);
+      });
+
+      for (let i = 0; i < sorted.length; i++) {
+        const img = sorted[i];
+        const blob = await downloadImage(img.url);
+        grandTotalCount++;
+        if (blob) {
+          grandSuccessCount++;
+          const isApplied = img.id === imageState.selectedImageId;
+          const name = isApplied ? `_应用图${getFileNameSuffix(img.url)}` : `历史_${i}${getFileNameSuffix(img.url)}`;
+          assetFolder.file(name, blob);
+        }
+      }
+    }
+  }
+
+  const fileName = `${projectName}_角色/场景/道具_${timestamp}.zip`;
+  const blob = await zip.generateAsync({ type: 'blob' });
+  FileSaver.saveAs(blob, fileName);
+
+  ElMessage.success(`下载完成！共 ${grandSuccessCount}/${grandTotalCount} 张图片已打包`);
 };
 
 const handleBatchGenerate = async (type: 'character' | 'scene' | 'prop') => {

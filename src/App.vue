@@ -107,6 +107,12 @@
                     <span>算力消耗明细</span>
                   </div>
                 </el-dropdown-item>
+                <el-dropdown-item command="changelog">
+                  <div class="menu-item-inner">
+                    <div class="icon-box teal"><el-icon><Document /></el-icon></div>
+                    <span>更新日志</span>
+                  </div>
+                </el-dropdown-item>
                 <div class="divider"></div>
                 <el-dropdown-item command="logout" class="logout-item">
                   <div class="menu-item-inner">
@@ -363,7 +369,7 @@ import { ref, reactive, provide, computed, onErrorCaptured, onMounted } from 'vu
 import { useRouter } from 'vue-router'
 import { 
   VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, 
-  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin, ArrowRight
+  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin, ArrowRight, Document
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useDramaStore } from '@/store/drama'
@@ -635,6 +641,8 @@ const handleCommand = (command: string) => {
     router.push('/member-center')
   } else if (command === 'consumption') {
     router.push('/member-center/consumption')
+  } else if (command === 'changelog') {
+    router.push('/changelog')
   }
 }
 
@@ -965,6 +973,7 @@ onErrorCaptured((error) => {
           &.purple { background-color: #8b5cf6; color: white; }
           &.gold { background-color: #f59e0b; color: white; }
           &.amber { background-color: #f59e0b; color: white; }
+          &.teal { background-color: #14b8a6; color: white; }
           &.red { background-color: #ef4444; color: white; }
         }
       }
@@ -999,6 +1008,7 @@ onErrorCaptured((error) => {
       &.purple { background-color: #f5f3ff; color: #8b5cf6; }
       &.gold { background-color: #fffbeb; color: #f59e0b; }
       &.amber { background-color: #fffbeb; color: #f59e0b; }
+      &.teal { background-color: #f0fdfa; color: #14b8a6; }
       &.red { background-color: #fef2f2; color: #ef4444; }
 
       .el-icon {
@@ -1328,6 +1338,7 @@ onErrorCaptured((error) => {
         &.purple { background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; }
         &.gold { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
         &.amber { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+        &.teal { background-color: rgba(20, 184, 166, 0.18); color: #2dd4bf; }
         &.red { background-color: rgba(239, 68, 68, 0.15); color: #f87171; }
       }
     }
@@ -1354,6 +1365,7 @@ onErrorCaptured((error) => {
             &.purple { background-color: #8b5cf6 !important; color: #ffffff !important; }
             &.gold { background-color: #f59e0b !important; color: #ffffff !important; }
             &.amber { background-color: #f59e0b !important; color: #ffffff !important; }
+            &.teal { background-color: #14b8a6 !important; color: #ffffff !important; }
             &.red { background-color: #ef4444 !important; color: #ffffff !important; }
           }
         }
