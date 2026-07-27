@@ -396,7 +396,7 @@
                 </button>
               </div>
 
-              <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div
                   v-for="pkg in rechargePackages"
                   :key="pkg.points"
@@ -408,15 +408,45 @@
                       {{ pkg.badge }}
                     </span>
                   </div>
-                  <div class="mt-4 text-3xl font-black text-slate-900 dark:text-white">{{ formatPointsCompact(pkg.points) }}</div>
+                  <div class="mt-4 text-2xl font-black text-slate-900 dark:text-white">{{ formatPointsCompact(pkg.points) }}</div>
                   <div class="mt-2 text-sm font-black text-slate-700 dark:text-slate-200">
-                    ¥{{ pkg.price }}
+                    ¥{{ pkg.price.toLocaleString() }}
                     <span class="ml-1 text-xs font-black text-slate-400 dark:text-slate-500">{{ pkg.note }}</span>
                   </div>
                   <el-button
                     round
                     class="mt-4 w-full !h-10 !rounded-2xl !border-none !font-black !bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white shadow-lg shadow-indigo-500/15"
                     @click="openRechargePackage(pkg)"
+                  >
+                    立即充值
+                  </el-button>
+                </div>
+
+                <div class="rounded-3xl p-5 border border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/20 hover:shadow-lg hover:shadow-slate-900/5 dark:hover:shadow-black/25 transition-all">
+                  <div class="flex items-center justify-between">
+                    <div class="text-xs font-black text-slate-500 dark:text-slate-400">自定义金额</div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25">
+                      灵活充值
+                    </span>
+                  </div>
+                  <div class="mt-4 flex items-center gap-2">
+                    <span class="text-2xl font-black text-slate-900 dark:text-white">¥</span>
+                    <el-input
+                      v-model.number="customRechargeAmount"
+                      type="number"
+                      min="100"
+                      placeholder="最低100"
+                      class="flex-1 !rounded-2xl !h-8"
+                    />
+                  </div>
+                  <div class="mt-2 text-xs font-black text-slate-400 dark:text-slate-500">
+                    获{{ (customRechargeAmount || 100) * 100 }}算力豆 · 最低100元起
+                  </div>
+                  <el-button
+                    round
+                    class="mt-3 w-full !h-10 !rounded-2xl !border-none !font-black !bg-gradient-to-r !from-cyan-500 !to-blue-600 !text-white shadow-lg shadow-cyan-500/15"
+                    :disabled="!customRechargeAmount || customRechargeAmount < 100"
+                    @click="openRechargeCustom"
                   >
                     立即充值
                   </el-button>
@@ -1683,10 +1713,10 @@ const planCards = computed(() => {
 
 const rechargePackages = computed<RechargePackage[]>(() => {
   return [
-    { points: 100, price: 1, note: '1元=100算力豆' },
-    { points: 500, price: 5, note: '1元=100算力豆' },
-    { points: 1000, price: 10, note: '1元=100算力豆', badge: '常用' },
-    { points: 5000, price: 50, note: '1元=100算力豆', badge: '高效' }
+    { points: 10000, price: 100, note: '1元=100算力豆', badge: '最低' },
+    { points: 100000, price: 1000, note: '1元=100算力豆', badge: '常用' },
+    { points: 500000, price: 5000, note: '1元=100算力豆', badge: '高效' },
+    { points: 10000000, price: 100000, note: '1元=100算力豆', badge: '超值' }
   ]
 })
 
@@ -1716,6 +1746,7 @@ const purchaseDialog = reactive<{
 })
 
 const payMethod = ref<'alipay' | 'wechat'>('alipay')
+const customRechargeAmount = ref<number | undefined>(undefined)
 
 // 二维码倒计时相关
 const qrCountdown = ref<number>(180)
@@ -1971,6 +2002,30 @@ const openRechargePackage = (pkg: RechargePackage) => {
 
 const openRechargeQuick = () => {
   openRechargePackage(rechargePackages.value[2])
+}
+
+const openRechargeCustom = () => {
+  if (!customRechargeAmount.value || customRechargeAmount.value < 100) {
+    ElMessage.warning('自定义充值最低金额为100元')
+    return
+  }
+  const amount = customRechargeAmount.value
+  const points = amount * 100
+  purchaseDialog.summary = `长效算力豆充值 ${points.toLocaleString()}`
+  purchaseDialog.amount = amount
+  purchaseDialog.bonusPoints = points
+  purchaseDialog.pointType = 'permanent'
+  purchaseDialog.payload = {
+    type: 'recharge',
+    title: `长效算力豆充值 ${points.toLocaleString()}（自定义）`,
+    amount: amount,
+    bonusPoints: points,
+    pointType: 'permanent',
+    effect: () => {
+      userStore.setBalance(userStore.balance + points)
+    }
+  }
+  purchaseDialog.visible = true
 }
 
 const confirmPurchase = () => {
