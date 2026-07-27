@@ -69,7 +69,13 @@ export const useEpisodeStore = defineStore('episode', {
   }),
   actions: {
     setTasks(tasks: any[]) {
-      this.tasks = tasks;
+      // 移除 execute 函数（不可序列化），再从已有 tasks 中恢复
+      const serialized = tasks.map((t: any) => {
+        const { execute, ...rest } = t
+        return rest
+      })
+      this.tasks = serialized
+      this.saveToLocalStorage()
     },
     setEpisodes(episodes: Episode[]) {
       this.episodes = episodes;
@@ -195,6 +201,8 @@ export const useEpisodeStore = defineStore('episode', {
         generationStatus: this.generationStatus
       };
       localStorage.setItem('episode_store', JSON.stringify(stateToSave));
+      // 单独保存 tasks（已移除 execute 函数）
+      localStorage.setItem('episode_tasks', JSON.stringify(this.tasks));
     },
     loadFromLocalStorage() {
       const savedState = localStorage.getItem('episode_store');
@@ -211,6 +219,15 @@ export const useEpisodeStore = defineStore('episode', {
           this.generationStatus = parsed.generationStatus || this.generationStatus;
         } catch (e) {
           console.error('Failed to parse episode_store from localStorage', e);
+        }
+      }
+      // 单独加载 tasks
+      const savedTasks = localStorage.getItem('episode_tasks');
+      if (savedTasks) {
+        try {
+          this.tasks = JSON.parse(savedTasks) || [];
+        } catch (e) {
+          console.error('Failed to parse episode_tasks from localStorage', e);
         }
       }
     }

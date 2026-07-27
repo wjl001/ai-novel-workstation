@@ -159,9 +159,14 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
                     <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-300">会员算力豆</span>
-                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatPointsCompact(memberPoints) }}</span>
+                    <div class="flex items-center gap-3">
+                      <span v-if="remainingDays > 0" class="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                        有效期 {{ formatDate(pointsExpireAt) }} · 剩 {{ remainingDays }} 天
+                      </span>
+                      <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatPointsCompact(memberPoints) }}</span>
+                    </div>
                   </div>
-                  <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">会员套餐赠送 · 随会员到期清零 · 升级时积分合并</div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">会员套餐赠送 · 随会员到期清零 · 升级时算力豆合并</div>
                 </div>
               </div>
               <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100/70 dark:border-emerald-800/30">
@@ -1300,7 +1305,7 @@ interface LocalInvoice {
 }
 
 interface MemberPointsPool {
-  totalPoints: number    // 当前总积分（单一积分池）
+  totalPoints: number    // 当前总算力豆（单一算力豆池）
   expireAt: number       // 到期时间（开通日起算，升级时延长）
   currentTier: string    // 当前权益档位
 }
@@ -1438,16 +1443,16 @@ const memberCenterDesign = {
     '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
     '**总览页头部**：展示超级会员状态、核心权益标签及总可用算力豆（会员算力豆 + 充值算力豆合并显示）。',
-    '**算力管理面板**：显示「会员算力豆」（会员套餐赠送，随会员到期清零，升级时积分合并）与「充值算力豆」（充值购买，永久有效），单一积分池模型。',
+    '**算力管理面板**：显示「会员算力豆」（会员套餐赠送，随会员到期清零，升级时算力豆合并）与「充值算力豆」（充值购买，永久有效），单一算力豆池模型。',
     '**会员套餐区**：支持“按月/按年购买”切换，套餐赠送会员算力豆（随会员周期发放，到期清零），所有算力豆等值。',
     '**算力豆充值套餐**：充值获得永久有效算力豆，直接写入用户余额，与会员算力豆独立存储。',
     '**算力消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
   ],
   interactions: [
-    '**算力豆类型说明**：会员算力豆（会员套餐赠送，随会员周期发放，到期清零，升级时积分合并）与充值算力豆（充值购买，永久有效）为独立的两笔余额，无消耗优先级差异。',
+    '**算力豆类型说明**：会员算力豆（会员套餐赠送，随会员周期发放，到期清零，升级时算力豆合并）与充值算力豆（充值购买，永久有效）为独立的两笔余额，无消耗优先级差异。',
     '**会员过期规则**：会员算力豆随会员到期清零，不结转、不返还；充值算力豆全部保留、永久有效，无会员状态下可继续使用。',
-    '**跨档位升级规则**：采用“全额购买新档”，不做差价计算。升级时新档积分直接合并到现有积分池，到期时间延长，避免积分浪费。',
-    '**计费规则**：所有算力豆均按“1元=100积分”等面值发放，会员档位之间不存在赠送比例差异（溢价体现在功能权益，不在积分数量），不存在套利空间。',
+    '**跨档位升级规则**：采用“全额购买新档”，不做差价计算。升级时新档算力豆直接合并到现有算力豆池，到期时间延长，避免算力豆浪费。',
+    '**计费规则**：所有算力豆均按“1元=100算力豆”等面值发放，会员档位之间不存在赠送比例差异（溢价体现在功能权益，不在算力豆数量），不存在套利空间。',
     '**支付确认弹窗**：点击"选择计划"或"立即充值"触发确认支付弹窗，展示金额、算力豆数量及有效期说明。',
     '**充值记录详情**：点击充值列表项可展开查看详细订单号及开票入口。',
     '**消耗明细查看**：支持横向滚动查看完整的消耗字段，并提供报表导出功能。',
@@ -1531,12 +1536,12 @@ const openPurchaseTier = (tier: any) => {
       const dayMs = 24 * 60 * 60 * 1000
       const periodDays = billingCycle.value === 'monthly' ? 30 : 365
       if (memberState.pointsPool) {
-        // 积分池已存在，升级合并
+        // 算力豆池已存在，升级合并
         memberState.pointsPool.totalPoints += tier.points
         memberState.pointsPool.expireAt += periodDays * dayMs
         memberState.pointsPool.currentTier = tier.id
       } else {
-        // 首次开通，创建新积分池
+        // 首次开通，创建新算力豆池
         memberState.pointsPool = {
           totalPoints: tier.points,
           expireAt: Date.now() + periodDays * dayMs,
@@ -1621,15 +1626,15 @@ const formatPointsCompact = (points: number) => {
 const giftPointsTotal = computed(() => memberState.orders.filter(o => o.type === 'member').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
 const rechargePointsTotal = computed(() => memberState.orders.filter(o => o.type === 'recharge').reduce((acc, o) => acc + (o.bonusPoints || 0), 0))
 
-// 单一积分池：会员套餐积分 + 充值积分
-// 会员套餐积分（随会员到期清零）
+// 单一算力豆池：会员套餐算力豆 + 充值算力豆
+// 会员套餐算力豆（随会员到期清零）
 const memberPoints = computed(() => memberState.pointsPool ? memberState.pointsPool.totalPoints : 0)
-// 充值积分（永久有效，无会员状态下仍可用）
+// 充值算力豆（永久有效，无会员状态下仍可用）
 const rechargeBalance = computed(() => userStore.balance)
-// 总可用积分 = 会员积分 + 充值积分
+// 总可用算力豆 = 会员算力豆 + 充值算力豆
 const totalAvailablePoints = computed(() => memberPoints.value + rechargeBalance.value)
 
-// 当前会员积分池到期时间
+// 当前会员算力豆池到期时间
 const pointsExpireAt = computed(() => memberState.pointsPool ? memberState.pointsPool.expireAt : 0)
 // 当前权益档位
 const currentTier = computed(() => memberState.pointsPool ? memberState.pointsPool.currentTier : '')
@@ -1681,7 +1686,7 @@ const rechargePackages = computed<RechargePackage[]>(() => {
     { points: 100, price: 1, note: '1元=100算力豆' },
     { points: 500, price: 5, note: '1元=100算力豆' },
     { points: 1000, price: 10, note: '1元=100算力豆', badge: '常用' },
-    { points: 5000, price: 50, note: '1元=100积分', badge: '高效' }
+    { points: 5000, price: 50, note: '1元=100算力豆', badge: '高效' }
   ]
 })
 
@@ -1796,7 +1801,12 @@ const loadState = () => {
     memberState.planExpireAt = {
       'short-drama': Date.now() + monthMs
     }
-    memberState.pointsPool = null
+    // 演示数据：会员算力豆池，有效期 30 天后
+    memberState.pointsPool = {
+      totalPoints: 9900,
+      expireAt: Date.now() + monthMs,
+      currentTier: 'pro'
+    }
     memberState.orders = []
     memberState.invoices = []
     return
@@ -1815,6 +1825,15 @@ const loadState = () => {
       }
     } else {
       memberState.pointsPool = null
+    }
+    // 如果无算力豆池或已过期，注入演示数据
+    if (!memberState.pointsPool || memberState.pointsPool.expireAt <= Date.now()) {
+      const monthMs = 30 * 24 * 60 * 60 * 1000
+      memberState.pointsPool = {
+        totalPoints: 9900,
+        expireAt: Date.now() + monthMs,
+        currentTier: 'pro'
+      }
     }
     memberState.orders = Array.isArray(parsed.orders) ? (parsed.orders as LocalOrder[]) : []
     memberState.invoices = Array.isArray(parsed.invoices) ? (parsed.invoices as LocalInvoice[]) : []
@@ -1892,12 +1911,12 @@ const openPurchaseSuper = () => {
       memberState.superExpireAt = Math.max(memberState.superExpireAt, Date.now())
       memberState.superExpireAt = memberState.superExpireAt + 30 * 24 * 60 * 60 * 1000
       if (memberState.pointsPool) {
-        // 积分池已存在，升级合并
+        // 算力豆池已存在，升级合并
         memberState.pointsPool.totalPoints += bonusPoints
         memberState.pointsPool.expireAt += periodDays * dayMs
         memberState.pointsPool.currentTier = 'super'
       } else {
-        // 首次开通，创建新积分池
+        // 首次开通，创建新算力豆池
         memberState.pointsPool = {
           totalPoints: bonusPoints,
           expireAt: Date.now() + periodDays * dayMs,
@@ -1914,7 +1933,9 @@ const openPurchasePlan = (plan: MemberPlan) => {
   purchaseDialog.summary = `${plan.title}（按月）`
   purchaseDialog.amount = plan.priceMonthly
   purchaseDialog.bonusPoints = plan.bonusPoints
+  purchaseDialog.pointType = 'monthly'  // 会员套餐赠送的也是会员算力豆
   purchaseDialog.payload = {
+    pointType: 'monthly',
     type: 'member',
     title: `${plan.title}（按月）`,
     amount: plan.priceMonthly,

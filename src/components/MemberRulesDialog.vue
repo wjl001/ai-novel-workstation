@@ -14,7 +14,7 @@
           </div>
           <div class="flex flex-col">
             <h4 class="text-xl font-black text-slate-800 dark:text-white m-0">算力豆规则说明</h4>
-            <span class="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest">v2.8 · 敬龙版（积分合并模式）</span>
+            <span class="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest">v2.8 · 敬龙版（算力豆合并模式）</span>
           </div>
         </div>
         <button @click="closeDialog" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
@@ -38,23 +38,23 @@
             </div>
           </div>
 
-          <!-- Rule 1: 单一积分池 -->
+          <!-- Rule 1: 单一算力豆池 -->
           <div class="bg-white dark:bg-slate-800/80 p-6 rounded-[28px] shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-700/50">
             <div class="flex items-start gap-4">
               <span class="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 mt-0.5">
                 <el-icon class="text-indigo-500 dark:text-indigo-400"><Grid /></el-icon>
               </span>
               <div class="flex-1">
-                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">单一积分池</h4>
+                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">单一算力豆池</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-bold mt-2">
-                  所有算力豆为<span class="text-indigo-600 dark:text-indigo-400 font-black">单一积分池</span>，会员套餐赠送的算力豆与充值购买的算力豆<span class="text-indigo-600 dark:text-indigo-400 font-black">合并到同一个池</span>。
+                  所有算力豆为<span class="text-indigo-600 dark:text-indigo-400 font-black">单一算力豆池</span>，会员套餐赠送的算力豆与充值购买的算力豆<span class="text-indigo-600 dark:text-indigo-400 font-black">合并到同一个池</span>。
                 </p>
                 <div class="mt-3 flex items-center gap-3 px-4 py-3 bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-800/30">
                   <el-icon class="text-indigo-500 dark:text-indigo-400"><Coin /></el-icon>
-                  <span class="text-sm font-black text-indigo-600 dark:text-indigo-300">积分按 "1元 = 100积分" 等面值发放</span>
+                  <span class="text-sm font-black text-indigo-600 dark:text-indigo-300">算力豆按 "1元 = 100算力豆" 等面值发放</span>
                 </div>
                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold mt-2">
-                  会员档位之间不存在赠送比例差异（溢价体现在功能权益，不在积分数量）
+                  会员档位之间不存在赠送比例差异（溢价体现在功能权益，不在算力豆数量）
                 </p>
               </div>
             </div>
@@ -140,7 +140,7 @@
                 <el-icon class="text-rose-500 dark:text-rose-400"><Clock /></el-icon>
               </span>
               <div class="flex-1">
-                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">积分随会员到期清零</h4>
+                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">算力豆随会员到期清零</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-bold mt-2">
                   会员套餐赠送的算力豆，<span class="text-rose-600 dark:text-rose-400 font-black">随会员到期日一起清零</span>，不结转、不返还。
                 </p>
@@ -154,7 +154,7 @@
                 <el-icon class="text-emerald-500 dark:text-emerald-400"><Check /></el-icon>
               </span>
               <div class="flex-1">
-                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">纯充值积分永久保留</h4>
+                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">纯充值算力豆永久保留</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-bold mt-2">
                   单独充值（不购买会员）的算力豆<span class="text-emerald-600 dark:text-emerald-400 font-black">永久有效</span>，无会员状态下可继续使用，但按非会员权限执行（带水印、480P/720P、1并发）。
                 </p>
@@ -186,11 +186,11 @@
             <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-4 space-y-3">
               <div class="flex items-center gap-3">
                 <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-xs font-black shrink-0">①</span>
-                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">购买 <span class="text-amber-600 dark:text-amber-400 font-black">¥100 A套餐</span>（100积分），使用15天后还剩 <span class="text-amber-600 dark:text-amber-400 font-black">15天 + 200积分</span></span>
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">购买 <span class="text-amber-600 dark:text-amber-400 font-black">¥100 A套餐</span>（100算力豆），使用15天后还剩 <span class="text-amber-600 dark:text-amber-400 font-black">15天 + 200算力豆</span></span>
               </div>
               <div class="flex items-center gap-3">
                 <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-xs font-black shrink-0">②</span>
-                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">再购买 <span class="text-emerald-600 dark:text-emerald-400 font-black">¥1000 B套餐</span>（1000积分）</span>
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">再购买 <span class="text-emerald-600 dark:text-emerald-400 font-black">¥1000 B套餐</span>（1000算力豆）</span>
               </div>
               <div class="flex items-center gap-3">
                 <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-xs font-black shrink-0">③</span>
@@ -199,7 +199,7 @@
             </div>
             <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-3 text-center border border-amber-200 dark:border-amber-700/50">
-                <div class="text-xs text-slate-400 dark:text-slate-500 font-bold">积分</div>
+                <div class="text-xs text-slate-400 dark:text-slate-500 font-bold">算力豆</div>
                 <div class="text-xl font-black text-amber-600 dark:text-amber-400 mt-1">1200</div>
                 <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">200剩余 + 1000新</div>
               </div>
@@ -216,16 +216,16 @@
             </div>
           </div>
 
-          <!-- Rule 1: 积分合并 -->
+          <!-- Rule 1: 算力豆合并 -->
           <div class="bg-white dark:bg-slate-800/80 p-6 rounded-[28px] shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-700/50">
             <div class="flex items-start gap-4">
               <span class="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 mt-0.5">
                 <el-icon class="text-indigo-500 dark:text-indigo-400"><Grid /></el-icon>
               </span>
               <div class="flex-1">
-                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">积分合并</h4>
+                <h4 class="text-base font-black text-slate-900 dark:text-white m-0">算力豆合并</h4>
                 <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-bold mt-2">
-                  新套餐积分与剩余积分<span class="text-indigo-600 dark:text-indigo-400 font-black">相加</span>，用户不吃亏。
+                  新套餐算力豆与剩余算力豆<span class="text-indigo-600 dark:text-indigo-400 font-black">相加</span>，用户不吃亏。
                 </p>
               </div>
             </div>
@@ -297,10 +297,10 @@
               <div class="flex-1">
                 <h4 class="text-base font-black text-slate-900 dark:text-white m-0">等面值发放 · 无套利空间</h4>
                 <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-bold mt-3">
-                  所有算力豆均按 <span class="text-purple-600 dark:text-purple-400 font-black">"1元 = 100积分"</span> 等面值发放，会员档位之间<span class="text-purple-600 dark:text-purple-400 font-black">不存在赠送比例差异</span>。
+                  所有算力豆均按 <span class="text-purple-600 dark:text-purple-400 font-black">"1元 = 100算力豆"</span> 等面值发放，会员档位之间<span class="text-purple-600 dark:text-purple-400 font-black">不存在赠送比例差异</span>。
                 </p>
                 <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-bold mt-2">
-                  溢价体现在<span class="text-purple-600 dark:text-purple-400 font-black">功能权益</span>，不在积分数量——上述规则下不存在套利空间，可以放心实现。
+                  溢价体现在<span class="text-purple-600 dark:text-purple-400 font-black">功能权益</span>，不在算力豆数量——上述规则下不存在套利空间，可以放心实现。
                 </p>
               </div>
             </div>

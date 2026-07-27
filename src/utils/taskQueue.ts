@@ -7,6 +7,7 @@ export type TaskSource = 'episodes-batch' | 'episodes-single' | 'storyboard-sing
 
 export interface Task {
   id: string;
+  batchId: string;              // 任务批次ID，同一批次生成的任务共享
   episodeId: string;
   dramaTitle: string;
   episodeTitle: string;
@@ -28,13 +29,55 @@ class TaskQueueManager {
   private maxConcurrency: number = 2;
   private isProcessing: boolean = false;
 
-  constructor(maxConcurrency: number = 2) {
-    this.maxConcurrency = maxConcurrency;
+  /** 生成批次ID：同一批次调用共享同一ID */
+  private currentBatchId: string = '';
+  private batchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  /**
+   * 生成批次ID：ST_YYYYMMDDHHMMSS_NN
+   * 例：ST_20260727143022_01 — 2026-07-27 14:30:22 当日第1批
+   * 同一批次连续 addTask（500ms 内）共享同一 ID
+   */
+  private getBatchId(): string {
+    if (this.currentBatchId && this.batchTimeout) {
+      // 刷新超时，保持当前批次
+      clearTimeout(this.batchTimeout);
+      this.batchTimeout = setTimeout(() => { this.currentBatchId = ''; }, 500);
+      return this.currentBatchId;
+    }
+    // 读取并更新当日批次计数
+    const now = new Date();
+    const todayKey = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const key = 'ST_batch_counter';
+    const stored = localStorage.getItem(key);
+    let todaySeq: number = 1;
+    if (stored) {
+      try {
+        const { date, seq } = JSON.parse(stored);
+        todaySeq = date === todayKey ? seq + 1 : 1;
+      } catch (_) { todaySeq = 1; }
+    }
+    localStorage.setItem(key, JSON.stringify({ date: todayKey, seq: todaySeq }));
+    
+    // 构建批次ID：ST_YYYYMMDDHHMMSS_NN
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const seq = String(todaySeq).padStart(2, '0');
+    const batchId = `ST_${y}${m}${d}${hh}${mm}${ss}_${seq}`;
+    this.currentBatchId = batchId;
+    this.batchTimeout = setTimeout(() => { this.currentBatchId = ''; }, 500);
+    return batchId;
   }
 
-  addTask(task: Omit<Task, 'status' | 'progress' | 'createdAt'>) {
+  addTask(task: Omit<Task, 'status' | 'progress' | 'createdAt' | 'batchId'>) {
+    const batchId = this.getBatchId();
     const newTask: Task = {
       ...task,
+      batchId,
       status: 'queued',
       progress: 0,
       createdAt: Date.now()

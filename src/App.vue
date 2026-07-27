@@ -295,36 +295,53 @@
             <!-- Expandable Scene Detail Panel -->
             <div v-show="expandedEpisodes.includes(group.episodeId)" class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
               <div class="p-2 space-y-1.5">
-                <div 
-                  v-for="scene in group.sceneTasks" 
-                  :key="scene.id" 
-                  class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
-                >
-                  <div class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg text-[10px] font-black" :class="getSceneBadgeClass(scene)">{{ scene.sceneIndex }}</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300">分镜 #{{ scene.sceneIndex }}</span>
-                      <span v-if="scene.taskSource" class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase">{{ getTaskSourceLabel(scene.taskSource) }}</span>
-                    </div>
-                    <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-0.5">
-                      <div class="h-full rounded-full transition-all duration-700" :class="getSceneProgressColor(scene)" :style="{ width: scene.progress + '%' }"></div>
+                <!-- Batch Groups -->
+                <div v-for="batch in group.batchGroups" :key="batch.batchId">
+                  <!-- Batch Header -->
+                  <div class="flex items-center gap-1.5 px-2 py-0.5">
+                    <span class="text-[8px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">批次 {{ getBatchLabel(batch.batchId) }}</span>
+                    <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500">{{ batch.scenes.length }} 个分镜</span>
+                    <div class="flex items-center gap-0.5">
+                      <div v-for="i in batch.completedCount" :key="'bc'+i" class="w-1 h-1 rounded-full bg-emerald-500"></div>
+                      <div v-for="i in batch.failedCount" :key="'bf'+i" class="w-1 h-1 rounded-full bg-red-500"></div>
+                      <div v-for="i in batch.processingCount" :key="'bp'+i" class="w-1 h-1 rounded-full bg-indigo-500 animate-pulse"></div>
+                      <div v-for="i in batch.pendingCount" :key="'bq'+i" class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
                     </div>
                   </div>
-                  <div :class="['px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider flex-shrink-0', getSceneStatusClass(scene)]">
-                    {{ scene.status === 'processing' ? '生成中' : scene.status === 'completed' ? '成功' : scene.status === 'failed' ? '失败' : '排队' }}
+                  <!-- Scenes in this batch -->
+                  <div class="space-y-1.5">
+                    <div 
+                      v-for="scene in batch.scenes" 
+                      :key="scene.id" 
+                      class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
+                    >
+                      <div class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg text-[10px] font-black" :class="getSceneBadgeClass(scene)">{{ scene.sceneIndex }}</div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300">分镜 #{{ scene.sceneIndex }}</span>
+                          <span v-if="scene.taskSource" class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase">{{ getTaskSourceLabel(scene.taskSource) }}</span>
+                        </div>
+                        <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-0.5">
+                          <div class="h-full rounded-full transition-all duration-700" :class="getSceneProgressColor(scene)" :style="{ width: scene.progress + '%' }"></div>
+                        </div>
+                      </div>
+                      <div :class="['px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider flex-shrink-0', getSceneStatusClass(scene)]">
+                        {{ scene.status === 'processing' ? '生成中' : scene.status === 'completed' ? '成功' : scene.status === 'failed' ? '失败' : '排队' }}
+                      </div>
+                      <button 
+                        v-if="scene.status === 'failed'" 
+                        @click.stop="handleRegenerateScene(scene)" 
+                        class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all flex-shrink-0"
+                        title="重新生成"
+                      >
+                        <el-icon :size="13"><RefreshRight /></el-icon>
+                      </button>
+                    </div>
                   </div>
-                  <button 
-                    v-if="scene.status === 'completed' || scene.status === 'failed'" 
-                    @click.stop="handleRegenerateScene(scene)" 
-                    class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all flex-shrink-0"
-                    title="重新生成"
-                  >
-                    <el-icon :size="13"><RefreshRight /></el-icon>
-                  </button>
                 </div>
                 <div class="flex items-center justify-between gap-2 px-2 py-1.5">
                   <button @click="handleRegenerateFailed(group)" :disabled="group.failedCount === 0" class="text-[10px] font-bold text-red-500 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">重新生成失败分镜({{ group.failedCount }})</button>
-                  <button @click="handleRegenerateAll(group)" class="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 transition-colors">重新生成全部</button>
+                  <button @click="handleRegenerateAll(group)" :disabled="group.failedCount === 0" class="text-[10px] font-bold text-indigo-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">重新生成全部失败</button>
                 </div>
               </div>
             </div>
@@ -378,12 +395,28 @@ const groupedEpisodes = computed(() => {
   for (const task of episodeStore.tasks) {
     const key = task.episodeId
     if (!groups[key]) {
-      groups[key] = { episodeId: task.episodeId, dramaTitle: task.dramaTitle, episodeTitle: task.episodeTitle, sceneTasks: [] }
+      groups[key] = { episodeId: task.episodeId, dramaTitle: task.dramaTitle, episodeTitle: task.episodeTitle, episodeIndex: task.episodeIndex || 1, batchGroups: [] }
     }
-    groups[key].sceneTasks.push(task)
+    groups[key].sceneTasks = (groups[key].sceneTasks || []).concat(task)
   }
   return Object.values(groups).map(group => {
-    group.sceneTasks.sort((a: any, b: any) => (a.sceneIndex || 0) - (b.sceneIndex || 0))
+    group.sceneTasks.sort((a: any, b: any) => {
+      // 先按批次分组，同批次内按分镜序号排序
+      if (a.batchId && b.batchId) {
+        if (a.batchId !== b.batchId) return a.batchId < b.batchId ? -1 : 1
+      }
+      return (a.sceneIndex || 0) - (b.sceneIndex || 0)
+    })
+    // Group scenes by batchId
+    const batchMap: Record<string, any[]> = {}
+    for (const task of group.sceneTasks) {
+      const bid = task.batchId || 'batch-unknown'
+      if (!batchMap[bid]) batchMap[bid] = []
+      batchMap[bid].push(task)
+    }
+    group.batchGroups = Object.entries(batchMap).map(([bid, scenes]) => {
+      return { batchId: bid, scenes, completedCount: scenes.filter((s: any) => s.status === 'completed').length, failedCount: scenes.filter((s: any) => s.status === 'failed').length, processingCount: scenes.filter((s: any) => s.status === 'processing').length, pendingCount: scenes.filter((s: any) => s.status === 'queued' || s.status === 'pending').length }
+    })
     group.completedCount = group.sceneTasks.filter((t: any) => t.status === 'completed').length
     group.failedCount = group.sceneTasks.filter((t: any) => t.status === 'failed').length
     group.processingCount = group.sceneTasks.filter((t: any) => t.status === 'processing').length
@@ -405,6 +438,10 @@ const getSceneBadgeClass = (s: any) => s.status === 'completed' ? 'bg-emerald-10
 const getSceneProgressColor = (s: any) => s.status === 'processing' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : s.status === 'completed' ? 'bg-emerald-500' : s.status === 'failed' ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'
 const getSceneStatusClass = (s: any) => s.status === 'processing' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 animate-pulse' : s.status === 'completed' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400' : s.status === 'failed' ? 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
 const getTaskSourceLabel = (src: string) => ({'episodes-batch':'批量','episodes-single':'单集','storyboard-single':'单分镜','storyboard-batch':'批量分镜','storyboard-timeline':'时间轴','storyboard-history':'历史','video-batch':'视频批量','video-single':'视频单分镜','regenerate':'重新生成'})[src] || ''
+// 直接显示完整批次ID（如 ST_20260727143022_01）
+const getBatchLabel = (batchId: string) => batchId
+
+
 
 const getPosterUrl = (ep: any) => {
   if (!ep) return 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=cinematic+movie+poster+placeholder&image_size=portrait_4_3'
@@ -472,10 +509,12 @@ const handleRegenerateFailed = (group: any) => {
   })
 }
 
-// Regenerate all scenes
+// Regenerate all failed scenes (已完成的不允许重新生成)
 const handleRegenerateAll = (group: any) => {
-  ElMessage.info(`重新生成第 ${group.episodeIndex || 1} 集全部 ${group.sceneTasks.length} 个分镜`)
-  group.sceneTasks.forEach((scene: any) => {
+  const failedScenes = group.sceneTasks.filter((s: any) => s.status === 'failed')
+  if (failedScenes.length === 0) return ElMessage.info('没有失败的分镜需要重新生成')
+  ElMessage.info(`重新生成第 ${group.episodeIndex || 1} 集 ${failedScenes.length} 个失败分镜`)
+  failedScenes.forEach((scene: any) => {
     taskQueueManager.addTask({
       id: `task-${scene.episodeId}-scene-${scene.sceneIndex}-${Date.now()}`,
       episodeId: scene.episodeId,
@@ -646,6 +685,7 @@ onMounted(() => {
   legacyTasks.forEach((task: any) => {
     const idx = episodeStore.tasks.findIndex((t: any) => t.id === task.id)
     if (idx > -1) episodeStore.tasks.splice(idx, 1)
+    const batchId = task.batchId || `batch-legacy-${task.episodeId}`
     for (let i = 1; i <= 6; i++) {
       episodeStore.tasks.push({
         ...task,
@@ -653,6 +693,7 @@ onMounted(() => {
         sceneIndex: i,
         taskSource: task.taskSource || 'episodes-batch',
         type: 'storyboard-scene',
+        batchId: batchId,
         status: task.status === 'completed' ? 'completed' : task.status,
         progress: task.status === 'completed' ? 100 : task.progress,
         execute: async () => {}
