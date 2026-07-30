@@ -50,6 +50,50 @@
       </transition>
     </teleport>
 
+    <!-- Batch Subject Generation Loading (Non-blocking) -->
+    <teleport to="body">
+      <transition name="el-zoom-in-center">
+        <div v-if="isBatchGenerating" class="fixed inset-0 z-[1500] flex items-center justify-center pointer-events-none">
+          <div class="relative w-[440px] px-6 flex flex-col items-center gap-6 bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl p-10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-white dark:border-slate-700 pointer-events-auto">
+            <div class="relative">
+              <div class="absolute inset-0 bg-teal-500 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
+              <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white shadow-lg rotate-3 animate-float-slow">
+                <el-icon :size="32" class="animate-bounce-subtle"><Document /></el-icon>
+              </div>
+            </div>
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">批量生成中</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-[13px] font-medium flex items-center justify-center gap-2">
+                <el-icon class="is-loading"><Loading /></el-icon>
+                {{ batchCurrentInfo }}
+              </p>
+            </div>
+            <div class="w-full space-y-3 px-2">
+              <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-black text-teal-600 dark:text-teal-400 uppercase tracking-widest">生成进度</span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ batchGenerationProgress }}%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50 relative">
+                <div
+                  class="h-full bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 transition-all duration-500 ease-out relative"
+                  :style="{ width: batchGenerationProgress + '%' }"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-fast"></div>
+                </div>
+              </div>
+            </div>
+            <button
+              @click="batchSessionId++"
+              class="w-full h-11 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-black text-[13px] hover:bg-teal-50 hover:text-teal-600 dark:hover:bg-teal-900/20 transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 group"
+            >
+              <span>取消生成</span>
+              <el-icon><Close /></el-icon>
+            </button>
+          </div>
+        </div>
+      </transition>
+    </teleport>
+
     <div class="flex-1 flex flex-col min-h-0 relative">
       <!-- Work Info Overlay - Integrated into Tabs Row -->
       <div class="absolute left-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
@@ -127,7 +171,77 @@
         <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="assets-view-image" />
       </div>
 
-      <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
+      <!-- Empty State: 3 Entry Cards -->
+      <div
+        v-if="isPageEmpty"
+        class="flex-1 flex flex-col items-center justify-center p-6 min-h-0"
+      >
+        <div class="flex flex-col items-center gap-6 max-w-2xl w-full">
+          <div class="relative mb-2">
+            <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-2xl opacity-15 animate-pulse"></div>
+            <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/25 rotate-3">
+              <el-icon :size="40"><MagicStick /></el-icon>
+            </div>
+          </div>
+          <div class="text-center">
+            <h2 class="text-[24px] font-black text-slate-800 dark:text-slate-100 tracking-tight">主体资产中心</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-2">您的主体库目前是空的，请选择一种方式开始创建主体资产</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full mt-4">
+            <!-- Card 1: 批量生成描述以及主体图片 -->
+            <button
+              @click="startSequentialGeneration"
+              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(79,70,229,0.15)] hover:border-indigo-200 dark:hover:border-indigo-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+            >
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:rotate-3 transition-transform">
+                <el-icon :size="28"><MagicStick /></el-icon>
+              </div>
+              <div class="text-center">
+                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">批量生成描述+图片</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">AI 全自动解析剧本，批量生成所有主体的文字描述与图片</p>
+              </div>
+              <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-1 uppercase tracking-wider">推荐 · 全自动</span>
+            </button>
+
+            <!-- Card 2: 上传主体资产 -->
+            <button
+              @click="showUploadModal = true"
+              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(20,184,166,0.15)] hover:border-teal-200 dark:hover:border-teal-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+            >
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/25 group-hover:rotate-3 transition-transform">
+                <el-icon :size="28"><Upload /></el-icon>
+              </div>
+              <div class="text-center">
+                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">上传主体资产</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">按格式上传本地图片，文件名即主体名称，自定义导入</p>
+              </div>
+              <span class="text-[11px] font-bold text-teal-600 dark:text-teal-400 mt-1 uppercase tracking-wider">手动导入</span>
+            </button>
+
+            <!-- Card 3: 批量生成主体文字描述 -->
+            <button
+              @click="handleTextOnlyGen"
+              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(234,88,12,0.15)] hover:border-orange-200 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+            >
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/25 group-hover:rotate-3 transition-transform">
+                <el-icon :size="28"><Document /></el-icon>
+              </div>
+              <div class="text-center">
+                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">批量生成文字描述</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">仅生成所有主体的文字描述信息，后续手动上传图片</p>
+              </div>
+              <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400 mt-1 uppercase tracking-wider">仅文字</span>
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-2">💡 推荐使用「批量生成描述+图片」一键完成所有主体的创建</p>
+        </div>
+      </div>
+
+      <!-- Main Content (Tabs + Footer) -->
+      <template v-if="!isPageEmpty">
+        <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
       <!-- 角色管理 -->
       <el-tab-pane label="角色管理" name="characters">
         <div class="flex flex-col h-full p-6 pt-4">
@@ -202,6 +316,20 @@
               >
                 <el-icon><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('char')).length }})
+              </button>
+              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
+              <button
+                v-if="characters.length > 0"
+                @click="handleBatchGenerateSubjectInfo('character')"
+                :disabled="isBatchGenerating"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
+                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
+              >
+                <el-icon :class="{ 'is-loading': isBatchGenerating }">
+                  <Document v-if="!isBatchGenerating" />
+                  <Loading v-else />
+                </el-icon>
+                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
               </button>
               <!-- 新增角色入口 -->
               <button 
@@ -406,6 +534,20 @@
                 <el-icon><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('scene')).length }})
               </button>
+              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
+              <button
+                v-if="scenes.length > 0"
+                @click="handleBatchGenerateSubjectInfo('scene')"
+                :disabled="isBatchGenerating"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
+                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
+              >
+                <el-icon :class="{ 'is-loading': isBatchGenerating }">
+                  <Document v-if="!isBatchGenerating" />
+                  <Loading v-else />
+                </el-icon>
+                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
+              </button>
               <!-- 新增场景入口 -->
               <button 
                 @click="showLibraryModal = true"
@@ -609,6 +751,20 @@
                 <el-icon><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('prop')).length }})
               </button>
+              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
+              <button
+                v-if="propsList.length > 0"
+                @click="handleBatchGenerateSubjectInfo('prop')"
+                :disabled="isBatchGenerating"
+                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
+                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
+              >
+                <el-icon :class="{ 'is-loading': isBatchGenerating }">
+                  <Document v-if="!isBatchGenerating" />
+                  <Loading v-else />
+                </el-icon>
+                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
+              </button>
               <!-- 新增道具入口 -->
               <button 
                 @click="showLibraryModal = true"
@@ -737,7 +893,7 @@
         </div>
       </el-tab-pane>
     </el-tabs>
-  </div>
+      </template>
 
     <div class="flex justify-end items-center p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
       <el-tooltip
@@ -757,6 +913,8 @@
         </span>
       </el-tooltip>
     </div>
+
+  </div>
 
     <!-- Unsaved Changes Confirm Dialog -->
     <el-dialog
@@ -803,6 +961,185 @@
       @confirm="handleLibraryConfirm"
     />
 
+    <!-- Upload Asset Modal - ZIP upload -->
+    <el-dialog
+      v-model="showUploadModal"
+      title="上传主体资产"
+      width="640px"
+      center
+      :close-on-click-modal="false"
+      :destroy-on-close="true"
+    >
+      <div class="p-3 space-y-4">
+        <!-- Upload zone -->
+        <div
+          v-if="!parsedSubjects.length"
+          @dragover.prevent="uploadDragOver = true"
+          @dragleave.prevent="uploadDragOver = false"
+          @drop.prevent="handleZipDrop"
+          class="border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer"
+          :class="uploadDragOver ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50'"
+        >
+          <input
+            ref="zipInputRef"
+            type="file"
+            accept=".zip"
+            class="hidden"
+            @change="handleZipSelect"
+          />
+          <el-icon :size="44" class="text-slate-300 dark:text-slate-500 mb-3"><Upload /></el-icon>
+          <p class="text-[15px] font-bold text-slate-600 dark:text-slate-300">
+            上传主体资产压缩包 (.zip)
+          </p>
+          <p class="text-[12px] text-slate-400 dark:text-slate-500 mt-2 leading-relaxed">
+            请按以下格式组织压缩包文件夹
+          </p>
+
+          <!-- 格式说明：三分类 -->
+          <div class="mt-5 grid grid-cols-3 gap-3 text-left max-w-md mx-auto">
+            <!-- 角色 -->
+            <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-700/50">
+              <div class="flex items-center gap-2 mb-1.5">
+                <el-icon :size="14" class="text-indigo-600 dark:text-indigo-400"><User /></el-icon>
+                <span class="text-[12px] font-bold text-indigo-600 dark:text-indigo-400">角色</span>
+              </div>
+              <div class="font-mono text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p>角色/林星/</p>
+                <p>&nbsp;&nbsp;├ 图片.jpg</p>
+                <p>&nbsp;&nbsp;├ 描述.txt</p>
+                <p>&nbsp;&nbsp;└ 音频描述.txt</p>
+              </div>
+            </div>
+
+            <!-- 场景 -->
+            <div class="p-3 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-700/50">
+              <div class="flex items-center gap-2 mb-1.5">
+                <el-icon :size="14" class="text-teal-600 dark:text-teal-400"><OfficeBuilding /></el-icon>
+                <span class="text-[12px] font-bold text-teal-600 dark:text-teal-400">场景</span>
+              </div>
+              <div class="font-mono text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p>场景/会议室/</p>
+                <p>&nbsp;&nbsp;├ 图片.jpg</p>
+                <p>&nbsp;&nbsp;└ 描述.txt</p>
+              </div>
+            </div>
+
+            <!-- 道具 -->
+            <div class="p-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-700/50">
+              <div class="flex items-center gap-2 mb-1.5">
+                <el-icon :size="14" class="text-orange-600 dark:text-orange-400"><Box /></el-icon>
+                <span class="text-[12px] font-bold text-orange-600 dark:text-orange-400">道具</span>
+              </div>
+              <div class="font-mono text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p>道具/项链/</p>
+                <p>&nbsp;&nbsp;├ 图片.png</p>
+                <p>&nbsp;&nbsp;└ 描述.txt</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-4 leading-relaxed">
+            文件名可自定义，系统自动按类型识别。<br>
+            图片：.jpg/.jpeg/.png/.webp/.gif  |  描述：.txt/.md<br>
+            音频描述（仅角色）：音频描述.txt — 纯文字描述角色声音特征
+          </p>
+
+          <button
+            @click="(zipInputRef as any)?.click()"
+            class="mt-4 h-10 px-8 bg-indigo-600 text-white rounded-full text-[13px] font-bold hover:bg-indigo-700 active:scale-95 transition-all"
+          >
+            <el-icon :size="14"><Folder /></el-icon>
+            <span class="ml-1">选择 zip 文件</span>
+          </button>
+        </div>
+
+        <!-- Zip file preview -->
+        <div
+          v-if="parsedSubjects.length"
+          class="relative p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[12px] font-bold text-slate-600 dark:text-slate-300">
+              压缩包：{{ zipFileName }}
+            </span>
+            <div class="flex gap-2">
+              <button
+                @click="handleReUpload"
+                class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+              >
+                重新选择
+              </button>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mb-3">
+            共解析出 {{ parsedSubjects.length }} 个主体
+          </p>
+          <div class="flex flex-col gap-2 max-h-[320px] overflow-y-auto">
+            <div
+              v-for="(s, i) in parsedSubjects"
+              :key="i"
+              class="flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700"
+            >
+              <div
+                v-if="s.imageData"
+                class="w-14 h-14 rounded-lg bg-cover bg-center shrink-0 border border-slate-200"
+                :style="{ backgroundImage: `url(${s.imageData})` }"
+              ></div>
+              <div
+                v-else
+                class="w-14 h-14 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 shrink-0"
+              >
+                <el-icon :size="18"><Picture /></el-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-bold px-1.5 rounded-md"
+                    :class="s.type === 'character' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400' : s.type === 'scene' ? 'bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'">
+                    {{ s.type === 'character' ? '角色' : s.type === 'scene' ? '场景' : '道具' }}
+                  </span>
+                  <p class="text-[13px] font-bold text-slate-700 dark:text-slate-200 truncate">{{ s.name }}</p>
+                </div>
+                <p v-if="s.description" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ s.description }}</p>
+                <p v-if="s.type === 'character' && s.audioDesc" class="text-[11px] text-indigo-500 dark:text-indigo-400 truncate">🎤 {{ s.audioDesc }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Uploading progress -->
+        <div v-if="isUploading" class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">上传进度</span>
+            <span class="text-[11px] font-bold text-slate-400">{{ uploadProgress }}%</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 dark:bg-slate-900/50 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
+              :style="{ width: uploadProgress + '%' }"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-center gap-4 pb-2">
+          <button
+            @click="handleCancelUpload"
+            class="h-10 px-8 bg-white text-slate-500 rounded-full text-[14px] font-bold border border-slate-200 transition-all"
+          >
+            取消
+          </button>
+          <button
+            @click="handleUploadAsset"
+            :disabled="isUploading || parsedSubjects.length === 0"
+            class="h-10 px-10 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all"
+          >
+            <span v-if="isUploading">上传中...</span>
+            <span v-else>确认上传 {{ parsedSubjects.length }} 个主体</span>
+          </button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- Product Design Dialog -->
     <ProductDesignDialog
       v-model="showDesignDialog"
@@ -827,9 +1164,13 @@
           {
             text: '**AI 自动规划：** 系统仍支持深度扫描剧本自动提取角色、场景及道具信息，作为创作基准。',
             image: ''
+          },
+          {
+            text: '**批量生成主体图和文字描述 (2.9 新增)：**\n - **两种模式：** ① 自动模式（小白用户）：点击【完成，去设置主体】后系统自动生成所有主体；② 手动模式：在各 Tab 页点击【批量生成描述和图片】按钮，手动触发当前分类下所有主体的文字描述与图片批量生成。\n - **操作对象：** 只针对已存在于列表中的主体，不新增、不删除，仅补充描述与图片。\n - **生成流程：** 逐一对每个主体生成文字描述 + 基准图片，生成中展示进度浮层，支持随时取消。',
+            image: ''
           }
         ],
-        version: '2.2'
+        version: '2.9'
       }"
     />
 
@@ -855,7 +1196,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useModelStore } from '@/store/models';
 import { VIDEO_MODELS } from '@/config/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
-import { Plus, Picture, Edit, MagicStick, Refresh, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu, Download } from '@element-plus/icons-vue';
+import { Plus, Picture, Edit, MagicStick, Refresh, Upload, ArrowRight, ArrowDown, InfoFilled, Close, Document, Location, Monitor, Pointer, Delete, Loading, Check, Finished, Menu, Download, User, OfficeBuilding, Box, Folder } from '@element-plus/icons-vue';
 
 const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -1320,20 +1661,472 @@ const generatingAssetImages = reactive<Set<string>>(new Set());
 const generationProgress = ref(0);
 const currentAssetInfo = ref('');
 
+// Batch Generation (Mode 2 - Manual) State
+const isBatchGenerating = ref(false);
+const batchGenerationProgress = ref(0);
+const batchCurrentInfo = ref('');
+const batchSessionId = ref(0);
+
+// Mock descriptions database for batch generation
+const mockDescriptions: Record<string, Record<string, { description: string; prompt: string }>> = {
+  character: {
+    default: {
+      description: '根据剧本角色设定，AI 自动生成详细的角色外貌、性格与背景描述。',
+      prompt: '1个角色，写实风格，电影级光影，8k分辨率'
+    },
+    '林星': {
+      description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人，一头利落的短发，眼神坚定。',
+      prompt: '1个女孩，28岁，短发，职业装，办公室女性，坚强独立，自信表情，写实风格，电影级光影，8k分辨率'
+    },
+    '陈宇': {
+      description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马，温和笑容，文艺气质。',
+      prompt: '1个男孩，30岁，休闲装，摄影师气质，温和笑容，文艺风，写实风格，电影级光影，8k分辨率'
+    }
+  },
+  scene: {
+    default: {
+      description: '根据剧本场景设定，AI 自动生成详细的环境氛围与空间描述。',
+      prompt: '场景环境，电影级光影，8k分辨率'
+    },
+    '公司会议室': {
+      description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景，冷色调灯光。',
+      prompt: '现代办公室会议室，大落地窗，繁华城市夜景，冷色调灯光，电影级光影，8k分辨率'
+    },
+    '林星公寓': {
+      description: '温馨的单身公寓，布置得很有格调，暖色调灯光，简约北欧风。',
+      prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，北欧风，写实风格，8k分辨率'
+    }
+  },
+  prop: {
+    default: {
+      description: '根据剧本道具设定，AI 自动生成详细的物品外观与质感描述。',
+      prompt: '物品特写，细节质感丰富，电影级光影，8k分辨率'
+    },
+    '复古相机': {
+      description: '陈宇常用的老式胶片相机，带有岁月痕迹，金属质感机身。',
+      prompt: '复古胶片相机，金属机身，岁月痕迹，细节质感丰富，电影级光影，8k分辨率'
+    },
+    '定情项链': {
+      description: '一条星星形状的银质项链，闪耀光泽，象征两人的感情纽带。',
+      prompt: '星形纯银项链，闪耀光泽，精致工艺，微距摄影，8k分辨率'
+    }
+  }
+};
+
+const generateSubjectDescription = (name: string, type: string): { description: string; prompt: string } => {
+  const typeDict = mockDescriptions[type] || mockDescriptions.character;
+  return typeDict[name] || typeDict.default;
+};
+
+const handleBatchGenerateSubjectInfo = async (type: 'character' | 'scene' | 'prop') => {
+  if (isBatchGenerating.value) {
+    ElMessage.warning('批量生成正在进行中，请稍候...');
+    return;
+  }
+
+  const targetType = type;
+  let currentAssets: any[] = [];
+  if (targetType === 'character') currentAssets = characters.value;
+  else if (targetType === 'scene') currentAssets = scenes.value;
+  else currentAssets = propsList.value;
+
+  if (currentAssets.length === 0) {
+    ElMessage.warning(`暂无${getAssetTypeName(targetType)}，请先添加主体`);
+    return;
+  }
+
+  const sessionId = ++batchSessionId.value;
+  isBatchGenerating.value = true;
+  batchGenerationProgress.value = 0;
+  const typeName = getAssetTypeName(targetType);
+
+  for (let i = 0; i < currentAssets.length; i++) {
+    if (sessionId !== batchSessionId.value) {
+      isBatchGenerating.value = false;
+      return;
+    }
+
+    const asset = currentAssets[i];
+    batchCurrentInfo.value = `正在为 ${typeName}「${asset.name}」生成描述和图片...`;
+    batchGenerationProgress.value = Math.round(((i + 1) / currentAssets.length) * 100);
+
+    // Generate description
+    const { description, prompt } = generateSubjectDescription(asset.name, targetType);
+    if (description && asset.description !== description) {
+      episodeStore.updateSubject(asset.id, { description });
+    }
+
+    // Generate image
+    const typePrefix = targetType === 'character' ? 'char' : targetType;
+    const loadingKey = `${typePrefix}-${asset.id}`;
+    generatingAssetImages.add(loadingKey);
+
+    if (targetType === 'character') activeTab.value = 'characters';
+    else if (targetType === 'scene') activeTab.value = 'scenes';
+    else activeTab.value = 'props';
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (sessionId !== batchSessionId.value) {
+      generatingAssetImages.delete(loadingKey);
+      continue;
+    }
+
+    const nextUrl = await generateImageAPI(prompt);
+    const patch = buildAssetImagePatch(asset, nextUrl);
+    episodeStore.updateSubject(asset.id, { ...patch, description });
+
+    generatingAssetImages.delete(loadingKey);
+  }
+
+  if (sessionId === batchSessionId.value) {
+    isBatchGenerating.value = false;
+    ElMessage.success(`批量生成完成！共生成 ${currentAssets.length} 个${typeName}的描述与图片`);
+  }
+};
+
 // Navigation Logic
 const confirmVisible = ref(false);
-const hasUnsavedChanges = ref(false); // For demo, let's say true if we edited anything
+const hasUnsavedChanges = ref(false);
+
+// Empty state: no subjects at all
+const isPageEmpty = computed(() => {
+  const allAssets = [...(characters.value || []), ...(scenes.value || []), ...(propsList.value || [])];
+  return allAssets.length === 0 && !isGeneratingAssetsText.value && generatingAssetImages.size === 0;
+});
+
+// Upload modal - ZIP upload: folder per subject (image + text desc + audio desc)
+const showUploadModal = ref(false);
+const uploadProgress = ref(0);
+const isUploading = ref(false);
+const uploadDragOver = ref(false);
+const zipInputRef = ref<HTMLInputElement | null>(null);
+
+interface ParsedSubject {
+  name: string;
+  type: 'character' | 'scene' | 'prop';
+  imageData: string;
+  description: string;
+  audioDesc: string;
+}
+
+const zipFileName = ref('');
+const parsedSubjects = reactive<ParsedSubject[]>([]);
+
+const handleCancelUpload = () => {
+  isUploading.value = false;
+  uploadProgress.value = 0;
+  uploadDragOver.value = false;
+  zipFileName.value = '';
+  parsedSubjects.length = 0;
+  showUploadModal.value = false;
+};
+
+const handleReUpload = () => {
+  zipFileName.value = '';
+  parsedSubjects.length = 0;
+};
+
+const fileToDataURL = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+const parseZipAsSubjects = async (file: File): Promise<void> => {
+  zipFileName.value = file.name;
+  parsedSubjects.length = 0;
+
+  try {
+    const zip = await JSZip.loadAsync(file);
+
+    // Collect top-level folder names
+    const folderNames = new Set<string>();
+    zip.forEach((relativePath, entry) => {
+      if (entry.dir) {
+        const parts = relativePath.split('/');
+        if (parts.length === 2 && parts[1]) {
+          folderNames.add(parts[1]);
+        }
+      }
+    });
+
+    if (folderNames.size === 0) {
+      throw new Error('未识别到文件夹结构，请按主体文件夹打包');
+    }
+
+    const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp']);
+    const textExtensions = new Set(['.txt', '.md']);
+
+    // Try category structure first (角色/林星/image.jpg)
+    const typeFolders = new Map<string, 'character' | 'scene' | 'prop'>();
+    zip.forEach((relativePath, entry) => {
+      if (entry.dir) {
+        const parts = relativePath.split('/').filter(Boolean);
+        if (parts.length === 1) {
+          const fn = parts[0];
+          if (fn === '角色' || fn === 'characters' || fn === 'character' || fn === '角色库' || fn === 'role') {
+            typeFolders.set(fn, 'character');
+          } else if (fn === '场景' || fn === 'scenes' || fn === 'scene' || fn === '场景库') {
+            typeFolders.set(fn, 'scene');
+          } else if (fn === '道具' || fn === 'props' || fn === 'prop' || fn === '道具库') {
+            typeFolders.set(fn, 'prop');
+          }
+        }
+      }
+    });
+
+    let categorySubjectFiles: Map<string, { type: 'character' | 'scene' | 'prop'; path: string; name: string; ext: string }>;
+
+    if (typeFolders.size > 0) {
+      // Category structure: /角色/林星/image.jpg
+      categorySubjectFiles = new Map();
+      zip.forEach((relativePath, entry) => {
+        if (!entry.dir && relativePath.split('/').filter(Boolean).length >= 2) {
+          const parts = relativePath.split('/').filter(Boolean);
+          const category = typeFolders.get(parts[0]);
+          if (category && parts.length >= 2) {
+            const subjectName = parts.slice(1).join('/');
+            const fileName = parts[parts.length - 1] || '';
+            const ext = fileName.toLowerCase().split('.').pop() || '';
+            const key = `${category}|${subjectName}|${fileName}`;
+            categorySubjectFiles.set(key, { type: category, path: relativePath, name: fileName, ext });
+          }
+        }
+      });
+    } else {
+      // Flat structure: /林星/image.jpg — default to character
+      categorySubjectFiles = new Map();
+      zip.forEach((relativePath, entry) => {
+        if (!entry.dir && relativePath.includes('/')) {
+          const parts = relativePath.split('/');
+          const folder = parts[0];
+          const fileName = parts[1] || '';
+          const ext = fileName.toLowerCase().split('.').pop() || '';
+          const key = `character|${folder}|${fileName}`;
+          categorySubjectFiles.set(key, { type: 'character', path: relativePath, name: fileName, ext });
+        }
+      });
+    }
+
+    // Group files by subject
+    const subjectGroups = new Map<string, Array<{ type: 'character' | 'scene' | 'prop'; path: string; name: string; ext: string }>>();
+    for (const [key, fileInfo] of categorySubjectFiles) {
+      const subjectName = key.split('|').slice(1).join('|');
+      if (!subjectGroups.has(subjectName)) subjectGroups.set(subjectName, []);
+      subjectGroups.get(subjectName)!.push(fileInfo);
+    }
+
+    for (const [subjectName, files] of subjectGroups) {
+      const fileInfo = files[0];
+      const type = fileInfo.type;
+      const subject: ParsedSubject = { name: subjectName, type, imageData: '', description: '', audioDesc: '' };
+
+      for (const file of files) {
+        const entry = zip.file(file.path);
+        if (!entry) continue;
+
+        if (imageExtensions.has(file.ext) && !subject.imageData) {
+          const blob = await entry.async('blob');
+          subject.imageData = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } else if (textExtensions.has(file.ext)) {
+          const text = await entry.async('text');
+          const trimmed = text.trim();
+          const fileName = file.name.toLowerCase();
+          // 音频描述.txt — 仅角色，存储为 audioDesc
+          if ((fileName.includes('音频描述') || fileName.includes('audio') || fileName.includes('voice')) && type === 'character' && !subject.audioDesc) {
+            subject.audioDesc = trimmed;
+          } else if (!subject.description) {
+            subject.description = trimmed;
+          }
+        }
+      }
+
+      parsedSubjects.push(subject);
+    }
+
+    if (parsedSubjects.length === 0) {
+      throw new Error('压缩包内未解析到主体数据');
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '压缩包解析失败');
+    parsedSubjects.length = 0;
+    zipFileName.value = '';
+  }
+};
+
+const handleZipSelect = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    parseZipAsSubjects(target.files[0]);
+    target.value = '';
+  }
+};
+
+const handleZipDrop = (e: DragEvent) => {
+  uploadDragOver.value = false;
+  const files = e.dataTransfer?.files;
+  if (files && files.length > 0 && files[0].name.endsWith('.zip')) {
+    parseZipAsSubjects(files[0]);
+  } else {
+    ElMessage.warning('请选择 .zip 格式的文件');
+  }
+};
+
+const handleUploadAsset = async () => {
+  if (parsedSubjects.length === 0) {
+    ElMessage.warning('请先选择 zip 文件');
+    return;
+  }
+
+  isUploading.value = true;
+  uploadProgress.value = 0;
+
+  for (let i = 0; i < parsedSubjects.length; i++) {
+    uploadProgress.value = Math.round(((i + 1) / parsedSubjects.length) * 100);
+    const subject = parsedSubjects[i];
+    const now = Date.now();
+    const imgId = `img_${now}_${Math.random().toString(36).slice(2, 8)}`;
+    const subjectId = `upload_${now}_${Math.random().toString(36).slice(2, 8)}`;
+
+    episodeStore.addSubject({
+      id: subjectId,
+      name: subject.name,
+      type: subject.type,
+      image: subject.imageData,
+      reference_image: '',
+      description: subject.description,
+      selectedImageId: imgId,
+      imageHistory: [{
+        id: imgId,
+        url: subject.imageData,
+        isSelected: true,
+        createdAt: now,
+        name: subject.name,
+        description: subject.description,
+      }],
+    });
+  }
+
+  isUploading.value = false;
+  const count = parsedSubjects.length;
+  uploadProgress.value = 0;
+  parsedSubjects.length = 0;
+  zipFileName.value = '';
+  showUploadModal.value = false;
+  ElMessage.success(`成功上传 ${count} 个主体资产`);
+};
+
+const handleTextOnlyGen = async () => {
+  if (isBatchGenerating.value) {
+    ElMessage.warning('批量生成正在进行中，请稍候...');
+    return;
+  }
+
+  const sessionId = ++batchSessionId.value;
+  isBatchGenerating.value = true;
+  batchGenerationProgress.value = 0;
+  batchCurrentInfo.value = '正在批量生成文字描述...';
+
+  // 检查是否已有主体数据
+  const allExisting = [...(characters.value || []), ...(scenes.value || []), ...(propsList.value || [])];
+
+  if (allExisting.length === 0) {
+    // 空页面：生成 mock 主体的文字描述并填充到列表
+    const mockCharacters = [
+      { id: `char-${Date.now()}-1`, name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人，一头利落的短发，眼神坚定。', type: 'character' as const },
+      { id: `char-${Date.now()}-2`, name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马，温和笑容，文艺气质。', type: 'character' as const },
+    ];
+    const mockScenes = [
+      { id: `scene-${Date.now()}-1`, name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景，冷色调灯光。', type: 'scene' as const },
+      { id: `scene-${Date.now()}-2`, name: '林星公寓', description: '温馨的单身公寓，布置得很有格调，暖色调灯光，简约北欧风。', type: 'scene' as const },
+    ];
+    const mockProps = [
+      { id: `prop-${Date.now()}-1`, name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹，金属质感机身。', type: 'prop' as const },
+      { id: `prop-${Date.now()}-2`, name: '定情项链', description: '一条星星形状的银质项链，闪耀光泽，象征两人的感情纽带。', type: 'prop' as const },
+    ];
+
+    const steps = ['生成角色描述', '生成场景描述', '生成道具描述'];
+    const datasets = [
+      { list: mockCharacters, label: '角色' },
+      { list: mockScenes, label: '场景' },
+      { list: mockProps, label: '道具' },
+    ];
+
+    for (let i = 0; i < datasets.length; i++) {
+      if (sessionId !== batchSessionId.value) { isBatchGenerating.value = false; return; }
+      batchCurrentInfo.value = steps[i];
+      batchGenerationProgress.value = Math.round(((i + 1) / datasets.length) * 100);
+
+      for (const item of datasets[i].list) {
+        if (sessionId !== batchSessionId.value) break;
+        episodeStore.addSubject({
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          description: item.description,
+          image: '',
+          reference_image: '',
+          selectedImageId: '',
+          imageHistory: [],
+        });
+        await new Promise(resolve => setTimeout(resolve, 400));
+      }
+    }
+  } else {
+    // 已有数据：仅更新缺失的描述
+    const typeConfigs: Array<{ type: 'character' | 'scene' | 'prop'; label: string }> = [
+      { type: 'character', label: '角色' },
+      { type: 'scene', label: '场景' },
+      { type: 'prop', label: '道具' },
+    ];
+
+    for (const { type, label } of typeConfigs) {
+      if (sessionId !== batchSessionId.value) {
+        isBatchGenerating.value = false;
+        return;
+      }
+
+      let currentAssets: any[] = [];
+      if (type === 'character') currentAssets = characters.value;
+      else if (type === 'scene') currentAssets = scenes.value;
+      else currentAssets = propsList.value;
+
+      if (currentAssets.length === 0) continue;
+
+      for (const asset of currentAssets) {
+        if (sessionId !== batchSessionId.value) break;
+        batchCurrentInfo.value = `正在为 ${label}「${asset.name}」生成文字描述...`;
+
+        const { description } = generateSubjectDescription(asset.name, type);
+        if (description && asset.description !== description) {
+          episodeStore.updateSubject(asset.id, { description });
+        }
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    }
+  }
+
+  if (sessionId === batchSessionId.value) {
+    isBatchGenerating.value = false;
+    ElMessage.success('批量文字描述生成完成');
+  }
+};
 
 const isAssetsComplete = computed(() => {
   const hasBasicAssets = (characters.value?.length || 0) > 0 && (scenes.value?.length || 0) > 0;
   const isGenerating = isGeneratingAssetsText.value || generatingAssetImages.size > 0;
-  
-  // Check if any asset is missing a description or image (or has a failed image)
+
   const allAssets = [...(characters.value || []), ...(scenes.value || []), ...(propsList.value || [])];
   const hasIncompleteAssets = allAssets.some(asset => {
-    // Check for empty name or description
     if (!asset.name || !asset.description) return true;
-    // Check for empty image or failed image
     if (!asset.image || asset.image === 'FAILED') return true;
     return false;
   });
@@ -1378,35 +2171,35 @@ const goToEpisodes = () => {
 };
 
 onMounted(async () => {
-  // Check if we need to generate assets (mock check)
-  // If coming from script page and no assets yet, trigger generation
-  // 模拟真实历史数据：如果 episodeStore 中已经有主体数据，则不再重新生成
+  // 主体数据为空时，不自动生成，直接展示空状态让用户选择操作方式
   if (episodeStore.subjects.length === 0) {
-    await startSequentialGeneration();
-  } else {
-    // 数据修正逻辑：如果检测到旧版数字 ID 导致图片错位，进行自动修复
-    const hasOldIds = episodeStore.subjects.some(s => s.id === '1' || s.id === '2');
-    if (hasOldIds) {
-      console.log('检测到旧版数据 ID，正在执行自动修复以确保图片正确...');
-      const fixedSubjects = episodeStore.subjects.map(s => {
-        if (s.type === 'character') {
-          if (s.name === '林星') return { ...s, id: 'char-1', image: createInstantAssetImage({ ...s, id: 'char-1' }) };
-          if (s.name === '陈宇') return { ...s, id: 'char-2', image: createInstantAssetImage({ ...s, id: 'char-2' }) };
-        }
-        if (s.type === 'scene') {
-          if (s.name === '公司会议室') return { ...s, id: 'scene-1', image: createInstantAssetImage({ ...s, id: 'scene-1' }) };
-          if (s.name === '林星公寓') return { ...s, id: 'scene-2', image: createInstantAssetImage({ ...s, id: 'scene-2' }) };
-        }
-        if (s.type === 'prop') {
-          if (s.name === '复古相机') return { ...s, id: 'prop-1', image: createInstantAssetImage({ ...s, id: 'prop-1' }) };
-          if (s.name === '定情项链') return { ...s, id: 'prop-2', image: createInstantAssetImage({ ...s, id: 'prop-2' }) };
-        }
-        return s;
-      });
-      episodeStore.setSubjects(fixedSubjects);
-    }
-    normalizeAllSubjectImageHistories();
-    console.log('检测到已有主体数据，保留历史记录，跳过自动生成。');
+    console.log('主体数据为空，展示空状态入口页面');
+    return;
+  }
+
+  // 数据修正逻辑：如果检测到旧版数字 ID 导致图片错位，进行自动修复
+  const hasOldIds = episodeStore.subjects.some(s => s.id === '1' || s.id === '2');
+  if (hasOldIds) {
+    console.log('检测到旧版数据 ID，正在执行自动修复以确保图片正确...');
+    const fixedSubjects = episodeStore.subjects.map(s => {
+      if (s.type === 'character') {
+        if (s.name === '林星') return { ...s, id: 'char-1', image: createInstantAssetImage({ ...s, id: 'char-1' }) };
+        if (s.name === '陈宇') return { ...s, id: 'char-2', image: createInstantAssetImage({ ...s, id: 'char-2' }) };
+      }
+      if (s.type === 'scene') {
+        if (s.name === '公司会议室') return { ...s, id: 'scene-1', image: createInstantAssetImage({ ...s, id: 'scene-1' }) };
+        if (s.name === '林星公寓') return { ...s, id: 'scene-2', image: createInstantAssetImage({ ...s, id: 'scene-2' }) };
+      }
+      if (s.type === 'prop') {
+        if (s.name === '复古相机') return { ...s, id: 'prop-1', image: createInstantAssetImage({ ...s, id: 'prop-1' }) };
+        if (s.name === '定情项链') return { ...s, id: 'prop-2', image: createInstantAssetImage({ ...s, id: 'prop-2' }) };
+      }
+      return s;
+    });
+    episodeStore.setSubjects(fixedSubjects);
+  }
+  normalizeAllSubjectImageHistories();
+  console.log('检测到已有主体数据，保留历史记录，跳过自动生成。');
 
     const snapshot = [...episodeStore.subjects];
     for (const asset of snapshot) {
@@ -1415,7 +2208,6 @@ onMounted(async () => {
       const patch = buildAssetImagePatch(asset, nextUrl);
       episodeStore.updateSubject(asset.id, patch);
     }
-  }
 });
 
 const startSequentialGeneration = async () => {

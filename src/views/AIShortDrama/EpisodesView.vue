@@ -564,6 +564,65 @@
             </span>
           </div>
         </div>
+
+        <!-- 生成选项：分辨率、字幕、水印 -->
+        <div class="mt-4 p-3 rounded-2xl bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/15 dark:to-red-900/15 border border-orange-100 dark:border-orange-800/30">
+          <div class="flex items-center gap-2 mb-3">
+            <el-icon class="text-orange-600 dark:text-orange-400"><Setting /></el-icon>
+            <span class="text-[13px] font-black text-orange-700 dark:text-orange-400">视频生成选项</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4">
+            <!-- 分辨率选择 -->
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">导出分辨率</span>
+              <div class="flex gap-1 p-0.5 bg-white/70 dark:bg-slate-800/50 rounded-lg">
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisResolution === '1080P' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisResolution = '1080P'"
+                >1080P</button>
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisResolution === '720P' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisResolution = '720P'"
+                >720P</button>
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisResolution === '4K' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisResolution = '4K'"
+                >4K</button>
+              </div>
+            </div>
+
+            <!-- 字幕选项 -->
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">字幕</span>
+              <div class="flex gap-1 p-0.5 bg-white/70 dark:bg-slate-800/50 rounded-lg">
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisSubtitle ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisSubtitle = true"
+                >开启</button>
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', !synthesisSubtitle ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisSubtitle = false"
+                >关闭</button>
+              </div>
+            </div>
+
+            <!-- 水印选项 -->
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">水印</span>
+              <div class="flex gap-1 p-0.5 bg-white/70 dark:bg-slate-800/50 rounded-lg">
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisWatermark === 'brand' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisWatermark = 'brand'"
+                >带水印</button>
+                <button
+                  :class="['flex-1 text-[11px] font-bold px-2 py-1 rounded-md transition-all', synthesisWatermark === 'none' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-500 hover:text-orange-600']"
+                  @click="synthesisWatermark = 'none'"
+                >无水印</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <template #footer>
         <div class="flex justify-end gap-4 pb-2">
@@ -817,7 +876,8 @@ import {
   Close,
   Delete,
   Warning,
-  RefreshRight
+  RefreshRight,
+  Setting
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import JSZip from 'jszip';
@@ -860,6 +920,11 @@ const showBatchSynthesisSelectDialog = ref(false);
 const synthesisSelectEpisodes = ref<any[]>([]);
 const synthesisSelectedIds = ref<Set<string>>(new Set());
 const synthesisAllSelected = ref(false);
+
+// Batch synthesis video settings
+const synthesisResolution = ref('1080P');
+const synthesisSubtitle = ref(false);
+const synthesisWatermark = ref('brand'); // 'brand' | 'none'
 
 // Subject Association Logic
 const handleGlobalAssociate = () => {
@@ -1498,6 +1563,12 @@ const handleBatchSynthesis = () => {
     }
   });
   synthesisAllSelected.value = synthesisSelectedIds.value.size === allEpisodes.length;
+  
+  // Reset video settings to defaults
+  synthesisResolution.value = '1080P';
+  synthesisSubtitle.value = false;
+  synthesisWatermark.value = 'brand';
+  
   showBatchSynthesisSelectDialog.value = true;
 };
 
@@ -1546,6 +1617,13 @@ const confirmBatchSynthesisSelection = () => {
     return;
   }
 
+  // Capture current settings
+  const settings = {
+    resolution: synthesisResolution.value,
+    subtitle: synthesisSubtitle.value,
+    watermark: synthesisWatermark.value
+  };
+
   showBatchSynthesisSelectDialog.value = false;
 
   // Check for episodes with some existing storyboard videos among selected
@@ -1573,24 +1651,25 @@ const confirmBatchSynthesisSelection = () => {
     
     videoOverwriteConfirmData.value = {
       items: [...episodesWithPartialVideos, ...episodesWithoutVideos],
-      detail: detail
+      detail: detail,
+      settings: settings
     };
     videoOverwriteConfirmVisible.value = true;
     return;
   }
 
   // No existing videos, proceed directly
-  executeBatchStoryboardGeneration(selectedEpisodes);
+  executeBatchStoryboardGeneration(selectedEpisodes, settings);
 };
 
 // Execute batch storyboard video generation for the given episodes
-const executeBatchStoryboardGeneration = (episodes: any[]) => {
+const executeBatchStoryboardGeneration = (episodes: any[], settings: any = {}) => {
   const totalScenes = episodes.reduce((sum, ep) => {
     const pending = getPendingStoryboardIndices(ep);
     return sum + (pending.length > 0 ? pending.length : (ep.storyboardScenes?.length || 6));
   }, 0);
   
-  ElMessage.success(`已将 ${episodes.length} 集的分镜视频生成任务加入队列（共 ${totalScenes} 个分镜）`);
+  ElMessage.success(`已将 ${episodes.length} 集的分镜视频生成任务加入队列（共 ${totalScenes} 个分镜，${settings.resolution || '1080P'}${settings.subtitle ? ' + 字幕' : ''}${settings.watermark === 'none' ? ' + 无水印' : ''}）`);
   
   episodes.forEach(ep => {
     const sceneCount = ep.storyboardScenes?.length || 6;
@@ -1605,6 +1684,7 @@ const executeBatchStoryboardGeneration = (episodes: any[]) => {
         taskSource: 'episodes-batch',
         type: 'storyboard-scene',
         priority: 1,
+        ...settings,
         execute: async () => {
           await executeSceneGeneration(ep, i);
         }
@@ -1616,7 +1696,7 @@ const executeBatchStoryboardGeneration = (episodes: any[]) => {
 // Handle video overwrite confirmation
 const handleVideoOverwriteConfirm = () => {
   if (videoOverwriteConfirmData.value) {
-    executeBatchStoryboardGeneration(videoOverwriteConfirmData.value.items);
+    executeBatchStoryboardGeneration(videoOverwriteConfirmData.value.items, videoOverwriteConfirmData.value.settings);
     videoOverwriteConfirmVisible.value = false;
     videoOverwriteConfirmData.value = null;
   }

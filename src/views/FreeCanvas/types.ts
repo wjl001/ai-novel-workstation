@@ -152,10 +152,10 @@ export type LightType = 'key' | 'fill' | 'rim' | 'ambient' | 'accent'
 export type LightDirection = 'top' | 'bottom' | 'left' | 'right' | 'back' | 'side' | 'front'
 
 /** 镜头运动类型 */
-export type CameraMotion = 'static' | 'pan' | 'tilt' | 'dolly' | 'truck' | 'orbit' | 'push' | 'pull'
+export type CameraMotion = 'static' | 'pan' | 'tilt' | 'dolly' | 'truck' | 'orbit' | 'push' | 'pull' | 'dolly-in' | 'dolly-out' | 'truck-left' | 'truck-right' | 'pan-left' | 'pan-right' | 'tilt-up' | 'tilt-down' | 'orbit-clockwise' | 'orbit-ccw' | 'crane-up' | 'crane-down' | 'arc' | 'zoom-in' | 'zoom-out' | 'shake' | 'snap-zoom'
 
 /** 景别类型 */
-export type ShotType = 'extreme-close-up' | 'close-up' | 'medium-close' | 'medium' | 'medium-full' | 'full' | 'wide' | 'extreme-wide'
+export type ShotType = 'extreme-close-up' | 'extreme-close' | 'close-up' | 'medium-close' | 'medium' | 'medium-full' | 'full' | 'wide' | 'extreme-wide' | 'long'
 
 /** 3D 灯光配置 */
 export interface LightConfig {
@@ -225,7 +225,7 @@ export interface KeyframeAnimation {
   name: string
   targetId: string
   property: string
-  keyframes: Array<{ time: number; value: number }>
+  keyframes: Array<{ time: number; value: number; interpolation?: InterpolationMode }>
   loop: boolean
   duration: number
 }
@@ -241,6 +241,113 @@ export interface Scene3DDirectorData {
   objects: Scene3DObject[]
   animations: KeyframeAnimation[]
   currentFrame: number
+  totalFrames: number
+  fps: number
   isPlaying: boolean
   thumbnail?: string
+  // 机位列表
+  cameraPositions: CameraPosition[]
+  activeCameraIndex: number
+  // 时间轴轨道
+  tracks: TimelineTrack[]
+  // 选中对象
+  selectedObjectId: string | null
+  selectedObjectProperty: string
+}
+
+// ============= 机位 / 运镜相关 =============
+
+/** 机位类型 */
+export type CameraPresetType = 'front' | 'back' | 'side-left' | 'side-right' | 'top' | 'close-up' | 'medium' | 'wide' | 'low-angle' | 'high-angle' | 'over-shoulder'
+
+/** 机位预设 */
+export interface CameraPosition {
+  id: string
+  name: string
+  preset: CameraPresetType | 'custom'
+  position: { x: number; y: number; z: number }
+  target: { x: number; y: number; z: number }
+  fov: number
+  focalLength: number
+  shotType: ShotType
+  motion: CameraMotion
+  thumbnail?: string
+}
+
+// ============= 时间轴相关 =============
+
+/** 插值方式 */
+export type InterpolationMode = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'hold' | 'bezier'
+
+/** 单个关键帧 */
+export interface TimelineKeyframe {
+  time: number
+  value: number
+  interpolation: InterpolationMode
+}
+
+/** 时间轴轨道 */
+export interface TimelineTrack {
+  id: string
+  name: string
+  targetId: string
+  property: string
+  keyframes: TimelineKeyframe[]
+  enabled: boolean
+  loop: boolean
+}
+
+// ============= 道具库相关 =============
+
+/** 道具分类 */
+export type PropCategory = 'furniture' | 'props' | 'architecture' | 'nature' | 'vehicles' | 'clothing' | 'food' | 'electronic' | 'weapons' | 'decorative'
+
+/** 道具模型 */
+export interface PropModel {
+  id: string
+  name: string
+  category: PropCategory
+  description?: string
+  thumbnail?: string
+  boundingBox: { width: number; height: number; depth: number }
+  polygonCount?: number
+  tags: string[]
+}
+
+// ============= 动作库相关 =============
+
+/** 动作分类 */
+export type ActionCategory = 'walk' | 'run' | 'jump' | 'sit' | 'stand' | 'fight' | 'dance' | 'gesture' | 'emote' | 'interact'
+
+/** 动作素材 */
+export interface ActionClip {
+  id: string
+  name: string
+  category: ActionCategory
+  description?: string
+  thumbnail?: string
+  previewUrl?: string
+  duration: number
+  fps: number
+  frameCount: number
+  tags: string[]
+  isLoop: boolean
+}
+
+// ============= 导出相关 =============
+
+/** 导出格式 */
+export type ExportFormat = 'mp4' | 'webm' | 'gif'
+
+/** 导出区域 */
+export type ExportArea = 'full' | 'viewport' | 'custom'
+
+/** 导出配置 */
+export interface ExportConfig {
+  format: ExportFormat
+  area: ExportArea
+  quality: 'low' | 'medium' | 'high'
+  fps: number
+  width: number
+  height: number
 }

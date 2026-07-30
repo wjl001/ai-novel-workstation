@@ -26,8 +26,12 @@ export interface Task {
 class TaskQueueManager {
   private queue: Task[] = [];
   private activeTasks: number = 0;
-  private maxConcurrency: number = 2;
+  private maxConcurrency: number;
   private isProcessing: boolean = false;
+
+  constructor(concurrency: number = 2) {
+    this.maxConcurrency = concurrency;
+  }
 
   /** 生成批次ID：同一批次调用共享同一ID */
   private currentBatchId: string = '';

@@ -1,4 +1,4 @@
-﻿﻿<template>
+﻿<template>
   <div class="free-canvas-container" @contextmenu.prevent="handleContextMenu">
     <!-- 左侧节点面板 -->
     <NodePanel ref="panelRef" @add-node="handleAddNode" />
@@ -97,7 +97,7 @@
           @select="handleNodeSelect(node.id)"
           @delete="canvasStore.removeNode(node.id)"
           @drag-start="startDrag"
-          @open-edit="openScene3DEditPanel(node.id)"
+          @open-edit="openScene3DFullEditor(node.id)"
         />
       </div>
     </div>
@@ -519,7 +519,12 @@ const handleScene3DEditSave = (data: Scene3DDirectorData) => {
 // 打开 3D 导演台全屏编辑器
 const openScene3DFullEditor = (nodeId: string) => {
   const node = canvasStore.getNode(nodeId)
-  if (!node || !node.data.directorData) return
+  if (!node) return
+  // 没有 directorData 时创建默认数据
+  if (!node.data.directorData) {
+    node.data.directorData = createDefaultDirectorData()
+    canvasStore.updateNode({ id: nodeId, data: { directorData: createDefaultDirectorData() } })
+  }
   scene3dFullEditNodeId.value = nodeId
   scene3dFullEditData.value = { ...node.data.directorData }
   showScene3DFullEditor.value = true

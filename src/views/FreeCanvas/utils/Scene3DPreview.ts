@@ -637,6 +637,7 @@ function drawHUD(
 // ============= 导出默认配置工厂 =============
 
 export function createDefaultDirectorData(): import('../types').Scene3DDirectorData {
+  const cameraPosId = (i: number) => `cam_${i}`
   return {
     name: '新 3D 场景',
     description: '3D 导演台',
@@ -647,6 +648,47 @@ export function createDefaultDirectorData(): import('../types').Scene3DDirectorD
     objects: DEFAULT_OBJECTS.map(o => ({ ...o })),
     animations: [],
     currentFrame: 0,
-    isPlaying: false
+    totalFrames: 120,
+    fps: 24,
+    isPlaying: false,
+    cameraPositions: [
+      {
+        id: cameraPosId(0),
+        name: '正视',
+        preset: 'front',
+        position: { x: 0, y: 1.5, z: 5 },
+        target: { x: 0, y: 1, z: 0 },
+        fov: 50,
+        focalLength: 50,
+        shotType: 'medium',
+        motion: 'static'
+      },
+      {
+        id: cameraPosId(1),
+        name: '侧视',
+        preset: 'side-left',
+        position: { x: 5, y: 1.5, z: 0 },
+        target: { x: 0, y: 1, z: 0 },
+        fov: 50,
+        focalLength: 50,
+        shotType: 'medium',
+        motion: 'static'
+      },
+      {
+        id: cameraPosId(2),
+        name: '俯视',
+        preset: 'top',
+        position: { x: 0, y: 5, z: 3 },
+        target: { x: 0, y: 0, z: 0 },
+        fov: 60,
+        focalLength: 35,
+        shotType: 'wide',
+        motion: 'static'
+      }
+    ],
+    activeCameraIndex: 0,
+    tracks: [],
+    selectedObjectId: null,
+    selectedObjectProperty: 'position'
   }
 }
