@@ -31,7 +31,7 @@
           <div class="search-box"><input v-model="objectSearch" type="text" placeholder="搜索对象"/></div>
           <div class="object-list">
             <div class="object-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="oi-name">3D场景</span></div>
-            <div v-for="(r, i) in roles" :key="i" class="object-item" :class="{ selected: selectedRoleIdx === i }" @click="selectedRoleIdx = i">
+            <div v-for="(r, i) in roles" :key="i" class="object-item" :class="{ selected: selectedRoleIdx === i }" draggable="true" @dragstart="startDrag($event, 'role', { name: r.name, idx: i })" @click="selectedRoleIdx = i">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
               <span class="oi-name">{{ r.name }}</span>
               <div class="oi-actions"><button class="oi-btn" @click.stop="duplicateRole(i)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
@@ -44,20 +44,20 @@
           <div class="empty-msg">暂无我的素材</div>
         </div>
         <div class="lc-body" v-else-if="activeTab === 'character'">
-          <div class="char-section"><div class="char-section-title">单人</div><div class="char-cards"><div class="char-card"><div class="char-thumb"><svg viewBox="0 0 40 50" width="36" height="44" fill="none" stroke="#8b5cf6" stroke-width="1.5"><circle cx="20" cy="8" r="5"/><line x1="20" y1="13" x2="20" y2="30"/><line x1="10" y1="17" x2="30" y2="17"/><line x1="20" y1="30" x2="15" y2="45"/><line x1="20" y1="30" x2="25" y2="45"/></svg></div><span class="char-name">单人</span><span class="char-tag">角色</span></div></div></div>
-          <div class="char-section"><div class="char-section-title">群众</div><div class="char-cards"><div class="char-card"><div class="char-thumb"><svg viewBox="0 0 40 50" width="36" height="44" fill="none" stroke="#8b5cf6" stroke-width="1.5"><circle cx="14" cy="8" r="4"/><circle cx="26" cy="8" r="4"/><line x1="14" y1="12" x2="14" y2="28"/><line x1="26" y1="12" x2="26" y2="28"/></svg></div><span class="char-name">群众</span><span class="char-tag">角色</span></div></div></div>
+          <div class="char-section"><div class="char-section-title">单人</div><div class="char-cards"><div class="char-card" draggable="true" @dragstart="startDrag($event, 'character', { name: '单人角色' })"><div class="char-thumb"><svg viewBox="0 0 40 50" width="36" height="44" fill="none" stroke="#8b5cf6" stroke-width="1.5"><circle cx="20" cy="8" r="5"/><line x1="20" y1="13" x2="20" y2="30"/><line x1="10" y1="17" x2="30" y2="17"/><line x1="20" y1="30" x2="15" y2="45"/><line x1="20" y1="30" x2="25" y2="45"/></svg></div><span class="char-name">单人</span><span class="char-tag">角色</span></div></div></div>
+          <div class="char-section"><div class="char-section-title">群众</div><div class="char-cards"><div class="char-card" draggable="true" @dragstart="startDrag($event, 'character', { name: '群众角色' })"><div class="char-thumb"><svg viewBox="0 0 40 50" width="36" height="44" fill="none" stroke="#8b5cf6" stroke-width="1.5"><circle cx="14" cy="8" r="4"/><circle cx="26" cy="8" r="4"/><line x1="14" y1="12" x2="14" y2="28"/><line x1="26" y1="12" x2="26" y2="28"/></svg></div><span class="char-name">群众</span><span class="char-tag">角色</span></div></div></div>
         </div>
         <div class="lc-body" v-else-if="activeTab === 'prop'">
           <div class="filter-tabs"><button :class="{ active: propFilter === 'all' }" @click="propFilter = 'all'">全部</button><button :class="{ active: propFilter === 'animal' }" @click="propFilter = 'animal'">动物</button><button :class="{ active: propFilter === 'prop' }" @click="propFilter = 'prop'">道具</button><button :class="{ active: propFilter === 'scene' }" @click="propFilter = 'scene'">场景</button></div>
           <div class="search-box"><input v-model="propSearch" type="text" placeholder="搜索道具"/></div>
           <div class="prop-section"><div class="prop-section-title">基础形状</div><div class="prop-grid">
-            <div v-for="p in shapeProps" :key="p.name" class="prop-card">
+            <div v-for="p in shapeProps" :key="p.name" class="prop-card" draggable="true" @dragstart="startDrag($event, 'prop', { name: p.name, icon: p.icon })">
               <div class="prop-thumb"><svg viewBox="0 0 60 60" width="48" height="48" fill="none" stroke="#8b5cf6" stroke-width="1.5"><template v-if="p.icon==='cube'"><path d="M15 18 L30 10 L45 18 L45 35 L30 43 L15 35 Z"/><path d="M30 10 L30 30 L15 35"/><path d="M30 30 L45 35"/></template><template v-if="p.icon==='cone'"><path d="M12 45 L30 10 L48 45 Z"/><ellipse cx="30" cy="45" rx="18" ry="4"/></template><template v-if="p.icon==='cylinder'"><ellipse cx="30" cy="15" rx="16" ry="4"/><line x1="14" y1="15" x2="14" y2="45"/><line x1="46" y1="15" x2="46" y2="45"/><ellipse cx="30" cy="45" rx="16" ry="4"/></template><template v-if="p.icon==='capsule'"><path d="M14 20 Q14 10 30 10 Q46 10 46 20 L46 40 Q46 50 30 50 Q14 50 14 40 Z"/></template><template v-if="p.icon==='sphere'"><ellipse cx="30" cy="30" rx="18" ry="18"/><ellipse cx="30" cy="30" rx="18" ry="6" fill="none" stroke-width="0.8"/></template></svg></div>
               <span class="prop-name">{{ p.name }}</span><span class="prop-tag">道具</span>
             </div>
           </div></div>
           <div class="prop-section"><div class="prop-section-title">动物</div><div class="prop-grid">
-            <div v-for="a in animalProps" :key="a.name" class="prop-card">
+            <div v-for="a in animalProps" :key="a.name" class="prop-card" draggable="true" @dragstart="startDrag($event, 'prop', { name: a.name, icon: 'animal' })">
               <div class="prop-thumb"><svg viewBox="0 0 60 60" width="40" height="40" fill="none" stroke="#8b5cf6" stroke-width="1.5"><ellipse cx="30" cy="35" rx="14" ry="10"/><circle cx="20" cy="22" r="6"/><line x1="20" y1="16" x2="17" y2="12"/><line x1="23" y1="16" x2="25" y2="12"/></svg></div>
               <span class="prop-name">{{ a.name }}</span><span class="prop-tag">道具</span>
             </div>
@@ -76,7 +76,7 @@
           <div class="filter-tabs"><button :class="{ active: actFilter === 'all' }" @click="actFilter = 'all'">全部</button><button :class="{ active: actFilter === 'walk' }" @click="actFilter = 'walk'">行走</button><button :class="{ active: actFilter === 'fight' }" @click="actFilter = 'fight'">战斗</button><button :class="{ active: actFilter === 'dance' }" @click="actFilter = 'dance'">舞蹈</button></div>
           <div class="search-box"><input v-model="actSearch" type="text" placeholder="搜索动作"/></div>
           <div class="action-grid">
-            <div v-for="a in actionPresets" :key="a.name" class="action-card">
+            <div v-for="a in actionPresets" :key="a.name" class="action-card" draggable="true" @dragstart="startDrag($event, 'action', { name: a.name })">
               <div class="action-thumb"><svg viewBox="0 0 40 50" width="32" height="40" fill="none" stroke="#8b5cf6" stroke-width="1.5"><circle cx="20" cy="6" r="4"/><line x1="20" y1="10" x2="20" y2="24"/><line x1="10" y1="14" x2="30" y2="14"/><line x1="20" y1="24" x2="16" y2="42"/><line x1="20" y1="24" x2="24" y2="42"/></svg></div>
               <span class="action-name">{{ a.name }}</span><span class="action-tag">动作</span>
             </div>
@@ -94,7 +94,7 @@
       </div>
       <div class="lc-toggle" v-show="!sidebarExpanded" @click="sidebarExpanded = true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
       <div class="viewport-main">
-        <div class="viewport-canvas-wrap" @mousedown="onCanvasMouseDown" @mousemove="onCanvasMouseMove" @mouseup="onCanvasMouseUp" @wheel.passive="onCanvasWheel">
+        <div class="viewport-canvas-wrap" @mousedown="onCanvasMouseDown" @mousemove="onCanvasMouseMove" @mouseup="onCanvasMouseUp" @wheel.passive="onCanvasWheel" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" @drop="onDrop">
           <canvas ref="canvasRef" :width="canvasWidth" :height="canvasHeight" class="viewport-canvas"/>
         </div>
         <div class="view-indicator">
@@ -257,6 +257,8 @@ let renderFrameId = 0, isDragging = false, isCharacterDragging = false, dragStar
 const fps = computed({ get: () => props.nodeData.fps || 30, set: (v: number) => emit('update:data', { ...props.nodeData, fps: Math.max(1, v) }) })
 const totalFrames = computed({ get: () => props.nodeData.totalFrames || 150, set: (v: number) => emit('update:data', { ...props.nodeData, totalFrames: Math.max(1, v) }) })
 const frameInput = computed({ get: () => props.nodeData.currentFrame, set: (v: number) => emit('update:data', { ...props.nodeData, currentFrame: Math.max(0, Math.min(v, totalFrames.value)) }) })
+const canvasDropActive = ref(false)
+const dragGhostPos = ref({ x: 0, y: 0 })
 
 const sidebarTabs = [
   { key: 'object', label: '对象', icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>' },
@@ -347,6 +349,37 @@ function onTrackMouseDown(e: MouseEvent) {
 
 let isDraggingScroll = false, scrollStartX = 0, scrollStart = 0
 
+// ====== 拖拽添加到画布 ======
+function startDrag(e: DragEvent, type: string, data: Record<string, unknown>) {
+  e.dataTransfer!.setData('director-item', JSON.stringify({ type, ...data }))
+}
+function onDragOver(e: DragEvent) { e.preventDefault(); e.dataTransfer!.dropEffect = 'copy' }
+function onDragEnter(e: DragEvent) { e.preventDefault(); canvasDropActive.value = true }
+function onDragLeave(e: DragEvent) { canvasDropActive.value = false }
+function onDrop(e: DragEvent) {
+  canvasDropActive.value = false
+  const canvas = canvasRef.value
+  if (!canvas) return
+  const raw = e.dataTransfer!.getData('director-item')
+  if (!raw) return
+  try {
+    const item: { type: string; name: string; icon?: string } = JSON.parse(raw)
+    const wrap = canvas.parentElement
+    const r = wrap!.getBoundingClientRect()
+    dragGhostPos.value = { x: e.clientX - r.left, y: e.clientY - r.top }
+    addDraggedItem(item)
+  } catch { /* ignore */ }
+}
+const canvasObjects = ref<Array<{ id: string; type: string; name: string; x: number; y: number; icon?: string }>>([])
+let nextId = 0
+function addDraggedItem(item: { type: string; name: string; icon?: string }) {
+  const wrap = canvasRef.value?.parentElement
+  const r = wrap?.getBoundingClientRect()
+  const cx = r ? Math.max(30, Math.min(r.width - 30, dragGhostPos.value.x)) : canvasWidth.value / 2
+  const cy = r ? Math.max(30, Math.min(r.height - 30, dragGhostPos.value.y)) : canvasHeight.value * 0.6
+  canvasObjects.value.push({ id: `obj-${nextId++}`, type: item.type, name: item.name, x: cx, y: cy, icon: item.icon })
+}
+
 function onCanvasMouseDown(e: MouseEvent) {
   const canvas = canvasRef.value
   if (!canvas) return
@@ -395,6 +428,7 @@ function renderFrame() {
   const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#e8eaf0'); g.addColorStop(1, '#d5d8de')
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h)
   drawGrid(ctx, w, h)
+  drawDraggedObjects(ctx, w, h)
   drawHumanoid(ctx, w, h)
   renderFrameId = requestAnimationFrame(renderFrame)
 }
@@ -415,6 +449,51 @@ function drawGrid(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.strokeStyle = 'rgba(16,185,129,0.6)'
   ctx.beginPath(); ctx.moveTo(cx, cy - 60); ctx.lineTo(cx, cy + 10); ctx.stroke()
   ctx.lineWidth = 1
+}
+function drawDraggedObjects(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  ctx.lineWidth = 1
+  for (const o of canvasObjects.value) {
+    const sx = o.x + cameraOffset.value.x, sy = o.y + cameraOffset.value.y, z = viewportZoom.value / 100
+    let color = '#8b5cf6'
+    if (o.type === 'role' || o.type === 'character') color = '#d8b4fe'
+    else if (o.type === 'prop') color = '#f59e0b'
+    else if (o.type === 'action') color = '#10b981'
+    ctx.save()
+    ctx.translate(sx, sy); ctx.scale(z, z)
+    ctx.strokeStyle = color; ctx.fillStyle = `rgba(${colorToRgb(color)},0.15)`
+    if (o.icon === 'cube') {
+      ctx.beginPath(); ctx.rect(-18, -18, 36, 36); ctx.fill(); ctx.stroke()
+    } else if (o.icon === 'sphere') {
+      ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill(); ctx.stroke()
+    } else if (o.icon === 'cone') {
+      ctx.beginPath(); ctx.moveTo(0, -18); ctx.lineTo(18, 18); ctx.lineTo(-18, 18); ctx.closePath(); ctx.fill(); ctx.stroke()
+    } else if (o.icon === 'cylinder') {
+      ctx.beginPath(); ctx.moveTo(-18, -12); ctx.lineTo(18, -12); ctx.lineTo(18, 12); ctx.lineTo(-18, 12); ctx.closePath(); ctx.fill(); ctx.stroke()
+    } else if (o.icon === 'capsule') {
+      ctx.beginPath(); ctx.roundRect(-12, -18, 24, 36, 12); ctx.fill(); ctx.stroke()
+    } else if (o.icon === 'animal' || o.type === 'role' || o.type === 'character' || o.type === 'action') {
+      ctx.fillStyle = color
+      ctx.beginPath(); ctx.arc(0, -10, 7, 0, Math.PI * 2); ctx.fill()
+      ctx.fillRect(-6, -3, 12, 14)
+      ctx.fillRect(-10, -2, 3, 10)
+      ctx.fillRect(7, -2, 3, 10)
+      ctx.fillRect(-5, 11, 4, 9)
+      ctx.fillRect(1, 11, 4, 9)
+    } else {
+      ctx.beginPath(); ctx.roundRect(-18, -18, 36, 36, 6); ctx.fill(); ctx.stroke()
+    }
+    ctx.fillStyle = '#fff'
+    ctx.strokeStyle = '#333'
+    ctx.font = 'bold 10px "Microsoft YaHei", sans-serif'
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top'
+    ctx.strokeText(o.name, 0, 26)
+    ctx.fillText(o.name, 0, 26)
+    ctx.restore()
+  }
+}
+function colorToRgb(color: string): string {
+  const hex = color.replace('#', '')
+  return `${parseInt(hex.slice(0,2),16)},${parseInt(hex.slice(2,4),16)},${parseInt(hex.slice(4,6),16)}`
 }
 function drawHumanoid(ctx: CanvasRenderingContext2D, w: number, h: number) {
   const cx = w / 2 + cameraOffset.value.x + characterPos.value.x, cy = h * 0.62 + cameraOffset.value.y + characterPos.value.y, z = viewportZoom.value / 100
@@ -579,5 +658,74 @@ function drawHumanoid(ctx: CanvasRenderingContext2D, w: number, h: number) {
 .pose-tag { padding: 3px 8px; border: 1px solid #e5e7eb; background: #fff; color: #4b5563; border-radius: 4px; cursor: pointer; font-size: 10px; transition: all 0.12s; }
 .pose-tag:hover { background: #eef2ff; border-color: #6366f1; color: #6366f1; }
 
-.timeline-area { height: 56px; background: #fff; border-top: 1px solid #e5e7eb; flex-shrink: 0; }
+.timeline-area { height: auto; min-height: 200px; max-height: 320px; background: #fff; border-top: 1px solid #e5e7eb; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
+.tl-header { display: flex; align-items: center; padding: 6px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; gap: 10px; }
+.tl-header-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+.tl-playback { display: flex; align-items: center; gap: 2px; }
+.tl-pb { width: 26px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #4b5563; border-radius: 4px; cursor: pointer; }
+.tl-pb:hover { background: #f3f4f6; }
+.tl-pb.active { background: #eef2ff; color: #6366f1; }
+.tl-key { width: 26px; height: 24px; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; border-radius: 4px; cursor: pointer; }
+.tl-key.active { background: #eef2ff; border-color: #6366f1; color: #6366f1; }
+.tl-jump { display: flex; align-items: center; gap: 2px; margin-left: 4px; }
+.tl-jp { width: 24px; height: 22px; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; background: #fff; color: #4b5563; border-radius: 4px; cursor: pointer; }
+.tl-jp:hover { background: #f3f4f6; }
+.tl-frame { display: flex; align-items: center; gap: 4px; }
+.tl-frame-label { font-size: 10px; color: #6b7280; }
+.tl-frame-input { width: 48px; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; text-align: center; outline: none; }
+.tl-frame-input:focus { border-color: #6366f1; }
+.tl-sep { font-size: 11px; color: #9ca3af; }
+.tl-frame-total { font-size: 11px; color: #4b5563; }
+.tl-fps { display: flex; align-items: center; gap: 4px; }
+.tl-fps-label { font-size: 10px; color: #6b7280; }
+.tl-fps-input { width: 36px; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 4px; font-size: 11px; text-align: center; outline: none; }
+.tl-fps-input:focus { border-color: #6366f1; }
+.tl-ease { display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: #f3f4f6; border-radius: 6px; cursor: pointer; }
+.tl-ease span { font-size: 10px; color: #4b5563; }
+.tl-sep-v { width: 1px; height: 18px; background: #e5e7eb; margin: 0 4px; }
+.tl-zoom-label { font-size: 10px; color: #6b7280; }
+.tl-zoom-bar { position: relative; width: 80px; height: 16px; cursor: pointer; }
+.tl-zoom-line { position: absolute; top: 7px; left: 0; right: 0; height: 2px; background: #e5e7eb; }
+.tl-zoom-handle { position: absolute; top: 2px; width: 12px; height: 12px; background: #6366f1; border-radius: 50%; transform: translateX(-50%); }
+.tl-zoom-in, .tl-zoom-out { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; background: #fff; color: #4b5563; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.tl-zoom-in:hover, .tl-zoom-out:hover { background: #f3f4f6; }
+
+.tl-grid { display: flex; flex: 1; overflow: hidden; position: relative; }
+.tl-row-labels { width: 132px; border-right: 1px solid #e5e7eb; background: #fafbfc; flex-shrink: 0; display: flex; flex-direction: column; }
+.tl-time-label { position: relative; height: 24px; background: #f3f4f6; flex-shrink: 0; overflow: hidden; border-bottom: 1px solid #e5e7eb; }
+.tl-time-num-row { position: relative; height: 100%; }
+.tl-time-num { position: absolute; font-size: 9px; color: #9ca3af; transform: translateX(-50%); line-height: 22px; }
+.tl-role-labels { flex: 1; overflow: hidden; }
+.tl-role-label-row { height: 36px; display: flex; align-items: center; gap: 6px; padding: 0 8px; cursor: pointer; transition: all 0.12s; border-bottom: 1px solid #f0f1f3; }
+.tl-role-label-row:hover { background: #f3f4f6; }
+.tl-rl-thumb { width: 28px; height: 32px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tl-rl-name { flex: 1; font-size: 11px; color: #374151; font-weight: 500; }
+.tl-rl-actions { display: flex; gap: 2px; }
+.tl-mini-act { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #9ca3af; border-radius: 3px; cursor: pointer; }
+.tl-mini-act:hover { background: #e5e7eb; color: #374151; }
+.tl-mini-act.active { color: #6366f1; }
+
+.tl-track-area { position: relative; flex: 1; overflow: hidden; cursor: default; }
+.tl-track-header { position: relative; height: 24px; background: #f3f4f6; border-bottom: 1px solid #e5e7eb; }
+.tl-ruler { position: relative; height: 100%; }
+.tl-ruler-bg { position: absolute; top: 0; left: 0; height: 100%; background: #f3f4f6; }
+.tl-ruler-ticks { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.tl-ruler-tick { position: absolute; top: 6px; height: 8px; border-left: 1px solid #d1d5db; }
+.tl-ruler-tick.major { height: 12px; border-left-color: #9ca3af; }
+
+.tl-track-rows { position: relative; }
+.tl-track-row { position: relative; height: 36px; border-bottom: 1px solid #f0f1f3; }
+.tl-track-row.selected { background: rgba(99,102,241,0.06); }
+.tl-role-bar { position: absolute; top: 6px; height: 24px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; cursor: pointer; }
+.tl-role-bar-label { font-size: 10px; color: #fff; font-weight: 600; }
+.tl-key-dots { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.tl-key-dot { position: absolute; top: 10px; transform: translateX(-5px); cursor: pointer; }
+.tl-key-dot.active svg { fill: #f59e0b; }
+.tl-key-dot svg { fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+
+.tl-global-playhead { position: absolute; top: 0; bottom: 0; width: 16px; transform: translateX(-8px); cursor: ew-resize; z-index: 10; pointer-events: auto; }
+.tl-global-playhead::before { content: ""; position: absolute; top: 0; left: 7px; width: 2px; height: 100%; background: #ef4444; }
+.tl-global-playhead::after { content: ""; position: absolute; top: 0; left: 1px; width: 14px; height: 18px; background: #ef4444; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+
+.viewport-canvas-wrap.drag-over { outline: 2px dashed #6366f1; outline-offset: -2px; }
 </style>

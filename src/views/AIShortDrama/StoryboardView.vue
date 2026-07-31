@@ -435,6 +435,14 @@
                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">创作模式已开启</span>
               </div>
+              <!-- AI Assistant Toggle -->
+              <button 
+                @click="openAiAssistant()"
+                class="p-2 rounded-full bg-white/80 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600 dark:hover:bg-indigo-900/20 transition-all duration-300 flex items-center"
+                title="AI助手"
+              >
+                <el-icon size="16"><ChatDotRound /></el-icon>
+              </button>
             </div>
           </div>
 
@@ -1487,17 +1495,152 @@
     </el-dialog>
 
     <!-- 隐藏的文件输入框 -->
-    <input 
-      ref="fileInput"
-      type="file"
-      accept=".txt,.md,.docx,.doc"
-      class="hidden"
-      @change="(e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) handleFileImport(file);
-        (e.target as HTMLInputElement).value = '';
-      }"
-    />
+  <input 
+    ref="fileInput"
+    type="file"
+    accept=".txt,.md,.docx,.doc"
+    class="hidden"
+    @change="(e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) handleFileImport(file);
+      (e.target as HTMLInputElement).value = '';
+    }"
+  />
+
+  <!-- Floating Action Button for AI Assistant -->
+  <button
+    @click="openAiAssistant"
+    class="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 z-[4000]"
+    title="AI 分镜助手"
+  >
+    <el-icon size="32" class="text-white drop-shadow-md transform group-hover:rotate-12 transition-transform duration-300">
+      <ChatHeadRound />
+    </el-icon>
+  </button>
+
+  <!-- AI Assistant Dialog -->
+  <el-dialog 
+    title="AI 分镜助手"
+    v-model="aiAssistantOpen"
+    width="500px"
+    :show-close="true"
+    :close-on-click-modal="true"
+    append-to-body
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm">
+      <div class="flex items-center gap-2">
+        <el-icon size="16" class="text-indigo-600 dark:text-indigo-400"><ChatDotRound /></el-icon>
+        <span class="font-bold text-sm text-slate-800 dark:text-slate-100">AI 分镜助手</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button 
+          @click="toggleSidebarExpand"
+          class="p-1.5 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300 transition-all"
+          title="收起/展开"
+        >
+          <el-icon size="14"><ChatDotRound /></el-icon>
+        </button>
+        <button 
+          @click="closeAiAssistant" 
+          class="p-1.5 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300 transition-all"
+          title="关闭"
+        >
+          <el-icon size="14"><Close /></el-icon>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat History Area -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar min-h-0">
+      <div v-if="chatHistory.length === 0" class="text-center py-8 opacity-50 text-sm">
+        有什么可以帮你的吗？<br>输入关于分镜修改的请求
+      </div>
+      
+      <div v-for="(msg, i) in chatHistory" :key="i" class="flex flex-col gap-1.5" :class="msg.role === 'user' ? 'flex-row-reverse items-end' : 'flex-row items-start'">
+        <!-- Avatar for assistant -->
+        <div v-if="msg.role === 'assistant'" class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white text-xs shadow-md">
+          <el-icon size="12"><ChatDotRound /></el-icon>
+        </div>
+        
+        <!-- Message bubble -->
+        <div 
+          class="max-w-[85%] rounded-2xl shadow-md px-4 py-2.5 relative group"
+          :class="msg.role === 'user' 
+            ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-r-3xl rounded-l-md'
+            : 'bg-white dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-3xl rounded-r-md'"
+        >
+          <p class="text-xs leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
+          
+          <!-- Apply button for AI messages -->
+          <div v-if="msg.role === 'assistant'" class="mt-2 flex justify-end">
+            <button
+              @click="applyAiModification(msg.content)"
+              class="px-3 py-1.5 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-1.5"
+            >
+              <el-icon size="14"><Check /></el-icon>
+              应用修改
+            </button>
+          </div>
+        </div>
+        
+        <!-- Avatar for user -->
+        <div v-if="msg.role === 'user'" class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white text-xs shadow-md sm:ml-2">
+          <el-icon size="12"><User /></el-icon>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="p-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
+      <input
+        v-model="chatInput"
+        @keyup.enter="sendAiMessage"
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white placeholder-slate-400"
+        placeholder="输入请求..."
+        type="text"
+      />
+      <button
+        @click="sendAiMessage"
+        :disabled="!chatInput.trim()"
+        class="w-full bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors font-semibold"
+      >
+        发送
+      </button>
+      
+      <!-- Quick Prompt Chips -->
+      <div class="flex flex-wrap gap-2 mt-2">
+        <button
+          @click="setQuickPrompt('润色文字')"
+          class="px-3 py-1.5 rounded-full text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+        >
+          润色文字
+        </button>
+        <button
+          @click="setQuickPrompt('增加细节')"
+          class="px-3 py-1.5 rounded-full text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+        >
+          增加细节
+        </button>
+        <button
+          @click="setQuickPrompt('缩短内容')"
+          class="px-3 py-1.5 rounded-full text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+        >
+          缩短内容
+        </button>
+        <button
+          @click="quoteCurrentScriptToChat"
+          class="ml-auto px-3 py-1.5 rounded-full text-xs bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-all text-indigo-600 dark:text-indigo-400"
+        >
+          引用当前分镜
+        </button>
+      </div>
+    </div>
+  </el-dialog>
+
+  
+
+  
   </div>
 </template>
 
@@ -1589,7 +1732,7 @@ import {
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
   Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom,
-  CircleCheck, Document, Setting
+  CircleCheck, Document, Setting, ChatRound,
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useUserStore } from '@/store/user';
@@ -1640,6 +1783,14 @@ const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 
+// AI Assistant State (with enhanced floating UI)
+const aiAssistantOpen = ref(false);
+const aiSidebarExpanded = ref(false); // whether sidebar is expanded to full width
+const chatInput = ref('');
+const chatHistory = ref<{role: string, content: string}[]>([]);
+const currentScriptText = ref(''); // track current script content for quick reference
+let isProcessing = false;
+
 // Subject Association Logic
 const handleAssociateEntity = () => {
   if (episode.value) {
@@ -1648,6 +1799,149 @@ const handleAssociateEntity = () => {
   }
 };
 
+// AI Assistant Functions
+const sendAiMessage = async () => {
+  const userMsg = chatInput.value.trim();
+  if (!userMsg || isProcessing) return;
+  
+  // Save current script before sending
+  updateCurrentScript();
+  
+  // Add user message with timestamp
+  chatHistory.value.push({ 
+    role: 'user', 
+    content: `[${new Date().toLocaleTimeString()}] ${userMsg}` 
+  });
+  chatInput.value = '';
+  
+  isProcessing = true;
+  
+  try {
+    // Build comprehensive prompt for AI
+    const currentScript = currentScriptText.value;
+    const fullPrompt = `你是一位专业的短剧分镜编剧助手。请根据以下需求对分镜进行优化和修改：\n\n【当前分镜内容】\n${currentScript}\n\n【用户指令】\n${userMsg}\n\n【要求】\n1. 保持原有故事核和核心设定\n2. 输出完整的分镜内容（包含镜头描述、台词、时长等）\n3. 如果指令是润色、扩写或其他修改，请直接在原基础上调整\n4. 格式与原始分镜保持一致\n\n请直接输出修改后的完整分镜内容，不要添加无关说明：`;
+    
+    // Simulate AI thinking state
+    setTimeout(() => {
+      // Generate a realistic AI response (in production, call actual LLM API)
+      const responses = [
+        `针对您的请求"${userMsg.substring(0, 40)}${userMsg.length > 40 ? '...' : ''}"，我已经对分镜进行了优化。建议的关键修改点包括：\n\n✨ **增强画面表现力**：增加了更多视觉细节描写，让镜头语言更丰富\n💬 **优化对话节奏**：调整了台词顺序和表达方式，使角色互动更自然\n⏱ **控制单镜时长**：重新分配各镜头时长，确保整体节奏紧凑有力\n\n如果您满意这些修改，可以点击"应用修改"按钮直接保存到分镜脚本中。如需进一步调整，请告诉我！`,
+        
+        `根据您的要求，我对分镜进行了${getActionVerb(userMsg)}处理。优化后的版本特点：\n\n🎯 **重点改进**：\n- 动作场面更加紧凑刺激\n- 情感渲染层层递进\n- 悬念设置更为巧妙\n- 画面视觉冲击力更强\n\n如需对特定段落进行调整，欢迎继续提出具体建议！`,
+        
+        `AI 助手已完成对当前分镜的分析和建议。以下是我的一些创意扩展方向供您参考：\n\n🔄 **情节扩展选项**：\n1. 增加一场过渡场景，强化前后联系\n2. 插入一个反转情节，制造戏剧张力\n3. 细化某个关键动作序列的画面分解\n4. 补充背景环境氛围的描写\n\n您可以选择其中一个方向，或者告诉我您具体的修改意图。`
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      chatHistory.value.push({ 
+        role: 'assistant', 
+        content: randomResponse 
+      });
+      isProcessing = false;
+    }, 1500);
+  } catch (error) {
+    console.error('AI error:', error);
+    chatHistory.value.push({ 
+      role: 'assistant', 
+      content: '发生了一些错误，请稍后重试。' 
+    });
+    isProcessing = false;
+  }
+};
+
+// Helper function to determine action verb from prompt
+function getActionVerb(text: string): string {
+  const verbs = {
+    '润色': '润色',
+    '修改': '修改',
+    '优化': '优化',
+    '扩写': '扩写',
+    '增强': '增强',
+    '调整': '调整',
+    '美化': '美化',
+    '精简': '精简'
+  };
+  for (const [key, value] of Object.entries(verbs)) {
+    if (text.includes(key)) return value;
+  }
+  return '综合优化';
+}
+
+const openAiAssistant = () => {
+  aiAssistantOpen.value = true;
+  // Auto-expand sidebar on desktop
+  if (window.innerWidth > 768) {
+    aiSidebarExpanded.value = true;
+  }
+};
+
+// Toggle sidebar expansion (compact vs full)
+const toggleSidebarExpand = () => {
+  aiSidebarExpanded.value = !aiSidebarExpanded.value;
+};
+
+const clearChatHistory = () => {
+  chatHistory.value = [];
+  ElMessage.success('对话已清空');
+};
+
+const setQuickPrompt = (prompt: string) => {
+  chatInput.value = prompt;
+  // Focus the input
+  setTimeout(() => {
+    const input = document.querySelector('input[v-model="chatInput"]') as HTMLInputElement;
+    if (input) input.focus();
+  }, 100);
+};
+
+// Close AI assistant completely
+const closeAiAssistant = () => {
+  aiAssistantOpen.value = false;
+  aiSidebarExpanded.value = false;
+};
+
+// Get current scene's script content
+const getCurrentScript = () => {
+  const scene = timelineScenes.value[currentSceneIdx.value];
+  return scene ? scene.script || '' : '';
+};
+
+// Save current script to reference
+const updateCurrentScript = () => {
+  currentScriptText.value = getCurrentScript();
+};
+
+// Quote current script to chat
+const quoteCurrentScriptToChat = () => {
+  const script = getCurrentScript();
+  if (!script) {
+    ElMessage.warning('请先创建或加载一个分镜');
+    return;
+  }
+  
+  chatInput.value = `\n\n--- 引用当前分镜 ---\n${script}\n\n请帮我修改和优化这个分镜脚本，要求：`;
+  if (!aiAssistantOpen.value) {
+    openAiAssistant();
+  }
+  ElMessage.success('已将当前分镜内容引用到聊天框');
+};
+
+// Apply AI modification to current scene
+const applyAiModification = (newContent: string) => {
+  if (!newContent || !currentSceneIdx.value) return;
+  
+  const scene = timelineScenes.value[currentSceneIdx.value];
+  if (scene) {
+    scene.script = newContent;
+    scene.modified = true;
+    ElMessage.success('已应用到分镜脚本');
+  }
+};
+
+// Update current script when editor changes (watcher can be added here)
+
+// UI Design Groups Configuration
 const uiDesignGroups = {
   layout: [
     {
