@@ -97,25 +97,7 @@
             <h1 class="text-[14px] font-black text-slate-700 dark:text-slate-200 truncate max-w-[300px] group-hover:text-indigo-600 transition-colors">
               <template v-if="episodeNotFound">
                 视频不存在
-                <button
-    ref="aiAssistantBtnRef"
-    @click="handleOpenAiAssistant()"
-    @mousedown="startDragAiAssistantBtn"
-    class="fixed z-[1500] p-2 rounded-full bg-white/80 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600 dark:hover:bg-indigo-900/20 transition-all duration-300 flex items-center cursor-grab"
-    :style="{ left: `${aiAssistantBtnPosition.x}px`, top: `${aiAssistantBtnPosition.y}px` }"
-    title="AI助手"
-  >
-    <el-icon size="16"><ChatDotRound /></el-icon>
-  </button>
-  <StoryboardView_AIAssistant
-    v-model:modelValue="aiAssistantOpen"
-    :storyboardContent="aiAssistantInputContent || currentScriptText"
-    :allStoryboardScenes="timelineScenes"
-    @apply-ai-content="handleApplyAiContent"
-  />
-<!-- AI Assistant Dialog -->
-
-</template>
+              </template>
               <template v-else>
                 {{ episode?.title || '第 1 集：命运抉择系统自毁' }}
               </template>
@@ -137,6 +119,31 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+    <!-- Floating AI Assistant Button for Selected Text -->
+    <teleport to="body">
+      <div
+        v-if="showAiAssistantButton"
+        class="floating-ai-button fixed z-[9999]"
+        :style="{ top: aiAssistantButtonPosition.top, left: aiAssistantButtonPosition.left }"
+      >
+        <el-button
+          type="primary"
+          round
+          size="small"
+          @click="openAiAssistantWithSelection"
+          class="!bg-gradient-to-r !from-indigo-500 !to-purple-500 !border-none !shadow-lg !shadow-indigo-500/30 hover:!shadow-indigo-500/50 hover:!-translate-y-0.5 transition-all"
+        >
+          <el-icon class="mr-1"><MagicStick /></el-icon>引用至AI助手
+        </el-button>
+      </div>
+    </teleport>
+
+    <StoryboardView_AIAssistant
+      v-model:modelValue="aiAssistantOpen"
+      :storyboardContent="aiAssistantInputContent || currentScriptText"
+      :allStoryboardScenes="timelineScenes"
+      @apply-ai-content="handleApplyAiContent"
+    />
 
         <div class="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-1"></div>
 
@@ -470,16 +477,7 @@
                   <div class="flex-1 overflow-y-auto custom-scrollbar" @mouseup="handleTextSelection" @selectionchange="handleTextSelection">
                     <editor-content :editor="editor" class="script-editor-content w-full h-full text-[16px]" />
 
-                    <!-- Floating button for AI Assistant -->
-                    <button
-                      v-if="showAiAssistantButton"
-                      @click.stop="openAiAssistantWithSelection"
-                      :style="aiAssistantButtonPosition"
-                      class="fixed px-3 py-1.5 rounded-full shadow-lg flex items-center space-x-1 transition-all duration-200 bg-blue-500 text-white text-xs font-bold z-50 hover:bg-blue-600"
-                    >
-                      <el-icon size="14"><ChatDotRound /></el-icon>
-                      <span>引用至AI助手</span>
-                    </button>
+
                   </div>
                   
                   <!-- @ Mention Popup -->
@@ -1544,6 +1542,7 @@ import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
 import { Node, mergeAttributes } from '@tiptap/core';
+import { DOMSerializer } from 'prosemirror-model';
 import StoryboardView_AIAssistant from './StoryboardView_AIAssistant.vue'; // AI Assistant Component
 
 const isLight = inject('isLight', ref(false));
@@ -1677,6 +1676,11 @@ const showUIDesignSpecsDialog = ref(false);
 
 // AI Assistant State (with enhanced floating UI)
 const aiAssistantOpen = ref(false);
+const aiAssistantInputContent = ref('');
+const savedSelectionForAi = ref<any>(null);
+const selectedTextForAiAssistant = ref(''); // For passing selected text to AI Assistant
+const showAiAssistantButton = ref(false); // Controls visibility of the floating AI Assistant button
+const aiAssistantButtonPosition = ref({ x: 0, y: 0 }); // Position for the floating AI Assistant button when text is selected
 const aiSidebarExpanded = ref(false); // whether sidebar is expanded to full width
 const chatInput = ref('');
 const chatHistory = ref<{role: string, content: string}[]>([]);
@@ -2080,33 +2084,35 @@ const activeMentionNodePos = ref<{from: number, to: number} | null>(null);
 const autoSaveTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 const isAutoSaving = ref(false);
 
-// Reactive variables for the AI Assistant floating button
-const showAiAssistantButton = ref(false);
-const aiAssistantButtonPosition = ref({ top: '0px', left: '0px' });
-const selectedTextForAiAssistant = ref('');
-const aiAssistantInputContent = ref('');
-const savedSelectionForAi = ref<any>(null);
-const showAiAssistantDialog = ref(false);
+
 
 // Function to handle text selection
 const handleTextSelection = () => {
+  if (!editor.value) return;
+  
+  const { empty } = editor.value.state.selection;
   const selection = window.getSelection();
-  const selectedText = selection ? selection.toString().trim() : '';
 
-  if (selectedText.length > 0 && editor.value && editor.value.view.dom.contains(selection?.anchorNode || null)) {
+  if (!empty && selection && editor.value.view.dom.contains(selection.anchorNode)) {
     // Check if the selection is within the editor
-    selectedTextForAiAssistant.value = selectedText;
+    
+    // Extract HTML from TipTap selection
+    const slice = editor.value.state.selection.content();
+    const fragment = DOMSerializer.fromSchema(editor.value.state.schema).serializeFragment(slice.content);
+    const div = document.createElement('div');
+    div.appendChild(fragment);
+    selectedTextForAiAssistant.value = div.innerHTML;
+    
     showAiAssistantButton.value = true;
 
     // Calculate button position
-    const range = selection?.getRangeAt(0);
+    const range = selection.getRangeAt(0);
     if (range) {
       const rect = range.getBoundingClientRect();
-      // const editorRect = editor.value.view.dom.getBoundingClientRect(); // Not used
 
       aiAssistantButtonPosition.value = {
-        top: `${rect.bottom + window.scrollY + 5}px`, // Adjust position as needed, placing it below the selection
-        left: `${rect.left + window.scrollX + rect.width / 2 - 50}px`, // Center button below selection
+        top: `${rect.bottom + window.scrollY}px`, // Tightly attached below the selection
+        left: `${rect.left + window.scrollX + rect.width / 2 - 45}px`, // Center button below selection (assuming ~90px width)
       };
     }
   } else {
@@ -2115,7 +2121,7 @@ const handleTextSelection = () => {
   }
 };
 
-// Function to open AI Assistant dialog with selected text
+// Function to open AI Assistant dialog with selected textv
 const openAiAssistantWithSelection = () => {
   aiAssistantInputContent.value = selectedTextForAiAssistant.value; // Pass selected text
   if (editor.value) {
@@ -2151,6 +2157,9 @@ const editor = useEditor({
     PillIcon,
     PillImage,
   ],
+  onSelectionUpdate: ({ editor }) => {
+    handleTextSelection();
+  },
   onUpdate: ({ editor: edt }) => {
     // 实时更新 currentScript
     currentScript.value = edt.getHTML();

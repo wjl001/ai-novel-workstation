@@ -1,7 +1,9 @@
 <template>
-  <div v-if="visible" class="floating-button" :style="buttonPosition" @mousedown="startDrag">
+  <div ref="button" v-if="visible" class="floating-button" :style="buttonPosition" @mousedown="startDrag">
     <el-tooltip content="AI助手" placement="left">
-      <el-button type="primary" :icon="ChatDotRound" circle @click="dialogVisible = true" />
+      <el-button :icon="ChatDotRound" @click="dialogVisible = true">
+        AI分镜助手
+      </el-button>
     </el-tooltip>
   </div>
 
@@ -11,7 +13,7 @@
     :close-on-click-modal="false"
     :append-to-body="true"
     destroy-on-close
-    width="600px"
+    width="800px"
     class="ai-assistant-dialog"
   >
     <template #header="{ close }">
@@ -21,7 +23,7 @@
       </div>
     </template>
 
-    <div class="flex flex-col h-[70vh]">
+    <div class="flex flex-col h-[80vh]">
       <!-- Chat History Area -->
       <div
         class="flex-1 overflow-y-auto custom-scrollbar p-4 rounded-lg bg-gradient-to-br from-white to-indigo-100/30 dark:from-slate-800 dark:to-slate-900/60 shadow-inner mb-4"
@@ -36,8 +38,8 @@
           <div
             v-if="msg.role === 'user'"
             class="max-w-[80%] rounded-xl px-4 py-3 text-sm shadow-md bg-indigo-500 text-white"
+            v-html="msg.content"
           >
-            {{ msg.content }}
           </div>
           <div
             v-else-if="msg.role === 'assistant'"
@@ -47,7 +49,7 @@
             <div v-if="msg.aiAction" class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">
               {{ msg.aiAction }}
             </div>
-            {{ msg.content }}
+            <div v-html="msg.content"></div>
           </div>
           <div
             v-else-if="msg.role === 'system'"
@@ -57,14 +59,14 @@
             <div v-if="msg.aiAction" class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
               {{ msg.aiAction }}
             </div>
-            {{ msg.content }}
+            <div v-html="msg.content"></div>
           </div>
         </div>
         <!-- AI Proposal / Comparison Card -->
         <el-card v-if="aiProposal.visible" class="ai-proposal-card mt-4 shadow-lg border-none">
           <!-- First line: AI建议的内容和指令 -->
           <div class="mb-3 text-sm text-gray-700 dark:text-gray-300">
-            <span class="font-bold text-indigo-600 dark:text-indigo-400">AI 建议:</span> {{ aiProposal.instruction }}
+            <span class="font-bold text-indigo-600 dark:text-indigo-400">您的指令:</span> {{ aiProposal.instruction }}
           </div>
 
           <!-- Second line: 引用的原文，如果文字多后面的省略号 -->
@@ -72,7 +74,7 @@
             v-if="aiProposal.original"
             class="mb-4 p-2 bg-gray-100 dark:bg-slate-800 rounded-md text-sm text-gray-700 dark:text-gray-300 overflow-hidden whitespace-nowrap text-overflow-ellipsis"
           >
-            <span class="font-bold text-blue-600 dark:text-blue-400">引用原文:</span> {{ aiProposal.original }}
+            <span class="font-bold text-blue-600 dark:text-blue-400">引用原文:</span> <span v-html="aiProposal.original"></span>
           </div>
 
           <!-- Third line: AI助手优化过的内容 (directly displayed) -->
@@ -80,7 +82,7 @@
             <span class="font-bold text-indigo-600 dark:text-indigo-400">AI 处理方案:</span>
           </div>
           <div class="p-2 bg-blue-50 dark:bg-blue-950 rounded-md text-sm text-gray-800 dark:text-gray-100">
-            {{ aiProposal.modified }}
+            <span v-html="aiProposal.modified"></span>
           </div>
           
           <div class="flex justify-end mt-4 space-x-2">
@@ -108,20 +110,7 @@
             class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           />
         </div>
-        <p class="whitespace-pre-wrap">{{ referencedContent }}</p>
-      </div>
-
-      <!-- Quick Prompts -->
-      <div class="mb-4 flex flex-wrap gap-2">
-        <el-button
-          v-for="(instruction, idx) in aiInstructions"
-          :key="idx"
-          round
-          class="transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95"
-          @click="setQuickPrompt(instruction)"
-        >
-          {{ instruction.tag }}
-        </el-button>
+        <div class="whitespace-pre-wrap" v-html="referencedContent"></div>
       </div>
 
       <!-- Message Input Area -->
@@ -136,6 +125,19 @@
           class="flex-1"
         />
         <el-button type="primary" :icon="Promotion" circle @click="sendMessage" :disabled="!chatInput.trim()" />
+      </div>
+
+      <!-- Quick Prompts -->
+      <div class="mb-4 flex flex-nowrap gap-2 overflow-x-auto custom-scrollbar-horizontal">
+        <el-button
+          v-for="(instruction, idx) in aiInstructions"
+          :key="idx"
+          round
+          class="quick-prompt-button transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95"
+          @click="setQuickPrompt(instruction)"
+        >
+          {{ instruction.tag }}
+        </el-button>
       </div>
     </div>
   </el-dialog>
@@ -197,8 +199,12 @@ const handleRemoveReference = () => {
 // Draggable button position
 const button = ref(null)
 const { x, y, isDragging } = useDraggable(button, {
-  initialValue: { x: window.innerWidth - 80, y: 100 },
+  initialValue: { x: window.innerWidth - 180, y: 100 }, // Adjusted for wider button with text
 })
+
+const startDrag = () => {
+  isDragging.value = true;
+};
 
 const buttonPosition = computed(() => ({
   left: `${x.value}px`,
@@ -206,13 +212,7 @@ const buttonPosition = computed(() => ({
   cursor: isDragging.value ? 'grabbing' : 'grab',
 }))
 
-const startDrag = (event: MouseEvent) => {
-  if (event.target && (event.target as HTMLElement).closest('.el-button')) {
-    // If click originated from the button itself, don't start drag
-    return;
-  }
-  isDragging.value = true;
-};
+
 
 const aiProposal = reactive<AIProposal>({
   visible: false,
@@ -272,8 +272,11 @@ watch(dialogVisible, (val) => {
     // When dialog opens, if storyboardContent is provided, set it as referencedContent
     if (props.storyboardContent) {
       referencedContent.value = props.storyboardContent
+      // Strip HTML tags before populating chatInput
+      chatInput.value = props.storyboardContent.replace(/<[^>]*>?/gm, ''); // Simple HTML tag stripping
     } else {
       referencedContent.value = null // Clear if no new content
+      chatInput.value = ''; // Clear chatInput if no referenced content
     }
 
     // Only push welcome message if chat history is entirely empty
@@ -335,11 +338,38 @@ const sendMessage = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
   const originalContent = props.storyboardContent
-  const aiGeneratedContent = `AI根据您的指令："${message}"，对内容进行了智能处理。这是处理后的结果。`;
+  // Simulate AI processing: a simplified example where AI "optimizes" the original content
+  let aiGeneratedContent: string; // Declare without initial value
 
-  aiProposal.original = originalContent;
-  aiProposal.modified = aiGeneratedContent;
-  aiProposal.instruction = message;
+  // This part simulates the AI's actual output based on the instruction
+  if (message.includes('优化')) {
+    // Simulate a more detailed optimized description based on originalContent
+    if (originalContent.includes('舞台') && originalContent.includes('鲜花')) {
+      aiGeneratedContent = `场景描述已优化，增加了更多细节和情感色彩：在华丽的舞台中央，鲜花如瀑布般倾泻而下，璀璨的水晶灯折射出斑斓的光芒，将整个空间点缀得如梦似幻。镜头缓缓拉近，捕捉到每一个细微的闪烁，营造出一种静谧而又奢华的氛围。`;
+    } else {
+      aiGeneratedContent = `场景描述已优化，使其更具画面感和情感张力：${originalContent}。增加了如下细节：[AI生成的优化细节]`;
+    }
+  } else if (message.includes('生成对白')) {
+    aiGeneratedContent = `根据您的指令，AI生成了以下对白：\n角色A：“${originalContent}，你觉得呢？”\n角色B：“我同意。”`;
+  } else if (message.includes('调整节奏')) {
+    aiGeneratedContent = `节奏已调整。场景从${originalContent}切换至下一个画面将更加平缓，营造出深思的氛围，或者加快节奏，突出紧张感。`;
+  } else if (message.includes('续写剧情')) {
+    aiGeneratedContent = `AI为您续写了以下剧情发展：在${originalContent}之后，主角突然发现了隐藏的线索，剧情随即进入高潮，引人入胜。`;
+  } else if (message.includes('总结概述')) {
+    aiGeneratedContent = `以下是内容的总结概述：${originalContent}。主要讲述了[总结的核心要点]。`;
+  } else if (message.includes('添加转场')) {
+    // For "添加转场", the AI output would be the description of the new transition
+    aiGeneratedContent = `AI为您添加了以下转场描述：一个象征性的转场，如雨滴汇聚成河流，象征悲伤的积累与希望的萌芽。`;
+  } else if (message.includes('分析人物')) {
+    aiGeneratedContent = `对${originalContent}中人物的性格和动机分析如下：主角展现出[性格特点]，其行为动机可能源于[动机分析]。`;
+  }
+  else {
+    // Default response if no specific keyword is matched, should still be an "output"
+    aiGeneratedContent = `AI已根据您的指令对内容进行处理。这是本次处理的概览或初步结果。`;
+  }
+
+  aiProposal.original = originalContent; // Original content remains the same
+  aiProposal.modified = aiGeneratedContent; // This is the AI's generated output
   aiProposal.activeTab = 'modified'; // Show modified content by default
   aiProposal.visible = true;
 
@@ -368,10 +398,38 @@ const discardAiResponse = () => {
 
 const adoptAndApplyAiResponse = () => {
   if (aiProposal.modified) {
-    // Emit the modified content. The parent component should handle how to apply it.
+    let contentToEmit = aiProposal.modified;
+    const message = aiProposal.instruction; // Use the stored instruction
+
+    // Strip prefixes based on the instruction that generated the modified content
+    if (message.includes('优化')) {
+      contentToEmit = contentToEmit.replace(/^场景描述已优化，增加了更多细节和情感色彩：/, '');
+      contentToEmit = contentToEmit.replace(/^场景描述已优化，使其更具画面感和情感张力：.*。增加了如下细节：/, '');
+    } else if (message.includes('生成对白')) {
+      contentToEmit = contentToEmit.replace(/^根据您的指令，AI生成了以下对白：\n/, '');
+    } else if (message.includes('续写剧情')) {
+      contentToEmit = contentToEmit.replace(/^AI为您续写了以下剧情发展：/, '');
+    } else if (message.includes('总结概述')) {
+      contentToEmit = contentToEmit.replace(/^以下是内容的总结概述：/, '');
+    } else if (message.includes('添加转场')) {
+      contentToEmit = contentToEmit.replace(/^AI为您添加了以下转场描述：/, '');
+    } else if (message.includes('分析人物')) {
+      const originalContentEscaped = aiProposal.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
+      contentToEmit = contentToEmit.replace(new RegExp(`^对${originalContentEscaped}中人物的性格和动机分析如下：`), '');
+    } else if (message.includes('调整节奏')) {
+        // For "调整节奏", the whole string is the "description of adjustment", user might want to insert this directly.
+        // So, no prefix removal needed for this specific `aiGeneratedContent` value.
+    } else {
+        // Default message prefix removal
+        contentToEmit = contentToEmit.replace(/^AI已根据您的指令对内容进行处理。这是本次处理的概览或初步结果。/, '');
+    }
+
+    // Trim any leftover whitespace
+    contentToEmit = contentToEmit.trim();
+
     emit('apply-ai-content', {
       original: aiProposal.original,
-      modified: aiProposal.modified,
+      modified: contentToEmit, // Emit the cleaned content
       instruction: aiProposal.instruction
     })
     chatHistory.push({
@@ -391,9 +449,16 @@ const adoptAndApplyAiResponse = () => {
 }
 
 const setQuickPrompt = (instruction: AIInstruction) => {
-  chatInput.value = instruction.command
-  // Optionally, send the message immediately or let the user review/edit
-  // sendMessage();
+  let newChatInput = instruction.command;
+  if (referencedContent.value) {
+    // Strip HTML tags from referencedContent.value before combining
+    const strippedContent = referencedContent.value.replace(/<[^>]*>?/gm, ''); // Simple HTML tag stripping
+    newChatInput = `${instruction.tag}：${strippedContent}`;
+  }
+  chatInput.value = newChatInput;
+  // referencedContent.value should remain unchanged as per the new requirement for consistency.
+  // The '引用分镜脚本内容' display should also remain.
+  // sendMessage(); // Keep commented for user review/edit
 }
 </script>
 
@@ -431,16 +496,66 @@ const setQuickPrompt = (instruction: AIInstruction) => {
 .floating-button {
   position: fixed;
   z-index: 1000;
-  // Use transform for smooth dragging and prevent layout reflows
   transition: transform 0.1s ease-out;
   &:active {
     cursor: grabbing;
+  }
+
+  .el-button {
+    height: auto;
+    padding: 10px 15px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #4a90e2, #2e6cb7); /* More professional blue gradient */
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(0, 0, 0, 0.1); /* Enhanced 3D shadow */
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-3px); /* Slightly more lift on hover */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .el-icon {
+      margin-right: 5px;
+      font-size: 16px;
+    }
   }
 }
 
 .ai-proposal-card {
   .el-card__body {
     padding: 20px !important; // Important to override default padding
+  }
+}
+
+.quick-prompt-button {
+  height: auto;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #a7baff, #8a9bff); /* Lighter, more playful gradient */
+  border: none;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -469,6 +584,35 @@ const setQuickPrompt = (instruction: AIInstruction) => {
       &:hover {
         background: #cbd5e0;
     }
+    }
+  }
+}
+
+/* Custom Horizontal Scrollbar for Quick Prompts */
+.custom-scrollbar-horizontal {
+  &::-webkit-scrollbar {
+    height: 8px; /* height for horizontal scrollbar */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+    .dark & {
+      background: #2d3748;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    &:hover {
+      background: #555;
+    }
+    .dark & {
+      background: #a0aec0;
+      &:hover {
+        background: #cbd5e0;
+      }
     }
   }
 }
