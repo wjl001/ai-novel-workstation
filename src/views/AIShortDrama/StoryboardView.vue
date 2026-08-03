@@ -1772,6 +1772,7 @@ const handleOpenAiAssistant = () => {
   aiAssistantInputContent.value = ''; // Ensure no specific selection is active
   savedSelectionForAi.value = null;
   aiAssistantOpen.value = true;
+  showAiAssistantButton.value = false; // Hide the floating button when AI Assistant dialog is opened directly
 };
 
 const handleApplyAiContent = (payload: any) => {
@@ -2103,7 +2104,9 @@ const handleTextSelection = () => {
     div.appendChild(fragment);
     selectedTextForAiAssistant.value = div.innerHTML;
     
-    showAiAssistantButton.value = true;
+    if (!aiAssistantOpen.value) { // Only show the button if the AI Assistant dialog is not open
+      showAiAssistantButton.value = true;
+    }
 
     // Calculate button position
     const range = selection.getRangeAt(0);
@@ -2124,6 +2127,7 @@ const handleTextSelection = () => {
 // Function to open AI Assistant dialog with selected textv
 const openAiAssistantWithSelection = () => {
   aiAssistantInputContent.value = selectedTextForAiAssistant.value; // Pass selected text
+  selectedTextForAiAssistant.value = ''; // Clear selection to hide the button
   if (editor.value) {
     savedSelectionForAi.value = editor.value.state.selection;
   }

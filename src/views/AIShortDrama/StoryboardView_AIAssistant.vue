@@ -345,9 +345,12 @@ const sendMessage = async () => {
   if (message.includes('优化')) {
     // Simulate a more detailed optimized description based on originalContent
     if (originalContent.includes('舞台') && originalContent.includes('鲜花')) {
-      aiGeneratedContent = `场景描述已优化，增加了更多细节和情感色彩：在华丽的舞台中央，鲜花如瀑布般倾泻而下，璀璨的水晶灯折射出斑斓的光芒，将整个空间点缀得如梦似幻。镜头缓缓拉近，捕捉到每一个细微的闪烁，营造出一种静谧而又奢华的氛围。`;
+      const detailedOptimizedContent = `在华丽的舞台中央，鲜花如瀑布般倾泻而下，璀璨的水晶灯折射出斑斓的光芒，将整个空间点缀得如梦似幻。镜头缓缓拉近，捕捉到每一个细微的闪烁，营造出一种静谧而又奢华的氛围。`;
+      aiGeneratedContent = `场景描述已优化，增加了更多细节和情感色彩：${detailedOptimizedContent}`;
     } else {
-      aiGeneratedContent = `场景描述已优化，使其更具画面感和情感张力：${originalContent}。增加了如下细节：[AI生成的优化细节]`;
+      // Simulate more generic optimized details that can be inserted
+      const simulatedOptimizedDetails = '气氛变得更加紧张，伴随着微弱的电流声和闪烁的指示灯，预示着即将到来的转折。';
+      aiGeneratedContent = `场景描述已优化，使其更具画面感和情感张力：${originalContent}。增加了如下细节：${simulatedOptimizedDetails}`;
     }
   } else if (message.includes('生成对白')) {
     aiGeneratedContent = `根据您的指令，AI生成了以下对白：\n角色A：“${originalContent}，你觉得呢？”\n角色B：“我同意。”`;
@@ -370,6 +373,7 @@ const sendMessage = async () => {
 
   aiProposal.original = originalContent; // Original content remains the same
   aiProposal.modified = aiGeneratedContent; // This is the AI's generated output
+  aiProposal.instruction = message; // Store the instruction that generated this proposal
   aiProposal.activeTab = 'modified'; // Show modified content by default
   aiProposal.visible = true;
 
@@ -403,8 +407,9 @@ const adoptAndApplyAiResponse = () => {
 
     // Strip prefixes based on the instruction that generated the modified content
     if (message.includes('优化')) {
-      contentToEmit = contentToEmit.replace(/^场景描述已优化，增加了更多细节和情感色彩：/, '');
-      contentToEmit = contentToEmit.replace(/^场景描述已优化，使其更具画面感和情感张力：.*。增加了如下细节：/, '');
+      contentToEmit = contentToEmit.replace(/场景描述已优化，增加了更多细节和情感色彩：/g, '');
+      contentToEmit = contentToEmit.replace(/场景描述已优化，使其更具画面感和情感张力：/g, '');
+      contentToEmit = contentToEmit.replace(/。?增加了如下细节：/g, '');
     } else if (message.includes('生成对白')) {
       contentToEmit = contentToEmit.replace(/^根据您的指令，AI生成了以下对白：\n/, '');
     } else if (message.includes('续写剧情')) {
