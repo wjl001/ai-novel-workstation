@@ -26,6 +26,13 @@
               <el-icon :size="12"><Reading /></el-icon>
               <span>算力豆规则说明</span>
             </button>
+            <button 
+              @click="showModelPriceDialog = true"
+              class="ml-1 h-7 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/50 hover:border-purple-400 dark:hover:border-purple-500/50"
+            >
+              <el-icon :size="12"><PriceTag /></el-icon>
+              <span>模型价格说明</span>
+            </button>
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 ml-13 font-medium">管理会员、算力豆与充值，解锁更强创作能力</p>
         </div>
@@ -1253,6 +1260,8 @@
     />
     <!-- 算力豆规则说明弹窗 -->
     <MemberRulesDialog v-model="showRulesDialog" />
+    <!-- 模型价格说明弹窗 -->
+    <ModelPriceExplanationDialog v-model="showModelPriceDialog" :model-tiers="activeTiers" />
   </div>
 </template>
 
@@ -1262,6 +1271,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 import MemberRulesDialog from '@/components/MemberRulesDialog.vue'
+import ModelPriceExplanationDialog from '@/components/Common/ModelPriceExplanationDialog.vue'
 import { useUserStore } from '@/store/user'
 import { useThemeStore } from '@/store/theme'
 import {
@@ -1289,7 +1299,8 @@ import {
   SwitchButton,
   Trophy,
   User,
-  Check
+  Check,
+  PriceTag
 } from '@element-plus/icons-vue'
 
 type NavKey = 'overview' | 'recharge-records' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
@@ -1373,6 +1384,7 @@ const themeStore = useThemeStore()
 
 const showDesignDialog = ref(false)
 const showRulesDialog = ref(false)
+const showModelPriceDialog = ref(false)
 
 const generateMockData = (count: number): ConsumptionDetail[] => {
   const data: ConsumptionDetail[] = []
@@ -1504,47 +1516,86 @@ const membershipTypes = [
 
 const activeTiers = computed(() => {
   return [
-    { id: 'basic', name: '基础版', priceMonthly: 99, priceYearly: Math.floor(99 * 12 * 0.8), points: 9900, concurrent: 2, badge: '' },
-    { id: 'pro', name: '专业版', priceMonthly: 299, priceYearly: Math.floor(299 * 12 * 0.8), points: 29900, concurrent: 4, badge: '最受欢迎' },
-    { id: 'studio', name: '工作室版', priceMonthly: 999, priceYearly: Math.floor(999 * 12 * 0.8), points: 99900, concurrent: 8, badge: '最超值' }
+    {
+      id: 'basic',
+      name: '基础版',
+      priceMonthly: 99,
+      priceYearly: Math.floor(99 * 12 * 0.8),
+      points: 9900,
+      concurrent: 2,
+      badge: '',
+      modelInfo: [
+        { name: 'doubao-seedance-2.0', type: 'video', costCategory: '基础', unitPrice: '0.005 算力豆/秒', usageScenario: '稳定经典视频生成' },
+        { name: 'HappyHorse 1.1', type: 'video', costCategory: '基础', unitPrice: '0.005 算力豆/秒', usageScenario: '高效快速视频预览' },
+        { name: 'gemini-3.1-flash-lite-image', type: 'image', costCategory: '基础', unitPrice: '5 算力豆/张', usageScenario: '极速多模态影像生成' },
+        { name: 'doubao-seedream-5.0-lite', type: 'image', costCategory: '基础', unitPrice: '5 算力豆/张', usageScenario: '专业级生图' }
+      ]
+    },
+    {
+      id: 'pro',
+      name: '专业版',
+      priceMonthly: 299,
+      priceYearly: Math.floor(299 * 12 * 0.8),
+      points: 29900,
+      concurrent: 4,
+      badge: '最受欢迎',
+      modelInfo: [
+        { name: 'doubao-seedance-2.5', type: 'video', costCategory: '高端', unitPrice: '0.05 算力豆/秒', usageScenario: '新一代高质量视频生成' },
+        { name: 'ChatGPT Images 2.0', type: 'image', costCategory: '高端', unitPrice: '50 算力豆/张', usageScenario: '顶尖精美绘图' }
+      ]
+    },
+    {
+      id: 'studio',
+      name: '工作室版',
+      priceMonthly: 999,
+      priceYearly: Math.floor(999 * 12 * 0.8),
+      points: 99900,
+      concurrent: 8,
+      badge: '最超值',
+      modelInfo: [
+        { name: '可灵3.0 Omni', type: 'video', costCategory: '旗舰', unitPrice: '0.1 算力豆/秒', usageScenario: '顶级物理模拟视频生成' }
+      ]
+    }
   ]
 })
 
 const getTierFeatures = (tier: any) => {
-  if (tier.id === 'basic') {
-    return [
-      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
-      '视频分辨率：480P / 720P',
-      '并发任务数：2',
-      '生成队列：标准',
-      '支持服务：工单',
-      '月产能参照（720P标准视频）：约 100 秒',
-      '注：1080P/4K、去水印、商用授权、多并发、API 需升级专业版'
-    ]
-  } else if (tier.id === 'pro') {
-    return [
-      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
-      '视频分辨率：+ 1080P / 4K',
-      '并发任务数：4',
-      '生成队列：优先',
-      '水印/授权：去水印 + 去字幕 + 商用授权',
-      'API 接入：不支持',
-      '支持服务：工单优先',
-      '月产能参照（720P标准视频）：约 300 秒'
-    ]
-  } else if (tier.id === 'studio') {
-    return [
-      `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
-      '视频分辨率：+ 1080P / 4K',
-      '并发任务数：8',
-      '生成队列：最高优先',
-      '水印/授权：去水印 + 去字幕 + 商用授权',
-      'API 接入：支持',
-      '支持服务：专属对接',
-      '月产能参照（720P标准视频）：约 1,000 秒'
-    ]
+  const features = [
+    `算力豆：${tier.points.toLocaleString()}（随会员周期发放，到期清零）`,
+    '月产能参照（720P标准视频）：约 100 秒'
+  ]
+  
+  if (tier.modelInfo && tier.modelInfo.length > 0) {
+    features.push('\n--- AI 模型能力 ---')
+    tier.modelInfo.forEach((model: any) => {
+      features.push(`模型：${model.name} (${model.costCategory}级)`) // 显示模型名称和级别
+      features.push(`  单价：${model.unitPrice}`) // 显示单价
+      features.push(`  适用场景：${model.usageScenario}`) // 显示适用场景
+    })
   }
-  return []
+
+  if (tier.id === 'basic') {
+    features.push('视频分辨率：480P / 720P')
+    features.push('并发任务数：2')
+    features.push('生成队列：标准')
+    features.push('支持服务：工单')
+    features.push('注：1080P/4K、去水印、商用授权、多并发、API 需升级专业版')
+  } else if (tier.id === 'pro') {
+    features.push('视频分辨率：+ 1080P / 4K')
+    features.push('并发任务数：4')
+    features.push('生成队列：优先')
+    features.push('水印/授权：去水印 + 去字幕 + 商用授权')
+    features.push('API 接入：不支持')
+    features.push('支持服务：工单优先')
+  } else if (tier.id === 'studio') {
+    features.push('视频分辨率：+ 1080P / 4K')
+    features.push('并发任务数：8')
+    features.push('生成队列：最高优先')
+    features.push('水印/授权：去水印 + 去字幕 + 商用授权')
+    features.push('API 接入：支持')
+    features.push('支持服务：专属对接')
+  }
+  return features
 }
 
 const openPurchaseTier = (tier: any) => {

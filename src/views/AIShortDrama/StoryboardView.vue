@@ -1535,7 +1535,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, onUnmounted, nextTick, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { ChatDotRound } from '@element-plus/icons-vue';
+
 import { useModelStore } from '@/store/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
@@ -1622,7 +1622,7 @@ import {
   Menu, Delete, Search, InfoFilled, Close, Select, Picture, Film, Headset,
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
-  Cpu, ChatDotRound, CircleClose, CaretTop, CaretBottom,
+  Cpu, CircleClose, CaretTop, CaretBottom,
   CircleCheck, Document, Setting, ChatRound,
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
