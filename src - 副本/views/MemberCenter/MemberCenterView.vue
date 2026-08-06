@@ -173,7 +173,7 @@
               <div class="w-9 h-9 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center">
                 <el-icon><Coin /></el-icon>
               </div>
-              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力消耗明细</span>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力豆消耗明细</span>
               <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
             </button>
             <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'invoice'">
@@ -566,7 +566,7 @@
                   <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
                 </button>
                 <div class="min-w-0">
-                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力消耗明细</div>
+                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力豆消耗明细</div>
                   <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     <span class="font-black">{{ filteredConsumptionList.length }}</span> 条消耗记录
                   </div>
@@ -1353,12 +1353,12 @@ const memberCenterDesign = {
   title: '会员中心',
   location: '用户管理个人会员权益、算力豆余额及充值记录的核心枢纽，承载 C 端变现转化的关键功能。',
   layout: [
-    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
+    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力豆消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
     '**总览页头部**：展示超级会员状态、核心权益标签及可用算力豆大数值显示。',
     '**会员套餐区**：支持“连续包月/按年购买”切换，并按业务线（短剧、视频、音乐、小说）分类展示不同档位套餐。',
     '**算力包充值**：提供不同额度的算力豆充值包，并带有折扣标签提示。',
-    '**算力消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
+    '**算力豆消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
   ],
   interactions: [
     '**套餐切换交互**：点击不同业务线标签，下方的会员套餐卡片将实时更新，伴随平滑的过渡动画。',

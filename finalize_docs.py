@@ -34,7 +34,7 @@ def generate_manual_with_screenshots(output_path):
         ("五、 资产库管理", "一键从剧本提取角色和场景。通过 AI 批量生成资产图，确保视觉特征高度一致。", "asset_management.png"),
         ("六、 分镜创作与视频生成", "自动解析剧本生成分镜脚本。关联资产库主体，选择视频引擎一键批量生成视频素材。", "storyboard.png"),
         ("七、 团队协作管理", "管理员可邀请成员、指派角色（导演、编剧、后期）并下发算力豆资源。", "team_management.png"),
-        ("八、 算力消耗明细", "透明化展示每一笔 AI 任务的消耗记录。支持按模型、按项目筛选导出报表。", "consumption_details.png")
+        ("八、 算力豆消耗明细", "透明化展示每一笔 AI 任务的消耗记录。支持按模型、按项目筛选导出报表。", "consumption_details.png")
     ]
     
     for title, content, img_name in sections:

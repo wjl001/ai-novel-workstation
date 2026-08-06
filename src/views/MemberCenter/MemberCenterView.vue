@@ -203,7 +203,14 @@
               <div class="w-9 h-9 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center">
                 <el-icon><Coin /></el-icon>
               </div>
-              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力消耗明细</span>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力豆消耗明细</span>
+              <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
+            </button>
+            <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'expired-points'">
+              <div class="w-9 h-9 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-300 flex items-center justify-center">
+                <el-icon><Calendar /></el-icon>
+              </div>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-100">算力豆失效记录</span>
               <el-icon class="ml-auto text-slate-400"><ArrowRight /></el-icon>
             </button>
             <button type="button" class="w-full px-4 py-3 rounded-2xl flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" @click="activeKey = 'invoice'">
@@ -641,7 +648,7 @@
                   <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
                 </button>
                 <div class="min-w-0">
-                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力消耗明细</div>
+                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力豆消耗明细</div>
                   <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     <span class="font-black">{{ filteredConsumptionList.length }}</span> 条消耗记录
                   </div>
@@ -1107,6 +1114,101 @@
             </div>
           </section>
           
+          <section v-else-if="activeKey === 'expired-points'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6 min-h-0 flex flex-col">
+            <div class="flex items-center justify-between gap-4 shrink-0">
+              <div class="flex items-center gap-3 min-w-0">
+                <button type="button" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors" @click="activeKey = 'overview'">
+                  <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
+                </button>
+                <div class="min-w-0">
+                  <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力豆失效记录</div>
+                  <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    <span class="font-black">{{ memberState.expiredPoints.length }}</span> 条失效记录
+                  </div>
+                </div>
+              </div>
+              <el-button round class="!rounded-2xl !font-black" @click="activeKey = 'overview'">返回会员中心</el-button>
+            </div>
+
+            <div class="mt-5 flex flex-col md:flex-row items-center gap-4 shrink-0">
+              <div class="flex-1 w-full md:w-auto">
+                <el-input
+                  v-model="expiredPointsSearchQuery"
+                  placeholder="搜索类型、失效时间或数量"
+                  class="modern-input"
+                  clearable
+                >
+                  <template #prefix>
+                    <el-icon><Search /></el-icon>
+                  </template>
+                </el-input>
+              </div>
+            </div>
+
+            <div class="mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
+              <template v-if="isDark">
+                <div v-if="filteredExpiredPoints.length === 0" class="rounded-3xl border border-slate-700 bg-slate-950/20 p-10 text-center">
+                  <div class="text-sm font-black text-slate-200">暂无失效记录</div>
+                  <div class="mt-2 text-xs text-slate-400">会员算力豆过期后会在此显示</div>
+                </div>
+
+                <div v-else class="flex flex-col gap-3">
+                  <div v-for="ep in filteredExpiredPoints" :key="ep.recordAt" class="rounded-3xl border border-slate-700 bg-slate-950/20 overflow-hidden p-5 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-rose-500/15 text-rose-300 flex items-center justify-center shrink-0">
+                      <el-icon><Calendar /></el-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-black text-slate-100 truncate">{{ ep.type === 'member' ? '会员算力豆失效' : '' }}</div>
+                      <div class="mt-1 text-xs text-slate-400 truncate">
+                        失效数量：{{ ep.amount.toLocaleString() }} 算力豆
+                      </div>
+                      <div class="mt-1 text-xs text-slate-500">失效时间：{{ formatDateTime(ep.expireAt) }}</div>
+                      <div class="mt-1 text-xs text-slate-500">记录时间：{{ formatDateTime(ep.recordAt) }}</div>
+                    </div>
+                    <div class="flex flex-col items-end gap-2 shrink-0">
+                      <div class="text-base font-black text-rose-400">-{{ ep.amount }} 算力豆</div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <template v-else>
+                <el-table
+                  :data="filteredExpiredPoints"
+                  height="100%"
+                  class="modern-table"
+                  :header-cell-style="{
+                    background: 'transparent',
+                    borderBottom: '1px solid rgba(148, 163, 184, 0.25)',
+                    color: '#94a3b8',
+                    fontWeight: 900
+                  }"
+                >
+                  <el-table-column prop="type" label="类型" min-width="120">
+                    <template #default="{ row }">
+                      <span>{{ row.type === 'member' ? '会员算力豆' : '' }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="amount" label="失效数量" min-width="120">
+                    <template #default="{ row }">
+                      <span class="font-black text-rose-500">-{{ row.amount }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="expireAt" label="失效时间" min-width="170">
+                    <template #default="{ row }">
+                      <span class="text-slate-500 dark:text-slate-400">{{ formatDateTime(row.expireAt) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="recordAt" label="记录时间" min-width="170">
+                    <template #default="{ row }">
+                      <span class="text-slate-500 dark:text-slate-400">{{ formatDateTime(row.recordAt) }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </div>
+          </section>
+          
           <section v-else-if="activeKey === 'logout'" class="rounded-3xl border border-white/60 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm p-6">
             <div class="text-lg font-black text-slate-800 dark:text-slate-100">退出登录</div>
             <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">确认退出后将返回登录页</div>
@@ -1303,7 +1405,7 @@ import {
   PriceTag
 } from '@element-plus/icons-vue'
 
-type NavKey = 'overview' | 'recharge-records' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite'
+type NavKey = 'overview' | 'recharge-records' | 'consumption' | 'invoice' | 'support' | 'tutorial' | 'logout' | 'invite' | 'expired-points'
 
 type OrderType = 'member' | 'recharge'
 
@@ -1345,6 +1447,13 @@ interface LocalInvoice {
   createdAt: number
 }
 
+interface ExpiredPointsRecord {
+  amount: number;       // 失效算力豆数量
+  expireAt: number;     // 失效时间
+  recordAt: number;     // 记录时间
+  type: 'member';       // 失效类型，目前只有会员算力豆会失效
+}
+
 interface MemberPointsPool {
   totalPoints: number    // 当前总算力豆（单一算力豆池）
   expireAt: number       // 到期时间（开通日起算，升级时延长）
@@ -1357,6 +1466,7 @@ interface MemberState {
   pointsPool: MemberPointsPool | null
   orders: LocalOrder[]
   invoices: LocalInvoice[]
+  expiredPoints: ExpiredPointsRecord[] // 新增失效算力豆记录
 }
 
 interface MemberPlan {
@@ -1482,13 +1592,13 @@ const memberCenterDesign = {
   title: '会员中心',
   location: '用户管理个人会员权益、算力豆余额及充值记录的核心枢纽，承载 C 端变现转化的关键功能。',
   layout: [
-    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
+    '**左侧导航栏**：采用玻璃拟态卡片，集成会员权益、算力管理、充值记录、算力豆消耗明细、开票申请、人工客服、使用教程、邀请返利及退出登录等入口。',
     '**右侧内容区**：动态加载不同功能模块，默认显示“我的会员中心”总览。',
     '**总览页头部**：展示超级会员状态、核心权益标签及总可用算力豆（会员算力豆 + 充值算力豆合并显示）。',
     '**算力管理面板**：显示「会员算力豆」（会员套餐赠送，随会员到期清零，升级时算力豆合并）与「充值算力豆」（充值购买，永久有效），单一算力豆池模型。',
     '**会员套餐区**：支持“按月/按年购买”切换，套餐赠送会员算力豆（随会员周期发放，到期清零），所有算力豆等值。',
     '**算力豆充值套餐**：充值获得永久有效算力豆，直接写入用户余额，与会员算力豆独立存储。',
-    '**算力消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
+    '**算力豆消耗明细**：详细展示每一笔算力消耗的流水号、模型、场景、扣费额度及余额变化。'
   ],
   interactions: [
     '**算力豆类型说明**：会员算力豆（会员套餐赠送，随会员周期发放，到期清零，升级时算力豆合并）与充值算力豆（充值购买，永久有效）为独立的两笔余额，无消耗优先级差异。',
@@ -1661,6 +1771,7 @@ const claimPendingBeans = () => {
 const expandedOrders = reactive<Record<string, boolean>>({})
 const expandedConsumption = reactive<Record<string, boolean>>({})
 const selectedMemberKey = ref<'short-drama' | 'super'>('short-drama')
+const expiredPointsSearchQuery = ref('') // New search query for expired points
 
 const isDark = computed(() => themeStore.isDark)
 
@@ -1669,7 +1780,8 @@ const memberState = reactive<MemberState>({
   planExpireAt: {},
   pointsPool: null,
   orders: [],
-  invoices: []
+  invoices: [],
+  expiredPoints: [] // Initialize new field
 })
 
 const isSuperMember = computed(() => {
@@ -1692,6 +1804,21 @@ const filteredOrders = computed(() => {
   }
   
   return orders
+})
+
+const filteredExpiredPoints = computed(() => {
+  let points = memberState.expiredPoints
+
+  if (expiredPointsSearchQuery.value.trim()) {
+    const q = expiredPointsSearchQuery.value.toLowerCase()
+    points = points.filter(ep =>
+      ep.type.toLowerCase().includes(q) ||
+      formatDate(ep.expireAt).includes(q) ||
+      formatDate(ep.recordAt).includes(q) ||
+      String(ep.amount).includes(q)
+    )
+  }
+  return points
 })
 
 const superDiscount = computed(() => (isSuperMember.value ? 7.5 : 10))
@@ -1891,6 +2018,10 @@ const loadState = () => {
     }
     memberState.orders = []
     memberState.invoices = []
+    memberState.expiredPoints = [
+      { amount: 1000, expireAt: Date.now() - 5 * 24 * 3600 * 1000, recordAt: Date.now() - 4 * 24 * 3600 * 1000, type: 'member' },
+      { amount: 500, expireAt: Date.now() - 15 * 24 * 3600 * 1000, recordAt: Date.now() - 14 * 24 * 3600 * 1000, type: 'member' }
+    ] // Initialize new field with mock data
     return
   }
 
@@ -1908,6 +2039,24 @@ const loadState = () => {
     } else {
       memberState.pointsPool = null
     }
+
+    // Handle expired pointsPool
+    if (memberState.pointsPool && memberState.pointsPool.expireAt <= Date.now() && memberState.pointsPool.totalPoints > 0) {
+      const expiredRecord: ExpiredPointsRecord = {
+        amount: memberState.pointsPool.totalPoints,
+        expireAt: memberState.pointsPool.expireAt,
+        recordAt: Date.now(),
+        type: 'member',
+      };
+      // Initialize expiredPoints if it's null or undefined before pushing
+      if (!memberState.expiredPoints) {
+        memberState.expiredPoints = [];
+      }
+      memberState.expiredPoints.push(expiredRecord);
+      memberState.pointsPool.totalPoints = 0; // Clear expired points
+      ElMessage.warning(`检测到 ${expiredRecord.amount} 会员算力豆已于 ${formatDate(expiredRecord.expireAt)} 过期并清零`);
+    }
+
     // 如果无算力豆池或已过期，注入演示数据
     if (!memberState.pointsPool || memberState.pointsPool.expireAt <= Date.now()) {
       const monthMs = 30 * 24 * 60 * 60 * 1000
@@ -1919,12 +2068,17 @@ const loadState = () => {
     }
     memberState.orders = Array.isArray(parsed.orders) ? (parsed.orders as LocalOrder[]) : []
     memberState.invoices = Array.isArray(parsed.invoices) ? (parsed.invoices as LocalInvoice[]) : []
+    memberState.expiredPoints = Array.isArray(parsed.expiredPoints) ? (parsed.expiredPoints as ExpiredPointsRecord[]) : [
+      { amount: 800, expireAt: Date.now() - 25 * 24 * 3600 * 1000, recordAt: Date.now() - 24 * 24 * 3600 * 1000, type: 'member' },
+      { amount: 1200, expireAt: Date.now() - 35 * 24 * 3600 * 1000, recordAt: Date.now() - 34 * 24 * 3600 * 1000, type: 'member' }
+    ] // Initialize expiredPoints from parsed data, add some mock data if empty
   } catch {
     memberState.superExpireAt = 0
     memberState.planExpireAt = {}
     memberState.pointsPool = null
     memberState.orders = []
     memberState.invoices = []
+    memberState.expiredPoints = [] // Also initialize on error
   }
 }
 
@@ -1940,7 +2094,7 @@ const saveState = () => {
 }
 
 watch(
-  () => ({ ...memberState, orders: memberState.orders.length, invoices: memberState.invoices.length }),
+  () => ({ ...memberState, orders: memberState.orders.length, invoices: memberState.invoices.length, expiredPoints: memberState.expiredPoints.length }),
   () => saveState(),
   { deep: true }
 )

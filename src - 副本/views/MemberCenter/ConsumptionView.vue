@@ -12,7 +12,7 @@
               <el-icon class="text-slate-500 dark:text-slate-300"><ArrowLeft /></el-icon>
             </button>
             <div class="min-w-0">
-              <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力消耗明细</div>
+              <div class="text-lg font-black text-slate-800 dark:text-slate-100">算力豆消耗明细</div>
               <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 <span class="font-black">{{ filteredConsumptionList.length }}</span> 条消耗记录
               </div>

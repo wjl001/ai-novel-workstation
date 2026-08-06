@@ -39,262 +39,390 @@
       </div>
     </div>
 
-    <!-- Main Content: Top Creation Area -->
-    <div class="flex-1 overflow-y-auto p-4 lg:p-6 relative z-10 flex flex-col min-h-0 custom-scrollbar">
-      <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
-        <!-- Header: More compact -->
-        <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
-          <!-- Product Design Info Button -->
-          <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
-            <button 
-              @click="showDesignDialog = true"
-              class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
-              :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
-            >
-              <el-icon :size="12"><InfoFilled /></el-icon>
-              <span>产品设计说明</span>
-            </button>
-          </div>
-          
-          <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-              智能极速创作，打造爆款短剧
-            </span>
+    <!-- NEW: Main Layout Container (Sidebar + Content) -->
+    <div class="flex flex-1 relative z-10">
+      <!-- Left Sidebar -->
+      <div class="relative bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-700/50 flex flex-col shrink-0 transition-all duration-300" :class="isSidebarCollapsed ? 'w-16' : 'w-64'">
+        <div class="p-4 flex flex-col gap-2">
+
+          <button
+            @click="activeChannel = 'creation'"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+            :class="activeChannel === 'creation' ? 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+          >
+            <el-icon :size="16"><Film /></el-icon>
+            <span v-if="!isSidebarCollapsed">创作</span>
+          </button>
+          <button
+            @click="activeChannel = 'shortDrama'"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+            :class="activeChannel === 'shortDrama' ? 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+          >
+            <el-icon :size="16"><VideoCamera /></el-icon>
+            <span v-if="!isSidebarCollapsed">短剧</span>
+          </button>
+          <button
+            @click="activeChannel = 'assetLibrary'"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+            :class="activeChannel === 'assetLibrary' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+          >
+            <el-icon :size="16"><Collection /></el-icon>
+            <span v-if="!isSidebarCollapsed">资产库</span>
+          </button>
+          <button
+            @click="activeChannel = 'history'"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+            :class="activeChannel === 'history' ? 'bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+          >
+            <el-icon :size="16"><Clock /></el-icon>
+            <span v-if="!isSidebarCollapsed">创作历史</span>
+          </button>
+          <!-- Collapse/Expand Button (new position: bottom right) -->
+          <button
+            @click="isSidebarCollapsed = !isSidebarCollapsed"
+            class="absolute bottom-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
+            :class="[
+              isLight ? 'bg-white shadow-md text-slate-500 hover:bg-slate-100' : 'bg-slate-800 shadow-lg text-slate-400 hover:bg-slate-700'
+            ]"
+          >
+            <el-icon :size="16">
+              <ArrowLeft v-if="!isSidebarCollapsed" />
+              <ArrowRight v-else />
+            </el-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Content Area -->
+      <div v-if="activeChannel === 'creation'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+        <div class="max-w-7xl mx-auto w-full">
+          <h1 class="text-2xl md:text-3xl font-black mb-4 tracking-tight leading-tight" :class="isLight ? 'text-slate-800' : 'text-white'">
+            短视频创作
           </h1>
-          <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
-            AI全流程辅助，内置高转化剧情模板，让创意触手可及。
+          <p class="text-base md:text-lg font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-500' : 'text-slate-400'">
+            敬请期待更多短视频创作功能...
           </p>
         </div>
-
-        <!-- Creation Card: More compact and color-distinguished -->
-        <div
-          class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
-          :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
-        >
-          <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
-            <button 
-              class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
-              :class="activeTab === 'ai'
-                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
-                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
-              @click="activeTab = 'ai'"
-            >
-              <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
-            </button>
-            <button 
-              class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
-              :class="activeTab === 'upload'
-                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
-                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
-              @click="activeTab = 'upload'"
-            >
-              <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
-            </button>
-            <button 
-              class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
-              :class="activeTab === 'canvas'
-                ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
-                : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
-              @click="router.push('/free-canvas')"
-            >
-              <el-icon :size="16"><Monitor /></el-icon> 自由画布
-            </button>
+      </div>
+      <div v-else-if="activeChannel === 'shortDrama'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+        <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
+          <!-- Header: More compact -->
+          <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
+            <!-- Product Design Info Button -->
+            <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
+              <button 
+                @click="showDesignDialog = true"
+                class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
+                :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
+              >
+                <el-icon :size="12"><InfoFilled /></el-icon>
+                <span>产品设计说明</span>
+              </button>
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                智能极速创作，打造爆款短剧
+              </span>
+            </h1>
+            <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
+              AI全流程辅助，内置高转化剧情模板，让创意触手可及。
+            </p>
           </div>
 
-          <div class="px-6 py-3 md:px-8 md:py-4 pt-1">
-            <div class="min-h-[180px] flex flex-col">
-              <!-- AI Tab Content -->
-              <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
-                <div class="relative group mt-2">
-                  <!-- Dynamic Glowing Border -->
-                  <div 
-                    class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
-                    :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
-                  ></div>
-                  
-                  <div
-                    class="relative rounded-[28px] border-2 transition-all overflow-hidden"
-                    :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
-                  >
-                    <textarea 
-                      v-model="aiPrompt"
-                      class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
-                      :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
-                      placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
-                    ></textarea>
+          <!-- Creation Card: More compact and color-distinguished -->
+          <div
+            class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
+            :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
+          >
+            <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
+              <button 
+                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+                :class="activeTab === 'ai'
+                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+                @click="activeTab = 'ai'"
+              >
+                <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
+              </button>
+              <button 
+                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+                :class="activeTab === 'upload'
+                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+                @click="activeTab = 'upload'"
+              >
+                <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
+              </button>
+              <button 
+                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+                :class="activeTab === 'canvas'
+                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+                @click="router.push('/free-canvas')"
+              >
+                <el-icon :size="16"><Monitor /></el-icon> 自由画布
+              </button>
+            </div>
+
+            <div class="px-6 py-3 md:px-8 md:py-4 pt-1">
+              <div class="min-h-[180px] flex flex-col">
+                <!-- AI Tab Content -->
+                <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
+                  <div class="relative group mt-2">
+                    <!-- Dynamic Glowing Border -->
+                    <div 
+                      class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
+                      :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
+                    ></div>
                     
-                    <!-- Textarea Bottom Toolbar -->
-                    <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
-                      <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
-                        <span
-                          class="text-[11px] font-bold flex items-center gap-1.5 px-3 py-1 rounded-full shadow-sm"
-                          :class="isLight ? 'bg-white text-slate-500 border border-slate-100' : 'bg-white/10 text-slate-300'"
-                        >
-                          <el-icon class="text-indigo-400"><EditPen /></el-icon> {{ aiPrompt.length }} 字
-                        </span>
-                        <div class="w-px h-4" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></div>
-                        <div class="flex items-center gap-1">
-                          <button
-                            class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
-                            :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
-                            title="清空内容"
-                            @click="aiPrompt = ''"
-                            v-if="aiPrompt"
+                    <div
+                      class="relative rounded-[28px] border-2 transition-all overflow-hidden"
+                      :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
+                    >
+                      <textarea 
+                        v-model="aiPrompt"
+                        class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
+                        :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
+                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
+                      ></textarea>
+                      
+                      <!-- Textarea Bottom Toolbar -->
+                      <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
+                        <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                          <span
+                            class="text-[11px] font-bold flex items-center gap-1.5 px-3 py-1 rounded-full shadow-sm"
+                            :class="isLight ? 'bg-white text-slate-500 border border-slate-100' : 'bg-white/10 text-slate-300'"
                           >
-                            <el-icon :size="14" class="text-rose-400"><Delete /></el-icon>
-                          </button>
-                          <button
-                            class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
-                            :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
-                            title="优化描述"
+                            <el-icon class="text-indigo-400"><EditPen /></el-icon> {{ aiPrompt.length }} 字
+                          </span>
+                          <div class="w-px h-4" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></div>
+                          <div class="flex items-center gap-1">
+                            <button
+                              class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
+                              :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
+                              title="清空内容"
+                              @click="aiPrompt = ''"
+                              v-if="aiPrompt"
+                            >
+                              <el-icon :size="14" class="text-rose-400"><Delete /></el-icon>
+                            </button>
+                            <button
+                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                              title="优化描述"
+                            >
+                              <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
+                              <span>AI 润色</span>
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                           <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
+                             <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
+                           </span>
+                           <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
+                           <button 
+                            class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                            :disabled="!aiPrompt.trim() || isGenerating"
+                            @click="startCreation"
                           >
-                            <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
-                            <span>AI 润色</span>
+                            <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
+                            <span>立即创作</span>
                           </button>
                         </div>
                       </div>
-                      
-                      <div class="flex items-center gap-3">
-                         <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
-                           <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
-                         </span>
-                         <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
-                         <button 
-                          class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
-                          :disabled="!aiPrompt.trim() || isGenerating"
-                          @click="startCreation"
-                        >
-                          <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
-                          <span>立即创作</span>
-                        </button>
+                    </div>
+                  </div>
+
+                  <!-- Featured Categories -->
+                  <div class="flex flex-col items-center gap-3 mt-1">
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+                      热门题材灵感
+                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                      <div 
+                        v-for="topic in hotTopics" 
+                        :key="topic.label" 
+                        @click="selectHotTopic(topic)"
+                        class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
+                        :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
+                        {{ topic.label }}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Featured Categories -->
-                <div class="flex flex-col items-center gap-3 mt-1">
-                  <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
-                    <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
-                    热门题材灵感
-                    <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
-                  </div>
-                  <div class="flex flex-wrap items-center justify-center gap-2">
-                    <div 
-                      v-for="topic in hotTopics" 
-                      :key="topic.label" 
-                      @click="selectHotTopic(topic)"
-                      class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
-                      :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
-                    >
-                      <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
-                      {{ topic.label }}
+                <!-- Upload Tab Content -->
+                <div v-if="activeTab === 'upload'" class="py-1 animate-fade-in h-full flex flex-col justify-center">
+                  <el-upload
+                    drag
+                    action="#"
+                    :auto-upload="false"
+                    class="custom-upload-v3 w-full h-full"
+                    @change="handleFileUpload"
+                  >
+                    <div class="py-4">
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm" :class="isLight ? 'bg-indigo-50 text-indigo-500' : 'bg-indigo-500/30 text-indigo-300'">
+                        <el-icon :size="20"><upload-filled /></el-icon>
+                      </div>
+                      <div class="el-upload__text font-black text-[15px] mb-1 drop-shadow-md" :class="isLight ? 'text-slate-700' : '!text-white'">
+                        <span :class="isLight ? 'text-slate-700' : 'text-white'">将剧本文件拖到此处，或</span> 
+                        <em 
+                          class="not-italic font-[1000] underline underline-offset-4 transition-colors"
+                          :class="isLight ? 'text-indigo-600 hover:text-indigo-500' : 'text-indigo-300 hover:text-indigo-200'"
+                        >点击上传</em>
+                      </div>
+                      <div class="text-[12px] font-black drop-shadow-sm" :class="isLight ? 'text-slate-500' : 'text-white'">
+                        支持 docx, pdf, txt 格式，不超过10万字
+                      </div>
                     </div>
+                  </el-upload>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Projects Section -->
+          <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
+            <div class="flex items-center justify-between mb-4 shrink-0">
+              <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
+                <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+                近期作品
+                <span class="text-slate-600 font-light text-lg">/</span>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
+              </h2>
+              <button 
+                @click="router.push('/ai-short-drama-creator/works')" 
+                class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+                :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
+              >
+                <span>管理作品</span>
+                <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
+              <div 
+                v-for="work in recentWorks.slice(0, 4)" 
+                :key="work.id"
+                class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
+                :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
+                @click="router.push('/ai-short-drama-creator/outline')"
+              >
+                <!-- Previews Area: More compact -->
+                <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
+                  <template v-if="work.previews && work.previews.length > 0">
+                    <div 
+                      v-for="(img, idx) in work.previews" 
+                      :key="idx"
+                      class="flex-1 h-full rounded-lg overflow-hidden"
+                      :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
+                    >
+                      <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                    </div>
+                  </template>
+                  <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
+                     <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+                  </div>
+                  <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
+                    Example
+                  </div>
+                </div>
+
+                <div class="p-3 flex flex-col gap-1.5">
+                  <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
+                    {{ work.title }}
+                  </h3>
+                  <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                    <div class="flex items-center gap-1">
+                      <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
+                      <span>{{ work.updatedAt.split(' ')[0] }}</span>
+                    </div>
+                    <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
+                      {{ work.episodes }} 集
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Upload Tab Content -->
-              <div v-if="activeTab === 'upload'" class="py-1 animate-fade-in h-full flex flex-col justify-center">
-                <el-upload
-                  drag
-                  action="#"
-                  :auto-upload="false"
-                  class="custom-upload-v3 w-full h-full"
-                  @change="handleFileUpload"
-                >
-                  <div class="py-4">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm" :class="isLight ? 'bg-indigo-50 text-indigo-500' : 'bg-indigo-500/30 text-indigo-300'">
-                      <el-icon :size="20"><upload-filled /></el-icon>
-                    </div>
-                    <div class="el-upload__text font-black text-[15px] mb-1 drop-shadow-md" :class="isLight ? 'text-slate-700' : '!text-white'">
-                      <span :class="isLight ? 'text-slate-700' : 'text-white'">将剧本文件拖到此处，或</span> 
-                      <em 
-                        class="not-italic font-[1000] underline underline-offset-4 transition-colors"
-                        :class="isLight ? 'text-indigo-600 hover:text-indigo-500' : 'text-indigo-300 hover:text-indigo-200'"
-                      >点击上传</em>
-                    </div>
-                    <div class="text-[12px] font-black drop-shadow-sm" :class="isLight ? 'text-slate-500' : 'text-white'">
-                      支持 docx, pdf, txt 格式，不超过10万字
-                    </div>
-                  </div>
-                </el-upload>
+            <!-- Empty State for Recent Projects -->
+            <div v-if="recentWorks.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+              <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
+                <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
               </div>
+              <p class="font-bold text-lg mb-1">暂无制作中的短剧</p>
+              <p class="text-sm opacity-60">开启您的第一场 AI 剧本创作之旅吧</p>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Recent Projects Section -->
-        <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
-          <div class="flex items-center justify-between mb-4 shrink-0">
-            <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
-              <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
-              近期作品
-              <span class="text-slate-600 font-light text-lg">/</span>
-              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
-            </h2>
-            <button 
-              @click="router.push('/ai-short-drama-creator/works')" 
-              class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
-              :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
-            >
-              <span>管理作品</span>
-              <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
+      <div v-else-if="activeChannel === 'history'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+        <div class="max-w-7xl mx-auto w-full">
+          <!-- Header with "查看全部" button -->
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight leading-tight" :class="isLight ? 'text-slate-800' : 'text-white'">
+              创作历史
+            </h1>
+            <button @click="viewAllHistory" class="text-indigo-600 dark:text-indigo-400 text-sm font-bold hover:underline">
+              查看全部
             </button>
           </div>
 
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
-            <div 
-              v-for="work in recentWorks.slice(0, 4)" 
-              :key="work.id"
-              class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
-              :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
-              @click="router.push('/ai-short-drama-creator/outline')"
-            >
-              <!-- Previews Area: More compact -->
-              <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
-                <template v-if="work.previews && work.previews.length > 0">
-                  <div 
-                    v-for="(img, idx) in work.previews" 
-                    :key="idx"
-                    class="flex-1 h-full rounded-lg overflow-hidden"
-                    :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
-                  >
-                    <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                  </div>
-                </template>
-                <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
-                   <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+          <!-- History items grouped by date -->
+          <div v-for="group in groupedHistory || []" :key="group.date" class="mb-6">
+            <h2 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+              {{ group.date }}
+            </h2>
+            <div class="space-y-3">
+              <div
+                v-for="item in group.items"
+                :key="item.id"
+                class="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 cursor-pointer"
+                :class="isLight ? 'bg-white hover:bg-slate-50 shadow-sm border border-slate-100' : 'bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700'"
+                @click="goToHistoryDetail(item)"
+              >
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                  :class="{
+                    'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300': item.type === 'shortDrama',
+                    'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-300': item.type === 'shortVideo',
+                    'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300': item.type === 'image',
+                  }"
+                >
+                  <el-icon :size="20">
+                    <VideoCamera v-if="item.type === 'shortDrama'" />
+                    <Film v-else-if="item.type === 'shortVideo'" />
+                    <Picture v-else-if="item.type === 'image'" />
+                    <Document v-else />
+                  </el-icon>
                 </div>
-                <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
-                  Example
+                <div class="flex-1">
+                  <h3 class="font-bold text-base truncate" :class="isLight ? 'text-slate-800' : 'text-white'">
+                    {{ item.title }}
+                  </h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    {{ item.description }}
+                  </p>
                 </div>
-              </div>
-
-              <div class="p-3 flex flex-col gap-1.5">
-                <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
-                  {{ work.title }}
-                </h3>
-                <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
-                  <div class="flex items-center gap-1">
-                    <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
-                    <span>{{ work.updatedAt.split(' ')[0] }}</span>
-                  </div>
-                  <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
-                    {{ work.episodes }} 集
-                  </span>
-                </div>
+                <el-icon :size="16" class="text-slate-400"><ArrowRight /></el-icon>
               </div>
             </div>
           </div>
 
-          <!-- Empty State for Recent Projects -->
-          <div v-if="recentWorks.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+          <!-- Empty State -->
+          <div v-if="!groupedHistory || groupedHistory.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
             <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
-              <el-icon size="32" class="opacity-20"><VideoCamera /></el-icon>
+              <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><Clock /></el-icon>
             </div>
-            <p class="font-bold text-lg mb-1">暂无制作中的短剧</p>
-            <p class="text-sm opacity-60">开启您的第一场 AI 剧本创作之旅吧</p>
+            <p class="font-bold text-lg mb-1">暂无创作历史</p>
+            <p class="text-sm opacity-60">开始您的第一次创作吧！</p>
           </div>
         </div>
       </div>
@@ -880,6 +1008,7 @@ import {
   ArrowRight,
   ArrowLeft,
   VideoCamera,
+  Film,
   InfoFilled,
   Close,
   Document,
@@ -922,10 +1051,34 @@ const isLight = inject('isLight', ref(true));
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showHotTopicDialog = ref(false);
+const isSidebarCollapsed = ref(false);
+const activeChannel = ref('shortDrama');
 const currentStep = ref(1);
 const selectedTopic = ref<any>(null);
 const inspirationTab = ref('basic');
 const isImportedScript = computed(() => selectedTopic.value?.label === '外部剧本导入');
+
+const groupedHistory = computed(() => {
+  return [
+    {
+      date: '昨天',
+      items: [
+        { id: 1, title: '短剧带货构思', description: '画布项目', type: 'shortDrama' },
+        { id: 2, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+      ],
+    },
+    {
+      date: '更早',
+      items: [
+        { id: 3, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+        { id: 4, title: '新品推广图', description: '已完成', type: 'image' },
+        { id: 5, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+        { id: 6, title: '节日祝福视频', description: '已发布', type: 'shortVideo' },
+        { id: 7, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+      ],
+    },
+  ];
+});
 
 const uiDesignGroups = {
   layout: [

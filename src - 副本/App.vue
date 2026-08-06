@@ -104,7 +104,7 @@
                 <el-dropdown-item command="consumption">
                   <div class="menu-item-inner">
                     <div class="icon-box amber"><el-icon><Coin /></el-icon></div>
-                    <span>算力消耗明细</span>
+                    <span>算力豆消耗明细</span>
                   </div>
                 </el-dropdown-item>
                 <div class="divider"></div>
