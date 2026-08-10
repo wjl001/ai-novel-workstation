@@ -95,13 +95,41 @@
 
       <!-- Right Content Area -->
       <div v-if="activeChannel === 'creation'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
-        <div class="max-w-7xl mx-auto w-full">
-          <h1 class="text-2xl md:text-3xl font-black mb-4 tracking-tight leading-tight" :class="isLight ? 'text-slate-800' : 'text-white'">
-            短视频创作
-          </h1>
-          <p class="text-base md:text-lg font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-500' : 'text-slate-400'">
-            敬请期待更多短视频创作功能...
-          </p>
+        <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
+          <h1 class="text-3xl font-black mb-4 text-slate-800 dark:text-white">AI 短视频创作</h1>
+          <p class="text-lg text-slate-500 dark:text-slate-400 mb-6">通过对话和问答，轻松生成您的专属短视频。</p>
+
+          <!-- Model and Aspect Ratio Selection -->
+          <div class="flex items-center gap-4 mb-6 p-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <span class="font-bold text-slate-600 dark:text-slate-300">模型选择:</span>
+            <el-select v-model="selectedVideoModel" placeholder="选择视频模型" class="flex-1 custom-select-v4">
+              <el-option label="AI Video Model 1" value="video_model_1"></el-option>
+              <el-option label="AI Video Model 2" value="video_model_2"></el-option>
+            </el-select>
+            <el-select v-model="selectedImageModel" placeholder="选择图片模型" class="flex-1 custom-select-v4">
+              <el-option label="AI Image Model 1" value="image_model_1"></el-option>
+              <el-option label="AI Image Model 2" value="image_model_2"></el-option>
+            </el-select>
+            <span class="font-bold text-slate-600 dark:text-slate-300">视频比例:</span>
+            <el-select v-model="selectedAspectRatio" placeholder="选择比例" class="w-32 custom-select-v4">
+              <el-option label="16:9" value="16:9"></el-option>
+              <el-option label="9:16" value="9:16"></el-option>
+              <el-option label="1:1" value="1:1"></el-option>
+            </el-select>
+          </div>
+
+          <!-- Chat Area (from short-video-creation/index.vue) -->
+          <section class="chat-area flex-1 flex flex-col rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <div class="messages flex-1 p-4 overflow-y-auto flex flex-col gap-3" ref="messagesContainer">
+              <div v-for="(message, index) in messages" :key="index" :class="['message', message.sender === 'ai' ? 'ai-message' : 'user-message']">
+                <p>{{ message.text }}</p>
+              </div>
+            </div>
+            <div class="input-area flex p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700">
+              <input type="text" placeholder="输入您的回答或指令..." v-model="userInput" @keyup.enter="sendMessage" class="flex-1 border border-slate-300 dark:border-slate-600 rounded-full px-4 py-2 bg-white dark:bg-slate-600 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              <button @click="sendMessage" class="ml-3 px-6 py-2 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-colors">发送</button>
+            </div>
+          </section>
         </div>
       </div>
       <div v-else-if="activeChannel === 'shortDrama'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
