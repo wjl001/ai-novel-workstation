@@ -19,7 +19,7 @@ import StoryboardView from '../views/AIShortDrama/StoryboardView.vue'
 import TeamManagementView from '../views/TeamManagement/TeamManagementView.vue'
 import FreeCanvas from '../views/FreeCanvas/index.vue'
 import ChangelogView from '../views/ChangelogView.vue'
-import ShortVideoCreation from '../views/short-video-creation/index.vue'
+// import ShortVideoCreationView from '../views/AIShortVideoCreation/index.vue'
 
 // Placeholder component for the new workflow
 const UnderConstruction = { template: '<div class="p-8 text-center text-lg">正在建设中...</div>' };
@@ -127,9 +127,9 @@ const router = createRouter({
       component: ChangelogView
     },
     {
-      path: '/short-video-creation',
+      path: '/ai-short-video-creator/index',
       name: 'short-video-creation',
-      component: ShortVideoCreation
+      component: () => import('../views/AIShortVideoCreation/index.vue')
     },
     {
       path: '/ai-short-drama-creator',

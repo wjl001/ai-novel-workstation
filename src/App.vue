@@ -369,7 +369,7 @@ import { ref, reactive, provide, computed, onErrorCaptured, onMounted } from 'vu
 import { useRouter } from 'vue-router'
 import { 
   VideoPlay, User, SwitchButton, Connection, ArrowDown, MagicStick, Upload, 
-  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin, ArrowRight, Document
+  Edit, Check, Refresh, Sunny, Moon, GoldMedal, List, Box, Warning, RefreshRight, Coin, ArrowRight, Document, Close
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useDramaStore } from '@/store/drama'

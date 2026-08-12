@@ -42,11 +42,11 @@
     <!-- NEW: Main Layout Container (Sidebar + Content) -->
     <div class="flex flex-1 relative z-10">
       <!-- Left Sidebar -->
-      <div class="relative bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-700/50 flex flex-col shrink-0 transition-all duration-300" :class="isSidebarCollapsed ? 'w-16' : 'w-64'">
+      <div class="relative bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-700/50 flex flex-col shrink-0 transition-all duration-300" :class="isSidebarCollapsed ? 'w-16' : 'w-35'">
         <div class="p-4 flex flex-col gap-2">
 
           <button
-            @click="activeChannel = 'creation'"
+            @click="activeChannel = 'creation'; activeTab = 'ai'"
             class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
             :class="activeChannel === 'creation' ? 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
           >
@@ -95,43 +95,338 @@
 
       <!-- Right Content Area -->
       <div v-if="activeChannel === 'creation'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
-        <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
-          <h1 class="text-3xl font-black mb-4 text-slate-800 dark:text-white">AI 短视频创作</h1>
-          <p class="text-lg text-slate-500 dark:text-slate-400 mb-6">通过对话和问答，轻松生成您的专属短视频。</p>
-
-          <!-- Model and Aspect Ratio Selection -->
-          <div class="flex items-center gap-4 mb-6 p-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <span class="font-bold text-slate-600 dark:text-slate-300">模型选择:</span>
-            <el-select v-model="selectedVideoModel" placeholder="选择视频模型" class="flex-1 custom-select-v4">
-              <el-option label="AI Video Model 1" value="video_model_1"></el-option>
-              <el-option label="AI Video Model 2" value="video_model_2"></el-option>
-            </el-select>
-            <el-select v-model="selectedImageModel" placeholder="选择图片模型" class="flex-1 custom-select-v4">
-              <el-option label="AI Image Model 1" value="image_model_1"></el-option>
-              <el-option label="AI Image Model 2" value="image_model_2"></el-option>
-            </el-select>
-            <span class="font-bold text-slate-600 dark:text-slate-300">视频比例:</span>
-            <el-select v-model="selectedAspectRatio" placeholder="选择比例" class="w-32 custom-select-v4">
-              <el-option label="16:9" value="16:9"></el-option>
-              <el-option label="9:16" value="9:16"></el-option>
-              <el-option label="1:1" value="1:1"></el-option>
-            </el-select>
+        <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
+          <!-- Header: More compact -->
+          <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
+            <!-- Product Design Info Button -->
+            <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
+              <button 
+                @click="showDesignDialog = true"
+                class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
+                :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
+              >
+                <el-icon :size="12"><InfoFilled /></el-icon>
+                <span>产品设计说明</span>
+              </button>
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                智能短视频创作，引爆流量
+              </span>
+            </h1>
+            <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
+              AI智能生成，海量模板素材，轻松打造爆款短视频。
+            </p>
           </div>
 
-          <!-- Chat Area (from short-video-creation/index.vue) -->
-          <section class="chat-area flex-1 flex flex-col rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-            <div class="messages flex-1 p-4 overflow-y-auto flex flex-col gap-3" ref="messagesContainer">
-              <div v-for="(message, index) in messages" :key="index" :class="['message', message.sender === 'ai' ? 'ai-message' : 'user-message']">
-                <p>{{ message.text }}</p>
+          <!-- Creation Card: More compact and color-distinguished -->
+          <div
+            class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
+            :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
+          >
+            <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
+
+            </div>
+
+            <div class="px-6 py-3 md:px-8 md:py-4 pt-1">
+              <div class="min-h-[180px] flex flex-col">
+
+                <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
+                  <div class="relative group mt-2">
+                    <!-- Dynamic Glowing Border -->
+                    <div 
+                      class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
+                      :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
+                    ></div>
+                    
+                    <div
+                      class="relative rounded-[28px] border-2 transition-all overflow-hidden"
+                      :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
+                    >
+                      <textarea 
+                        v-model="aiPrompt"
+                        class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
+                        :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
+                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
+                      ></textarea>
+                      
+                      <!-- Textarea Bottom Toolbar -->
+                      <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
+                        <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+                          <div class="flex items-center gap-2">
+                            <!-- Plus button for upload and asset library -->
+                            <el-dropdown trigger="click">
+                              <button
+                                class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
+                                :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
+                                title="上传文件/资产库"
+                              >
+                                <el-icon :size="16"><Plus /></el-icon>
+                              </button>
+                              <template #dropdown>
+                                <el-dropdown-menu>
+                                  <el-dropdown-item @click="handleFileUploadClick">
+                                    <el-icon><Upload /></el-icon>上传文件
+                                  </el-dropdown-item>
+                                  <el-dropdown-item @click="openAssetLibrary">
+                                    <el-icon><Collection /></el-icon>资产库
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              </template>
+                            </el-dropdown>
+
+                            <!-- Model Selection -->
+                            <el-dropdown trigger="click" class="model-selector-dropdown">
+                              <button
+                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                                title="选择模型"
+                              >
+                                <el-icon :size="14"><MagicStick /></el-icon>
+                                <span>模型</span>
+                                <el-icon :size="12"><ArrowDown /></el-icon>
+                              </button>
+                              <template #dropdown>
+                                <el-dropdown-menu class="!p-0 !rounded-xl !overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 w-80">
+                                  <div class="p-2">
+                                    <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-3">
+                                      <button
+                                        class="flex-1 py-1 text-center rounded-lg text-xs font-bold transition-all"
+                                        :class="modelSelectionType === 'video' ? 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700/50'"
+                                        @click="modelSelectionType = 'video'"
+                                      >
+                                        视频
+                                      </button>
+                                      <button
+                                        class="flex-1 py-1 text-center rounded-lg text-xs font-bold transition-all"
+                                        :class="modelSelectionType === 'image' ? 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700/50'"
+                                        @click="modelSelectionType = 'image'"
+                                      >
+                                        图片
+                                      </button>
+                                    </div>
+
+                                    <div v-if="modelSelectionType === 'video'" class="flex flex-col gap-1">
+                                      <el-dropdown-item v-for="model in videoModels" :key="model.id" @click="selectedVideoModel = model.name" :class="[selectedVideoModel === model.name ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200' : '', '!py-2 !px-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg']">
+                                        <div class="flex items-center justify-between w-full">
+                                          <div>
+                                            <p class="font-bold text-gray-800 dark:text-white">{{ model.name }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ model.description }}</p>
+                                          </div>
+                                          <i v-if="selectedVideoModel === model.name" class="i-mingcute-check-line text-blue-500 text-lg"></i>
+                                        </div>
+                                      </el-dropdown-item>
+                                    </div>
+
+                                    <div v-else class="flex flex-col gap-1">
+                                      <el-dropdown-item v-for="model in imageModels" :key="model.id" @click="selectedImageModel = model.name" :class="[selectedImageModel === model.name ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200' : '', '!py-2 !px-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg']">
+                                        <div class="flex items-center justify-between w-full">
+                                          <div>
+                                            <p class="font-bold text-gray-800 dark:text-white">{{ model.name }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ model.description }}</p>
+                                          </div>
+                                          <i v-if="selectedImageModel === model.name" class="i-mingcute-check-line text-blue-500 text-lg"></i>
+                                        </div>
+                                      </el-dropdown-item>
+                                    </div>
+                                  </div>
+                                </el-dropdown-menu>
+                              </template>
+                            </el-dropdown>
+
+                            <!-- Skills (Placeholder for now) -->
+                            <button
+                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                              title="技能"
+                            >
+                              <el-icon :size="14"><Lightning /></el-icon>
+                              <span>技能</span>
+                              <el-icon :size="12"><ArrowDown /></el-icon>
+                            </button>
+
+                            <!-- Ratio Selection -->
+                            <el-dropdown trigger="click">
+                              <button
+                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                                title="选择比例"
+                              >
+                                <el-icon :size="14"><Crop /></el-icon>
+                                <span>{{ configForm.videoAspectRatio }}</span>
+                                <el-icon :size="12"><ArrowDown /></el-icon>
+                              </button>
+                              <template #dropdown>
+                                <el-dropdown-menu>
+                                  <el-dropdown-item
+                                    v-for="option in aspectRatioOptions"
+                                    :key="option.label"
+                                    @click="configForm.videoAspectRatio = option.label"
+                                    :class="{'is-active': configForm.videoAspectRatio === option.label}"
+                                  >
+                                    {{ option.label }}
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              </template>
+                            </el-dropdown>
+
+                            <!-- AI Embellishment (retained) -->
+                            <button
+                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                              title="优化描述"
+                            >
+                              <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
+                              <span>AI 润色</span>
+                            </button>
+
+                            <!-- Duration Selection (Dropdown with Slider) -->
+                            <el-dropdown trigger="click">
+                              <button
+                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+                                title="选择时长"
+                              >
+                                <span>{{ configForm.expectedDuration }}秒</span>
+                                <el-icon :size="12"><ArrowDown /></el-icon>
+                              </button>
+                              <template #dropdown>
+                                <el-dropdown-menu>
+                                  <div class="px-4 py-2">
+                                    <p class="text-sm font-bold mb-2">视频时长</p>
+                                    <div class="flex items-center gap-2 mb-2">
+                                      <el-button size="small">按秒数</el-button>
+                                      <el-button size="small">智能时长</el-button>
+                                    </div>
+                                    <el-slider v-model="configForm.expectedDuration" :min="4" :max="180" :step="1" show-input />
+                                    <p class="text-xs text-slate-500 mt-2">会在提示词里附加 “时长: {{ configForm.expectedDuration }}秒”</p>
+                                  </div>
+                                </el-dropdown-menu>
+                              </template>
+                            </el-dropdown>
+                          </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                           <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
+                             <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
+                           </span>
+
+                           <button 
+                            class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                            :disabled="!aiPrompt.trim() || isGenerating"
+                            @click="startCreation"
+                          >
+                            <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
+                            <span>立即创作</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Featured Categories -->
+                  <div class="flex flex-col items-center gap-3 mt-1">
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+                      热门题材灵感
+                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                      <div 
+                        v-for="topic in hotTopics" 
+                        :key="topic.label" 
+                        @click="selectHotTopic(topic)"
+                        class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
+                        :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
+                        {{ topic.label }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="input-area flex p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700">
-              <input type="text" placeholder="输入您的回答或指令..." v-model="userInput" @keyup.enter="sendMessage" class="flex-1 border border-slate-300 dark:border-slate-600 rounded-full px-4 py-2 bg-white dark:bg-slate-600 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
-              <button @click="sendMessage" class="ml-3 px-6 py-2 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-colors">发送</button>
+          </div>
+
+          <!-- Recent Projects Section -->
+          <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
+            <div class="flex items-center justify-between mb-4 shrink-0">
+              <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
+                <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+                近期作品
+                <span class="text-slate-600 font-light text-lg">/</span>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
+              </h2>
+              <button 
+                @click="router.push('/ai-short-drama-creator/works')" 
+                class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+                :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
+              >
+                <span>管理作品</span>
+                <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
+              </button>
             </div>
-          </section>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
+              <div 
+                v-for="work in recentWorks.slice(0, 4)" 
+                :key="work.id"
+                class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
+                :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
+                @click="router.push('/ai-short-drama-creator/outline')"
+              >
+                <!-- Previews Area: More compact -->
+                <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
+                  <template v-if="work.previews && work.previews.length > 0">
+                    <div 
+                      v-for="(img, idx) in work.previews" 
+                      :key="idx"
+                      class="flex-1 h-full rounded-lg overflow-hidden"
+                      :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
+                    >
+                      <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                    </div>
+                  </template>
+                  <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
+                     <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+                  </div>
+                  <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
+                    Example
+                  </div>
+                </div>
+
+                <div class="p-3 flex flex-col gap-1.5">
+                  <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
+                    {{ work.title }}
+                  </h3>
+                  <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                    <div class="flex items-center gap-1">
+                      <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
+                      <span>{{ work.updatedAt.split(' ')[0] }}</span>
+                    </div>
+                    <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
+                      {{ work.episodes }} 集
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State for Recent Projects -->
+            <div v-if="recentWorks.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+              <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
+                <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+              </div>
+              <p class="font-bold text-lg mb-1">暂无制作中的短剧</p>
+              <p class="text-sm opacity-60">开启您的第一场 AI 剧本创作之旅吧</p>
+            </div>
+          </div>
         </div>
       </div>
+
       <div v-else-if="activeChannel === 'shortDrama'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
         <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
           <!-- Header: More compact -->
@@ -1023,6 +1318,8 @@
 <script setup lang="ts">
 import { ref, inject, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
+
+
 import { 
   Upload, 
   UploadFilled, 
@@ -1060,7 +1357,11 @@ import {
   Crop,
   CircleCheck,
   FullScreen,
-  Connection
+  Connection,
+  Top,
+  Plus,
+  ArrowDown,
+  Edit // New
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
@@ -1079,12 +1380,44 @@ const isLight = inject('isLight', ref(true));
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
 const showHotTopicDialog = ref(false);
+const autoMode = ref(false); // New
 const isSidebarCollapsed = ref(false);
 const activeChannel = ref('shortDrama');
 const currentStep = ref(1);
 const selectedTopic = ref<any>(null);
 const inspirationTab = ref('basic');
 const isImportedScript = computed(() => selectedTopic.value?.label === '外部剧本导入');
+
+// New refs for model, ratio, duration selections
+const selectedVideoModel = ref('Seedance 2.5');
+const selectedImageModel = ref('DALL-E 3');
+const selectedAspectRatio = ref('9:16'); // Default to vertical
+const selectedDuration = ref(4); // Default to 4 seconds
+const modelSelectionType = ref('video'); // 'video' or 'image'
+
+const videoModels = ref([
+  { id: '1', name: 'doubao-seedance-2.0 (标准版)', description: '经典视频模型，生成效果出色' },
+  { id: '2', name: 'doubao-seedance-2.5 (标准版)', description: '经典视频模型升级版，生成效果更佳' },
+  { id: '3', name: 'happyhorse-1.1-r2v', description: '高效视频生成模型，快速迭代预览效果' },
+  { id: '4', name: 'kling-v3-omni', description: '顶级视频生成模型，物理模拟与动态表现巅峰' },
+]);
+
+const imageModels = ref([
+  { id: '1', name: 'doubao-seedream-5.0-lite', description: '豆包专业级生图模型，细节表现惊人' },
+  { id: '2', name: 'ChatGPT Images 2.0', description: 'OpenAI 顶级绘图模型，画质精美，构图精准' },
+  { id: '3', name: 'gemini-3.1-flash-image-preview', description: '谷歌最新多模态影像模型，极速生成' },
+]);
+
+// New functions for button actions
+const handleFileUploadClick = () => {
+  // Trigger hidden file input or open file dialog
+  ElMessage.info('触发文件上传');
+};
+
+const openAssetLibrary = () => {
+  // Open asset library modal/dialog
+  ElMessage.info('打开资产库');
+};
 
 const groupedHistory = computed(() => {
   return [
@@ -1590,23 +1923,7 @@ const startCreation = () => {
     return;
   }
   
-  // Instead of direct creation, open the config dialog
-  selectedTopic.value = { label: 'AI 灵感创作', isCustom: true };
-  configForm.genre = 'AI 灵感创作';
-  configForm.title = '';
-  configForm.storySynopsis = aiPrompt.value;
-  configForm.storyBackground = '';
-  configForm.storySetting = '';
-  configForm.protagonistDesc = '';
-  
-  configForm.episodesCount = '80';
-  configForm.expectedDuration = 120;
-  configForm.protagonistSetting = protagonistOptions.value[0].label;
-  configForm.targetAudience = audienceOptions[0];
-  configForm.videoStyle = videoStyleOptions[0].label;
-  configForm.videoAspectRatio = aspectRatioOptions[0].label;
-
-  showHotTopicDialog.value = true;
+  router.push('/ai-short-video-creator/index');
 };
 
 const handleFileUpload = async (file: any) => {

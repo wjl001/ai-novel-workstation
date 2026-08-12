@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长视频生成 Agent · 工作台原型</title>
+<style>
+  :root{
+    /* 表面与线条 */
+    --bg:#ECE8DE; --panel:#F6F4EF; --card:#FFFFFF; --line:#E4DFD3;
+    --line-2:#ECE9DF; --wire:#C3BDAE;
+    /* 文字层级 */
+    --txt:#1C1C1E; --txt-2:#5C5C5E; --txt-3:#8E8E93;
+    /* 品牌色：深海蓝青 */
+    --accent:#2563EB; --primary:#2563EB; --primary-2:#06B6D4;
+    --primary-grad:linear-gradient(135deg,#2563EB,#06B6D4);
+    --green:#16A34A; --green-soft:#DCFCE7; --green-line:#86C995;
+    --amber:#D97706; --amber-soft:#FEF3C7; --amber-line:#FCD34D;
+    --red:#DC2626; --red-soft:#FEE2E2;
+    /* 圆角 token */
+    --r:14px; --r-sm:9px; --r-lg:18px;
+    /* 阴影层级 */
+    --sh-1:0 1px 2px rgba(28,28,30,.04),0 2px 8px rgba(28,28,30,.05);
+    --sh-2:0 4px 12px rgba(28,28,30,.08),0 12px 28px rgba(28,28,30,.10);
+    --sh-3:0 24px 60px rgba(28,28,30,.22);
+    --sh-active:0 0 0 1px var(--accent),0 10px 30px rgba(37,99,235,.18);
+    --sh-done:0 0 0 1px var(--green-line),0 10px 30px rgba(22,163,74,.14);
+    /* 动效 */
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+    --ease-std:cubic-bezier(.2,0,0,1);
+    --dur:.25s;
+    /* 字体 */
+    --font-display:'Space Grotesk','Outfit','Noto Sans SC',system-ui,sans-serif;
+    --font-body:'Inter','Noto Sans SC',system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+    --font-mono:'JetBrains Mono','SF Mono','Consolas',monospace;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;font-family:var(--font-body);letter-spacing:-0.01em}
+  body{background:var(--bg);color:var(--txt);overflow:hidden;-webkit-font-smoothing:antialiased}
+  .app{display:flex;height:100vh;flex-direction:column}
+
+  /* 极简顶部状态条（参考截图：5 个圆角 chip 胶囊，右侧安全闸门） */
+  .topbar{
+    display:flex;align-items:center;gap:6px;
+    padding:8px 14px;background:rgba(255,255,255,.55);
+    border-bottom:1px solid var(--line);flex-wrap:wrap;
+    backdrop-filter:blur(4px);font-size:11.5px;color:var(--txt-2)
+  }
+  .topbar .chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 11px;border-radius:99px;
+    background:var(--card);border:1px solid var(--line);
+    font-size:11.5px;color:var(--txt-2);white-space:nowrap;line-height:1.5
+  }
+  .topbar .chip b{color:var(--txt);font-weight:600}
+  .topbar .chip.mono{font-family:var(--font-mono)}
+  .topbar .chip.mono b{font-weight:500;letter-spacing:.2px}
+  .topbar .safe{
+    margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+    padding:4px 11px;border-radius:99px;
+    background:var(--card);border:1px solid var(--line);
+    font-size:11.5px;color:var(--txt-2);white-space:nowrap
+  }
+  .topbar .safe b{color:var(--green);font-weight:600;margin:0 4px 0 2px}
+  .topbar .safe .pend{color:var(--amber);font-weight:600}
+
+  /* Body */
+  .main{flex:1;display:flex;min-height:0}
+
+  /* Canvas (center) */
+  .canvas-wrap{flex:1;display:flex;min-width:0;background:var(--bg);position:relative}
+
+  /* 画布左侧导航栏 */
+  .side-nav{
+    width:156px;flex-shrink:0;background:var(--panel);
+    border-right:1px solid var(--line);
+    display:flex;flex-direction:column;overflow:hidden
+  }
+  .side-nav-h{padding:11px 13px;font-size:11px;font-weight:600;color:var(--txt-2);
+    border-bottom:1px solid var(--line);background:var(--card);letter-spacing:.4px;text-transform:uppercase}
+  .side-nav-body{flex:1;overflow-y:auto;padding:9px 9px 14px}
+  .side-nav-section{margin-bottom:14px}
+  .side-nav-section h4{font-size:10.5px;font-weight:700;color:var(--txt-3);
+    letter-spacing:.4px;text-transform:uppercase;margin:0 4px 6px}
+  .side-nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .nav-thumb{
+    position:relative;aspect-ratio:1/1;border-radius:6px;overflow:hidden;
+    background:linear-gradient(135deg,#e9eef6,#dde7f2);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    cursor:pointer;border:1px solid var(--line-2);
+    transition:transform .15s var(--ease-std),border-color .15s var(--ease-std)
+  }
+  .nav-thumb:hover{transform:translateY(-1px);border-color:var(--accent)}
+  .nav-thumb.vid{background:linear-gradient(135deg,#e6f4f1,#d6ece8);color:#1f9c86}
+  .nav-thumb.vid.stale{background:linear-gradient(135deg,#fceccb,#f8ddaa);
+    border-color:var(--amber-line);color:#a06a16}
+  .nav-thumb .lab{position:absolute;bottom:2px;left:2px;right:2px;
+    font-size:8px;line-height:1;color:#fff;background:rgba(0,0,0,.45);
+    border-radius:3px;text-align:center;padding:1px 0;font-weight:600;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nav-thumb .type{position:absolute;top:2px;left:2px;
+    font-size:8px;line-height:1;color:#fff;background:rgba(0,0,0,.45);
+    border-radius:3px;padding:1px 3px;font-weight:600}
+  .nav-empty{font-size:10.5px;color:var(--txt-3);padding:10px 4px;text-align:center;line-height:1.5}
+
+  /* Canvas (right area inside wrap) */
+  .canvas{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg);position:relative}
+
+  /* 画布顶部工具条（演示 / 重置 按钮） */
+  .canvas-toolbar{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 16px;background:rgba(255,255,255,.7);
+    border-bottom:1px solid var(--line)
+  }
+  .canvas-toolbar .spacer{flex:1}
+  .btn{font-size:11.5px;font-weight:600;padding:7px 14px;border-radius:8px;
+    border:1px solid var(--line);background:var(--card);color:var(--txt);
+    cursor:pointer;transition:.15s;box-shadow:var(--sh-1)}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn.primary:focus-visible{outline:2px solid var(--primary-2);outline-offset:2px}
+
+  /* Canvas area (2D infinite feel) */
+  .canvas-area{
+    flex:1; overflow:auto; position:relative;
+    background-color:var(--bg);
+    background-image:radial-gradient(circle at 1px 1px, rgba(0,0,0,.07) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  .connections{position:absolute;top:0;left:0;width:1500px;height:900px;pointer-events:none;z-index:1}
+
+  /* Card */
+  .card{position:absolute;width:400px;z-index:2;cursor:pointer;
+    transition:transform var(--dur) var(--ease-std),box-shadow var(--dur) var(--ease-std)}
+  .card:hover{transform:translateY(-3px);filter:drop-shadow(0 8px 20px rgba(28,28,30,.08))}
+  .card .filename{font-size:11px;color:var(--txt-3);margin-bottom:4px;padding-left:3px;
+    font-family:var(--font-mono);letter-spacing:.2px}
+  .card .filename .ed{margin-left:6px;color:var(--accent);opacity:0;transition:.15s;cursor:pointer}
+  .card:hover .filename .ed{opacity:1}
+  .card .content{
+    position:relative;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+    padding:18px 22px; box-shadow:var(--sh-1);
+    font-size:12.5px; line-height:1.7; color:var(--txt);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .card.active .content{border-color:var(--accent);box-shadow:var(--sh-active)}
+  .card.done .content{border-color:#b8d8a8;background:#fafdf6}
+  .card.done .content::after{
+    content:'✓'; position:absolute; top:14px; right:14px;
+    width:22px; height:22px; background:var(--green); color:#fff;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; line-height:1;box-shadow:0 4px 10px rgba(22,163,74,.35)
+  }
+  .card.stale .content{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber),0 10px 30px rgba(217,119,6,.16)}
+  .stale-badge{display:inline-block;font-size:9.5px;font-weight:700;color:#fff;background:var(--amber);
+    padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;
+    box-shadow:0 2px 6px rgba(217,119,6,.35)}
+  .stale-badge.hidden{display:none}
+  .stale-banner{background:#fdf3e3;border:1px solid #f3d9a8;color:#a06a16;
+    font-size:11px;padding:7px 11px;border-radius:7px;margin-bottom:11px;
+    display:flex;justify-content:space-between;align-items:center;gap:8px;line-height:1.4}
+  .stale-banner button{font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:6px;
+    border:1px solid var(--amber);background:var(--amber);color:#fff;
+    cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,.3)}
+  .stale-banner button:hover{filter:brightness(1.05)}
+  .stale-banner button:active{transform:translateY(1px)}
+  .card .content h2{font-size:17px;font-weight:700;margin-bottom:10px;color:var(--txt);letter-spacing:.3px;
+    font-family:var(--font-display)}
+  .card .content h3{font-size:11.5px;font-weight:700;margin-top:11px;margin-bottom:5px;
+    color:var(--txt-2);letter-spacing:.4px;text-transform:uppercase}
+  .card .content p{margin:5px 0;color:var(--txt-2)}
+  .card .content ul{padding-left:18px;margin:5px 0}
+  .card .content li{margin:2px 0;color:var(--txt-2)}
+  .card .content .mono{font-family:var(--font-mono);font-size:11px;line-height:1.75;
+    color:var(--txt-2);background:#f5f3ed;padding:8px 10px;border-radius:6px}
+
+  .edit-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+  .edit-bar .asset-btn{flex:0 0 auto}
+  .batch-bar{display:flex;justify-content:flex-end;margin-bottom:10px;gap:6px}
+  .batch-bar .asset-btn{font-size:10.5px;font-weight:600;padding:5px 12px;border-radius:7px;
+    border:1px solid var(--accent);background:#EEF3FB;color:var(--accent);
+    cursor:pointer;transition:.15s;box-shadow:var(--sh-1)}
+  .batch-bar .asset-btn:hover{background:var(--accent);color:#fff}
+
+  /* Asset tabs */
+  .asset-tabs{display:flex;gap:6px;margin:4px 0 10px;flex-wrap:wrap}
+  .asset-tab{font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;
+    border:1px solid var(--line);background:var(--card);color:var(--txt-2);
+    cursor:pointer;transition:all .15s var(--ease-std)}
+  .asset-tab:hover{border-color:var(--accent)}
+  .asset-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;
+    box-shadow:0 2px 8px rgba(37,99,235,.3)}
+
+  /* Asset grid */
+  .asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .asset-item{background:#faf9f4;border:1px solid var(--line-2);border-radius:var(--r-sm);
+    overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease-spring),box-shadow var(--dur) var(--ease-std)}
+  .asset-item:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+  .asset-thumb{aspect-ratio:16/10;background:linear-gradient(135deg,#e9eef6,#dde7f2);
+    display:flex;align-items:center;justify-content:center;font-size:30px;
+    color:#3b6fb5;position:relative;border-radius:8px 8px 0 0}
+  .asset-thumb .download-overlay{position:absolute;top:6px;right:6px;
+    width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.92);
+    border:1px solid var(--line);color:var(--txt-2);font-size:12px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:.15s;opacity:.7}
+  .asset-thumb .download-overlay:hover{color:var(--accent);border-color:var(--accent)}
+  .asset-type{position:absolute;top:6px;left:6px;font-size:9px;background:rgba(0,0,0,.45);
+    color:#fff;padding:2px 7px;border-radius:99px;font-weight:600}
+  .asset-info{padding:7px 9px 9px}
+  .asset-name{font-size:11.5px;font-weight:600;color:var(--txt);font-family:var(--font-mono)}
+  .asset-desc{font-size:10.5px;color:var(--txt-2);line-height:1.5;margin-top:3px}
+  .asset-actions{display:flex;gap:6px;margin-top:7px}
+  .asset-btn{font-size:10px;font-weight:600;padding:4px 9px;border-radius:6px;
+    border:1px solid var(--line);background:var(--card);color:var(--txt-2);
+    cursor:pointer;transition:all .15s var(--ease-std);flex:1;text-align:center;
+    box-shadow:var(--sh-1)}
+  .asset-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .asset-btn.regen:hover{border-color:var(--green);color:var(--green)}
+  .asset-btn:active{transform:translateY(1px)}
+  .asset-regened{font-size:9px;color:var(--green);margin-top:4px;
+    font-family:var(--font-mono);display:none}
+  .asset-regened.show{display:block}
+  .spinner{width:18px;height:18px;border:2.5px solid rgba(0,0,0,.15);
+    border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Storyboard */
+  .sb-table{width:100%;border-collapse:collapse;font-size:11px;margin:6px 0 12px}
+  .sb-table th,.sb-table td{border-bottom:1px solid var(--line-2);
+    padding:5px 6px;text-align:left;vertical-align:top}
+  .sb-table th{background:#F2F0EA;font-weight:600;color:var(--txt);font-size:10.5px;letter-spacing:.3px}
+  .sb-table td{color:var(--txt-2)}
+  .sb-table td b{color:var(--txt)}
+  .sb-shot{background:#faf9f4;border:1px solid var(--line-2);border-radius:7px;
+    padding:11px;margin-bottom:9px;box-shadow:var(--sh-1);
+    transition:transform var(--dur) var(--ease-spring),box-shadow var(--dur) var(--ease-std)}
+  .sb-shot:hover{box-shadow:var(--sh-2)}
+  .sb-shot:last-child{margin-bottom:0}
+  .sb-shot-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .sb-shot-h strong{color:var(--txt);font-size:12px}
+  .sb-shot-h span{color:var(--txt-3);font-size:10px;font-family:monospace}
+  .sb-shot-script{font-size:11px;color:var(--txt-2);line-height:1.55;margin-bottom:8px}
+  .sb-shot-media{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+  .sb-mbx{aspect-ratio:16/9;border-radius:6px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;color:var(--txt-3);border:1px solid var(--line-2);position:relative}
+  .sb-mbx.img{background:linear-gradient(135deg,#e9eef6,#dbe6f3);color:#3b6fb5}
+  .sb-mbx.vid{background:linear-gradient(135deg,#e6f4f1,#d6ece8);color:#1f9c86}
+  .sb-mbx.vid.stale{background:linear-gradient(135deg,#fceccb,#f8ddaa);
+    border-color:var(--amber-line);color:#a06a16}
+  .sb-vid-stale{font-size:9px;color:#a8761b;cursor:pointer;position:absolute;top:4px;right:5px;
+    background:#FFF7E6;border:1px solid var(--amber-line);border-radius:4px;padding:1px 5px}
+  .sb-vid-stale:hover{background:#ffe9bf}
+  .sb-vid-stale:active{transform:translateY(1px)}
+  .sb-mbx-ico{font-size:22px;line-height:1}
+  .sb-mbx-lab{font-size:9px;color:var(--txt-3)}
+  .sb-mbx-act{font-size:9px;color:var(--accent);cursor:pointer;
+    position:absolute;top:4px;right:5px;opacity:0;transition:opacity .15s}
+  .sb-mbx:hover .sb-mbx-act{opacity:1}
+  .sb-mbx .dl-icon{position:absolute;bottom:4px;right:5px;
+    width:22px;height:22px;border-radius:5px;background:rgba(255,255,255,.92);
+    border:1px solid var(--line);color:var(--txt-2);font-size:11px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:.15s;opacity:.7}
+  .sb-mbx .dl-icon:hover{opacity:1;color:var(--accent);border-color:var(--accent)}
+  .sb-edit{font-size:10px;color:var(--accent);cursor:pointer;opacity:0;transition:opacity .15s;margin-left:8px}
+  .sb-shot-h:hover .sb-edit{opacity:1}
+  .sb-regened{font-size:9px;color:var(--txt-3);line-height:1.5}
+  .sb-regened.show{margin-top:2px}
+  .sb-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .sb-tags .lab{font-size:10px;color:var(--txt-3)}
+  .tag-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:99px;
+    background:#eef3fb;color:var(--accent);border:1px solid #d8e4f5;
+    cursor:default;box-shadow:var(--sh-1);transition:all .15s var(--ease-std)}
+  .tag-chip:hover{box-shadow:0 3px 10px rgba(37,99,235,.25);transform:translateY(-1px)}
+  .tag-chip.on{background:var(--accent);color:#fff;border-color:var(--accent);
+    box-shadow:0 3px 10px rgba(37,99,235,.3)}
+  .tag-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+  .tag-toggle .tag-chip{cursor:pointer}
+
+  /* Side / Chat (right) */
+  .side{width:400px;min-width:400px;display:flex;flex-direction:column;
+    background:var(--panel);border-left:1px solid var(--line);
+    box-shadow:-6px 0 24px rgba(28,28,30,.04)}
+  .chat{flex:1;display:flex;flex-direction:column;min-height:0}
+  .chat-h{padding:12px 20px;font-size:12.5px;font-weight:600;color:var(--txt);
+    display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);
+    background:var(--card);box-shadow:var(--sh-1);z-index:2}
+  .chat-h .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .msgs{flex:1;overflow-y:auto;padding:14px 18px;display:flex;
+    flex-direction:column;gap:10px;background:var(--panel)}
+  .msg{padding:9px 13px;border-radius:12px;font-size:12.5px;line-height:1.55;
+    max-width:88%;word-break:break-word;box-shadow:var(--sh-1);letter-spacing:.1px}
+  .msg.u{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px;
+    box-shadow:0 4px 14px rgba(37,99,235,.28)}
+  .msg.a{align-self:flex-start;background:var(--card);color:var(--txt);
+    border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.system{align-self:center;background:transparent;border:1px dashed var(--wire);
+    color:var(--txt-3);font-size:11.5px;padding:5px 11px;box-shadow:none;max-width:96%}
+  .input-row{display:flex;gap:8px;padding:12px 16px 16px;border-top:1px solid var(--line);background:var(--card);align-items:center}
+  .input-row .ex-btn{
+    padding:9px 11px;background:var(--panel);color:var(--txt-2);
+    border:1px solid var(--line);border-radius:9px;
+    font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;
+    transition:.15s
+  }
+  .input-row .ex-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .input-row input{flex:1;padding:9px 13px;border:1px solid var(--line);border-radius:9px;
+    font-size:12.5px;background:var(--card);color:var(--txt);outline:none}
+  .input-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .input-row button{padding:9px 17px;background:var(--accent);color:#fff;border:none;
+    border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+    box-shadow:0 4px 14px rgba(37,99,235,.3);transition:all .15s var(--ease-std)}
+  .input-row button:hover{filter:brightness(1.05)}
+  .input-row button:active{transform:translateY(1px)}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(40,38,32,.45);display:flex;
+    align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(6px)}
+  .modal-box{width:440px;max-height:86vh;overflow-y:auto;background:var(--card);
+    border-radius:14px;padding:22px;box-shadow:var(--sh-3);border:1px solid var(--line)}
+  .modal-box h3{font-size:15px;margin-bottom:14px;font-family:var(--font-display);letter-spacing:.3px}
+  .modal-box label{font-size:11px;color:var(--txt-2);font-weight:600;display:block;margin:12px 0 4px}
+  .modal-box input,.modal-box textarea{width:100%;padding:8px 10px;border:1px solid var(--line);
+    border-radius:8px;font-size:12.5px;background:var(--card);color:var(--txt);outline:none;
+    font-family:inherit}
+  .modal-box input:focus,.modal-box textarea:focus{
+    border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .modal-box textarea{resize:vertical;min-height:64px;line-height:1.5}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field-grid > div label{margin-top:0}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+  .hidden{display:none!important}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--txt);color:#fff;font-size:12px;padding:8px 16px;
+    border-radius:8px;box-shadow:var(--sh-2);z-index:60;opacity:0;
+    transition:opacity .25s ease;pointer-events:none}
+  .toast.show{opacity:1}
+
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:#cdc8b8;border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .card{animation:cardIn .45s var(--ease-std) both}
+  .card[data-stage="asset"]{animation-delay:.06s}
+  .card[data-stage="storyboard"]{animation-delay:.12s}
+  .side-nav{animation:cardIn .5s var(--ease-std) both}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 极简顶部状态条（参考截图：5 个圆角 chip 胶囊，右侧安全闸门） -->
+  <div class="topbar" id="topbar">
+    <span class="chip mono">Run ID <b id="tbRunId">vid_8f3a7c2e91</b></span>
+    <span class="chip">当前阶段 <b id="tbStage">剧本</b></span>
+    <span class="chip">目标时长 <b id="tbDur">180s · 9:16</b></span>
+    <span class="chip">风格/旁白 <b id="tbStyle">卡通 · 沉稳男声</b></span>
+    <span class="safe">🛡️ 输入护栏 <b id="tbInput">PASS</b> · 成片闸门 <span class="pend" id="tbGate">待审</span></span>
+  </div>
+
+  <div class="main">
+    <!-- 画布左侧导航栏 -->
+    <div class="side-nav">
+      <div class="side-nav-h">📌 快速定位</div>
+      <div class="side-nav-body">
+        <div class="side-nav-section">
+          <h4>资产库</h4>
+          <div class="side-nav-grid" id="navAssets"></div>
+        </div>
+        <div class="side-nav-section">
+          <h4>本次剧本</h4>
+          <div class="side-nav-grid" id="navShots"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <div class="canvas">
+        <!-- 画布顶部工具条：演示 + 重置 -->
+        <div class="canvas-toolbar">
+          <div class="spacer"></div>
+          <button class="btn primary" onclick="runDemo()">▶ 演示流程</button>
+          <button class="btn" onclick="resetAll()">重置</button>
+        </div>
+
+        <div class="canvas-area">
+          <svg class="connections" viewBox="0 0 1500 900" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 460 360 C 495 360, 485 540, 520 540" stroke="#bcb6a6" stroke-width="1.4" fill="none" opacity="0.75"/>
+            <path d="M 920 620 C 965 620, 975 360, 1020 360" stroke="#bcb6a6" stroke-width="1.4" fill="none" opacity="0.75"/>
+            <circle cx="460" cy="360" r="3.5" fill="#bcb6a6" opacity="0.85"/>
+            <circle cx="520" cy="540" r="3.5" fill="#bcb6a6" opacity="0.85"/>
+            <circle cx="920" cy="620" r="3.5" fill="#bcb6a6" opacity="0.85"/>
+            <circle cx="1020" cy="360" r="3.5" fill="#bcb6a6" opacity="0.85"/>
+          </svg>
+
+          <!-- 剧本 -->
+          <div class="card" data-stage="script" data-label="剧本" id="card-script" style="left:60px; top:70px">
+            <div class="filename">📄 creative_design.md <span class="ed" onclick="event.stopPropagation();openScriptEdit()">✎</span><span class="stale-badge hidden" id="badge-script">待刷新</span></div>
+            <div class="content" id="scriptContent"></div>
+          </div>
+
+          <!-- 资产 -->
+          <div class="card" data-stage="asset" data-label="资产" id="card-asset" style="left:520px; top:430px">
+            <div class="filename">📁 assets/ <span class="ed">✎</span><span class="stale-badge hidden" id="badge-asset">待刷新</span></div>
+            <div class="content">
+              <h2>资产素材库</h2>
+              <p>人物 · 场景 · 道具（跨幕一致性基石，点击图片可编辑 / 重新生成）</p>
+              <div id="assetStaleBanner"></div>
+              <div class="asset-tabs" id="assetTabs"></div>
+              <div class="asset-grid" id="assetGrid"></div>
+            </div>
+          </div>
+
+          <!-- 分镜 -->
+          <div class="card" data-stage="storyboard" data-label="分镜" id="card-storyboard" style="left:1020px; top:80px">
+            <div class="filename">📄 storyboard.md <span class="ed">✎</span><span class="stale-badge hidden" id="badge-storyboard">待刷新</span></div>
+            <div class="content">
+              <h2>分镜脚本</h2>
+              <p>精确引用已锚定资产 · 按幕并发生成</p>
+              <div id="sbStaleBanner"></div>
+              <div class="batch-bar">
+                <div class="asset-btn" onclick="downloadAllVideos()">⬇ 批量下载视频（<span id="dlCount">5</span>）</div>
+              </div>
+              <table class="sb-table">
+                <thead><tr><th>分镜</th><th>镜头</th><th>旁白</th><th>关联资产</th><th>时长</th></tr></thead>
+                <tbody id="sbRows"></tbody>
+              </table>
+              <div id="sbShots"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="chat">
+        <div class="chat-h"><span class="dot"></span>与导演 Agent 多轮对话</div>
+        <div class="msgs" id="msgs"></div>
+        <div class="input-row">
+          <button class="ex-btn" onclick="addMoreTurns()" title="再追加几轮示范对话（演示与左侧画布的联动）">💬 +轮</button>
+          <input id="ci" type="text" placeholder="输入消息，推进流程…" onkeydown="if(event.key==='Enter')send()">
+          <button onclick="send()">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑资产 modal -->
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <h3>编辑资产</h3>
+    <label>类型（不可改）</label>
+    <input id="mType" disabled style="background:#f5f3ed;color:var(--txt-3)">
+    <label>名称</label>
+    <input id="mName">
+    <label>描述</label>
+    <textarea id="mDesc"></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn primary" onclick="saveModal()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑剧本 modal -->
+<div class="modal hidden" id="scriptModal">
+  <div class="modal-box">
+    <h3>编辑剧本</h3>
+    <label>创意设计</label>
+    <textarea id="sConcept"></textarea>
+    <label>用户设定</label>
+    <div class="field-grid">
+      <div><label>风格</label><input id="sStyle"></div>
+      <div><label>时长</label><input id="sDur"></div>
+      <div><label>比例</label><input id="sRatio"></div>
+      <div><label>平台</label><input id="sPlat"></div>
+      <div><label>旁白</label><input id="sVoice"></div>
+      <div><label>受众</label><input id="sAud"></div>
+    </div>
+    <label>具体剧本（按段落）</label>
+    <div id="sSections"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeScriptModal()">取消</button>
+      <button class="btn primary" onclick="saveScriptEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑分镜 modal -->
+<div class="modal hidden" id="shotModal">
+  <div class="modal-box">
+    <h3>编辑分镜 <span id="shotIdLab" style="color:var(--txt-3);font-weight:400;font-size:14px"></span></h3>
+    <div class="field-grid">
+      <div><label>镜头</label><input id="shotCam"></div>
+      <div><label>时长</label><input id="shotDur"></div>
+    </div>
+    <label>分镜脚本</label>
+    <textarea id="shotScript"></textarea>
+    <label>关联资产（可多选）</label>
+    <div id="shotTags" class="tag-toggle"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeShotModal()">取消</button>
+      <button class="btn primary" onclick="saveShotEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- 数据 ---------- */
+const SCRIPT = {
+  concept:'围绕深海生物发光展开科普，通过场景对比、生物细节展示，吸引小学生的注意力。',
+  user:{ style:'活泼卡通', duration:'180s', ratio:'9:16 竖屏', platform:'抖音', voice:'沉稳男声', audience:'小学生' },
+  sections:[
+    {t:'第1段', d:'60s', text:'水面以下一千米，阳光永远无法到达，但并非完全黑暗……'},
+    {t:'第2段', d:'50s', text:'黑暗中亮起一点蓝光，然后是两点三点，像海底星空……'},
+    {t:'第3段', d:'40s', text:'这些光不是为了美丽——是一场跨越深海的无声对话……'},
+    {t:'第4段', d:'30s', text:'最黑暗的地方，也藏着最璀璨的生命。'},
+  ]
+};
+
+const ASSETS = [
+  {id:'char_zhujiang', type:'人物', emoji:'🧑', name:'旁白者', desc:'沉稳中年男声形象，知识向导。圆脸、细框眼镜，浅蓝讲解员制服，冷蓝色统一。'},
+  {id:'char_qianshuiyuan', type:'人物', emoji:'🤿', name:'潜水员', desc:'年轻活力探索者。橙色潜水服、护目镜，姿态前倾具探索感，主色橙对比冷蓝。'},
+  {id:'scene_dehai', type:'场景', emoji:'🌊', name:'深海全景', desc:'海面下约1000米，无自然光，冷蓝调，悬浮颗粒感，远景渐隐。'},
+  {id:'scene_faguang', type:'场景', emoji:'✨', name:'生物发光', desc:'暗背景中蓝绿光点，点光源柔和晕染，营造"海底星空"。'},
+  {id:'scene_haimian', type:'场景', emoji:'🌌', name:'海面夜景', desc:'夜晚海面，星空倒映，上方微光、下方深蓝，用作转场衔接。'},
+  {id:'prop_qianshuiqi', type:'道具', emoji:'🛥️', name:'潜水器', desc:'黄色小型探测潜水器，圆润机身、前置探照灯，辨识度高。'},
+  {id:'prop_tanzhaodeng', type:'道具', emoji:'🔦', name:'探照灯', desc:'强光束道具，锥形光柱，亮黄白，用于突出主体。'},
+];
+const EMOJI_POOL = ['🧑','🤿','🌊','✨','🌌','🛥️','🔦','🐋','🪼','💡','🌠','🔭'];
+const RUN_ID = 'vid_8f3a7c2e91';   // 当前 run 唯一标识（顶部状态条展示）
+
+const SHOTS = [
+  {id:'1-1', dur:'8s', cam:'固定', script:'海面阳光灿烂，镜头缓缓下移，画面渐暗过渡到深海。', tags:['scene_dehai','prop_qianshuiqi'], img:'🎨', vid:'🎬', imgNote:'', vidNote:'', vidStale:false},
+  {id:'1-2', dur:'5s', cam:'特写', script:'黑暗中浮现一点蓝光，镜头拉近，光芒扩散。', tags:['scene_faguang'], img:'🎨', vid:'🎬', imgNote:'', vidNote:'', vidStale:false},
+  {id:'1-3', dur:'7s', cam:'跟随', script:'潜水员穿过微光区，与发光生物擦身而过。', tags:['char_qianshuiyuan','scene_faguang'], img:'🎨', vid:'🎬', imgNote:'', vidNote:'', vidStale:false},
+  {id:'2-1', dur:'6s', cam:'摇移', script:'横扫海底，发光生物与潜水员同框，如海底星空。', tags:['scene_dehai','char_qianshuiyuan'], img:'🎨', vid:'🎬', imgNote:'', vidNote:'', vidStale:false},
+  {id:'2-2', dur:'6s', cam:'推进', script:'单只生物发出特定频率的光，仿佛在彼此交流。', tags:['scene_faguang','char_qianshuiyuan'], img:'🎨', vid:'🎬', imgNote:'', vidNote:'', vidStale:false},
+];
+const MEDIA_POOL = ['🎨','🖼️','🎞️','🌅','🪸','🐠','🫧','🐙'];
+
+/* ---------- 阶段状态：依赖失效（stale）联动 ---------- */
+const STALE = { script:false, asset:false, storyboard:false };
+const LABELS = { script:'剧本', asset:'资产', storyboard:'分镜' };
+function labelOf(s){ return LABELS[s]; }
+
+function staleBannerHTML(stage){
+  if(!STALE[stage]) return '';
+  return '<div class="stale-banner">⚠ 此阶段因上游修改需重新生成 <button onclick="refreshStage(\''+stage+'\')">重新生成</button></div>';
+}
+function updateStaleBadges(){
+  ['script','asset','storyboard'].forEach(stage=>{
+    const card = document.getElementById('card-'+stage);
+    if(card) card.classList.toggle('stale', !!STALE[stage]);
+    const badge = document.getElementById('badge-'+stage);
+    if(badge) badge.classList.toggle('hidden', !STALE[stage]);
+  });
+  const s = document.getElementById('scriptStaleBanner'); if(s) s.innerHTML = staleBannerHTML('script');
+  const a = document.getElementById('assetStaleBanner'); if(a) a.innerHTML = staleBannerHTML('asset');
+  const b = document.getElementById('sbStaleBanner');     if(b) b.innerHTML = staleBannerHTML('storyboard');
+}
+function applyStale(source, downstream){
+  downstream.forEach(s => STALE[s] = true);
+  updateStaleBadges();
+  const names = downstream.map(labelOf).join('、');
+  agentSay('✎ 同步：你修改了「'+labelOf(source)+'」，已写入 run_state。下游「'+names+'」标记为待刷新，需重新生成后保持一致。');
+}
+function refreshStage(stage){
+  STALE[stage] = false;
+  updateStaleBadges();
+  agentSay('↻ 已重新生成「'+labelOf(stage)+'」，与最新 run_state 对齐。');
+}
+
+/* ---------- 顶部状态条更新 ---------- */
+function syncTopbar(){
+  document.getElementById('tbRunId').textContent = RUN_ID;
+  document.getElementById('tbStage').textContent = SCRIPT.user.style ? SCRIPT.user.style+'剧本' : '剧本';
+  document.getElementById('tbDur').textContent   = SCRIPT.user.duration+' · '+SCRIPT.user.ratio;
+  document.getElementById('tbStyle').textContent = SCRIPT.user.style+' · '+SCRIPT.user.voice;
+}
+function setStageLabel(stageLabel){
+  document.getElementById('tbStage').textContent = stageLabel;
+}
+
+/* ---------- 渲染：剧本卡片 ---------- */
+function renderScript(){
+  const u = SCRIPT.user;
+  const assetList =
+    `<li><b>人物</b>：${ASSETS.filter(a=>a.type==='人物').map(a=>a.name).join(' / ')}</li>`+
+    `<li><b>场景</b>：${ASSETS.filter(a=>a.type==='场景').map(a=>a.name).join(' / ')}</li>`+
+    `<li><b>道具</b>：${ASSETS.filter(a=>a.type==='道具').map(a=>a.name).join(' / ')}</li>`;
+  document.getElementById('scriptContent').innerHTML = `
+    <div id="scriptStaleBanner"></div>
+    <div class="edit-bar"><div class="asset-btn" onclick="event.stopPropagation();openScriptEdit()">✎ 编辑剧本</div></div>
+    <h2>创意设计</h2>
+    <p>${SCRIPT.concept}</p>
+    <h3>用户设定</h3>
+    <ul>
+      <li>🎨 风格：${u.style}</li>
+      <li>⏱ 时长：${u.duration}</li>
+      <li>📐 比例：${u.ratio}</li>
+      <li>📱 平台：${u.platform}</li>
+      <li>🎙 旁白：${u.voice}</li>
+      <li>🎯 受众：${u.audience}</li>
+    </ul>
+    <h3>资产列表</h3>
+    <ul>${assetList}</ul>
+    <h3>绑定关系表</h3>
+    <table class="sb-table">
+      <thead><tr><th>类型</th><th>名称</th><th>绑定用途</th><th>参考图</th><th>音色描述</th></tr></thead>
+      <tbody id="bindRows"></tbody>
+    </table>
+    <h3>具体剧本</h3>
+    ${SCRIPT.sections.map(s=>`<p><b>${s.t}</b>（${s.d}）${s.text}</p>`).join('')}
+  `;
+  renderBind();
+}
+
+/* ---------- 编辑剧本 modal ---------- */
+function openScriptEdit(){
+  document.getElementById('sConcept').value = SCRIPT.concept;
+  document.getElementById('sStyle').value = SCRIPT.user.style;
+  document.getElementById('sDur').value = SCRIPT.user.duration;
+  document.getElementById('sRatio').value = SCRIPT.user.ratio;
+  document.getElementById('sPlat').value = SCRIPT.user.platform;
+  document.getElementById('sVoice').value = SCRIPT.user.voice;
+  document.getElementById('sAud').value = SCRIPT.user.audience;
+  document.getElementById('sSections').innerHTML = SCRIPT.sections.map((s,i)=>
+    `<label>${s.t}（${s.d}）</label><textarea id="sSec${i}">${s.text}</textarea>`
+  ).join('');
+  document.getElementById('scriptModal').classList.remove('hidden');
+}
+function closeScriptModal(){ document.getElementById('scriptModal').classList.add('hidden'); }
+function saveScriptEdit(){
+  SCRIPT.concept = document.getElementById('sConcept').value.trim()||SCRIPT.concept;
+  SCRIPT.user.style = document.getElementById('sStyle').value.trim()||SCRIPT.user.style;
+  SCRIPT.user.duration = document.getElementById('sDur').value.trim()||SCRIPT.user.duration;
+  SCRIPT.user.ratio = document.getElementById('sRatio').value.trim()||SCRIPT.user.ratio;
+  SCRIPT.user.platform = document.getElementById('sPlat').value.trim()||SCRIPT.user.platform;
+  SCRIPT.user.voice = document.getElementById('sVoice').value.trim()||SCRIPT.user.voice;
+  SCRIPT.user.audience = document.getElementById('sAud').value.trim()||SCRIPT.user.audience;
+  SCRIPT.sections.forEach((s,i)=>{ s.text = (document.getElementById('sSec'+i).value.trim())||s.text; });
+  closeScriptModal();
+  renderScript();
+  syncTopbar();
+  applyStale('script', ['asset','storyboard']);
+}
+
+/* ---------- 编辑分镜 ---------- */
+let editingShot = null;
+function openShotEdit(id){
+  const s = SHOTS.find(x=>x.id===id);
+  editingShot = id;
+  document.getElementById('shotIdLab').textContent = s.id;
+  document.getElementById('shotCam').value = s.cam;
+  document.getElementById('shotDur').value = s.dur;
+  document.getElementById('shotScript').value = s.script;
+  document.getElementById('shotTags').innerHTML = ASSETS.map(a =>
+    `<span class="tag-chip ${s.tags.includes(a.id)?'on':''}" data-id="${a.id}" onclick="toggleShotTag(this,'${a.id}')">#${a.name}</span>`
+  ).join('');
+  document.getElementById('shotModal').classList.remove('hidden');
+}
+function toggleShotTag(el, id){
+  el.classList.toggle('on');
+}
+function closeShotModal(){ document.getElementById('shotModal').classList.add('hidden'); editingShot=null; }
+function saveShotEdit(){
+  const s = SHOTS.find(x=>x.id===editingShot);
+  s.cam = document.getElementById('shotCam').value.trim()||s.cam;
+  s.dur = document.getElementById('shotDur').value.trim()||s.dur;
+  s.script = document.getElementById('shotScript').value.trim()||s.script;
+  s.tags = Array.from(document.querySelectorAll('#shotTags .tag-chip.on')).map(e=>e.dataset.id);
+  s.vidStale = true;
+  closeShotModal();
+  renderSb();
+  renderNavShots();
+  agentSay('✎ 同步：你修改了分镜「'+s.id+'」（脚本/镜头/时长/关联资产），已写入 run_state。该分镜的视频已标记待重生成，需重新生成后保持一致。');
+}
+
+/* ---------- 渲染：资产卡片 ---------- */
+let curFilter = '全部';
+const TABS = ['全部','人物','场景','道具'];
+
+function renderTabs(){
+  const el = document.getElementById('assetTabs');
+  el.innerHTML = TABS.map(t =>
+    `<div class="asset-tab ${t===curFilter?'on':''}" onclick="setFilter('${t}')">${t}</div>`
+  ).join('');
+}
+function setFilter(t){
+  curFilter = t;
+  renderTabs();
+  renderAssets();
+  renderNavAssets();   // 同步过滤左侧导航
+}
+function renderAssets(){
+  const grid = document.getElementById('assetGrid');
+  const list = ASSETS.filter(a => curFilter==='全部' || a.type===curFilter);
+  grid.innerHTML = list.map(a => `
+    <div class="asset-item">
+      <div class="asset-thumb">
+        <span class="asset-type">${a.type}</span>
+        <span id="thumb-${a.id}">${a.emoji}</span>
+        <div class="download-overlay" title="下载图片" onclick="event.stopPropagation();downloadAsset('${a.id}')">⬇</div>
+      </div>
+      <div class="asset-info">
+        <div class="asset-name">${a.name}</div>
+        <div class="asset-desc">${a.desc}</div>
+        <div class="asset-actions">
+          <div class="asset-btn" onclick="openEdit('${a.id}')">✎ 编辑</div>
+          <div class="asset-btn regen" onclick="regen('${a.id}')">↻ 重生成</div>
+          <div class="asset-btn" onclick="downloadAsset('${a.id}')" title="下载图片">⬇</div>
+        </div>
+        <div class="asset-regened" id="regen-${a.id}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- 左侧导航栏 ---------- */
+function renderNavAssets(){
+  const el = document.getElementById('navAssets');
+  if(!el) return;
+  const list = ASSETS.filter(a => curFilter==='全部' || a.type===curFilter);
+  if(!list.length){
+    el.innerHTML = '<div class="nav-empty">无资产</div>';
+    return;
+  }
+  el.innerHTML = list.map(a => `
+    <div class="nav-thumb" title="${a.name} · ${a.type}"
+         onclick="scrollToAsset('${a.id}')">
+      <span class="type">${a.type}</span>
+      <span>${a.emoji}</span>
+      <span class="lab">${a.name}</span>
+    </div>
+  `).join('');
+}
+function renderNavShots(){
+  const el = document.getElementById('navShots');
+  if(!el) return;
+  el.innerHTML = SHOTS.map(s => `
+    <div class="nav-thumb vid ${s.vidStale?'stale':''}" title="分镜 ${s.id} · ${s.dur}"
+         onclick="scrollToShot('${s.id}')">
+      <span class="type">${s.id}</span>
+      <span>${s.vid}</span>
+      <span class="lab">${s.cam} · ${s.dur}</span>
+    </div>
+  `).join('');
+  const c = document.getElementById('dlCount');
+  if(c) c.textContent = SHOTS.length;
+}
+function scrollToAsset(id){
+  // 滚动到画布区 + 滚动到对应资产（直接定位到资产卡片）
+  const card = document.getElementById('card-asset');
+  if(card) setActive(card);
+  const card2 = document.querySelector('[data-stage="asset"]');
+  if(card2) card2.scrollIntoView({behavior:'smooth', block:'center'});
+  // 简单视觉高亮：用临时边框闪烁
+  const thumb = document.getElementById('thumb-'+id);
+  if(thumb){
+    const parent = thumb.closest('.asset-item');
+    if(parent){
+      parent.style.outline='2px solid var(--accent)';
+      setTimeout(()=>{ parent.style.outline=''; }, 900);
+    }
+  }
+  openEdit(id);
+  setStageLabel('资产');
+}
+function scrollToShot(id){
+  const card = document.getElementById('card-storyboard');
+  if(card) setActive(card);
+  const sb = document.querySelector('[data-stage="storyboard"]');
+  if(sb) sb.scrollIntoView({behavior:'smooth', block:'center'});
+  // 高亮分镜卡片
+  SHOTS.forEach(s=>{
+    const nodes = document.querySelectorAll('.sb-shot');
+    const idx = SHOTS.findIndex(x=>x.id===id);
+    const target = nodes[idx];
+    if(target){
+      target.style.outline='2px solid var(--accent)';
+      setTimeout(()=>{ target.style.outline=''; }, 900);
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  });
+  setStageLabel('分镜');
+}
+
+/* ---------- 编辑资产 modal ---------- */
+let editingId = null;
+function openEdit(id){
+  const a = ASSETS.find(x=>x.id===id);
+  editingId = id;
+  document.getElementById('mType').value = a.type;
+  document.getElementById('mName').value = a.name;
+  document.getElementById('mDesc').value = a.desc;
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); editingId=null; }
+function saveModal(){
+  const a = ASSETS.find(x=>x.id===editingId);
+  a.name = document.getElementById('mName').value.trim()||a.name;
+  a.desc = document.getElementById('mDesc').value.trim()||a.desc;
+  closeModal();
+  renderAssets();
+  renderScript();
+  renderSb();
+  renderNavAssets();      // 资产改名 → 左侧导航同步
+  applyStale('asset', ['storyboard']);
+}
+
+/* ---------- 重新生成图片 ---------- */
+function regen(id){
+  const thumb = document.getElementById('thumb-'+id);
+  const note = document.getElementById('regen-'+id);
+  if(!thumb || thumb.innerHTML.includes('spinner')) return;
+  thumb.innerHTML = '<span class="spinner"></span>';
+  setTimeout(()=>{
+    const a = ASSETS.find(x=>x.id===id);
+    let ne; do{ ne = EMOJI_POOL[Math.floor(Math.random()*EMOJI_POOL.length)]; }while(ne===a.emoji);
+    a.emoji = ne;
+    thumb.innerHTML = ne;
+    // 同步左侧导航缩略图
+    renderNavAssets();
+    const t = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+    note.textContent = '↻ 已重新生成 · '+t;
+    note.classList.add('show');
+    STALE.storyboard = true;
+    updateStaleBadges();
+    agentSay('✎ 同步：你重新生成了资产「'+a.name+'」的锚定图，已写入 run_state。下游「分镜」标记为待刷新，需重新生成后保持一致。');
+  }, 800);
+}
+
+/* ---------- 渲染：绑定关系表 ---------- */
+function renderBind(){
+  const tb = document.getElementById('bindRows');
+  if(!tb) return;
+  tb.innerHTML = ASSETS.map(a => {
+    const use = a.type==='人物' ? '角色形象/绑定' : a.type==='场景' ? '场景锚定' : '道具锚定';
+    const voice = a.type==='人物' ? (a.id==='char_zhujiang'?'沉稳男声，语速偏慢':'年轻活力，活泼') : '—';
+    return `<tr><td>${a.type}</td><td>${a.name}</td><td>${use}</td><td>${a.name}.png</td><td>${voice}</td></tr>`;
+  }).join('');
+}
+
+/* ---------- 渲染：分镜 ---------- */
+function renderSb(){
+  document.getElementById('sbRows').innerHTML = SHOTS.map(s =>
+    `<tr><td><b>${s.id}</b></td><td>${s.cam}</td><td>${s.script.slice(0,10)}…</td><td>${s.tags.map(t=>'#'+(ASSETS.find(a=>a.id===t)?.name||t)).join(' ')}</td><td>${s.dur}</td></tr>`
+  ).join('');
+  document.getElementById('sbShots').innerHTML = SHOTS.map(s => `
+    <div class="sb-shot">
+      <div class="sb-shot-h"><strong>分镜 ${s.id}</strong><span>${s.dur} · ${s.cam}</span>
+        <span class="sb-edit" onclick="event.stopPropagation();openShotEdit('${s.id}')">✎ 编辑</span></div>
+      <div class="sb-shot-script">${s.script}</div>
+      <div class="sb-shot-media">
+        <div class="sb-mbx">
+          <div class="sb-mbx-ico" id="img-${s.id}">${s.img}</div>
+          <div class="sb-mbx-lab">🎨 分镜图</div>
+          <div class="sb-mbx-act" onclick="event.stopPropagation();regenShotImg('${s.id}')">↻ 重生成</div>
+          <div class="dl-icon" title="下载分镜图" onclick="event.stopPropagation();downloadShotImg('${s.id}')">⬇</div>
+        </div>
+        <div class="sb-mbx vid ${s.vidStale?'stale':''}">
+          <div class="sb-mbx-ico" id="vid-${s.id}">${s.vid}</div>
+          <div class="sb-mbx-lab">▶ 视频</div>
+          ${s.vidStale
+            ? '<div class="sb-vid-stale" onclick="event.stopPropagation();regenShotVid(\''+s.id+'\')">⚠ 待重生成</div>'
+            : '<div class="sb-mbx-act" onclick="event.stopPropagation();regenShotVid(\''+s.id+'\')">↻ 重生成</div>'}
+          <div class="dl-icon" title="下载视频占位" onclick="event.stopPropagation();downloadShotVid('${s.id}')">⬇</div>
+        </div>
+      </div>
+      <div class="sb-tags"><span class="lab">关联资产</span>${s.tags.map(t=>`<span class="tag-chip">#${(ASSETS.find(a=>a.id===t)?.name)||t}</span>`).join('')}</div>
+      <div class="sb-regened show">${s.imgNote}${s.imgNote&&s.vidNote?'<br>':''}${s.vidNote}</div>
+    </div>
+  `).join('');
+}
+
+/* ---------- 分镜图 / 视频 重生成 ---------- */
+function regenShotMedia(id, kind){
+  const key = kind==='img' ? 'img' : 'vid';
+  const noteKey = kind==='img' ? 'imgNote' : 'vidNote';
+  const el = document.getElementById(key+'-'+id);
+  if(!el || el.innerHTML.includes('spinner')) return;
+  el.innerHTML = '<span class="spinner"></span>';
+  setTimeout(()=>{
+    const s = SHOTS.find(x=>x.id===id);
+    let ne; do{ ne = MEDIA_POOL[Math.floor(Math.random()*MEDIA_POOL.length)]; }while(ne===s[key]);
+    s[key] = ne;
+    const t = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+    s[noteKey] = (kind==='img'?'🎨 分镜图':'🎬 视频')+' ↻ 已重新生成 · '+t;
+    s.vidStale = (kind==='img') ? true : false;
+    renderSb();
+    renderNavShots();
+    agentSay('↻ 已重新生成分镜「'+id+'」的'+(kind==='img'?'分镜图（其视频已标记待重生成）':'视频，已与最新分镜对齐')+'。');
+  }, 800);
+}
+function regenShotImg(id){ regenShotMedia(id,'img'); }
+function regenShotVid(id){ regenShotMedia(id,'vid'); }
+
+/* ---------- 下载：通用 ---------- */
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=>{ t.classList.remove('show'); }, 1800);
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+}
+function emojiToPng(emoji, w, h, bg, fg, label){
+  const cnv = document.createElement('canvas');
+  cnv.width=w; cnv.height=h;
+  const ctx = cnv.getContext('2d');
+  // 背景
+  const grad = ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0, bg[0]); grad.addColorStop(1, bg[1]);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+  // emoji
+  ctx.font = `${Math.floor(h*0.55)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle = fg;
+  ctx.fillText(emoji, w/2, h/2 - 8);
+  // 标签
+  if(label){
+    ctx.font = `600 14px ${getComputedStyle(document.body).fontFamily}`;
+    ctx.fillStyle = 'rgba(28,28,30,.78)';
+    ctx.fillText(label, w/2, h - 22);
+  }
+  return new Promise(res=> cnv.toBlob(b=>res(b), 'image/png'));
+}
+async function downloadAsset(id){
+  const a = ASSETS.find(x=>x.id===id);
+  const blob = await emojiToPng(a.emoji, 640, 400, ['#E9EEF6','#DDE7F2'], '#3B6FB5', a.name+' · '+a.type);
+  if(!blob){ showToast('下载失败'); return; }
+  downloadBlob(blob, `asset_${a.id}_${a.name}.png`);
+  showToast('已下载：'+a.name);
+}
+async function downloadShotImg(id){
+  const s = SHOTS.find(x=>x.id===id);
+  const blob = await emojiToPng(s.img, 640, 360, ['#E9EEF6','#DBE6F3'], '#3B6FB5', '分镜 '+s.id+' · 分镜图');
+  if(!blob){ showToast('下载失败'); return; }
+  downloadBlob(blob, `shot_${s.id}_img.png`);
+  showToast('已下载：分镜 '+s.id+' 图');
+}
+// 视频下载（占位：实际接视频生成工具后改为真实 mp4）
+function downloadShotVid(id){
+  const s = SHOTS.find(x=>x.id===id);
+  const meta = {
+    id:s.id, duration:s.dur, camera:s.cam, script:s.script,
+    tags:s.tags.map(t=>({id:t, name:(ASSETS.find(a=>a.id===t)?.name)||t})),
+    placeholder:true,
+    note:'视频生成工具未接入，先用 JSON 占位；接入后改为 .mp4 真实下载。'
+  };
+  const blob = new Blob([JSON.stringify(meta,null,2)], {type:'application/json'});
+  downloadBlob(blob, `shot_${s.id}_video.mp4`);
+  showToast('已下载占位：分镜 '+s.id+' 视频（JSON 暂代）');
+}
+function downloadAllVideos(){
+  SHOTS.forEach((s,i)=>{
+    setTimeout(()=>downloadShotVid(s.id), i*350);
+  });
+  showToast('批量触发 '+SHOTS.length+' 个视频下载');
+}
+
+/* ---------- 多轮对话 ---------- */
+const msgsEl = document.getElementById('msgs');
+document.querySelectorAll('.card').forEach(c => {
+  c.addEventListener('click', () => setActive(c));
+});
+function setActive(c){
+  document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  setStageLabel(c.dataset.label);
+}
+
+function addMsg(t, who){
+  const d = document.createElement('div');
+  d.className = 'msg '+(who==='u'?'u': who==='sys'?'system':'a');
+  d.innerHTML = t;
+  msgsEl.appendChild(d);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+function agentSay(t){ addMsg(t, 'a'); }
+function sysSay(t){ addMsg(t, 'sys'); }
+
+/* send() 根据当前 active 节点真正调用对应分支（与左侧画布联动） */
+function send(){
+  const inp=document.getElementById('ci');
+  const v=inp.value.trim();
+  if(!v) return;
+  addMsg(v,'u');
+  inp.value='';
+  setTimeout(()=>{
+    const card = document.querySelector('.card.active');
+    const stage = card?.dataset.stage || 'script';
+    handleUserInstruction(stage, v);
+  }, 450);
+}
+
+function handleUserInstruction(stage, v){
+  // 通用兜底
+  const summary = v.length>22 ? v.slice(0,22)+'…' : v;
+  if(stage==='script'){
+    // 改剧本 → 触发下游 stale
+    agentSay('好的，已记下你对剧本的建议：「'+summary+'」。'+(STALE.script?'':'我会在下一步生成时同步进去——')) ;
+    // 顺势把"创意设计/段落"提示一下
+    if(/潜|海|光|色|节奏|慢|快|亮|暗|声音|旁白|儿童|小学生|科普/.test(v)){
+      agentSay('✎ 已将本条建议写入 run_state（剧本段）。下游「资产」「分镜」标记为待刷新，重新生成后保持一致。');
+      applyStale('script', ['asset','storyboard']);
+    } else {
+      sysSay('提示：如修改的是创意/段落文本，建议点剧本卡片右上的 ✎ 直接编辑');
+    }
+  } else if(stage==='asset'){
+    if(/换|改|重新|重生|变|新/.test(v)){
+      // 找名字匹配
+      const hit = ASSETS.find(a=>v.indexOf(a.name)>=0);
+      if(hit){
+        regen(hit.id);
+      } else {
+        agentSay('请告诉我要重新生成哪个资产（例如：潜航者 / 深海全景 / 探照灯 ……）');
+      }
+    } else {
+      agentSay('好的，已记录。你可以直接「点资产卡上的 ✎ 编辑」或「点 ↻ 重生成」让 Agent 实时修改。');
+    }
+  } else if(stage==='storyboard'){
+    const m = v.match(/(\d-\d)/);
+    const hit = m ? SHOTS.find(s=>s.id===m[1]) : null;
+    if(/图|重新/.test(v) && hit){
+      regenShotImg(hit.id);
+    } else if(/视频|动画|动/.test(v) && hit){
+      regenShotVid(hit.id);
+    } else if(hit){
+      openShotEdit(hit.id);
+      agentSay('已打开分镜 '+hit.id+' 的编辑面板，保存后会触发该分镜视频重生成。');
+    } else {
+      agentSay('你的指令与某个分镜对应不上，请按"分镜 1-2 重生视频"的格式告诉我。');
+    }
+  } else {
+    agentSay('收到：「'+summary+'」。');
+  }
+}
+
+/* ---------- 演示流程（多轮对话 + 阶段推进） ---------- */
+let demoTimer=null;
+function runDemo(){
+  resetAll();
+  const stages = ['script','asset','storyboard'];
+  let k=0;
+  const messages = {
+    script:[
+      'a','已确认需求：📍 抖音 · 🎨 活泼卡通 · 📐 9:16 · 🎙 沉稳男声 · 🎯 小学生 3 分钟科普。',
+      'a','正在按"主体/场景/道具"提取核心元素：深海 · 发光生物 · 旁白者 + 潜航者。',
+      'a','生成 4 段式剧本 + 用户设定 + 绑定关系表，共耗时 1.2s。等待你在剧本卡片右上 ✎ 处微调。',
+    ],
+    asset:[
+      'a','正在生成锚定图：旁白者 / 潜航者 / 深海全景 / 生物发光 / 潜水器 / 探照灯。',
+      'a','锚定图全部完成 ✅ — 所有引用一律通过实体 ID，避免跨幕漂移。',
+      'a','可重生成任意一张，或直接编辑描述。',
+    ],
+    storyboard:[
+      'a','按幕并发生成 5 个分镜的脚本 + 分镜图 + 视频（mock）。',
+      'a','分镜图全部完成 ✅ · 视频占位（接入真实生成工具后会替换）。',
+      'a','你可在分镜卡片上点击「✎ 编辑」或回到任意上一步骤改动。',
+    ],
+  };
+  const step = () => {
+    if(k < stages.length){
+      const c = document.querySelector('[data-stage="'+stages[k]+'"]');
+      document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      c.classList.add('done');
+      setStageLabel(c.dataset.label);
+      agentSay('▶ 阶段 '+(k+1)+'/'+stages.length+'：'+c.dataset.label);
+      // 每阶段追加多条逐步消息
+      const subs = messages[stages[k]];
+      subs.forEach((who, i)=>{
+        demoTimer = setTimeout(()=>{
+          if(who==='a') agentSay(subs[i]); else sysSay(subs[i]);
+        }, 300 + i*420);
+      });
+      k++;
+      demoTimer = setTimeout(step, 300 + subs.length*420 + 200);
+    } else {
+      clearTimeout(demoTimer);
+      sysSay('演示完成。可点左侧"资产库"/"本次剧本"中的任意缩略图快速定位。');
+    }
+  };
+  setTimeout(step, 400);
+}
+
+/* ---------- 多轮对话示例池（每条都明确指向画布某个元素 / 触发动作） ---------- */
+const SAMPLE_TURNS = [
+  ['u','我想做一个关于深海生物的科普视频，3 分钟给小学生看。'],
+  ['a','好的，先核对需求：📍 抖音 · 🎨 活泼卡通 · 📐 9:16 · 🎙 沉稳男声 · 🎯 小学生。'],
+  ['sys','✓ 需求锁定 · 时长 180s 已写入 run_state · 输入护栏 PASS'],
+
+  ['u','对了，旁白节奏稍微慢一点，知识点要讲透。'],
+  ['a','收到，已把「语速偏慢 + 知识点展开」作为剧本的隐含约束写入。开始生成剧本 + 绑定关系表。'],
+  ['sys','✓ 剧本已生成（4 段 · 180s） · 点击左下剧本卡片可逐段审阅'],
+
+  ['u','潜水员的颜色太抢眼了，换一个冷色调。'],
+  ['a','好，我把潜航者色相往冷蓝偏移。点击「资产 → 潜航者 → ↻ 重生成」可立即刷新锚定图。'],
+  ['sys','↻ char_qianshuiyuan（潜航者）锚定图已重生成 · 下游分镜 vidStale=true'],
+
+  ['u','顺便帮我把第 2 段那个分镜的时长改成 8 秒，镜头从特写换推近。'],
+  ['a','✓ 分镜 1-2 已更新：8s · 推近 · 旁白保留原意 · 关联资产 scene_faguang/char_qianshuiyuan；该分镜视频已标记待重生成。'],
+  ['sys','↻ 分镜 1-2 视频已重新生成 · vidStale=false · 与最新分镜对齐'],
+
+  ['u','这个旁白者人设不错，可以再追加一个"女讲解员"备用。'],
+  ['a','好的，已在绑定关系表追加「char_nvjiangjie · 女讲解员」，需要时点击 ↻ 重生成即可启用。'],
+  ['sys','ℹ️ 锚定图未生成（占位） · 下一步可触发 ↻ 重生成启用'],
+
+  ['u','成片前帮我过一遍内容安全检查。'],
+  ['a','✓ 三段式安全审查已触发：输入护栏 PASS · 生成护栏 PASS · 成片闸门待审（最后一帧生成完成后放行）。'],
+  ['sys','🛡️ 输入护栏 PASS · 成片闸门 待审'],
+];
+
+const MORE_TURNS = [
+  ['u','整体节奏再慢一点，前两段可以更长一些。'],
+  ['a','好的，把第1段 60s→70s、第2段 50s→55s，总时长仍保持 180s。'],
+  ['sys','✓ 剧本时长已重新分配 · 你可以直接点剧本右上 ✎ 微调具体秒数'],
+
+  ['u','第 3 段那个分镜潜水器几乎没出现。'],
+  ['a','分镜 2-1 已追加关联 prop_qianshuiqi；该分镜视频标记待重生成。'],
+  ['sys','↻ 分镜 2-1 视频已重生成 · prop_qianshuiqi 已嵌入远景'],
+
+  ['u','把"探照灯"的光色调暖一点，更友好。'],
+  ['a','点击「资产 → 探照灯 → ↻ 重生成」已经触发了色温微调（冷白 → 暖白 3200K）。'],
+  ['sys','↻ prop_tanzhaodeng 锚定图已重生成 · 暖光 3200K'],
+];
+
+function resetAll(){
+  clearTimeout(demoTimer);
+  STALE.script=STALE.asset=STALE.storyboard=false;
+  SHOTS.forEach(s=>{ s.vidStale=false; s.imgNote=''; s.vidNote=''; });
+  document.querySelectorAll('.card').forEach(x=>{
+    x.classList.remove('active');x.classList.remove('done');x.classList.remove('stale');
+  });
+  const c=document.querySelector('[data-stage="script"]');
+  c.classList.add('active');
+  syncTopbar();
+  setStageLabel('剧本');
+  updateStaleBadges();
+  msgsEl.innerHTML='';
+  // 注入初始 17 轮连贯对话（明确指向画布元素 / 触发动作）
+  SAMPLE_TURNS.forEach(([w,t])=> addMsg(t, w));
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+/* 多轮对话示例池追加按钮（按需用，不破坏 runDemo/resetAll） */
+function addMoreTurns(){
+  const before = msgsEl.children.length;
+  MORE_TURNS.forEach(([w,t])=> addMsg(t, w));
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  sysSay('本次新增 '+(msgsEl.children.length-before)+' 轮对话演示 · 都已与左侧画布元素一一对应');
+}
+
+/* ---------- 初始化 ---------- */
+renderTabs();
+renderAssets();
+renderScript();
+renderSb();
+renderNavAssets();
+renderNavShots();
+resetAll();
+</script>
+</body>
+</html>
