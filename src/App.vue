@@ -89,6 +89,12 @@
                     <span>个人资料</span>
                   </div>
                 </el-dropdown-item>
+                <el-dropdown-item command="watermark-subtitle">
+                  <div class="menu-item-inner">
+                    <div class="icon-box indigo"><el-icon><Setting /></el-icon></div>
+                    <span>水印与字幕</span>
+                  </div>
+                </el-dropdown-item>
                 <el-dropdown-item command="team">
                   <div class="menu-item-inner">
                     <div class="icon-box purple"><el-icon><Connection /></el-icon></div>
@@ -221,6 +227,61 @@
             @click="updateProfile"
           >
             保存设置
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 水印与字幕设置弹窗 -->
+    <el-dialog
+      v-model="showConfigDialog"
+      title="水印与字幕设置"
+      width="400px"
+      class="custom-dialog-v4 config-settings-dialog"
+      align-center
+    >
+      <div class="config-settings-content">
+        <div class="dialog-bg-decor"></div>
+        
+        <div class="config-list">
+          <!-- 字幕开关 -->
+          <div class="config-item" @click="modelStore.setSubtitle(!modelStore.isSubtitled)">
+            <div class="item-icon-wrapper" :class="{ active: modelStore.isSubtitled }">
+              <el-icon :size="20" :class="{ 'animate-pulse': modelStore.isSubtitled }"><ChatDotRound /></el-icon>
+            </div>
+            <div class="item-info">
+              <span class="item-title">视频字幕</span>
+              <span class="item-desc">开启后，生成的视频将自动叠加字幕内容</span>
+            </div>
+            <div class="item-switch" :class="{ active: modelStore.isSubtitled }">
+              <div class="switch-knob"></div>
+            </div>
+          </div>
+
+          <!-- 去水印开关 -->
+          <div class="config-item" @click="modelStore.setWatermarkRemoved(!modelStore.isWatermarkRemoved)">
+            <div class="item-icon-wrapper watermark" :class="{ active: modelStore.isWatermarkRemoved }">
+              <el-icon :size="20" :class="{ 'animate-pulse': modelStore.isWatermarkRemoved }"><CircleClose /></el-icon>
+            </div>
+            <div class="item-info">
+              <span class="item-title">去除水印</span>
+              <span class="item-desc">开启后，将尝试移除生成视频中的平台水印</span>
+            </div>
+            <div class="item-switch watermark-switch" :class="{ active: modelStore.isWatermarkRemoved }">
+              <div class="switch-knob"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="config-tips">
+          <el-icon><InfoFilled /></el-icon>
+          <span>此项为全局配置，修改后对后续所有生成任务生效</span>
+        </div>
+      </div>
+      <template #footer>
+        <div class="dialog-footer-v4">
+          <el-button round type="primary" class="save-btn w-full" @click="showConfigDialog = false">
+            完成配置
           </el-button>
         </div>
       </template>
@@ -376,6 +437,7 @@ import { useDramaStore } from '@/store/drama'
 import { useEpisodeStore } from '@/store/episode'
 import { useUserStore } from '@/store/user'
 import { useThemeStore } from '@/store/theme'
+import { useModelStore } from '@/store/models'
 import { taskQueueManager } from '@/utils/taskQueue'
 
 const runtimeError = ref<string | null>(null)
@@ -389,10 +451,12 @@ const dramaStore = useDramaStore()
 const episodeStore = useEpisodeStore()
 const userStore = useUserStore()
 const themeStore = useThemeStore()
+const modelStore = useModelStore()
 const isLight = computed(() => themeStore.isLight)
 
 // Task Center State
 const showTaskList = ref(false)
+const showConfigDialog = ref(false)
 const expandedEpisodes = ref<string[]>([])
 const activeTaskCount = computed(() => episodeStore.tasks.filter(t => t.status === 'processing' || t.status === 'queued').length)
 
@@ -635,6 +699,8 @@ const handleCommand = (command: string) => {
     profileForm.avatar = userStore.userInfo?.avatar || ''
     aiPreviewAvatar.value = ''
     showProfileDialog.value = true
+  } else if (command === 'watermark-subtitle') {
+    showConfigDialog.value = true
   } else if (command === 'team') {
     router.push('/team-management')
   } else if (command === 'member-center') {
@@ -970,6 +1036,7 @@ onErrorCaptured((error) => {
         .icon-box {
           transform: scale(1.1);
           &.blue { background-color: #3b82f6; color: white; }
+          &.indigo { background-color: #6366f1; color: white; }
           &.purple { background-color: #8b5cf6; color: white; }
           &.gold { background-color: #f59e0b; color: white; }
           &.amber { background-color: #f59e0b; color: white; }
@@ -1005,6 +1072,7 @@ onErrorCaptured((error) => {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       
       &.blue { background-color: #eff6ff; color: #3b82f6; }
+      &.indigo { background-color: #eef2ff; color: #6366f1; }
       &.purple { background-color: #f5f3ff; color: #8b5cf6; }
       &.gold { background-color: #fffbeb; color: #f59e0b; }
       &.amber { background-color: #fffbeb; color: #f59e0b; }
@@ -1335,6 +1403,7 @@ onErrorCaptured((error) => {
 
       .icon-box {
         &.blue { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        &.indigo { background-color: rgba(99, 102, 241, 0.15); color: #818cf8; }
         &.purple { background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; }
         &.gold { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
         &.amber { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; }
@@ -1362,6 +1431,7 @@ onErrorCaptured((error) => {
 
           .icon-box {
             &.blue { background-color: #3b82f6 !important; color: #ffffff !important; }
+            &.indigo { background-color: #6366f1 !important; color: #ffffff !important; }
             &.purple { background-color: #8b5cf6 !important; color: #ffffff !important; }
             &.gold { background-color: #f59e0b !important; color: #ffffff !important; }
             &.amber { background-color: #f59e0b !important; color: #ffffff !important; }
@@ -1419,5 +1489,187 @@ onErrorCaptured((error) => {
       }
     }
   }
+}
+
+/* Config Settings Dialog Styles */
+.config-settings-dialog .el-dialog {
+  background: #f8fafc;
+  border: none;
+  border-radius: 32px !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+  overflow: hidden;
+}
+
+.dark .config-settings-dialog .el-dialog {
+  background: #0f172a;
+  border: 1px solid #334155;
+}
+
+.config-settings-dialog .el-dialog__header {
+  background: white;
+  margin: 0 !important;
+  padding: 24px 32px !important;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dark .config-settings-dialog .el-dialog__header {
+  background: #111827;
+  border-bottom-color: #334155;
+}
+
+.config-settings-content {
+  padding: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.config-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.dark .config-item {
+  background: #111827;
+  border-color: #334155;
+}
+
+.config-item:hover {
+  border-color: #6366f1;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+}
+
+.dark .config-item:hover {
+  border-color: #818cf8;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.item-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.dark .item-icon-wrapper {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+.item-icon-wrapper.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+.item-icon-wrapper.watermark.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.dark .item-title {
+  color: #f1f5f9;
+}
+
+.item-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.item-switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #e2e8f0;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.dark .item-switch {
+  background: #334155;
+}
+
+.item-switch.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.item-switch.watermark-switch.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.item-switch.active .switch-knob {
+  left: 23px;
+}
+
+.config-tips {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.dark .config-tips {
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+}
+
+.config-tips .el-icon {
+  margin-top: 2px;
+  font-size: 14px;
 }
 </style>

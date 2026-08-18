@@ -172,71 +172,25 @@
           <div class="w-[1px] h-6 bg-slate-200/60 dark:bg-slate-700 mx-1"></div>
           
           <!-- Toggle Badges -->
-          <el-dropdown trigger="click" class="storyboard-config-dropdown" :hide-on-click="false">
+          <el-dropdown trigger="click" class="storyboard-config-dropdown" @command="(val) => resolution = val">
             <div class="flex items-center gap-2 cursor-pointer group px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20">
-              <el-icon :size="14" class="group-hover:rotate-90 transition-transform duration-500"><Setting /></el-icon>
-              <span class="text-[11px] font-black uppercase tracking-wider">分镜配置</span>
+              <el-icon :size="14" class="group-hover:rotate-90 transition-transform duration-500"><Monitor /></el-icon>
+              <span class="text-[11px] font-black uppercase tracking-wider">{{ resolutionOptions.find(o => o.value === resolution)?.label }}</span>
               <el-icon class="text-[12px] opacity-70 group-hover:translate-y-0.5 transition-transform"><ArrowDown /></el-icon>
             </div>
             <template #dropdown>
-              <el-dropdown-menu class="storyboard-config-menu">
-                <div class="config-menu-body">
-                  <!-- Resolution Selection -->
-                  <div class="config-section">
-                    <div class="config-section-label">
-                      <el-icon :size="13"><Monitor /></el-icon>
-                      <span>分辨率</span>
-                    </div>
-                    <div class="resolution-grid">
-                      <div 
-                        v-for="option in resolutionOptions"
-                        :key="option.value"
-                        @click="resolution = option.value"
-                        class="resolution-option"
-                        :class="{ active: resolution === option.value }"
-                      >
-                        <div class="resolution-check" v-if="resolution === option.value">
-                          <el-icon :size="10"><Select /></el-icon>
-                        </div>
-                        <span class="resolution-label">{{ option.label }}</span>
-                      </div>
-                    </div>
+              <el-dropdown-menu class="storyboard-resolution-menu">
+                <el-dropdown-item 
+                  v-for="option in resolutionOptions" 
+                  :key="option.value" 
+                  :command="option.value"
+                  :class="{ 'is-active': resolution === option.value }"
+                >
+                  <div class="flex items-center justify-between w-full min-w-[100px] gap-4">
+                    <span class="text-[12px] font-bold">{{ option.label }}</span>
+                    <el-icon v-if="resolution === option.value" class="text-indigo-500"><Check /></el-icon>
                   </div>
-                  
-                  <div class="config-divider"></div>
-                  
-                  <!-- Subtitle Toggle -->
-                  <div class="config-section">
-                    <div class="config-toggle-item" @click="isSubtitled = !isSubtitled">
-                      <div class="toggle-icon-wrapper" :class="{ active: isSubtitled }">
-                        <el-icon :size="14" :class="{ 'animate-pulse': isSubtitled }"><ChatDotRound /></el-icon>
-                      </div>
-                      <div class="toggle-info">
-                        <span class="toggle-title">字幕</span>
-                        <span class="toggle-desc">视频叠加字幕</span>
-                      </div>
-                      <div class="toggle-switch" :class="{ active: isSubtitled }">
-                        <div class="toggle-knob"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Watermark Toggle -->
-                  <div class="config-section">
-                    <div class="config-toggle-item" @click="isWatermarkRemoved = !isWatermarkRemoved">
-                      <div class="toggle-icon-wrapper watermark" :class="{ active: isWatermarkRemoved }">
-                        <el-icon :size="14" :class="{ 'animate-pulse': isWatermarkRemoved }"><CircleClose /></el-icon>
-                      </div>
-                      <div class="toggle-info">
-                        <span class="toggle-title">去水印</span>
-                        <span class="toggle-desc">移除平台水印</span>
-                      </div>
-                      <div class="toggle-switch" :class="{ active: isWatermarkRemoved }">
-                        <div class="toggle-knob"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -1651,8 +1605,6 @@ const isManualPasteActive = ref(false);
 const autoAssociateOnImport = ref(true);
 const manualImportText = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
-const isSubtitled = ref(true);
-const isWatermarkRemoved = ref(false);
 const resolution = ref('1080'); // 分辨率：480, 720, 1080, 4k
 const resolutionOptions = [
   { label: '480p', value: '480' },
@@ -3582,8 +3534,8 @@ const executeGenerateSingleScene = async (idx: number) => {
   // 模拟参数传递
   const params = {
     model: modelStore.selectedVideoModel,
-    withSubtitle: isSubtitled.value,
-    removeWatermark: isWatermarkRemoved.value,
+    withSubtitle: modelStore.isSubtitled,
+    removeWatermark: modelStore.isWatermarkRemoved,
     resolution: resolution.value
   };
   console.log(`Generating scene ${idx + 1} with:`, params);
@@ -3606,8 +3558,8 @@ const executeGenerateSingleScene = async (idx: number) => {
         persistStoryboardForEpisode(episodeId.value);
         
         let successMsg = `分镜 ${idx + 1} 生成成功 (模型: ${modelStore.selectedVideoModel}, 分辨率: ${resolution.value})`;
-        if (isSubtitled.value) successMsg += ' [含字幕]';
-        if (isWatermarkRemoved.value) successMsg += ' [已去水印]';
+        if (modelStore.isSubtitled) successMsg += ' [含字幕]';
+        if (modelStore.isWatermarkRemoved) successMsg += ' [已去水印]';
         ElMessage.success(successMsg);
         resolve();
       }

@@ -97,7 +97,7 @@
         </div>
 
         <div class="flex-1 relative z-0">
-          <VueFlow :nodes="flowNodes" :edges="flowEdges" :default-viewport="{ zoom: 0.8 }" fit-view-on-init>
+          <VueFlow :nodes="flowNodes" :edges="flowEdges" :default-viewport="{ zoom: 0.8 }" fit-view-on-init nodes-draggable="true">
             <Background pattern-color="#000" :gap="24" :size="1" :opacity="0.03" />
             <Controls />
 
@@ -205,6 +205,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <span v-if="STALE.storyboard" class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-md shadow-sm">⚠ 待刷新</span>
+                    <button @click.stop="downloadAllVideos" class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-bold transition-colors shadow-sm"><el-icon><Download /></el-icon> 批量下载</button>
                     <button @click.stop="downloadAllVideos" class="flex items-center gap-1 px-3 py-1.5 bg-emerald-500 text-white hover:bg-emerald-600 rounded-lg text-xs font-bold transition-colors shadow-sm"><el-icon><VideoPlay /></el-icon> 播放全部</button>
                     <button class="text-slate-400 hover:text-slate-600 p-1.5 hover:bg-slate-100 rounded-lg transition-colors"><el-icon><Setting /></el-icon></button>
                   </div>
@@ -215,7 +216,27 @@
                     <button @click.stop="refreshStage('storyboard')" class="px-3 py-1 bg-amber-500 text-white rounded-lg font-bold shadow-sm hover:bg-amber-600">重新生成</button>
                   </div>
 
-                  <div class="space-y-4">
+                 <!-- 分镜表格 -->
+                 <div class="mb-6">
+                   <h4 class="font-black text-slate-800 text-sm mb-3">分镜表格总览</h4>
+                   <el-table :data="SHOTS" border style="width: 100%" size="small">
+                     <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                     <el-table-column prop="time" label="时间轴" width="100"></el-table-column>
+                     <el-table-column prop="dur" label="时长" width="60"></el-table-column>
+                     <el-table-column prop="cam" label="镜头" width="80"></el-table-column>
+                     <el-table-column prop="desc" label="画面描述" show-overflow-tooltip></el-table-column>
+                     <el-table-column prop="script" label="旁白" show-overflow-tooltip></el-table-column>
+                     <el-table-column label="关联资产" width="120" show-overflow-tooltip>
+                       <template #default="scope">
+                         <span v-for="(tag, index) in scope.row.tags" :key="tag">
+                           {{ getAssetName(tag) }}{{ index < scope.row.tags.length - 1 ? ', ' : '' }}
+                         </span>
+                       </template>
+                     </el-table-column>
+                   </el-table>
+                 </div>
+
+                 <div class="space-y-4">
                     <div v-for="shot in SHOTS" :key="shot.id" class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow group relative">
                       <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <button @click.stop="openShotEdit(shot)" class="w-6 h-6 flex items-center justify-center bg-white/90 text-slate-500 hover:text-indigo-600 rounded shadow-sm border border-slate-200"><el-icon><Edit /></el-icon></button>
@@ -326,10 +347,14 @@
               <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </div>
             <h2 class="font-black text-slate-800 text-base tracking-wide flex-1">多 Agent 协作网络</h2>
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">
-              <span class="text-xs font-medium">当前 Agent:</span>
-              <span class="text-sm font-bold">{{ agentConfigs[currentAgent].name }}</span>
-            </div>
+            <el-select v-model="currentAgent" placeholder="选择 Agent" size="small" class="w-[120px] agent-select" @change="agentSay(`当前 Agent 已切换至：${agentConfigs[currentAgent].name}`, currentAgent)">
+              <el-option
+                v-for="key in agentKeys"
+                :key="key"
+                :label="agentConfigs[key].name"
+                :value="key"
+              />
+            </el-select>
           </div>
           <!-- Agent Legend -->
           <div class="flex gap-2 overflow-x-auto hide-scrollbar-if-possible pb-1">
@@ -727,6 +752,10 @@ const messages = ref<ChatMessage[]>([]);
 const msgsContainer = ref<HTMLElement | null>(null);
 const currentAgent = ref<AgentType>('director'); // New state for current active agent
 
+const agentKeys = computed(() => Object.keys(agentConfigs));
+
+
+
 const scrollToBottom = () => {
   nextTick(() => {
     if (msgsContainer.value) msgsContainer.value.scrollTop = msgsContainer.value.scrollHeight;
@@ -1064,5 +1093,66 @@ setTimeout(resetAll, 100);
 .glass-dialog {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+:deep(.agent-select) {
+  .el-input__wrapper {
+    border-radius: 12px;
+    background-color: #f5f7fa; /* Slightly brighter default background */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.08); /* Enhanced 3D texture */
+    border: none;
+    transition: all 0.3s ease; /* Smooth transitions */
+
+    &:hover {
+      background-color: #e8ebf0; /* Slightly darker hover background */
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.12); /* More pronounced hover shadow */
+    }
+
+    &.is-focus {
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), inset 0 2px 4px rgba(0,0,0,0.08); /* Stronger focus ring with depth */
+      border-color: #6366f1; /* Accent border color */
+    }
+
+    .el-input__inner {
+      color: #1e293b;
+      font-weight: 600;
+    }
+  }
+
+  .el-select__suffix {
+    color: #64748b; // 下拉箭头颜色
+  }
+
+  .el-select-dropdown {
+    border-radius: 16px; /* Slightly larger border-radius */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.08); /* More pronounced shadow */
+    border: 1px solid #e2e8f0; /* Add a subtle border */
+    overflow: hidden; /* Ensure rounded corners are respected */
+    background-color: #ffffff; /* Explicit background for consistency */
+
+    .el-select-dropdown__item {
+      border-radius: 10px; /* Slightly larger border-radius for items */
+      margin: 6px 10px; /* Adjusted margin for better spacing */
+      padding: 10px 15px; /* Added padding */
+      font-size: 14px; /* Slightly larger font size */
+      transition: all 0.2s ease; /* Smooth transitions */
+      color: #334155; /* Default text color */
+
+      &:hover {
+        background-color: #e0e7ff; /* Lighter indigo hover background */
+        color: #4f46e5; /* Stronger indigo text color */
+        transform: translateY(-1px); /* Slight lift effect */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* Subtle shadow on hover */
+      }
+
+      &.is-selected {
+        background-color: #6366f1; /* Stronger indigo for selected item */
+        color: #ffffff; /* White text for selected item */
+        font-weight: 700;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Distinct shadow for selected */
+      }
+    }
+  }
 }
 </style>

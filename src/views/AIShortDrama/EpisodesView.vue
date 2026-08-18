@@ -108,65 +108,31 @@
           <span>关联主体</span>
         </button>
 
-        <!-- 分镜配置下拉框 -->
-        <el-popover
-          placement="bottom"
-          :width="280"
-          trigger="click"
-          popper-class="modern-popover"
-        >
-          <template #reference>
-            <button
-              class="h-10 px-6 flex items-center gap-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:shadow-lg hover:shadow-indigo-500/10 rounded-full font-black text-[13px] border-2 border-indigo-50 dark:border-indigo-900/30 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
-            >
-              <el-icon :size="16"><Setting /></el-icon>
-              <span>分镜配置</span>
-            </button>
+        <!-- 分辨率下拉框 -->
+        <el-dropdown trigger="click" @command="(val) => synthesisResolution = val">
+          <button
+            class="h-10 px-6 flex items-center gap-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:shadow-lg hover:shadow-indigo-500/10 rounded-full font-black text-[13px] border-2 border-indigo-50 dark:border-indigo-900/30 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
+          >
+            <el-icon :size="16"><Monitor /></el-icon>
+            <span>{{ synthesisResolution }}</span>
+            <el-icon class="text-[12px] opacity-70"><ArrowDown /></el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu class="modern-dropdown-menu">
+              <el-dropdown-item 
+                v-for="res in ['480P', '720P', '1080P', '4K']" 
+                :key="res" 
+                :command="res"
+                :class="{ 'is-active': synthesisResolution === res }"
+              >
+                <div class="flex items-center justify-between w-full min-w-[100px] gap-4">
+                  <span class="text-[12px] font-bold">{{ res }}</span>
+                  <el-icon v-if="synthesisResolution === res" class="text-indigo-500"><Check /></el-icon>
+                </div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
           </template>
-          
-          <div class="p-2 flex flex-col gap-4">
-            <!-- 分辨率选择 -->
-            <div>
-              <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200 block mb-2">分辨率</span>
-              <div class="flex gap-2">
-                <button
-                  :class="['flex-1 text-[13px] font-bold px-3 py-2 rounded-xl transition-all', synthesisResolution === '480P' ? 'bg-indigo-500 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-600']"
-                  @click="synthesisResolution = '480P'"
-                >480p</button>
-                <button
-                  :class="['flex-1 text-[13px] font-bold px-3 py-2 rounded-xl transition-all', synthesisResolution === '720P' ? 'bg-indigo-500 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-600']"
-                  @click="synthesisResolution = '720P'"
-                >720p</button>
-                <button
-                  :class="['flex-1 text-[13px] font-bold px-3 py-2 rounded-xl transition-all', synthesisResolution === '1080P' ? 'bg-indigo-500 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-600']"
-                  @click="synthesisResolution = '1080P'"
-                >1080p</button>
-                <button
-                  :class="['flex-1 text-[13px] font-bold px-3 py-2 rounded-xl transition-all', synthesisResolution === '4K' ? 'bg-indigo-500 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-600']"
-                  @click="synthesisResolution = '4K'"
-                >4K</button>
-              </div>
-            </div>
-
-            <!-- 字幕选项 -->
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col">
-                <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200">字幕</span>
-                <span class="text-[10px] text-slate-400">视频叠加字幕</span>
-              </div>
-              <el-switch v-model="synthesisSubtitle" />
-            </div>
-
-            <!-- 水印选项 -->
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col">
-                <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200">去水印</span>
-                <span class="text-[10px] text-slate-400">移除平台水印</span>
-              </div>
-              <el-switch v-model="synthesisWatermark" :active-value="'none'" :inactive-value="'brand'" />
-            </div>
-          </div>
-        </el-popover>
+        </el-dropdown>
 
         <!-- AI Video Model Selector (Only in 分镜视频 tab) -->
         <div 
@@ -926,8 +892,6 @@ const synthesisAllSelected = ref(false);
 
 // Batch synthesis video settings
 const synthesisResolution = ref('1080P');
-const synthesisSubtitle = ref(false);
-const synthesisWatermark = ref('brand'); // 'brand' | 'none'
 
 // Subject Association Logic
 const handleGlobalAssociate = () => {
@@ -1569,8 +1533,6 @@ const handleBatchSynthesis = () => {
   
   // Reset video settings to defaults
   synthesisResolution.value = '1080P';
-  synthesisSubtitle.value = false;
-  synthesisWatermark.value = 'brand';
   
   showBatchSynthesisSelectDialog.value = true;
 };
@@ -1623,8 +1585,8 @@ const confirmBatchSynthesisSelection = () => {
   // Capture current settings
   const settings = {
     resolution: synthesisResolution.value,
-    subtitle: synthesisSubtitle.value,
-    watermark: synthesisWatermark.value
+    subtitle: modelStore.isSubtitled,
+    watermark: modelStore.isWatermarkRemoved ? 'none' : 'brand'
   };
 
   showBatchSynthesisSelectDialog.value = false;

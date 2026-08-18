@@ -10,6 +10,9 @@ export const useModelStore = defineStore('models', {
     lockedModels: JSON.parse(localStorage.getItem('lockedModels') || '{}') as Record<string, { type: string, modelId: string }>,
     // 全局锁定状态: { text: boolean, image: boolean, video: boolean }
     globalLocks: JSON.parse(localStorage.getItem('globalLocks') || '{"text": false, "image": false, "video": false}') as Record<string, boolean>,
+    // 水印与字幕配置
+    isSubtitled: localStorage.getItem('isSubtitled') !== 'false', // 默认开启
+    isWatermarkRemoved: localStorage.getItem('isWatermarkRemoved') === 'true', // 默认不去除
     // 权限列表 (模拟 - 默认赋予所有权限或大部分权限)
     userPermissions: [] as string[],
     // 生成中的模块列表
@@ -75,6 +78,14 @@ export const useModelStore = defineStore('models', {
     setGenerating(moduleId: string, isGenerating: boolean) {
       if (!moduleId) return;
       this.generatingModules[moduleId] = isGenerating;
+    },
+    setSubtitle(val: boolean) {
+      this.isSubtitled = val;
+      localStorage.setItem('isSubtitled', String(val));
+    },
+    setWatermarkRemoved(val: boolean) {
+      this.isWatermarkRemoved = val;
+      localStorage.setItem('isWatermarkRemoved', String(val));
     }
   }
 });

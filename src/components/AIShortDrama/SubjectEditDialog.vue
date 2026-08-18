@@ -274,6 +274,34 @@
                         class="w-full flex-1 bg-transparent border-none resize-none text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed font-bold focus:outline-none px-2 custom-history-scrollbar"
                         @input="handleVoiceDescriptionInput"
                       ></textarea>
+
+                      <!-- 参考音频上传 -->
+                      <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center gap-3">
+                        <div class="w-16 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group/audio shrink-0 shadow-sm">
+                          <template v-if="localSubject.voice_audio">
+                            <audio :src="localSubject.voice_audio" controls class="w-full h-full object-cover"></audio>
+                          </template>
+                          <el-icon v-else size="24" class="text-slate-200 dark:text-slate-700"><Headset /></el-icon>
+                          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/audio:opacity-100 transition-all flex items-center justify-center gap-2 pointer-events-none">
+                            <el-upload action="#" :auto-upload="false" :show-file-list="false" @change="handleVoiceAudioUpload" class="pointer-events-auto">
+                              <el-icon class="text-white cursor-pointer hover:scale-110" size="18"><Upload /></el-icon>
+                            </el-upload>
+                            <el-icon v-if="localSubject.voice_audio" class="text-white cursor-pointer hover:scale-110 pointer-events-auto" size="18" @click="localSubject.voice_audio = ''">
+                              <Delete />
+                            </el-icon>
+                          </div>
+                        </div>
+                        <div class="flex-1 flex flex-col gap-1">
+                          <p class="text-[11px] text-slate-400 leading-relaxed font-medium">
+                            上传参考音频可以帮助 AI 更准确地生成角色声音。
+                          </p>
+                          <el-upload action="#" :auto-upload="false" :show-file-list="false" @change="handleVoiceAudioUpload">
+                            <button class="px-4 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 border border-indigo-100 dark:border-indigo-900/50 rounded-full text-[11px] font-black hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all shadow-sm">
+                              {{ localSubject.voice_audio ? '更换音频' : '上传参考音频' }}
+                            </button>
+                          </el-upload>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -440,7 +468,7 @@ import { ref, watch, computed } from 'vue';
 import { generateImageAPI } from '@/utils/imageGenerator';
 import { useModelStore } from '@/store/models';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
-import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked, Coin } from '@element-plus/icons-vue';
+import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked, Coin, Headset } from '@element-plus/icons-vue';
 
 const modelStore = useModelStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -928,6 +956,12 @@ const handleReferenceImageUpload = (file: any) => {
   localSubject.value.reference_image = URL.createObjectURL(file.raw);
   syncSelectedHistoryFromFields();
   ElMessage.success('参考图上传成功');
+};
+
+const handleVoiceAudioUpload = (file: any) => {
+  localSubject.value.voice_audio = URL.createObjectURL(file.raw);
+  syncSelectedHistoryFromFields();
+  ElMessage.success('参考音频上传成功');
 };
 
 const handleVoiceDescriptionInput = () => {

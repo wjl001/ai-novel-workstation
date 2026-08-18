@@ -160,6 +160,13 @@
 
       <!-- Model Selector & Batch Download Overlay - Aligned with Script Title Row -->
       <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
+        <el-select v-model="selectedResolution" placeholder="选择分辨率" class="w-[150px] h-10 mr-3">
+          <el-option label="1K (1280x720)" value="1280/720"></el-option>
+          <el-option label="1.5K (1920x1080)" value="1920/1080"></el-option>
+          <el-option label="2K (2560x1440)" value="2560/1440"></el-option>
+          <el-option label="3K (2880x1620)" value="2880/1620"></el-option>
+          <el-option label="4K (3840x2160)" value="3840/2160"></el-option>
+        </el-select>
         <button
           @click="batchDownloadAssets"
           class="h-10 px-5 flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full font-bold text-[13px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all duration-300 active:scale-95 mr-3"
@@ -1666,6 +1673,7 @@ const isBatchGenerating = ref(false);
 const batchGenerationProgress = ref(0);
 const batchCurrentInfo = ref('');
 const batchSessionId = ref(0);
+const selectedResolution = ref('1280/720');
 
 // Mock descriptions database for batch generation
 const mockDescriptions: Record<string, Record<string, { description: string; prompt: string }>> = {
@@ -1771,7 +1779,7 @@ const handleBatchGenerateSubjectInfo = async (type: 'character' | 'scene' | 'pro
       continue;
     }
 
-    const nextUrl = await generateImageAPI(prompt);
+    const nextUrl = await generateImageAPI(prompt, 'image', selectedResolution.value);
     const patch = buildAssetImagePatch(asset, nextUrl);
     episodeStore.updateSubject(asset.id, { ...patch, description });
 
@@ -2273,7 +2281,7 @@ const generateImagesForAssets = async (assets: any[], sessionId: number) => {
     if (sessionId !== generationSessionId.value) return;
 
     const prompt = `${asset.name}, ${asset.description}, realistic, high quality`;
-    const nextUrl = await generateImageAPI(prompt);
+    const nextUrl = await generateImageAPI(prompt, 'image', selectedResolution.value);
     const patch = buildAssetImagePatch(asset, nextUrl);
     episodeStore.updateSubject(asset.id, patch);
     
