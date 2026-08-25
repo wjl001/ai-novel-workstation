@@ -507,7 +507,7 @@
                         v-model="aiPrompt"
                         class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
                         :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
-                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
+                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探...."
                       ></textarea>
                       
                       <!-- Textarea Bottom Toolbar -->
@@ -1417,6 +1417,20 @@ const handleFileUploadClick = () => {
 const openAssetLibrary = () => {
   // Open asset library modal/dialog
   ElMessage.info('打开资产库');
+};
+
+const viewAllHistory = () => {
+  router.push('/ai-short-drama-creator/works');
+};
+
+const goToHistoryDetail = (item: any) => {
+  if (item.type === 'shortDrama') {
+    router.push('/ai-short-drama-creator/outline');
+  } else if (item.type === 'shortVideo') {
+    router.push('/ai-short-video-creator/index');
+  } else {
+    ElMessage.info(`跳转到 ${item.title} 的详情`);
+  }
 };
 
 const groupedHistory = computed(() => {
