@@ -65,6 +65,10 @@
         <div class="h-8 w-px bg-slate-100 dark:bg-slate-700 mx-1 hidden sm:block"></div>
         
         <div class="flex gap-3">
+          <el-select v-model="modeFilter" placeholder="创作模式" class="custom-select-v2 !w-full sm:!w-32" clearable>
+            <el-option label="完整流程" value="full" />
+            <el-option label="快捷创作" value="quick" />
+          </el-select>
           <el-select v-model="sortBy" placeholder="排序方式" class="custom-select-v2 !w-full sm:!w-40">
             <el-option label="最近修改" value="updated_desc" />
             <el-option label="最近创建" value="created_desc" />
@@ -155,7 +159,7 @@
             </div>
 
             <!-- Status Badge (Top Left) -->
-            <div class="absolute top-2 sm:top-4 left-2 sm:left-4 z-30">
+            <div class="absolute top-2 sm:top-4 left-2 sm:left-4 z-30 flex flex-col gap-1.5">
               <span 
                 class="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[10px] font-black tracking-wider uppercase backdrop-blur-md border shadow-sm"
                 :class="{
@@ -165,6 +169,13 @@
                 }"
               >
                 {{ getStatusLabel(work.status) }}
+              </span>
+              <!-- 创作模式标签 -->
+              <span 
+                v-if="work.creationMode === 'quick'"
+                class="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[10px] font-black tracking-wider uppercase backdrop-blur-md border shadow-sm bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-600/90 dark:text-white dark:border-emerald-500"
+              >
+                快捷创作
               </span>
             </div>
 
@@ -261,7 +272,7 @@
           </div>
 
           <!-- Status Badge -->
-          <div class="shrink-0 px-4">
+          <div class="shrink-0 px-4 flex flex-col gap-1.5">
             <span 
               class="px-4 py-2 rounded-xl text-[11px] font-black tracking-wider uppercase border shadow-sm transition-all inline-block"
               :class="{
@@ -271,6 +282,13 @@
               }"
             >
               {{ getStatusLabel(work.status) }}
+            </span>
+            <!-- 创作模式标签 -->
+            <span 
+              v-if="work.creationMode === 'quick'"
+              class="px-3 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase border shadow-sm bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-600/90 dark:text-white dark:border-emerald-500 text-center"
+            >
+              快捷创作
             </span>
           </div>
 
@@ -672,11 +690,14 @@ const uiDesignGroups = {
 
 // Mock Data
 const works = ref([
-  { id: 1, title: '《星际迷航：觉醒》', description: '讲述人类首次踏出太阳系，与外星文明发生接触并引发一系列危机的科幻史诗。', status: 'in_progress', createdAt: '2023-10-08 08:00', updatedAt: '2023-10-12 09:30', cover: '' },
-  { id: 2, title: '《末日拾荒者》', description: '废土世界中，主角依靠一个神秘的系统，在废墟中寻找生存资源并建立避难所。', status: 'draft', createdAt: '2023-10-10 11:15', updatedAt: '2023-10-10 11:15', cover: '' },
-  { id: 3, title: '《重生之我在古代当首富》', description: '一个现代社畜意外穿越回古代，利用现代商业知识打造商业帝国的爆笑爽文故事。', status: 'in_progress', createdAt: '2023-10-01 10:00', updatedAt: '2023-10-05 14:30', cover: '' },
-  { id: 4, title: '《冷面总裁的千金娇妻》', description: '豪门联姻背后的真情流露，从互相防备到相知相爱的都市情感短剧。', status: 'completed', createdAt: '2023-09-15 09:20', updatedAt: '2023-09-28 16:45', cover: '' },
+  { id: 1, title: '《星际迷航：觉醒》', description: '讲述人类首次踏出太阳系，与外星文明发生接触并引发一系列危机的科幻史诗。', status: 'in_progress', createdAt: '2023-10-08 08:00', updatedAt: '2023-10-12 09:30', cover: '', creationMode: 'full' },
+  { id: 2, title: '《末日拾荒者》', description: '废土世界中，主角依靠一个神秘的系统，在废墟中寻找生存资源并建立避难所。', status: 'draft', createdAt: '2023-10-10 11:15', updatedAt: '2023-10-10 11:15', cover: '', creationMode: 'quick' },
+  { id: 3, title: '《重生之我在古代当首富》', description: '一个现代社畜意外穿越回古代，利用现代商业知识打造商业帝国的爆笑爽文故事。', status: 'in_progress', createdAt: '2023-10-01 10:00', updatedAt: '2023-10-05 14:30', cover: '', creationMode: 'full' },
+  { id: 4, title: '《冷面总裁的千金娇妻》', description: '豪门联姻背后的真情流露，从互相防备到相知相爱的都市情感短剧。', status: 'completed', createdAt: '2023-09-15 09:20', updatedAt: '2023-09-28 16:45', cover: '', creationMode: 'quick' },
 ]);
+
+// 创作模式筛选
+const modeFilter = ref('');
 
 const filteredWorks = computed(() => {
   let result = works.value;
@@ -687,6 +708,10 @@ const filteredWorks = computed(() => {
   
   if (statusFilter.value) {
     result = result.filter(w => w.status === statusFilter.value);
+  }
+  
+  if (modeFilter.value) {
+    result = result.filter(w => w.creationMode === modeFilter.value);
   }
   
   result.sort((a, b) => {
@@ -705,7 +730,14 @@ const getStatusLabel = (status: string) => {
 };
 
 const openWork = (work: any) => {
-  router.push('/ai-short-drama-creator/episodes');
+  // 根据创作模式跳转到不同页面
+  if (work.creationMode === 'quick') {
+    // 快捷模式：跳转到主体设置页
+    router.push('/ai-short-drama-creator/assets');
+  } else {
+    // 完整模式：跳转到剧集规划页
+    router.push('/ai-short-drama-creator/episodes');
+  }
 };
 
 const handleCommand = (command: string, work: any) => {

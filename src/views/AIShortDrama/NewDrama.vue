@@ -316,7 +316,7 @@
                            <button 
                             class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                             :disabled="!aiPrompt.trim() || isGenerating"
-                            @click="startCreation"
+                            @click="handleCreationStart"
                           >
                             <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
                             <span>立即创作</span>
@@ -451,6 +451,41 @@
             <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
               AI全流程辅助，内置高转化剧情模板，让创意触手可及。
             </p>
+            
+            <!-- 创作模式选择 -->
+            <div class="flex items-center gap-3 mt-4">
+              <div class="flex items-center gap-1.5 p-1 rounded-2xl" :class="isLight ? 'bg-slate-100/80 border border-slate-200' : 'bg-white/5 border border-white/10'">
+                <button
+                  @click="creationMode = 'full'"
+                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300"
+                  :class="creationMode === 'full'
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
+                    : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-white')"
+                >
+                  <el-icon :size="14"><Document /></el-icon>
+                  完整流程
+                </button>
+                <button
+                  @click="creationMode = 'quick'"
+                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300"
+                  :class="creationMode === 'quick'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30'
+                    : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-white')"
+                >
+                  <el-icon :size="14"><Lightning /></el-icon>
+                  快捷创作
+                </button>
+              </div>
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-bold"
+                :class="creationMode === 'full'
+                  ? (isLight ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/20')
+                  : (isLight ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20')"
+              >
+                <el-icon :size="12"><InfoFilled /></el-icon>
+                <span v-if="creationMode === 'full'">剧本 → 主体 → 分镜，全流程AI辅助</span>
+                <span v-else>无需剧本，直接设置主体生成分镜视频</span>
+              </div>
+            </div>
           </div>
 
           <!-- Creation Card: More compact and color-distinguished -->
@@ -1384,6 +1419,8 @@ const autoMode = ref(false); // New
 const isSidebarCollapsed = ref(false);
 const activeChannel = ref('shortDrama');
 const currentStep = ref(1);
+// 创作模式：full=完整流程（剧本→主体→分镜），quick=快捷流程（主体→分镜）
+const creationMode = ref<'full' | 'quick'>('full');
 const selectedTopic = ref<any>(null);
 const inspirationTab = ref('basic');
 const isImportedScript = computed(() => selectedTopic.value?.label === '外部剧本导入');
@@ -1816,6 +1853,9 @@ const finishConfig = () => {
   isGenerating.value = true;
   showHotTopicDialog.value = false;
   
+  // 设置创作模式到 store
+  dramaStore.setCreationMode(creationMode.value);
+  
   // Combine all selections into a prompt
   const finalProtagonistName = isCustomProtagonist.value && configForm.customProtagonistName.trim()
     ? configForm.customProtagonistName.trim()
@@ -1843,7 +1883,14 @@ ${protagonist}
   dramaStore.setEpisodesCount(parseInt(configForm.episodesCount) || 80);
   
   setTimeout(() => {
-    router.push('/ai-short-drama-creator/outline');
+    // 根据创作模式跳转到不同页面
+    if (creationMode.value === 'quick') {
+      // 快捷流程：直接跳转到主体设置页
+      router.push('/ai-short-drama-creator/assets');
+    } else {
+      // 完整流程：跳转到剧本创作页
+      router.push('/ai-short-drama-creator/outline');
+    }
     isGenerating.value = false;
   }, 1000);
 };
@@ -1937,6 +1984,34 @@ const startCreation = () => {
     return;
   }
   
+  // 设置创作模式到 store
+  dramaStore.setCreationMode(creationMode.value);
+  
+  // 快捷模式：直接跳转到主体设置页，不弹灵感之门
+  if (creationMode.value === 'quick') {
+    // 将用户输入的灵感存入 store，供主体设置页使用
+    dramaStore.setQuickCreationPrompt(aiPrompt.value.trim());
+    router.push('/ai-short-drama-creator/assets');
+    return;
+  }
+  
+  // 完整模式：弹出灵感之门弹窗
+  // 将用户输入的灵感填入故事梗概
+  configForm.storySynopsis = aiPrompt.value.trim();
+  // 跳转到故事梗概标签页
+  inspirationTab.value = 'synopsis';
+  // 弹出灵感之门弹窗
+  showHotTopicDialog.value = true;
+};
+
+// 创作频道的立即创作按钮处理函数（跳转到短视频创作页）
+const handleCreationStart = () => {
+  if (!aiPrompt.value.trim()) {
+    ElMessage.warning('请输入创作灵感或点击上方建议');
+    return;
+  }
+  
+  // 跳转到短视频创作页面
   router.push('/ai-short-video-creator/index');
 };
 
