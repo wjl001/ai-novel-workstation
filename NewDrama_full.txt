@@ -1,0 +1,2562 @@
+Read "D:\phpstudy_pro\WWW\ai-novel-workstation1.2.0\src\views\AIShortDrama\NewDrama.vue":
+
+     1	<template>
+     2	  <div class="relative h-full flex flex-col overflow-hidden transition-colors duration-500" :class="[isLight ? 'bg-slate-50' : 'bg-slate-950', { 'dark': !isLight }]">
+     3	    
+     4	    <!-- Cinematic Blockbuster Background -->
+     5	    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+     6	      <!-- Ambient Video Layer: 60% for Light, 80% for Dark -->
+     7	      <div class="absolute inset-0 transition-opacity duration-1000" :class="isLight ? 'opacity-60' : 'opacity-80'">
+     8	        <video 
+     9	          autoplay 
+    10	          muted 
+    11	          loop 
+    12	          playsinline 
+    13	          class="w-full h-full object-cover scale-100"
+    14	          style="filter: saturate(1.3) contrast(1.2) brightness(0.8) hue-rotate(-5deg);"
+    15	        >
+    16	          <source src="@/assets/video_07e1234349e0e3972393d879f1c65c53.mp4" type="video/mp4">
+    17	        </video>
+    18	      </div>
+    19	
+    20	      <!-- Theme-aware Gradient Overlays: Light/Dark compatibility -->
+    21	      <div 
+    22	        class="absolute inset-0 transition-all duration-700"
+    23	        :class="isLight 
+    24	          ? 'bg-gradient-to-b from-white/20 via-transparent to-white/40' 
+    25	          : 'bg-gradient-to-b from-black/30 via-transparent to-black/50'"
+    26	      ></div>
+    27	
+    28	      <!-- Cinematic Elements -->
+    29	      <div class="absolute inset-0 pointer-events-none">
+    30	        <!-- Film Grain: Reduced opacity for clarity -->
+    31	        <div class="absolute inset-0 opacity-[0.05] dark:opacity-[0.1] mix-blend-overlay bg-noise-pattern"></div>
+    32	        
+    33	        <!-- Vignette -->
+    34	        <div class="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_200px_rgba(0,0,0,0.4)]"></div>
+    35	        
+    36	        <!-- Dynamic Glows -->
+    37	        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+    38	        <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-[120px] animate-pulse-slow-delayed"></div>
+    39	      </div>
+    40	    </div>
+    41	
+    42	    <!-- NEW: Main Layout Container (Sidebar + Content) -->
+    43	    <div class="flex flex-1 relative z-10">
+    44	      <!-- Left Sidebar -->
+    45	      <div class="relative bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-700/50 flex flex-col shrink-0 transition-all duration-300" :class="isSidebarCollapsed ? 'w-16' : 'w-35'">
+    46	        <div class="p-4 flex flex-col gap-2">
+    47	
+    48	          <button
+    49	            @click="activeChannel = 'creation'; activeTab = 'ai'"
+    50	            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+    51	            :class="activeChannel === 'creation' ? 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+    52	          >
+    53	            <el-icon :size="16"><Film /></el-icon>
+    54	            <span v-if="!isSidebarCollapsed">创作</span>
+    55	          </button>
+    56	          <button
+    57	            @click="activeChannel = 'shortDrama'"
+    58	            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+    59	            :class="activeChannel === 'shortDrama' ? 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+    60	          >
+    61	            <el-icon :size="16"><VideoCamera /></el-icon>
+    62	            <span v-if="!isSidebarCollapsed">短剧</span>
+    63	          </button>
+    64	          <button
+    65	            @click="activeChannel = 'assetLibrary'"
+    66	            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+    67	            :class="activeChannel === 'assetLibrary' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+    68	          >
+    69	            <el-icon :size="16"><Collection /></el-icon>
+    70	            <span v-if="!isSidebarCollapsed">资产库</span>
+    71	          </button>
+    72	          <button
+    73	            @click="activeChannel = 'history'"
+    74	            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+    75	            :class="activeChannel === 'history' ? 'bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+    76	          >
+    77	            <el-icon :size="16"><Clock /></el-icon>
+    78	            <span v-if="!isSidebarCollapsed">创作历史</span>
+    79	          </button>
+    80	          <!-- Collapse/Expand Button (new position: bottom right) -->
+    81	          <button
+    82	            @click="isSidebarCollapsed = !isSidebarCollapsed"
+    83	            class="absolute bottom-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
+    84	            :class="[
+    85	              isLight ? 'bg-white shadow-md text-slate-500 hover:bg-slate-100' : 'bg-slate-800 shadow-lg text-slate-400 hover:bg-slate-700'
+    86	            ]"
+    87	          >
+    88	            <el-icon :size="16">
+    89	              <ArrowLeft v-if="!isSidebarCollapsed" />
+    90	              <ArrowRight v-else />
+    91	            </el-icon>
+    92	          </button>
+    93	        </div>
+    94	      </div>
+    95	
+    96	      <!-- Right Content Area -->
+    97	      <div v-if="activeChannel === 'creation'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+    98	        <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
+    99	          <!-- Header: More compact -->
+   100	          <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
+   101	            <!-- Product Design Info Button -->
+   102	            <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
+   103	              <button 
+   104	                @click="showDesignDialog = true"
+   105	                class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
+   106	                :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
+   107	              >
+   108	                <el-icon :size="12"><InfoFilled /></el-icon>
+   109	                <span>产品设计说明</span>
+   110	              </button>
+   111	            </div>
+   112	            
+   113	            <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
+   114	              <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+   115	                智能短视频创作，引爆流量
+   116	              </span>
+   117	            </h1>
+   118	            <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
+   119	              AI智能生成，海量模板素材，轻松打造爆款短视频。
+   120	            </p>
+   121	          </div>
+   122	
+   123	          <!-- Creation Card: More compact and color-distinguished -->
+   124	          <div
+   125	            class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
+   126	            :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
+   127	          >
+   128	            <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
+   129	
+   130	            </div>
+   131	
+   132	            <div class="px-6 py-3 md:px-8 md:py-4 pt-1">
+   133	              <div class="min-h-[180px] flex flex-col">
+   134	
+   135	                <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
+   136	                  <div class="relative group mt-2">
+   137	                    <!-- Dynamic Glowing Border -->
+   138	                    <div 
+   139	                      class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
+   140	                      :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
+   141	                    ></div>
+   142	                    
+   143	                    <div
+   144	                      class="relative rounded-[28px] border-2 transition-all overflow-hidden"
+   145	                      :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
+   146	                    >
+   147	                      <textarea 
+   148	                        v-model="aiPrompt"
+   149	                        class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
+   150	                        :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
+   151	                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探..."
+   152	                      ></textarea>
+   153	                      
+   154	                      <!-- Textarea Bottom Toolbar -->
+   155	                      <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
+   156	                        <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+   157	                          <div class="flex items-center gap-2">
+   158	                            <!-- Plus button for upload and asset library -->
+   159	                            <el-dropdown trigger="click">
+   160	                              <button
+   161	                                class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
+   162	                                :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
+   163	                                title="上传文件/资产库"
+   164	                              >
+   165	                                <el-icon :size="16"><Plus /></el-icon>
+   166	                              </button>
+   167	                              <template #dropdown>
+   168	                                <el-dropdown-menu>
+   169	                                  <el-dropdown-item @click="handleFileUploadClick">
+   170	                                    <el-icon><Upload /></el-icon>上传文件
+   171	                                  </el-dropdown-item>
+   172	                                  <el-dropdown-item @click="openAssetLibrary">
+   173	                                    <el-icon><Collection /></el-icon>资产库
+   174	                                  </el-dropdown-item>
+   175	                                </el-dropdown-menu>
+   176	                              </template>
+   177	                            </el-dropdown>
+   178	
+   179	                            <!-- Model Selection -->
+   180	                            <el-dropdown trigger="click" class="model-selector-dropdown">
+   181	                              <button
+   182	                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   183	                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   184	                                title="选择模型"
+   185	                              >
+   186	                                <el-icon :size="14"><MagicStick /></el-icon>
+   187	                                <span>模型</span>
+   188	                                <el-icon :size="12"><ArrowDown /></el-icon>
+   189	                              </button>
+   190	                              <template #dropdown>
+   191	                                <el-dropdown-menu class="!p-0 !rounded-xl !overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700 w-80">
+   192	                                  <div class="p-2">
+   193	                                    <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-3">
+   194	                                      <button
+   195	                                        class="flex-1 py-1 text-center rounded-lg text-xs font-bold transition-all"
+   196	                                        :class="modelSelectionType === 'video' ? 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700/50'"
+   197	                                        @click="modelSelectionType = 'video'"
+   198	                                      >
+   199	                                        视频
+   200	                                      </button>
+   201	                                      <button
+   202	                                        class="flex-1 py-1 text-center rounded-lg text-xs font-bold transition-all"
+   203	                                        :class="modelSelectionType === 'image' ? 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700/50'"
+   204	                                        @click="modelSelectionType = 'image'"
+   205	                                      >
+   206	                                        图片
+   207	                                      </button>
+   208	                                    </div>
+   209	
+   210	                                    <div v-if="modelSelectionType === 'video'" class="flex flex-col gap-1">
+   211	                                      <el-dropdown-item v-for="model in videoModels" :key="model.id" @click="selectedVideoModel = model.name" :class="[selectedVideoModel === model.name ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200' : '', '!py-2 !px-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg']">
+   212	                                        <div class="flex items-center justify-between w-full">
+   213	                                          <div>
+   214	                                            <p class="font-bold text-gray-800 dark:text-white">{{ model.name }}</p>
+   215	                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ model.description }}</p>
+   216	                                          </div>
+   217	                                          <i v-if="selectedVideoModel === model.name" class="i-mingcute-check-line text-blue-500 text-lg"></i>
+   218	                                        </div>
+   219	                                      </el-dropdown-item>
+   220	                                    </div>
+   221	
+   222	                                    <div v-else class="flex flex-col gap-1">
+   223	                                      <el-dropdown-item v-for="model in imageModels" :key="model.id" @click="selectedImageModel = model.name" :class="[selectedImageModel === model.name ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200' : '', '!py-2 !px-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg']">
+   224	                                        <div class="flex items-center justify-between w-full">
+   225	                                          <div>
+   226	                                            <p class="font-bold text-gray-800 dark:text-white">{{ model.name }}</p>
+   227	                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ model.description }}</p>
+   228	                                          </div>
+   229	                                          <i v-if="selectedImageModel === model.name" class="i-mingcute-check-line text-blue-500 text-lg"></i>
+   230	                                        </div>
+   231	                                      </el-dropdown-item>
+   232	                                    </div>
+   233	                                  </div>
+   234	                                </el-dropdown-menu>
+   235	                              </template>
+   236	                            </el-dropdown>
+   237	
+   238	                            <!-- Skills (Placeholder for now) -->
+   239	                            <button
+   240	                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   241	                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   242	                              title="技能"
+   243	                            >
+   244	                              <el-icon :size="14"><Lightning /></el-icon>
+   245	                              <span>技能</span>
+   246	                              <el-icon :size="12"><ArrowDown /></el-icon>
+   247	                            </button>
+   248	
+   249	                            <!-- Ratio Selection -->
+   250	                            <el-dropdown trigger="click">
+   251	                              <button
+   252	                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   253	                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   254	                                title="选择比例"
+   255	                              >
+   256	                                <el-icon :size="14"><Crop /></el-icon>
+   257	                                <span>{{ configForm.videoAspectRatio }}</span>
+   258	                                <el-icon :size="12"><ArrowDown /></el-icon>
+   259	                              </button>
+   260	                              <template #dropdown>
+   261	                                <el-dropdown-menu>
+   262	                                  <el-dropdown-item
+   263	                                    v-for="option in aspectRatioOptions"
+   264	                                    :key="option.label"
+   265	                                    @click="configForm.videoAspectRatio = option.label"
+   266	                                    :class="{'is-active': configForm.videoAspectRatio === option.label}"
+   267	                                  >
+   268	                                    {{ option.label }}
+   269	                                  </el-dropdown-item>
+   270	                                </el-dropdown-menu>
+   271	                              </template>
+   272	                            </el-dropdown>
+   273	
+   274	                            <!-- AI Embellishment (retained) -->
+   275	                            <button
+   276	                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   277	                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   278	                              title="优化描述"
+   279	                            >
+   280	                              <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
+   281	                              <span>AI 润色</span>
+   282	                            </button>
+   283	
+   284	                            <!-- Duration Selection (Dropdown with Slider) -->
+   285	                            <el-dropdown trigger="click">
+   286	                              <button
+   287	                                class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   288	                                :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   289	                                title="选择时长"
+   290	                              >
+   291	                                <span>{{ configForm.expectedDuration }}秒</span>
+   292	                                <el-icon :size="12"><ArrowDown /></el-icon>
+   293	                              </button>
+   294	                              <template #dropdown>
+   295	                                <el-dropdown-menu>
+   296	                                  <div class="px-4 py-2">
+   297	                                    <p class="text-sm font-bold mb-2">视频时长</p>
+   298	                                    <div class="flex items-center gap-2 mb-2">
+   299	                                      <el-button size="small">按秒数</el-button>
+   300	                                      <el-button size="small">智能时长</el-button>
+   301	                                    </div>
+   302	                                    <el-slider v-model="configForm.expectedDuration" :min="4" :max="180" :step="1" show-input />
+   303	                                    <p class="text-xs text-slate-500 mt-2">会在提示词里附加 “时长: {{ configForm.expectedDuration }}秒”</p>
+   304	                                  </div>
+   305	                                </el-dropdown-menu>
+   306	                              </template>
+   307	                            </el-dropdown>
+   308	                          </div>
+   309	                        </div>
+   310	                        
+   311	                        <div class="flex items-center gap-3">
+   312	                           <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
+   313	                             <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
+   314	                           </span>
+   315	
+   316	                           <button 
+   317	                            class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+   318	                            :disabled="!aiPrompt.trim() || isGenerating"
+   319	                            @click="startCreation"
+   320	                          >
+   321	                            <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
+   322	                            <span>立即创作</span>
+   323	                          </button>
+   324	                        </div>
+   325	                      </div>
+   326	                    </div>
+   327	                  </div>
+   328	
+   329	                  <!-- Featured Categories -->
+   330	                  <div class="flex flex-col items-center gap-3 mt-1">
+   331	                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+   332	                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+   333	                      热门题材灵感
+   334	                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+   335	                    </div>
+   336	                    <div class="flex flex-wrap items-center justify-center gap-2">
+   337	                      <div 
+   338	                        v-for="topic in hotTopics" 
+   339	                        :key="topic.label" 
+   340	                        @click="selectHotTopic(topic)"
+   341	                        class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
+   342	                        :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
+   343	                      >
+   344	                        <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
+   345	                        {{ topic.label }}
+   346	                      </div>
+   347	                    </div>
+   348	                  </div>
+   349	                </div>
+   350	              </div>
+   351	            </div>
+   352	          </div>
+   353	
+   354	          <!-- Recent Projects Section -->
+   355	          <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
+   356	            <div class="flex items-center justify-between mb-4 shrink-0">
+   357	              <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
+   358	                <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+   359	                近期作品
+   360	                <span class="text-slate-600 font-light text-lg">/</span>
+   361	                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
+   362	              </h2>
+   363	              <button 
+   364	                @click="router.push('/ai-short-drama-creator/works')" 
+   365	                class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+   366	                :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
+   367	              >
+   368	                <span>管理作品</span>
+   369	                <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
+   370	              </button>
+   371	            </div>
+   372	
+   373	            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
+   374	              <div 
+   375	                v-for="work in recentWorks.slice(0, 4)" 
+   376	                :key="work.id"
+   377	                class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
+   378	                :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
+   379	                @click="router.push('/ai-short-drama-creator/outline')"
+   380	              >
+   381	                <!-- Previews Area: More compact -->
+   382	                <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
+   383	                  <template v-if="work.previews && work.previews.length > 0">
+   384	                    <div 
+   385	                      v-for="(img, idx) in work.previews" 
+   386	                      :key="idx"
+   387	                      class="flex-1 h-full rounded-lg overflow-hidden"
+   388	                      :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
+   389	                    >
+   390	                      <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+   391	                    </div>
+   392	                  </template>
+   393	                  <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
+   394	                     <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+   395	                  </div>
+   396	                  <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
+   397	                    Example
+   398	                  </div>
+   399	                </div>
+   400	
+   401	                <div class="p-3 flex flex-col gap-1.5">
+   402	                  <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
+   403	                    {{ work.title }}
+   404	                  </h3>
+   405	                  <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+   406	                    <div class="flex items-center gap-1">
+   407	                      <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
+   408	                      <span>{{ work.updatedAt.split(' ')[0] }}</span>
+   409	                    </div>
+   410	                    <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
+   411	                      {{ work.episodes }} 集
+   412	                    </span>
+   413	                  </div>
+   414	                </div>
+   415	              </div>
+   416	            </div>
+   417	
+   418	            <!-- Empty State for Recent Projects -->
+   419	            <div v-if="recentWorks.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+   420	              <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
+   421	                <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+   422	              </div>
+   423	              <p class="font-bold text-lg mb-1">暂无制作中的短剧</p>
+   424	              <p class="text-sm opacity-60">开启您的第一场 AI 剧本创作之旅吧</p>
+   425	            </div>
+   426	          </div>
+   427	        </div>
+   428	      </div>
+   429	
+   430	      <div v-else-if="activeChannel === 'shortDrama'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+   431	        <div class="max-w-7xl mx-auto flex flex-col items-center w-full">
+   432	          <!-- Header: More compact -->
+   433	          <div class="text-center mb-2 max-w-3xl shrink-0 relative w-full">
+   434	            <!-- Product Design Info Button -->
+   435	            <div class="absolute top-0 right-0 md:right-[-40px] flex items-center gap-2">
+   436	              <button 
+   437	                @click="showDesignDialog = true"
+   438	                class="h-8 px-3 flex items-center gap-2 rounded-full font-bold text-[10px] shadow-sm border transition-all duration-300"
+   439	                :class="isLight ? 'bg-white text-slate-600 border-slate-200 hover:text-indigo-600 hover:border-indigo-300' : 'bg-slate-800/50 backdrop-blur-md text-slate-300 border-slate-700/50 hover:text-indigo-400 hover:border-indigo-400/50'"
+   440	              >
+   441	                <el-icon :size="12"><InfoFilled /></el-icon>
+   442	                <span>产品设计说明</span>
+   443	              </button>
+   444	            </div>
+   445	            
+   446	            <h1 class="text-2xl md:text-3xl font-black mb-1 tracking-tight leading-tight">
+   447	              <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+   448	                智能极速创作，打造爆款短剧
+   449	              </span>
+   450	            </h1>
+   451	            <p class="text-xs md:text-sm font-medium leading-relaxed opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-300'">
+   452	              AI全流程辅助，内置高转化剧情模板，让创意触手可及。
+   453	            </p>
+   454	          </div>
+   455	
+   456	          <!-- Creation Card: More compact and color-distinguished -->
+   457	          <div
+   458	            class="w-full max-w-5xl rounded-[32px] overflow-hidden mb-4 transition-all duration-500 shrink-0"
+   459	            :class="isLight ? 'bg-white/80 backdrop-blur-xl shadow-sm border border-slate-200' : 'bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-black/20 border border-slate-700/50'"
+   460	          >
+   461	            <div class="p-1 flex m-2 rounded-[18px]" :class="isLight ? 'bg-slate-50/50 border border-slate-100' : 'bg-slate-900/50'">
+   462	              <button 
+   463	                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+   464	                :class="activeTab === 'ai'
+   465	                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+   466	                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+   467	                @click="activeTab = 'ai'"
+   468	              >
+   469	                <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
+   470	              </button>
+   471	              <button 
+   472	                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+   473	                :class="activeTab === 'upload'
+   474	                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+   475	                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+   476	                @click="activeTab = 'upload'"
+   477	              >
+   478	                <el-icon :size="16"><Upload /></el-icon> 导入已有剧本
+   479	              </button>
+   480	              <button 
+   481	                class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
+   482	                :class="activeTab === 'canvas'
+   483	                  ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
+   484	                  : (isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white')"
+   485	                @click="router.push('/free-canvas')"
+   486	              >
+   487	                <el-icon :size="16"><Monitor /></el-icon> 自由画布
+   488	              </button>
+   489	            </div>
+   490	
+   491	            <div class="px-6 py-3 md:px-8 md:py-4 pt-1">
+   492	              <div class="min-h-[180px] flex flex-col">
+   493	                <!-- AI Tab Content -->
+   494	                <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
+   495	                  <div class="relative group mt-2">
+   496	                    <!-- Dynamic Glowing Border -->
+   497	                    <div 
+   498	                      class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
+   499	                      :class="isGenerating ? 'opacity-30 animate-pulse' : 'group-focus-within:opacity-15'"
+   500	                    ></div>
+   501	                    
+   502	                    <div
+   503	                      class="relative rounded-[28px] border-2 transition-all overflow-hidden"
+   504	                      :class="isLight ? 'bg-white border-slate-200 group-focus-within:border-indigo-400 shadow-sm' : 'bg-slate-900 border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-black/20'"
+   505	                    >
+   506	                      <textarea 
+   507	                        v-model="aiPrompt"
+   508	                        class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
+   509	                        :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
+   510	                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探...."
+   511	                      ></textarea>
+   512	                      
+   513	                      <!-- Textarea Bottom Toolbar -->
+   514	                      <div class="px-6 py-3 border-t flex items-center justify-between" :class="isLight ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-white/5 backdrop-blur-xl'">
+   515	                        <div class="flex items-center gap-4" :class="isLight ? 'text-slate-400' : 'text-slate-400'">
+   516	                          <span
+   517	                            class="text-[11px] font-bold flex items-center gap-1.5 px-3 py-1 rounded-full shadow-sm"
+   518	                            :class="isLight ? 'bg-white text-slate-500 border border-slate-100' : 'bg-white/10 text-slate-300'"
+   519	                          >
+   520	                            <el-icon class="text-indigo-400"><EditPen /></el-icon> {{ aiPrompt.length }} 字
+   521	                          </span>
+   522	                          <div class="w-px h-4" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></div>
+   523	                          <div class="flex items-center gap-1">
+   524	                            <button
+   525	                              class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm"
+   526	                              :class="isLight ? 'hover:bg-slate-100 hover:text-indigo-500' : 'hover:bg-white/10 hover:text-indigo-400'"
+   527	                              title="清空内容"
+   528	                              @click="aiPrompt = ''"
+   529	                              v-if="aiPrompt"
+   530	                            >
+   531	                              <el-icon :size="14" class="text-rose-400"><Delete /></el-icon>
+   532	                            </button>
+   533	                            <button
+   534	                              class="h-8 px-3 rounded-full flex items-center gap-1.5 transition-all shadow-sm text-[11px] font-black border"
+   535	                              :class="isLight ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100' : 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border-indigo-500/20'"
+   536	                              title="优化描述"
+   537	                            >
+   538	                              <el-icon :size="14" class="text-indigo-400"><Brush /></el-icon>
+   539	                              <span>AI 润色</span>
+   540	                            </button>
+   541	                          </div>
+   542	                        </div>
+   543	                        
+   544	                        <div class="flex items-center gap-3">
+   545	                           <span v-if="isGenerating" class="text-[11px] font-bold text-indigo-400 animate-pulse mr-2 flex items-center gap-1.5">
+   546	                             <el-icon class="is-loading"><Loading /></el-icon> 正在为您构思精彩剧情...
+   547	                           </span>
+   548	                           <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
+   549	                           <button 
+   550	                            class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+   551	                            :disabled="!aiPrompt.trim() || isGenerating"
+   552	                            @click="startCreation"
+   553	                          >
+   554	                            <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
+   555	                            <span>立即创作</span>
+   556	                          </button>
+   557	                        </div>
+   558	                      </div>
+   559	                    </div>
+   560	                  </div>
+   561	
+   562	                  <!-- Featured Categories -->
+   563	                  <div class="flex flex-col items-center gap-3 mt-1">
+   564	                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-80" :class="isLight ? 'text-slate-400' : 'text-slate-500'">
+   565	                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+   566	                      热门题材灵感
+   567	                      <span class="w-8 h-[1px]" :class="isLight ? 'bg-slate-200' : 'bg-white/10'"></span>
+   568	                    </div>
+   569	                    <div class="flex flex-wrap items-center justify-center gap-2">
+   570	                      <div 
+   571	                        v-for="topic in hotTopics" 
+   572	                        :key="topic.label" 
+   573	                        @click="selectHotTopic(topic)"
+   574	                        class="px-4 py-1.5 rounded-2xl text-[12px] font-bold cursor-pointer transition-all flex items-center gap-2 border group"
+   575	                        :class="isLight ? 'border-slate-100 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-md hover:-translate-y-0.5' : 'border-white/5 bg-white/5 text-slate-300 hover:border-indigo-400/50 hover:text-indigo-400 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'"
+   576	                      >
+   577	                        <span class="w-1.5 h-1.5 rounded-full transition-colors" :class="isLight ? 'bg-slate-400 group-hover:bg-indigo-500' : 'bg-slate-500 group-hover:bg-indigo-400'"></span>
+   578	                        {{ topic.label }}
+   579	                      </div>
+   580	                    </div>
+   581	                  </div>
+   582	                </div>
+   583	
+   584	                <!-- Upload Tab Content -->
+   585	                <div v-if="activeTab === 'upload'" class="py-1 animate-fade-in h-full flex flex-col justify-center">
+   586	                  <el-upload
+   587	                    drag
+   588	                    action="#"
+   589	                    :auto-upload="false"
+   590	                    class="custom-upload-v3 w-full h-full"
+   591	                    @change="handleFileUpload"
+   592	                  >
+   593	                    <div class="py-4">
+   594	                      <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm" :class="isLight ? 'bg-indigo-50 text-indigo-500' : 'bg-indigo-500/30 text-indigo-300'">
+   595	                        <el-icon :size="20"><upload-filled /></el-icon>
+   596	                      </div>
+   597	                      <div class="el-upload__text font-black text-[15px] mb-1 drop-shadow-md" :class="isLight ? 'text-slate-700' : '!text-white'">
+   598	                        <span :class="isLight ? 'text-slate-700' : 'text-white'">将剧本文件拖到此处，或</span> 
+   599	                        <em 
+   600	                          class="not-italic font-[1000] underline underline-offset-4 transition-colors"
+   601	                          :class="isLight ? 'text-indigo-600 hover:text-indigo-500' : 'text-indigo-300 hover:text-indigo-200'"
+   602	                        >点击上传</em>
+   603	                      </div>
+   604	                      <div class="text-[12px] font-black drop-shadow-sm" :class="isLight ? 'text-slate-500' : 'text-white'">
+   605	                        支持 docx, pdf, txt 格式，不超过10万字
+   606	                      </div>
+   607	                    </div>
+   608	                  </el-upload>
+   609	                </div>
+   610	              </div>
+   611	            </div>
+   612	          </div>
+   613	
+   614	          <!-- Recent Projects Section -->
+   615	          <div class="w-full relative flex-1 min-h-0 flex flex-col rounded-[32px] p-4 border" :class="isLight ? 'bg-white/70 backdrop-blur-xl border-slate-200' : 'bg-slate-900/30 backdrop-blur-2xl border-white/10'">
+   616	            <div class="flex items-center justify-between mb-4 shrink-0">
+   617	              <h2 class="text-xl font-black flex items-center gap-2" :class="isLight ? 'text-slate-900' : 'text-white'">
+   618	                <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+   619	                近期作品
+   620	                <span class="text-slate-600 font-light text-lg">/</span>
+   621	                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
+   622	              </h2>
+   623	              <button 
+   624	                @click="router.push('/ai-short-drama-creator/works')" 
+   625	                class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+   626	                :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
+   627	              >
+   628	                <span>管理作品</span>
+   629	                <el-icon class="group-hover:translate-x-1 transition-transform" :size="12"><ArrowRight /></el-icon>
+   630	              </button>
+   631	            </div>
+   632	
+   633	            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0 overflow-hidden">
+   634	              <div 
+   635	                v-for="work in recentWorks.slice(0, 4)" 
+   636	                :key="work.id"
+   637	                class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
+   638	                :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
+   639	                @click="router.push('/ai-short-drama-creator/outline')"
+   640	              >
+   641	                <!-- Previews Area: More compact -->
+   642	                <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
+   643	                  <template v-if="work.previews && work.previews.length > 0">
+   644	                    <div 
+   645	                      v-for="(img, idx) in work.previews" 
+   646	                      :key="idx"
+   647	                      class="flex-1 h-full rounded-lg overflow-hidden"
+   648	                      :class="isLight ? 'bg-slate-200' : 'bg-slate-800'"
+   649	                    >
+   650	                      <img :src="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+   651	                    </div>
+   652	                  </template>
+   653	                  <div v-else class="w-full h-full flex items-center justify-center rounded-lg" :class="isLight ? 'text-indigo-300 bg-white' : 'text-indigo-400/30 bg-white/5'">
+   654	                     <el-icon size="24" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+   655	                  </div>
+   656	                  <div v-if="work.isExample" class="absolute top-2 left-2 px-1.5 py-0.5 bg-purple-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-widest rounded shadow-lg z-10">
+   657	                    Example
+   658	                  </div>
+   659	                </div>
+   660	
+   661	                <div class="p-3 flex flex-col gap-1.5">
+   662	                  <h3 class="font-black truncate text-[14px] transition-colors" :class="isLight ? 'text-slate-800 group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-400'" :title="work.title">
+   663	                    {{ work.title }}
+   664	                  </h3>
+   665	                  <div class="flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+   666	                    <div class="flex items-center gap-1">
+   667	                      <el-icon class="text-indigo-400" :size="10"><Clock /></el-icon>
+   668	                      <span>{{ work.updatedAt.split(' ')[0] }}</span>
+   669	                    </div>
+   670	                    <span v-if="work.episodes" class="px-1.5 py-0.5 rounded" :class="isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-400'">
+   671	                      {{ work.episodes }} 集
+   672	                    </span>
+   673	                  </div>
+   674	                </div>
+   675	              </div>
+   676	            </div>
+   677	
+   678	            <!-- Empty State for Recent Projects -->
+   679	            <div v-if="recentWorks.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+   680	              <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
+   681	                <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><VideoCamera /></el-icon>
+   682	              </div>
+   683	              <p class="font-bold text-lg mb-1">暂无制作中的短剧</p>
+   684	              <p class="text-sm opacity-60">开启您的第一场 AI 剧本创作之旅吧</p>
+   685	            </div>
+   686	          </div>
+   687	        </div>
+   688	      </div>
+   689	
+   690	      <div v-else-if="activeChannel === 'history'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
+   691	        <div class="max-w-7xl mx-auto w-full">
+   692	          <!-- Header with "查看全部" button -->
+   693	          <div class="flex items-center justify-between mb-4">
+   694	            <h1 class="text-2xl md:text-3xl font-black tracking-tight leading-tight" :class="isLight ? 'text-slate-800' : 'text-white'">
+   695	              创作历史
+   696	            </h1>
+   697	            <button @click="viewAllHistory" class="text-indigo-600 dark:text-indigo-400 text-sm font-bold hover:underline">
+   698	              查看全部
+   699	            </button>
+   700	          </div>
+   701	
+   702	          <!-- History items grouped by date -->
+   703	          <div v-for="group in groupedHistory || []" :key="group.date" class="mb-6">
+   704	            <h2 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+   705	              {{ group.date }}
+   706	            </h2>
+   707	            <div class="space-y-3">
+   708	              <div
+   709	                v-for="item in group.items"
+   710	                :key="item.id"
+   711	                class="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 cursor-pointer"
+   712	                :class="isLight ? 'bg-white hover:bg-slate-50 shadow-sm border border-slate-100' : 'bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700'"
+   713	                @click="goToHistoryDetail(item)"
+   714	              >
+   715	                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+   716	                  :class="{
+   717	                    'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300': item.type === 'shortDrama',
+   718	                    'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-300': item.type === 'shortVideo',
+   719	                    'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300': item.type === 'image',
+   720	                  }"
+   721	                >
+   722	                  <el-icon :size="20">
+   723	                    <VideoCamera v-if="item.type === 'shortDrama'" />
+   724	                    <Film v-else-if="item.type === 'shortVideo'" />
+   725	                    <Picture v-else-if="item.type === 'image'" />
+   726	                    <Document v-else />
+   727	                  </el-icon>
+   728	                </div>
+   729	                <div class="flex-1">
+   730	                  <h3 class="font-bold text-base truncate" :class="isLight ? 'text-slate-800' : 'text-white'">
+   731	                    {{ item.title }}
+   732	                  </h3>
+   733	                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+   734	                    {{ item.description }}
+   735	                  </p>
+   736	                </div>
+   737	                <el-icon :size="16" class="text-slate-400"><ArrowRight /></el-icon>
+   738	              </div>
+   739	            </div>
+   740	          </div>
+   741	
+   742	          <!-- Empty State -->
+   743	          <div v-if="!groupedHistory || groupedHistory.length === 0" class="py-20 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+   744	            <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4">
+   745	              <el-icon size="32" class="opacity-40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"><Clock /></el-icon>
+   746	            </div>
+   747	            <p class="font-bold text-lg mb-1">暂无创作历史</p>
+   748	            <p class="text-sm opacity-60">开始您的第一次创作吧！</p>
+   749	          </div>
+   750	        </div>
+   751	      </div>
+   752	    </div>
+   753	
+   754	    <el-dialog 
+   755	      v-model="showHotTopicDialog" 
+   756	      :title="undefined"
+   757	      width="1400px" 
+   758	      :class="['hot-topic-dialog-v3 overflow-hidden rounded-[40px]', { 'dark': !isLight }]"
+   759	      :show-close="false"
+   760	      destroy-on-close
+   761	      top="1vh"
+   762	    >
+   763	      <div class="relative flex flex-col bg-[#F8FAFC] dark:bg-slate-950 max-h-[96vh] rounded-[36px] overflow-hidden border border-white/40 dark:border-slate-800/40" :class="{ 'dark': !isLight }">
+   764	        <!-- Premium Background Elements -->
+   765	        <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+   766	        <div class="absolute top-1/2 -right-32 w-[400px] h-[400px] bg-purple-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+   767	        <div class="absolute -bottom-32 left-1/4 w-[350px] h-[350px] bg-pink-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+   768	        
+   769	        <!-- Header: Immersive Hero Style -->
+   770	        <div class="relative pl-10 pr-14 pt-4 pb-3 shrink-0 overflow-hidden">
+   771	          <!-- Close Button: Premium Style -->
+   772	          <div class="absolute right-4 top-1/2 -translate-y-1/2 z-[9999] flex items-center pointer-events-auto">
+   773	            <button 
+   774	              @click="showHotTopicDialog = false" 
+   775	              class="w-9 h-9 flex items-center justify-center rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-700 transition-all duration-500 shadow-xl shadow-slate-200/50 dark:shadow-none border border-white dark:border-slate-700 hover:rotate-90"
+   776	            >
+   777	              <el-icon :size="18"><Close /></el-icon>
+   778	            </button>
+   779	          </div>
+   780	          <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-purple-600/10 to-transparent dark:from-indigo-400/15 dark:via-purple-400/10"></div>
+   781	          
+   782	          <div class="relative flex items-center gap-4">
+   783	            <div class="w-12 h-12 rounded-[18px] bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-[0_8px_30px_rgba(79,70,229,0.3)] ring-2 ring-white dark:ring-slate-900 transition-all hover:scale-110 hover:rotate-6 duration-500 group">
+   784	              <el-icon :size="24" class="group-hover:animate-pulse"><MagicStick /></el-icon>
+   785	            </div>
+   786	            <div class="flex-1">
+   787	              <div class="flex items-center gap-3">
+   788	                <h2 class="text-2xl font-[1000] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600 dark:from-white dark:via-indigo-300 dark:to-purple-300 drop-shadow-sm">
+   789	                  开启灵感之门
+   790	                </h2>
+   791	                <span class="px-3 py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white text-[10px] font-[1000] uppercase tracking-[0.2em] rounded-xl shadow-[0_4px_15px_rgba(79,70,229,0.3)] border border-white/20">
+   792	                  AI PRO
+   793	                </span>
+   794	              </div>
+   795	              <p class="text-sm text-slate-500 dark:text-slate-400 font-bold flex items-center gap-2 mt-1">
+   796	                每一项都可以由 <span class="text-indigo-600 dark:text-indigo-400 font-black">AI 深度润色</span>，打造爆款短剧。
+   797	              </p>
+   798	            </div>
+   799	            <!-- Model Selector for Inspiration Door -->
+   800	            <div class="flex items-center gap-2 ml-auto">
+   801	               <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-hot" />
+   802	            </div>
+   803	          </div>
+   804	        </div>
+   805	
+   806	        <!-- Main Content: Left Tab + Right Content Layout -->
+   807	        <div class="flex-1 flex overflow-hidden relative z-10">
+   808	          <!-- Left Sidebar: Tab Navigation -->
+   809	          <div class="w-64 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col shrink-0">
+   810	            <div class="p-4 flex flex-col gap-2">
+   811	              <button
+   812	                v-for="tab in [
+   813	                  { id: 'basic', label: '基础信息', icon: EditPen, color: 'indigo' },
+   814	                  { id: 'background', label: '故事背景', icon: Location, color: 'blue' },
+   815	                  { id: 'character', label: '角色档案', icon: Avatar, color: 'purple' },
+   816	                  { id: 'setting', label: '故事设定', icon: Connection, color: 'amber' },
+   817	                  { id: 'synopsis', label: '故事梗概', icon: Document, color: 'emerald' }
+   818	                ]"
+   819	                :key="tab.id"
+   820	                @click="inspirationTab = tab.id"
+   821	                class="relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group overflow-hidden"
+   822	                :class="inspirationTab === tab.id 
+   823	                  ? 'bg-gradient-to-r from-' + tab.color + '-500/15 to-' + tab.color + '-600/10 border border-' + tab.color + '-200/50 shadow-lg shadow-' + tab.color + '-500/10'
+   824	                  : 'hover:bg-slate-100/50 dark:hover:bg-slate-800/50 border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50'"
+   825	              >
+   826	                <div class="relative z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+   827	                  :class="inspirationTab === tab.id 
+   828	                    ? 'bg-gradient-to-br from-' + tab.color + '-500 to-' + tab.color + '-600 text-white shadow-lg shadow-' + tab.color + '-500/30'
+   829	                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'"
+   830	                >
+   831	                  <el-icon :size="18">
+   832	                    <component :is="tab.icon" />
+   833	                  </el-icon>
+   834	                </div>
+   835	                <div class="relative z-10 flex-1 text-left">
+   836	                  <span class="text-sm font-black"
+   837	                    :class="inspirationTab === tab.id 
+   838	                      ? 'text-' + tab.color + '-700 dark:text-' + tab.color + '-300'
+   839	                      : 'text-slate-600 dark:text-slate-400'"
+   840	                  >
+   841	                    {{ tab.label }}
+   842	                  </span>
+   843	                </div>
+   844	                <div v-if="inspirationTab === tab.id" class="relative z-10 w-1.5 h-6 rounded-full bg-gradient-to-b"
+   845	                  :class="'from-' + tab.color + '-500 to-' + tab.color + '-600'"
+   846	                >
+   847	                </div>
+   848	              </button>
+   849	            </div>
+   850	          </div>
+   851	
+   852	          <!-- Right Content Area -->
+   853	          <div class="flex-1 overflow-y-auto p-6 custom-scrollbar-v2">
+   854	            <!-- Tab 1: Basic Information -->
+   855	            <div v-show="inspirationTab === 'basic'" class="flex flex-col gap-6 animate-fade-in">
+   856	              <div class="grid grid-cols-2 gap-4">
+   857	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+   858	                  <div class="flex items-center justify-between mb-3">
+   859	                    <div class="flex items-center gap-2">
+   860	                      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+   861	                        <el-icon :size="16"><EditPen /></el-icon>
+   862	                      </div>
+   863	                      <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">作品名称</label>
+   864	                    </div>
+   865	                    <button 
+   866	                      @click="handleAIFeature('title', 'polish')" 
+   867	                      :disabled="isGeneratingField.title" 
+   868	                      class="group/btn flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all duration-500 text-xs font-black shadow-sm border border-indigo-100 dark:border-indigo-900 overflow-hidden relative"
+   869	                    >
+   870	                      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+   871	                      <el-icon :size="12" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.title}"><Brush /></el-icon>
+   872	                      <span class="relative z-10">AI 润色</span>
+   873	                    </button>
+   874	                  </div>
+   875	                  <el-input 
+   876	                    v-model="configForm.title" 
+   877	                    placeholder="为您的短剧起一个吸睛的名字..." 
+   878	                    class="custom-input-v5 !h-12 !text-[15px]"
+   879	                  />
+   880	                </div>
+   881	
+   882	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+   883	                  <div class="flex items-center gap-2 mb-3">
+   884	                    <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+   885	                      <el-icon :size="16"><CollectionTag /></el-icon>
+   886	                    </div>
+   887	                    <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">题材类型</label>
+   888	                  </div>
+   889	                  
+   890	                  <div class="relative">
+   891	                    <el-select 
+   892	                      v-if="configForm.genre !== '自定义'"
+   893	                      v-model="configForm.genre" 
+   894	                      filterable 
+   895	                      allow-create 
+   896	                      default-first-option
+   897	                      placeholder="选择或输入题材..." 
+   898	                      class="w-full custom-select-v4 !h-12 !text-[15px]"
+   899	                      :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'"
+   900	                    >
+   901	                      <el-option
+   902	                        v-for="item in hotTopics"
+   903	                        :key="item.label"
+   904	                        :label="item.label"
+   905	                        :value="item.label"
+   906	                      />
+   907	                    </el-select>
+   908	                    
+   909	                    <div v-else class="flex items-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden h-12 shadow-sm transition-all hover:border-indigo-500 focus-within:border-indigo-500 focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1)]">
+   910	                      <input 
+   911	                        v-model="configForm.customGenre" 
+   912	                        placeholder="输入题材" 
+   913	                        class="flex-1 px-4 bg-transparent border-none outline-none text-[15px] text-slate-700 dark:text-slate-200 font-bold"
+   914	                      />
+   915	                      <div class="flex items-center px-3 h-full gap-2 border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+   916	                        <button @click="handleGenreConfirm" class="p-1.5 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-lg transition-all group/confirm" title="确认">
+   917	                          <el-icon :size="18" class="text-purple-600 dark:text-purple-400 group-hover/confirm:scale-110 transition-transform"><Check /></el-icon>
+   918	                        </button>
+   919	                        <button @click="configForm.genre = ''; configForm.customGenre = ''" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-all group/cancel" title="取消">
+   920	                          <el-icon :size="18" class="text-slate-500 dark:text-slate-400 group-hover/cancel:scale-110 transition-transform"><Close /></el-icon>
+   921	                        </button>
+   922	                      </div>
+   923	                    </div>
+   924	                  </div>
+   925	                </div>
+   926	              </div>
+   927	
+   928	              <div class="grid grid-cols-2 gap-4">
+   929	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+   930	                  <div class="flex items-center gap-2 mb-3">
+   931	                    <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+   932	                      <el-icon :size="16"><User /></el-icon>
+   933	                    </div>
+   934	                    <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">主角设定</label>
+   935	                  </div>
+   936	                  <div class="relative">
+   937	                    <el-select 
+   938	                      v-if="configForm.protagonistSetting !== '自定义'"
+   939	                      v-model="configForm.protagonistSetting" 
+   940	                      @change="handleProtagonistChange" 
+   941	                      class="w-full custom-select-v4 !h-12" 
+   942	                      :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'"
+   943	                    >
+   944	                      <el-option v-for="opt in protagonistOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+   945	                        <div class="flex items-center justify-between w-full">
+   946	                          <span class="font-bold text-[14px] text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+   947	                          <el-icon v-if="configForm.protagonistSetting === opt.label" class="text-indigo-500" :size="12"><Check /></el-icon>
+   948	                        </div>
+   949	                      </el-option>
+   950	                    </el-select>
+   951	                    <div v-else class="flex items-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden h-12 shadow-sm transition-all hover:border-indigo-500 focus-within:border-indigo-500 focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1)]">
+   952	                      <input 
+   953	                        v-model="configForm.customProtagonistName" 
+   954	                        placeholder="名称" 
+   955	                        class="flex-1 px-4 bg-transparent border-none outline-none text-[14px] text-slate-700 dark:text-slate-200 font-bold"
+   956	                      />
+   957	                      <div class="flex items-center px-3 h-full gap-2 border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+   958	                        <button @click="handleProtagonistConfirm" class="p-1.5 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-all group/confirm" title="确认">
+   959	                          <el-icon :size="16" class="text-indigo-600 dark:text-indigo-400 group-hover/confirm:scale-110 transition-transform"><Check /></el-icon>
+   960	                        </button>
+   961	                        <button @click="configForm.protagonistSetting = protagonistOptions[0].label; configForm.customProtagonistName = ''" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-all group/cancel" title="取消">
+   962	                          <el-icon :size="16" class="text-slate-500 dark:text-slate-400 group-hover/cancel:scale-110 transition-transform"><Close /></el-icon>
+   963	                        </button>
+   964	                      </div>
+   965	                    </div>
+   966	                  </div>
+   967	                </div>
+   968	
+   969	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+   970	                  <div class="flex items-center gap-2 mb-3">
+   971	                    <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all shadow-sm">
+   972	                      <el-icon :size="16"><Picture /></el-icon>
+   973	                    </div>
+   974	                    <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">视频风格</label>
+   975	                  </div>
+   976	                  <el-select v-model="configForm.videoStyle" class="w-full custom-select-v4 !h-12" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
+   977	                    <el-option v-for="opt in videoStyleOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+   978	                      <div class="flex items-center justify-between w-full">
+   979	                        <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+   980	                        <el-icon v-if="configForm.videoStyle === opt.label" class="text-purple-500" :size="12"><Check /></el-icon>
+   981	                      </div>
+   982	                    </el-option>
+   983	                  </el-select>
+   984	                </div>
+   985	              </div>
+   986	
+   987	              <div class="grid grid-cols-3 gap-4">
+   988	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+   989	                  <div class="flex items-center gap-2 mb-3">
+   990	                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+   991	                      <el-icon :size="16"><Crop /></el-icon>
+   992	                    </div>
+   993	                    <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">视频比例</label>
+   994	                  </div>
+   995	                  <el-select v-model="configForm.videoAspectRatio" class="w-full custom-select-v4 !h-12" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
+   996	                    <el-option v-for="opt in aspectRatioOptions" :key="opt.label" :label="opt.label" :value="opt.label">
+   997	                      <div class="flex items-center justify-between w-full">
+   998	                        <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">{{ opt.label }}</span>
+   999	                        <el-icon v-if="configForm.videoAspectRatio === opt.label" class="text-blue-500" :size="12"><Check /></el-icon>
+  1000	                      </div>
+  1001	                    </el-option>
+  1002	                  </el-select>
+  1003	                </div>
+  1004	
+  1005	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30">
+  1006	                  <div class="flex items-center gap-2 mb-3">
+  1007	                    <div class="w-8 h-8 rounded-xl bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-sm">
+  1008	                      <el-icon :size="16"><Star /></el-icon>
+  1009	                    </div>
+  1010	                    <label class="text-xs font-[1000] text-slate-400 dark:text-slate-500 tracking-tight uppercase">目标受众</label>
+  1011	                  </div>
+  1012	                  <el-select v-model="configForm.targetAudience" class="w-full custom-select-v4 !h-12" :popper-class="!isLight ? 'custom-select-popper dark' : 'custom-select-popper'">
+  1013	                    <el-option v-for="aud in audienceOptions" :key="aud" :label="aud" :value="aud">
+  1014	                      <div class="flex items-center justify-between w-full">
+  1015	                        <span class="text-[14px] font-bold text-slate-700 dark:text-slate-200">{{ aud }}</span>
+  1016	                        <el-icon v-if="configForm.targetAudience === aud" class="text-pink-500" :size="12"><Check /></el-icon>
+  1017	                      </div>
+  1018	                    </el-option>
+  1019	                  </el-select>
+  1020	                </div>
+  1021	
+  1022	                <div class="group p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl shadow-indigo-500/5 transition-all duration-500 hover:shadow-indigo-500/10 hover:border-indigo-500/30 flex flex-col justify-center gap-4">
+  1023	                  <div class="flex items-center gap-3">
+  1024	                    <div class="flex items-center gap-2 shrink-0">
+  1025	                      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-sm">
+  1026	                        <el-icon :size="16"><Collection /></el-icon>
+  1027	                      </div>
+  1028	                      <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">集数</span>
+  1029	                    </div>
+  1030	                    <div class="flex-1 relative">
+  1031	                      <el-input v-model="configForm.episodesCount" placeholder="80" class="custom-input-v5 !h-12 !text-[14px]" />
+  1032	                      <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-indigo-400/80 uppercase tracking-tighter">EPS</span>
+  1033	                    </div>
+  1034	                  </div>
+  1035	
+  1036	                  <div class="flex items-center gap-3">
+  1037	                    <div class="flex items-center gap-2 shrink-0">
+  1038	                      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-sm">
+  1039	                        <el-icon :size="16"><Timer /></el-icon>
+  1040	                      </div>
+  1041	                      <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">时长</span>
+  1042	                    </div>
+  1043	                    <div class="flex-1 relative">
+  1044	                      <el-input-number v-model="configForm.expectedDuration" :min="30" :max="300" :step="10" controls-position="right" class="custom-number-v5 w-full !h-12" />
+  1045	                      <span class="absolute right-10 top-1/2 -translate-y-1/2 text-[10px] font-black text-indigo-400/80 uppercase tracking-tighter pointer-events-none">SEC</span>
+  1046	                    </div>
+  1047	                  </div>
+  1048	                </div>
+  1049	              </div>
+  1050	            </div>
+  1051	
+  1052	            <!-- Tab 2: Story Background -->
+  1053	            <div v-show="inspirationTab === 'background'" class="flex flex-col gap-6 animate-fade-in">
+  1054	              <div class="relative group">
+  1055	                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[36px] blur opacity-5 group-focus-within:opacity-25 transition duration-500"></div>
+  1056	                <div class="relative flex flex-col gap-4 p-6 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-500/40">
+  1057	                  <div class="flex items-center justify-between">
+  1058	                    <div class="flex items-center gap-3">
+  1059	                      <div class="w-10 h-10 rounded-[14px] bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+  1060	                        <el-icon :size="20"><Location /></el-icon>
+  1061	                      </div>
+  1062	                      <div>
+  1063	                        <h4 class="text-sm font-[1000] text-slate-700 dark:text-slate-300 uppercase tracking-wider">故事背景</h4>
+  1064	                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">构建您短剧的世界观、时代背景和环境设定</p>
+  1065	                      </div>
+  1066	                    </div>
+  1067	                    <button 
+  1068	                      @click="handleAIFeature('storyBackground', 'polish')" 
+  1069	                      :disabled="isGeneratingField.storyBackground || isImportedScript" 
+  1070	                      class="group/btn flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all duration-500 text-sm font-black shadow-sm border border-indigo-100 dark:border-indigo-900 overflow-hidden relative disabled:opacity-40 disabled:cursor-not-allowed"
+  1071	                    >
+  1072	                      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+  1073	                      <el-icon :size="14" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storyBackground}"><Brush /></el-icon>
+  1074	                      <span class="relative z-10">AI 润色</span>
+  1075	                    </button>
+  1076	                  </div>
+  1077	                  <el-input 
+  1078	                    v-model="configForm.storyBackground" 
+  1079	                    type="textarea" 
+  1080	                    :rows="20" 
+  1081	                    placeholder="在这里详细描述您的故事背景...
+  1082	
+  1083	例如：
+  1084	• 这是一个什么样的世界？
+  1085	• 故事发生在什么时代？
+  1086	• 有什么特殊的社会规则或自然法则？
+  1087	• 主要的地理环境和场景是怎样的？" 
+  1088	                    class="custom-textarea-v4 !text-[15px]" 
+  1089	                    :disabled="isImportedScript"
+  1090	                  />
+  1091	                </div>
+  1092	              </div>
+  1093	            </div>
+  1094	
+  1095	            <!-- Tab 3: Character Profile -->
+  1096	            <div v-show="inspirationTab === 'character'" class="flex flex-col gap-6 animate-fade-in">
+  1097	              <div class="group flex flex-col gap-4 p-6 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/10 hover:border-purple-500/40">
+  1098	                <div class="flex items-center justify-between">
+  1099	                  <div class="flex items-center gap-3">
+  1100	                    <div class="w-10 h-10 rounded-[14px] bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+  1101	                      <el-icon :size="20"><Avatar /></el-icon>
+  1102	                    </div>
+  1103	                    <div>
+  1104	                      <h4 class="text-sm font-[1000] text-slate-700 dark:text-slate-300 uppercase tracking-wider">角色档案</h4>
+  1105	                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">塑造您短剧的主要角色，包括主角和关键配角</p>
+  1106	                    </div>
+  1107	                  </div>
+  1108	                  <button 
+  1109	                    @click="handleAIFeature('protagonistDesc', 'polish')"
+  1110	                    :disabled="isGeneratingField.protagonistDesc || isImportedScript" 
+  1111	                    class="group/btn flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 hover:bg-purple-600 hover:text-white transition-all duration-500 text-sm font-black shadow-sm border border-purple-100 dark:border-purple-900 overflow-hidden relative disabled:opacity-40 disabled:cursor-not-allowed"
+  1112	                  >
+  1113	                    <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+  1114	                    <el-icon :size="14" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.protagonistDesc}"><Brush /></el-icon>
+  1115	                    <span class="relative z-10">AI 润色</span>
+  1116	                  </button>
+  1117	                </div>
+  1118	                <el-input 
+  1119	                  v-model="configForm.protagonistDesc" 
+  1120	                  type="textarea" 
+  1121	                  :rows="20" 
+  1122	                  placeholder="详细描述您的主角...
+  1123	
+  1124	例如：
+  1125	• 姓名、年龄、外貌特征
+  1126	• 性格特点和行为习惯
+  1127	• 成长背景和人生经历
+  1128	• 核心动机 and 目标追求
+  1129	• 弱点和内心矛盾" 
+  1130	                  class="custom-textarea-v4 !text-[15px]" 
+  1131	                  :disabled="isImportedScript"
+  1132	                />
+  1133	              </div>
+  1134	            </div>
+  1135	
+  1136	            <!-- Tab 4: Story Setting -->
+  1137	            <div v-show="inspirationTab === 'setting'" class="flex flex-col gap-6 animate-fade-in">
+  1138	              <div class="group flex flex-col gap-4 p-6 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-amber-500/10 hover:border-amber-500/40">
+  1139	                <div class="flex items-center justify-between">
+  1140	                  <div class="flex items-center gap-3">
+  1141	                    <div class="w-10 h-10 rounded-[14px] bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+  1142	                      <el-icon :size="20"><Connection /></el-icon>
+  1143	                    </div>
+  1144	                    <div>
+  1145	                      <h4 class="text-sm font-[1000] text-slate-700 dark:text-slate-300 uppercase tracking-wider">故事设定</h4>
+  1146	                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">定义故事的核心冲突、关键事件和戏剧性元素</p>
+  1147	                    </div>
+  1148	                  </div>
+  1149	                  <button 
+  1150	                    @click="handleAIFeature('storySetting', 'polish')" 
+  1151	                    :disabled="isGeneratingField.storySetting || isImportedScript" 
+  1152	                    class="group/btn flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 hover:bg-amber-600 hover:text-white transition-all duration-500 text-sm font-black shadow-sm border border-amber-100 dark:border-amber-900 overflow-hidden relative disabled:opacity-40 disabled:cursor-not-allowed"
+  1153	                  >
+  1154	                    <div class="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+  1155	                    <el-icon :size="14" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storySetting}"><Brush /></el-icon>
+  1156	                    <span class="relative z-10">AI 润色</span>
+  1157	                  </button>
+  1158	                </div>
+  1159	                <el-input 
+  1160	                  v-model="configForm.storySetting" 
+  1161	                  type="textarea" 
+  1162	                  :rows="20" 
+  1163	                  placeholder="描述故事的核心冲突和关键设定...
+  1164	
+  1165	例如：
+  1166	• 主角面临的主要挑战是什么？
+  1167	• 有哪些对立的力量或人物？
+  1168	• 关键的转折点是什么？
+  1169	• 有什么特殊的规则或设定？
+  1170	• 故事的核心主题是什么？" 
+  1171	                  class="custom-textarea-v4 !text-[15px]" 
+  1172	                  :disabled="isImportedScript"
+  1173	                />
+  1174	              </div>
+  1175	            </div>
+  1176	
+  1177	            <!-- Tab 5: Story Synopsis -->
+  1178	            <div v-show="inspirationTab === 'synopsis'" class="flex flex-col gap-6 animate-fade-in">
+  1179	              <div class="group flex flex-col gap-4 p-6 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/10 hover:border-emerald-500/30">
+  1180	                <div class="flex items-center justify-between">
+  1181	                  <div class="flex items-center gap-3">
+  1182	                    <div class="w-10 h-10 rounded-[14px] bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+  1183	                      <el-icon :size="20"><Document /></el-icon>
+  1184	                    </div>
+  1185	                    <div>
+  1186	                      <h4 class="text-sm font-[1000] text-slate-700 dark:text-slate-300 uppercase tracking-wider">故事梗概</h4>
+  1187	                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">撰写整个故事的大纲和情节脉络</p>
+  1188	                    </div>
+  1189	                  </div>
+  1190	                  <button 
+  1191	                    @click="handleAIFeature('storySynopsis', 'polish')" 
+  1192	                    :disabled="isGeneratingField.storySynopsis || isImportedScript" 
+  1193	                    class="group/btn flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-emerald-600 hover:text-white transition-all duration-500 text-sm font-black shadow-sm border border-emerald-100 dark:border-emerald-900/30 overflow-hidden relative disabled:opacity-40 disabled:cursor-not-allowed"
+  1194	                  >
+  1195	                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+  1196	                    <el-icon :size="14" class="relative z-10 group-hover/btn:rotate-12 transition-transform duration-500" :class="{'is-loading': isGeneratingField.storySynopsis}"><Brush /></el-icon>
+  1197	                    <span class="relative z-10">AI 补全</span>
+  1198	                  </button>
+  1199	                </div>
+  1200	                <el-input 
+  1201	                  v-model="configForm.storySynopsis" 
+  1202	                  type="textarea" 
+  1203	                  :rows="20" 
+  1204	                  placeholder="详细描述您的故事脉络...
+  1205	
+  1206	例如：
+  1207	• 故事是如何开始的？
+  1208	• 主角经历了哪些关键事件？
+  1209	• 情节如何逐步升级？
+  1210	• 高潮部分发生了什么？
+  1211	• 结局是怎样的？" 
+  1212	                  class="custom-textarea-v4 !text-[15px]" 
+  1213	                  :disabled="isImportedScript"
+  1214	                />
+  1215	              </div>
+  1216	            </div>
+  1217	          </div>
+  1218	        </div>
+  1219	
+  1220	        <!-- Footer: High-Impact Action Center -->
+  1221	        <div class="px-10 py-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0 relative z-20 shadow-[0_-15px_40px_rgba(0,0,0,0.02)]">
+  1222	          <div class="flex items-center gap-6">
+  1223	            <!-- Left: AI Intelligence Block -->
+  1224	            <div class="flex-1 flex items-center justify-between gap-4 p-3 bg-slate-50 dark:bg-indigo-500/5 rounded-[20px] border border-slate-200/50 dark:border-indigo-500/20 group relative overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/10">
+  1225	              <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+  1226	              <div class="flex flex-col relative z-10">
+  1227	                <div class="flex items-center gap-2 mb-0.5">
+  1228	                  <div class="flex h-2 w-2 relative">
+  1229	                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+  1230	                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
+  1231	                  </div>
+  1232	                  <span class="text-base font-[1000] text-slate-800 dark:text-white tracking-tighter">智能灵感补全</span>
+  1233	                </div>
+  1234	                <p class="text-xs text-slate-500 dark:text-slate-400 font-bold tracking-tight"><span class="text-indigo-600 dark:text-indigo-400">AI</span> 自动构建全案</p>
+  1235	              </div>
+  1236	
+  1237	              <!-- AI One-click Generation Button: Colored Premium Style -->
+  1238	              <button 
+  1239	                @click="generateInspirationData" 
+  1240	                :disabled="isGeneratingInspiration"
+  1241	                class="relative z-10 flex items-center gap-2 px-5 h-10 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-500 text-sm font-[1000] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border border-white/20 group/btn"
+  1242	              >
+  1243	                <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+  1244	                <el-icon :class="{'is-loading': isGeneratingInspiration}" :size="18" class="relative z-10 group-hover/btn:rotate-12 transition-transform">
+  1245	                  <MagicStick v-if="!isGeneratingInspiration"/>
+  1246	                  <Loading v-else/>
+  1247	                </el-icon>
+  1248	                <span class="relative z-10 tracking-wider">{{ isGeneratingInspiration ? '构思中...' : '一键生成' }}</span>
+  1249	              </button>
+  1250	            </div>
+  1251	
+  1252	            <!-- Right: The Primary Action -->
+  1253	            <button 
+  1254	              @click="finishConfig"
+  1255	              :disabled="!isFormComplete"
+  1256	              class="group relative px-10 h-12 flex items-center justify-center gap-3 text-white rounded-[24px] font-[1000] text-lg shadow-[0_8px_15px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] transition-all duration-500 overflow-hidden"
+  1257	              :class="isFormComplete 
+  1258	                ? 'bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 hover:shadow-[0_12px_25px_-8px_rgba(79,70,229,0.5)] hover:-translate-y-0.5 animate-pulse-indigo' 
+  1259	                : 'bg-slate-300 dark:bg-slate-600 shadow-none pointer-events-none opacity-60'"
+  1260	            >
+  1261	              <div v-if="isFormComplete" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+  1262	              <div v-if="isFormComplete" class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+  1263	              <el-icon :size="22" v-if="isFormComplete" class="group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 animate-float"><Lightning /></el-icon>
+  1264	              <span class="tracking-[0.1em] uppercase">{{ isFormComplete ? '开启创作' : '下一步' }}</span>
+  1265	            </button>
+  1266	          </div>
+  1267	        </div>
+  1268	      </div>
+  1269	    </el-dialog>
+  1270	
+  1271	
+  1272	    <ProductDesignDialog
+  1273	      v-model="showDesignDialog"
+  1274	      id="short-drama-new"
+  1275	      :default-content="{
+  1276	        title: '新建短剧',
+  1277	        location: '系统创作入口，支持“AI灵感生成”与“外部剧本导入”双模式切换，决定后续生成的所有核心输入源。',
+  1278	        layout: [
+  1279	          '**灵感输入区：** 中央大型 TextArea 容器，支持多行输入。底部状态栏包含字数实时统计、清空与 AI 润色功能。',
+  1280	          '**题材灵感区：** 提供热门题材标签云，点击可触发高级配置弹窗 (HotTopicDialog)。',
+  1281	          '**创作规格区：** 2.2 版本新增“AI+手动”混合模式，允许用户在生成前自定义集数、时长及核心设定。'
+  1282	        ],
+  1283	        interactions: [
+  1284	          {
+  1285	            text: '**立即创作 (核心动作)：**\n - **流程：** 用户输入灵感 -> 点击按钮 -> 系统启动 AI 扩展引擎 -> 自动构建完整的“故事设定、主角人设、核心冲突及结局预览” -> 数据持久化至 Store -> 自动重定向至大纲工作台\n - **状态：** 按钮点击后立即进入 Loading 状态，防止多次点击导致重复生成。',
+  1286	            image: imgNewDramaCreate
+  1287	          },
+  1288	          {
+  1289	            text: '**功能说明 (2.2版本)：**\n - **创作模式：** 2.2版本支持 AI 灵感生成与手动精修模式，确保创作的原创性与灵活性。\n - **自由操作：** 全面支持手动新增、编辑或删除剧本、主体、分镜等，实现 AI 自动化与人工干预的深度结合。',
+  1290	            image: ''
+  1291	          },
+  1292	          {
+  1293	            text: '**属性规格与名词解释：**\n - **灵感输入 (aiPrompt)：** 创作的最初源动力。**字数限制：10-500字**\n - **生成集数 (episodesCount)：** 2.2版本支持 1-100 集自由设定。\n - **单集时长 (expectedDuration)：** 每集视频的预期时长。**数值限制：30-300秒**。',
+  1294	            image: ''
+  1295	          }
+  1296	        ],
+  1297	        version: '2.2'
+  1298	      }"
+  1299	    />
+  1300	
+  1301	    <GlobalUIDesignSpecsDialog
+  1302	      v-model="showUIDesignSpecsDialog"
+  1303	      title="UI 设计标注 - 新建短剧"
+  1304	      subtitle="NewDrama UI Design Specifications"
+  1305	      :groups="uiDesignGroups as any"
+  1306	    />
+  1307	
+  1308	    <button
+  1309	      @click="showUIDesignSpecsDialog = true"
+  1310	      class="fixed bottom-6 right-6 z-[1500] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+  1311	      title="查看UI设计标注"
+  1312	    >
+  1313	      <el-icon :size="22"><Monitor /></el-icon>
+  1314	    </button>
+  1315	  </div>
+  1316	</template>
+  1317	
+  1318	<script setup lang="ts">
+  1319	import { ref, inject, reactive, computed } from 'vue';
+  1320	import { useRouter } from 'vue-router';
+  1321	
+  1322	
+  1323	import { 
+  1324	  Upload, 
+  1325	  UploadFilled, 
+  1326	  MagicStick, 
+  1327	  EditPen, 
+  1328	  DocumentAdd, 
+  1329	  Refresh,
+  1330	  Brush,
+  1331	  Picture,
+  1332	  Clock,
+  1333	  ArrowRight,
+  1334	  ArrowLeft,
+  1335	  VideoCamera,
+  1336	  Film,
+  1337	  InfoFilled,
+  1338	  Close,
+  1339	  Document,
+  1340	  Location,
+  1341	  Monitor,
+  1342	  Pointer,
+  1343	  Delete,
+  1344	  Star,
+  1345	  Lightning,
+  1346	  Collection,
+  1347	  Check,
+  1348	  User,
+  1349	  Avatar,
+  1350	  UserFilled,
+  1351	  StarFilled,
+  1352	  Link,
+  1353	  Warning,
+  1354	  GoldMedal,
+  1355	  QuestionFilled,
+  1356	  Loading,
+  1357	  Crop,
+  1358	  CircleCheck,
+  1359	  FullScreen,
+  1360	  Connection,
+  1361	  Top,
+  1362	  Plus,
+  1363	  ArrowDown,
+  1364	  Edit // New
+  1365	} from '@element-plus/icons-vue';
+  1366	import { ElMessage, ElMessageBox } from 'element-plus';
+  1367	import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
+  1368	import GlobalUIDesignSpecsDialog from '@/components/Common/GlobalUIDesignSpecsDialog.vue';
+  1369	import AIModelSelector from '@/components/Common/ModelSelector.vue';
+  1370	import { useModelStore } from '@/store/models';
+  1371	// 导入产品设计图片以确保被 Vite 编译进源代码
+  1372	import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
+  1373	
+  1374	import { useDramaStore } from '../../store/drama';
+  1375	
+  1376	const router = useRouter();
+  1377	const dramaStore = useDramaStore();
+  1378	const modelStore = useModelStore();
+  1379	const isLight = inject('isLight', ref(true));
+  1380	const showDesignDialog = ref(false);
+  1381	const showUIDesignSpecsDialog = ref(false);
+  1382	const showHotTopicDialog = ref(false);
+  1383	const autoMode = ref(false); // New
+  1384	const isSidebarCollapsed = ref(false);
+  1385	const activeChannel = ref('shortDrama');
+  1386	const currentStep = ref(1);
+  1387	const selectedTopic = ref<any>(null);
+  1388	const inspirationTab = ref('basic');
+  1389	const isImportedScript = computed(() => selectedTopic.value?.label === '外部剧本导入');
+  1390	
+  1391	// New refs for model, ratio, duration selections
+  1392	const selectedVideoModel = ref('Seedance 2.5');
+  1393	const selectedImageModel = ref('DALL-E 3');
+  1394	const selectedAspectRatio = ref('9:16'); // Default to vertical
+  1395	const selectedDuration = ref(4); // Default to 4 seconds
+  1396	const modelSelectionType = ref('video'); // 'video' or 'image'
+  1397	
+  1398	const videoModels = ref([
+  1399	  { id: '1', name: 'doubao-seedance-2.0 (标准版)', description: '经典视频模型，生成效果出色' },
+  1400	  { id: '2', name: 'doubao-seedance-2.5 (标准版)', description: '经典视频模型升级版，生成效果更佳' },
+  1401	  { id: '3', name: 'happyhorse-1.1-r2v', description: '高效视频生成模型，快速迭代预览效果' },
+  1402	  { id: '4', name: 'kling-v3-omni', description: '顶级视频生成模型，物理模拟与动态表现巅峰' },
+  1403	]);
+  1404	
+  1405	const imageModels = ref([
+  1406	  { id: '1', name: 'doubao-seedream-5.0-lite', description: '豆包专业级生图模型，细节表现惊人' },
+  1407	  { id: '2', name: 'ChatGPT Images 2.0', description: 'OpenAI 顶级绘图模型，画质精美，构图精准' },
+  1408	  { id: '3', name: 'gemini-3.1-flash-image-preview', description: '谷歌最新多模态影像模型，极速生成' },
+  1409	]);
+  1410	
+  1411	// New functions for button actions
+  1412	const handleFileUploadClick = () => {
+  1413	  // Trigger hidden file input or open file dialog
+  1414	  ElMessage.info('触发文件上传');
+  1415	};
+  1416	
+  1417	const openAssetLibrary = () => {
+  1418	  // Open asset library modal/dialog
+  1419	  ElMessage.info('打开资产库');
+  1420	};
+  1421	
+  1422	const viewAllHistory = () => {
+  1423	  router.push('/ai-short-drama-creator/works');
+  1424	};
+  1425	
+  1426	const goToHistoryDetail = (item: any) => {
+  1427	  if (item.type === 'shortDrama') {
+  1428	    router.push('/ai-short-drama-creator/outline');
+  1429	  } else if (item.type === 'shortVideo') {
+  1430	    router.push('/ai-short-video-creator/index');
+  1431	  } else {
+  1432	    ElMessage.info(`跳转到 ${item.title} 的详情`);
+  1433	  }
+  1434	};
+  1435	
+  1436	const groupedHistory = computed(() => {
+  1437	  return [
+  1438	    {
+  1439	      date: '昨天',
+  1440	      items: [
+  1441	        { id: 1, title: '短剧带货构思', description: '画布项目', type: 'shortDrama' },
+  1442	        { id: 2, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+  1443	      ],
+  1444	    },
+  1445	    {
+  1446	      date: '更早',
+  1447	      items: [
+  1448	        { id: 3, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+  1449	        { id: 4, title: '新品推广图', description: '已完成', type: 'image' },
+  1450	        { id: 5, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+  1451	        { id: 6, title: '节日祝福视频', description: '已发布', type: 'shortVideo' },
+  1452	        { id: 7, title: '未命名', description: '短剧 Agent', type: 'shortDrama' },
+  1453	      ],
+  1454	    },
+  1455	  ];
+  1456	});
+  1457	
+  1458	const uiDesignGroups = {
+  1459	  layout: [
+  1460	    {
+  1461	      id: 'newDrama',
+  1462	      title: '短剧创作首页 (NewDrama)',
+  1463	      description: '短剧创作入口页：AI 灵感输入 / 剧本导入 / 近期作品。',
+  1464	      items: [
+  1465	        { name: '页面内边距', value: 'p-4 / lg:p-6', description: '主滚动容器 padding' },
+  1466	        { name: '主容器宽度', value: 'max-w-7xl', description: '整体内容水平居中' },
+  1467	        { name: '创作卡宽度', value: 'max-w-5xl', description: 'AI 输入与导入区域' },
+  1468	        { name: '创作卡圆角', value: '32px', description: 'rounded-[32px]' },
+  1469	        { name: 'Tab 容器圆角', value: '18px / 14px', description: 'rounded-[18px] + rounded-[14px]' },
+  1470	        { name: '输入框圆角', value: '28px', description: 'rounded-[28px]（含 2px 边框）' },
+  1471	        { name: '输入框高度', value: 'h-24 / md:h-28', description: '文本域高度' },
+  1472	        { name: '按钮圆角', value: 'rounded-2xl', description: '立即创作主按钮' },
+  1473	        { name: '近期作品区圆角', value: '32px', description: 'rounded-[32px]' },
+  1474	        { name: '作品卡圆角', value: '20px', description: 'rounded-[20px]' },
+  1475	        { name: '作品预览区高度', value: 'h-24', description: '卡片顶部预览区域高度' },
+  1476	        { name: '作品网格列数', value: '2 / 4', description: 'grid-cols-2 lg:grid-cols-4，gap-4' }
+  1477	      ]
+  1478	    },
+  1479	    {
+  1480	      id: 'hotTopicDialog',
+  1481	      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+  1482	      description: '高级创作规格配置弹窗：标题/题材/主角/风格/受众/集数/时长/背景等。',
+  1483	      items: [
+  1484	        { name: 'Dialog 宽度', value: '1200px', description: 'el-dialog width="1200px"' },
+  1485	        { name: 'Dialog 顶部偏移', value: 'top: 1vh', description: 'top="1vh"' },
+  1486	        { name: 'Dialog 圆角', value: '40px', description: 'rounded-[40px]（外层）' },
+  1487	        { name: 'Dialog 内层圆角', value: '36px', description: 'rounded-[36px]（内容容器）' },
+  1488	        { name: '头部内边距', value: 'px-10 pt-4 pb-3', description: '沉浸式 Hero Header' },
+  1489	        { name: '内容区内边距', value: 'px-10 pb-4', description: '滚动内容区' },
+  1490	        { name: '内容区间距', value: 'gap-4', description: '纵向模块间距' },
+  1491	        { name: '顶部两列栅格', value: 'grid-cols-2 gap-4', description: '标题/题材' },
+  1492	        { name: '策略选项栅格', value: 'grid-cols-5 gap-3', description: '主角/风格/比例/受众/规格' },
+  1493	        { name: '底部操作区', value: 'px-10 py-4', description: '固定 Footer（Action Center）' },
+  1494	        { name: '关闭按钮尺寸', value: '36x36', description: 'w-9 h-9 rounded-2xl' },
+  1495	        { name: '主CTA尺寸', value: 'h-12', description: '开启创作按钮高度' }
+  1496	      ]
+  1497	    }
+  1498	  ],
+  1499	  style: [
+  1500	    {
+  1501	      id: 'newDrama',
+  1502	      title: '短剧创作首页 (NewDrama)',
+  1503	      description: '入口页字号、层级与组件文本规范。',
+  1504	      items: [
+  1505	        { name: '主标题 (Hero H1)', style: { fontSize: '30px', fontWeight: '900', letterSpacing: '-0.02em' }, description: 'text-2xl md:text-3xl font-black tracking-tight leading-tight' },
+  1506	        { name: '副标题 (Hero Desc)', style: { fontSize: '14px', fontWeight: '500', opacity: '0.7' }, description: 'text-xs md:text-sm font-medium leading-relaxed opacity-70 text-slate-500' },
+  1507	        { name: 'Tab 标题', style: { fontSize: '14px', fontWeight: '900' }, description: 'text-[14px] font-black' },
+  1508	        { name: '输入正文', style: { fontSize: '18px', fontWeight: '500', lineHeight: '1.6' }, description: 'text-lg font-medium leading-relaxed placeholder:text-slate-400/60' },
+  1509	        { name: '工具条统计', style: { fontSize: '11px', fontWeight: '700' }, description: 'text-[11px] font-bold（字数统计/状态提示）' },
+  1510	        { name: '区块标题', style: { fontSize: '20px', fontWeight: '900' }, description: 'text-xl font-black（近期作品）' }
+  1511	      ]
+  1512	    },
+  1513	    {
+  1514	      id: 'hotTopicDialog',
+  1515	      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+  1516	      description: '弹窗标题层级、字段标签与按钮字重。',
+  1517	      items: [
+  1518	        { name: '弹窗标题', style: { fontSize: '24px', fontWeight: '1000', letterSpacing: '-0.03em' }, description: 'text-2xl font-[1000] tracking-tighter（渐变文字）' },
+  1519	        { name: '弹窗副文案', style: { fontSize: '13px', fontWeight: '700' }, description: 'text-[13px] font-bold text-slate-500' },
+  1520	        { name: '字段 Label', style: { fontSize: '12px', fontWeight: '1000', textTransform: 'uppercase' }, description: 'text-[12px] font-[1000] tracking-tight uppercase' },
+  1521	        { name: '输入内容', style: { fontSize: '15px', fontWeight: '700' }, description: '!text-[15px]（custom-input-v5 / custom-select-v4）' },
+  1522	        { name: '辅助单位标签', style: { fontSize: '9px', fontWeight: '900', opacity: '0.8' }, description: 'text-[9px] font-black text-indigo-400/80 uppercase' },
+  1523	        { name: '底部主按钮', style: { fontSize: '18px', fontWeight: '1000', letterSpacing: '0.1em' }, description: 'text-lg font-[1000] tracking-[0.1em] uppercase' }
+  1524	      ]
+  1525	    }
+  1526	  ],
+  1527	  color: [
+  1528	    {
+  1529	      id: 'newDrama',
+  1530	      title: '短剧创作首页 (NewDrama)',
+  1531	      description: '入口页背景、毛玻璃与渐变主题色。',
+  1532	      items: [
+  1533	        { name: '页面背景', value: '#F8FAFC' },
+  1534	        { name: '标题渐变', value: 'from-indigo-600 via-purple-600 to-pink-500' },
+  1535	        { name: '装饰光晕', value: 'bg-indigo-500/5 + bg-purple-500/5' },
+  1536	        { name: '主卡片毛玻璃', value: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl' },
+  1537	        { name: '输入区边框', value: 'border-slate-100 dark:border-slate-800' },
+  1538	        { name: '输入聚焦高亮', value: 'group-focus-within:border-indigo-500/40' },
+  1539	        { name: '工具条底色', value: 'bg-slate-50/80 dark:bg-slate-800/80' },
+  1540	        { name: '主按钮渐变', value: 'from-indigo-600 to-purple-600' },
+  1541	        { name: '热门题材标签', value: 'bg-white border-slate-100 hover:border-indigo-300 hover:text-indigo-600' },
+  1542	        { name: '近期作品标题条', value: 'bg-indigo-600 (left bar)' },
+  1543	        { name: '管理作品按钮', value: 'bg-slate-900 dark:bg-white' }
+  1544	      ]
+  1545	    },
+  1546	    {
+  1547	      id: 'hotTopicDialog',
+  1548	      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+  1549	      description: '弹窗背景、Hero 渐变遮罩与主 CTA 色彩。',
+  1550	      items: [
+  1551	        { name: '弹窗背景', value: '#F8FAFC / dark:bg-slate-950' },
+  1552	        { name: '头部渐变遮罩', value: 'from-indigo-600/15 via-purple-600/10 to-transparent' },
+  1553	        { name: '光晕装饰', value: 'bg-indigo-500/15 + bg-purple-500/15 + bg-pink-500/10' },
+  1554	        { name: '标题渐变', value: 'from-slate-900 via-indigo-600 to-purple-600' },
+  1555	        { name: 'AI PRO 徽标', value: 'from-indigo-600 via-purple-600 to-pink-500' },
+  1556	        { name: '卡片毛玻璃', value: 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl' },
+  1557	        { name: '卡片边框', value: 'border-white dark:border-slate-800' },
+  1558	        { name: '卡片 Hover 边框', value: 'hover:border-indigo-500/30' },
+  1559	        { name: 'AI 润色按钮', value: 'bg-indigo-50 hover:bg-indigo-600（渐变覆盖）' },
+  1560	        { name: '关闭按钮 Hover', value: 'hover:text-rose-500 hover:rotate-90' },
+  1561	        { name: '一键生成按钮', value: 'from-indigo-600 to-purple-600' },
+  1562	        { name: '开启创作按钮', value: 'from-indigo-600 via-indigo-500 to-purple-600' }
+  1563	      ]
+  1564	    }
+  1565	  ],
+  1566	  button: [
+  1567	    {
+  1568	      id: 'newDrama',
+  1569	      title: '短剧创作首页 (NewDrama)',
+  1570	      description: '入口页关键组件与交互态。',
+  1571	      items: [
+  1572	        { name: '模式切换 Tab', tag: 'button', classes: 'flex-1 py-1.5 text-[14px] font-black rounded-[14px] flex items-center justify-center gap-2', notes: ['Active: bg-white/dark:bg-slate-700 + text-indigo-600 + shadow-sm + scale-[1.01]', 'Inactive: text-slate-500 hover:text-slate-700'] },
+  1573	        { name: '灵感输入容器', tag: 'div', classes: 'relative bg-white dark:bg-slate-900 rounded-[28px] border-2 border-slate-100 dark:border-slate-800 group-focus-within:border-indigo-500/40 shadow-2xl shadow-indigo-500/5', notes: ['外围使用渐变 blur 作为动态描边（focus/生成时）'] },
+  1574	        { name: '灵感输入 Textarea', tag: 'textarea', classes: 'w-full h-24 md:h-28 resize-none bg-transparent outline-none text-slate-800 dark:text-slate-100 text-lg p-6 font-medium leading-relaxed', notes: ['Placeholder: text-slate-400/60'] },
+  1575	        { name: '底部工具条', tag: 'div', classes: 'px-6 py-3 bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between', notes: ['左侧字数统计/清空/AI润色；右侧主CTA'] },
+  1576	        { name: '立即创作 (主 CTA)', tag: 'button', classes: 'px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 disabled:opacity-40 disabled:grayscale', notes: ['Disabled: 无输入或生成中', 'Loading: 图标切换为 Loading'] },
+  1577	        { name: '热门题材标签', tag: 'div', classes: 'px-4 py-1.5 rounded-2xl text-[12px] font-bold border border-slate-100 bg-white hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md hover:-translate-y-0.5', notes: ['点击触发“开启灵感之门”弹窗'] },
+  1578	        { name: '管理作品按钮', tag: 'button', classes: 'h-8 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-black text-[11px] shadow-md hover:scale-105 active:scale-95', notes: ['右侧箭头 hover 平移 translate-x-1'] },
+  1579	        { name: '近期作品卡片', tag: 'div', classes: 'bg-white dark:bg-slate-800 rounded-[20px] border border-slate-100/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500', notes: ['Hover: 预览图 scale-110；标题变色 text-indigo-600'] }
+  1580	      ]
+  1581	    },
+  1582	    {
+  1583	      id: 'hotTopicDialog',
+  1584	      title: '弹窗：开启灵感之门 (HotTopicDialog)',
+  1585	      description: '弹窗关键组件、输入控件与主 CTA。',
+  1586	      items: [
+  1587	        { name: '关闭按钮', tag: 'button', classes: 'w-9 h-9 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl text-slate-400 hover:text-rose-500 hover:bg-white hover:rotate-90 shadow-xl border border-white', notes: ['点击关闭弹窗', 'Hover: 旋转 90° + 颜色变红'] },
+  1588	        { name: '弹窗标题块', tag: 'h2', classes: 'text-2xl font-[1000] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600', notes: ['与左侧 Icon 卡形成 Hero 区域'] },
+  1589	        { name: 'AI 润色按钮', tag: 'button', classes: 'px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 hover:bg-indigo-600 hover:text-white text-[11px] font-black border border-indigo-100 overflow-hidden relative', notes: ['Hover: 渐变层覆盖 from-indigo-600 to-purple-600', 'Loading: icon is-loading'] },
+  1590	        { name: '字段卡片', tag: 'div', classes: 'p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[28px] border border-white dark:border-slate-800 shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/30', notes: ['用于作品名称/题材等重要字段'] },
+  1591	        { name: 'Select 选择器', tag: 'el-select', classes: 'custom-select-v4 !h-14 / !h-12', notes: ['下拉项右侧显示 Check 选中态', '支持 allow-create（题材）'] },
+  1592	        { name: 'Input 输入框', tag: 'el-input', classes: 'custom-input-v5 !h-14 !text-[15px]', notes: ['用于作品名称/集数等'] },
+  1593	        { name: 'InputNumber 数字输入', tag: 'el-input-number', classes: 'custom-number-v5 w-full !h-10 controls-position="right"', notes: ['右侧单位 SEC 叠加在输入上'] },
+  1594	        { name: '一键生成 (智能补全)', tag: 'button', classes: 'px-6 h-10 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-50', notes: ['Loading: 图标切换为 Loading', 'Hover: 渐变反转层覆盖'] },
+  1595	        { name: '开启创作 (主动作)', tag: 'button', classes: 'px-10 h-12 bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-[24px] text-lg font-[1000] shadow-[0_10px_20px_-5px_rgba(79,70,229,0.4)] active:scale-[0.96] disabled:opacity-40', notes: ['表单完整时增加 shimmer 光带与 hover 阴影'] }
+  1596	      ]
+  1597	    }
+  1598	  ]
+  1599	};
+  1600	
+  1601	const designImageUrl = (fileName: string) => `${import.meta.env.BASE_URL}images/design/${fileName}`;
+  1602	
+  1603	// --- State Management ---
+  1604	const activeTab = ref('ai'); 
+  1605	const aiPrompt = ref('');
+  1606	const isGenerating = ref(false);
+  1607	const isGeneratingInspiration = ref(false);
+  1608	const isGeneratingField = reactive<Record<string, boolean>>({
+  1609	  title: false,
+  1610	  storySynopsis: false,
+  1611	  storyBackground: false,
+  1612	  storySetting: false,
+  1613	  episodesCount: false
+  1614	});
+  1615	
+  1616	// Configuration state
+  1617	const configForm = reactive({
+  1618	  title: '',
+  1619	  scriptType: 'short_drama',
+  1620	  genre: '',
+  1621	  customGenre: '',
+  1622	  targetAudience: '女频',
+  1623	  videoStyle: '写实',
+  1624	  videoAspectRatio: '9:16',
+  1625	  episodesCount: '80',
+  1626	  expectedDuration: 120,
+  1627	  protagonistSetting: '落魄千金',
+  1628	  customProtagonistName: '',
+  1629	  protagonistDesc: '',
+  1630	  storySynopsis: '',
+  1631	  storyBackground: '',
+  1632	  storySetting: '',
+  1633	  themeSetting: ''
+  1634	});
+  1635	
+  1636	const videoStyleOptions = [
+  1637	  { label: '写实' },
+  1638	  { label: '二次元' },
+  1639	  { label: '赛博朋克' },
+  1640	  { label: '古风' },
+  1641	  { label: '都市丽人' }
+  1642	];
+  1643	
+  1644	const aspectRatioOptions = [
+  1645	  { label: '9:16' },
+  1646	  { label: '16:9' }
+  1647	];
+  1648	
+  1649	// Hot Topics with templates
+  1650	const hotTopics = [
+  1651	  { 
+  1652	    label: '霸道总裁', 
+  1653	    template: '【霸道总裁题材】\n' +
+  1654	              '剧名：《傲娇总裁的契约娇妻》\n' +
+  1655	              '核心冲突：平凡少女意外撞破财阀继承人的秘密，被迫签订为期一年的“假结婚”协议。在豪门恩怨与商战博弈中，冷酷总裁逐渐卸下心防。\n' +
+  1656	              '名场面：总裁将她抵在墙角，声音低沉：“既然签了字，这辈子你都别想逃出我的手掌心。”' 
+  1657	  },
+  1658	  { 
+  1659	    label: '都市异能', 
+  1660	    template: '【都市异能题材】\n' +
+  1661	              '剧名：《我能看见万物价值》\n' +
+  1662	              '核心冲突：外卖小哥意外觉醒“神之眼”，能看穿任何物品的真实价值与未来走势。他凭借异能从捡漏开始，一步步建立属于自己的商业帝国，同时对抗隐藏在都市阴影下的神秘组织。' 
+  1663	  },
+  1664	  { 
+  1665	    label: '玄幻重生', 
+  1666	    template: '【玄幻重生题材】\n' +
+  1667	              '剧名：《万古剑帝：重回少年时》\n' +
+  1668	              '核心冲突：一代剑帝陨落后重生回十六岁。这一世，他要弥补所有遗憾，守护至亲，将前世背叛他的诸神一一斩落于剑下。' 
+  1669	  },
+  1670	  { 
+  1671	    label: '无限流', 
+  1672	    template: '【无限流题材】\n' +
+  1673	              '剧名：《规则怪谈：只有我能看到提示》\n' +
+  1674	              '核心冲突：全球被卷入诡异恐怖的规则游戏。主角在充满死亡陷阱的任务中，发现自己能看到隐藏的提示信息。在绝望中寻找生机，在惊悚中探寻世界的真相。' 
+  1675	  },
+  1676	  {
+  1677	    label: '自定义',
+  1678	    template: '',
+  1679	    isCustom: true
+  1680	  }
+  1681	];
+  1682	
+  1683	// Mock Recent Works Data
+  1684	const recentWorks = ref([
+  1685	  { 
+  1686	    id: 1, 
+  1687	    title: '誓要掀', 
+  1688	    episodes: 1, 
+  1689	    updatedAt: '2026-04-01 14:11',
+  1690	    previews: [
+  1691	      'https://picsum.photos/id/1011/200/300',
+  1692	      'https://picsum.photos/id/1027/200/300',
+  1693	      'https://picsum.photos/id/1005/200/300'
+  1694	    ]
+  1695	  },
+  1696	  { 
+  1697	    id: 2, 
+  1698	    title: '烽火铁牛：开局掀翻元廷', 
+  1699	    updatedAt: '2026-03-23 12:01',
+  1700	    previews: [
+  1701	      'https://picsum.photos/id/1015/200/300',
+  1702	      'https://picsum.photos/id/1016/200/300'
+  1703	    ]
+  1704	  },
+  1705	  { 
+  1706	    id: 3, 
+  1707	    title: '从弃女到巅峰：苏家千金归来', 
+  1708	    episodes: 5, 
+  1709	    updatedAt: '2026-03-19 10:48',
+  1710	    isExample: true,
+  1711	    previews: [
+  1712	      'https://picsum.photos/id/1024/200/300',
+  1713	      'https://picsum.photos/id/1025/200/300',
+  1714	      'https://picsum.photos/id/1012/200/300'
+  1715	    ]
+  1716	  },
+  1717	  { 
+  1718	    id: 4, 
+  1719	    title: '末世：我以为我是废柴，其实我是神', 
+  1720	    episodes: 5, 
+  1721	    updatedAt: '2026-03-16 14:10',
+  1722	    isExample: true,
+  1723	    previews: [
+  1724	      'https://picsum.photos/id/1035/200/300',
+  1725	      'https://picsum.photos/id/1039/200/300',
+  1726	      'https://picsum.photos/id/1043/200/300'
+  1727	    ]
+  1728	  }
+  1729	]);
+  1730	
+  1731	const protagonistOptions = ref([
+  1732	  { label: '落魄千金', desc: '家族破产，背负巨债，却拥有一手惊人的调香/设计才华。' },
+  1733	  { label: '冷面总裁', desc: '商界奇才，性格孤僻，因童年阴影不再相信爱情。' },
+  1734	  { label: '平民少女', desc: '乐观坚韧，为了给母亲治病，卷入豪门恩怨。' },
+  1735	  { label: '神秘杀手', desc: '隐姓埋名在都市中，执行最后一次任务。' },
+  1736	  { label: '自定义', desc: '手动输入或 AI 生成您心目中的完美主角。', isCustom: true }
+  1737	]);
+  1738	
+  1739	const isCustomProtagonist = computed(() => {
+  1740	  const opt = protagonistOptions.value.find(o => o.label === configForm.protagonistSetting);
+  1741	  return opt?.isCustom || configForm.protagonistSetting === '自定义';
+  1742	});
+  1743	
+  1744	const isFormComplete = computed(() => {
+  1745	  const isGenreValid = configForm.genre === '自定义' 
+  1746	    ? configForm.customGenre.trim().length > 0 
+  1747	    : (configForm.genre && configForm.genre.trim().length > 0);
+  1748	
+  1749	  return configForm.title &&
+  1750	         isGenreValid && 
+  1751	         configForm.protagonistSetting && 
+  1752	         configForm.protagonistDesc && 
+  1753	         configForm.storySynopsis && 
+  1754	         configForm.storyBackground && 
+  1755	         configForm.storySetting && 
+  1756	         configForm.targetAudience && 
+  1757	         configForm.videoStyle &&
+  1758	         configForm.videoAspectRatio;
+  1759	});
+  1760	
+  1761	const handleProtagonistChange = (val: string) => {
+  1762	  if (val === '自定义') {
+  1763	    // Focus or simple logic can be added here if needed, but ElMessageBox is removed for better C-end UX.
+  1764	  }
+  1765	};
+  1766	
+  1767	const handleProtagonistConfirm = () => {
+  1768	  if (configForm.customProtagonistName.trim()) {
+  1769	    ElMessage.success(`已确认主角设定：${configForm.customProtagonistName}`);
+  1770	    // Optional: could add more logic here to "lock" the selection if needed
+  1771	  } else {
+  1772	    ElMessage.warning('请输入主角设定名称');
+  1773	  }
+  1774	};
+  1775	
+  1776	const handleGenreConfirm = () => {
+  1777	  if (configForm.genre.trim()) {
+  1778	    ElMessage.success(`已确认题材：${configForm.genre}`);
+  1779	  } else {
+  1780	    ElMessage.warning('请选择或输入题材名称');
+  1781	  }
+  1782	};
+  1783	
+  1784	const audienceOptions = ['男频', '女频', '大众'];
+  1785	
+  1786	const handleAIFeature = (field: 'title' | 'storySynopsis' | 'storyBackground' | 'storySetting' | 'episodesCount' | 'protagonistDesc', action: 'generate' | 'polish') => {
+  1787	  isGeneratingField[field] = true;
+  1788	  
+  1789	  // Mock AI behavior
+  1790	  setTimeout(() => {
+  1791	    if (field === 'title') {
+  1792	      configForm.title = configForm.title || '未命名作品';
+  1793	      configForm.title = configForm.title.replace('（已由 AI 润色）', '') + '（已由 AI 润色）';
+  1794	    } else if (field === 'storySynopsis') {
+  1795	      configForm.storySynopsis = configForm.storySynopsis || '在赛博朋克的未来，一个底层少年意外发现自己能连接已故天才的意识...';
+  1796	      configForm.storySynopsis = configForm.storySynopsis + '（已由 AI 深度润色，增加了剧情转折的不可预测性）';
+  1797	    } else if (field === 'storyBackground') {
+  1798	      configForm.storyBackground = configForm.storyBackground || '2077年的霓虹之城，阶级分明，贫民窟与科技云端并存...';
+  1799	      configForm.storyBackground = configForm.storyBackground + '（已由 AI 润色，强化了世界观设定）';
+  1800	    } else if (field === 'storySetting') {
+  1801	      configForm.storySetting = configForm.storySetting || '所有的意识都可以被数据化，但灵魂的重量依然无法衡量...';
+  1802	      configForm.storySetting = configForm.storySetting + '（已由 AI 润色，细化了设定逻辑）';
+  1803	    } else if (field === 'episodesCount') {
+  1804	      configForm.episodesCount = '80-100';
+  1805	      ElMessage.success('AI 已建议最优集数');
+  1806	    }
+  1807	    
+  1808	    if (field !== 'episodesCount') {
+  1809	      ElMessage.success(action === 'generate' ? 'AI 生成成功' : 'AI 润色成功');
+  1810	    }
+  1811	    isGeneratingField[field] = false;
+  1812	  }, 1500);
+  1813	};
+  1814	
+  1815	const finishConfig = () => {
+  1816	  isGenerating.value = true;
+  1817	  showHotTopicDialog.value = false;
+  1818	  
+  1819	  // Combine all selections into a prompt
+  1820	  const finalProtagonistName = isCustomProtagonist.value && configForm.customProtagonistName.trim()
+  1821	    ? configForm.customProtagonistName.trim()
+  1822	    : configForm.protagonistSetting;
+  1823	
+  1824	  const protagonist = `【主角设定】${finalProtagonistName}`;
+  1825	
+  1826	  const finalGenre = configForm.genre === '自定义' && configForm.customGenre.trim()
+  1827	    ? configForm.customGenre.trim()
+  1828	    : (configForm.genre || selectedTopic.value.label);
+  1829	
+  1830	  const finalPrompt = `【作品名称】${configForm.title || '未命名短剧'}
+  1831	【题材】${finalGenre}
+  1832	${protagonist}
+  1833	【角色档案】${configForm.protagonistDesc}
+  1834	【故事梗概】${configForm.storySynopsis}
+  1835	【故事背景】${configForm.storyBackground}
+  1836	【故事设定】${configForm.storySetting}
+  1837	【视频风格】${configForm.videoStyle}
+  1838	【视频比例】${configForm.videoAspectRatio}
+  1839	【受众】${configForm.targetAudience}
+  1840	【规格】${configForm.episodesCount}集，单集时长${configForm.expectedDuration}秒`;
+  1841	
+  1842	  dramaStore.setExpandedPrompt(finalPrompt);
+  1843	  dramaStore.setEpisodesCount(parseInt(configForm.episodesCount) || 80);
+  1844	  
+  1845	  setTimeout(() => {
+  1846	    router.push('/ai-short-drama-creator/outline');
+  1847	    isGenerating.value = false;
+  1848	  }, 1000);
+  1849	};
+  1850	
+  1851	const selectHotTopic = (topic: any) => {
+  1852	  if (isGenerating.value) return;
+  1853	  selectedTopic.value = topic;
+  1854	  configForm.genre = topic.label;
+  1855	  configForm.title = ''; // Reset title
+  1856	  
+  1857	  configForm.episodesCount = '80';
+  1858	  configForm.expectedDuration = 120;
+  1859	  
+  1860	  // Set default selections for the first row
+  1861	  configForm.protagonistSetting = protagonistOptions.value[0].label;
+  1862	  configForm.targetAudience = audienceOptions[0];
+  1863	  configForm.videoStyle = videoStyleOptions[0].label;
+  1864	  configForm.videoAspectRatio = aspectRatioOptions[0].label;
+  1865	  
+  1866	  // Clear the fields by default as requested by user
+  1867	  configForm.storySynopsis = '';
+  1868	  configForm.storyBackground = '';
+  1869	  configForm.storySetting = '';
+  1870	  configForm.protagonistDesc = '';
+  1871	  
+  1872	  currentStep.value = 1;
+  1873	  showHotTopicDialog.value = true;
+  1874	};
+  1875	
+  1876	const generateInspirationData = () => {
+  1877	  const topic = selectedTopic.value;
+  1878	  if (!topic) return;
+  1879	
+  1880	  isGeneratingInspiration.value = true;
+  1881	  
+  1882	  setTimeout(() => {
+  1883	    if (topic.template) {
+  1884	      const parts = topic.template.split('\n');
+  1885	      if (!configForm.storySynopsis) {
+  1886	        configForm.storySynopsis = parts.find((p: string) => p.includes('核心冲突'))?.replace('核心冲突：', '') || '';
+  1887	      }
+  1888	      if (!configForm.storyBackground) {
+  1889	        configForm.storyBackground = `在典型的${topic.label}环境下展开，注重情感张力与快节奏转折。`;
+  1890	      }
+  1891	      if (!configForm.protagonistDesc) {
+  1892	        configForm.protagonistDesc = `主角拥有符合${topic.label}设定的特殊身份与技能，在危机中展现出非凡的智慧与勇气。`;
+  1893	      }
+  1894	      if (!configForm.storySetting) {
+  1895	        configForm.storySetting = `主角通过不懈努力，最终实现${topic.label}题材中常见的逆袭。`;
+  1896	      }
+  1897	    } else {
+  1898	      if (!configForm.storySynopsis) {
+  1899	        configForm.storySynopsis = '这是一个充满未知与挑战的故事，讲述了主角如何在逆境中寻找希望并完成自我救赎。';
+  1900	      }
+  1901	      if (!configForm.storyBackground) {
+  1902	        configForm.storyBackground = '现代都市，繁华表象下隐藏着复杂的权谋与深厚的情感纠葛。';
+  1903	      }
+  1904	      if (!configForm.protagonistDesc) {
+  1905	        configForm.protagonistDesc = '性格坚韧、外冷内热，拥有不为人知的神秘过往，擅长在绝境中寻找生机。';
+  1906	      }
+  1907	      if (!configForm.storySetting) {
+  1908	        configForm.storySetting = '故事注重细节刻画，力求在真实的社会背景下展现人性的光辉与阴暗面。';
+  1909	      }
+  1910	    }
+  1911	    
+  1912	    isGeneratingInspiration.value = false;
+  1913	    ElMessage.success('补全灵感内容成功');
+  1914	  }, 1000);
+  1915	};
+  1916	
+  1917	const typeText = (text: string) => {
+  1918	  isGenerating.value = true;
+  1919	  aiPrompt.value = '';
+  1920	  let currentPos = 0;
+  1921	  const speed = 15;
+  1922	  
+  1923	  const timer = setInterval(() => {
+  1924	    if (currentPos < text.length) {
+  1925	      aiPrompt.value += text.charAt(currentPos);
+  1926	      currentPos++;
+  1927	    } else {
+  1928	      clearInterval(timer);
+  1929	      isGenerating.value = false;
+  1930	    }
+  1931	  }, speed);
+  1932	};
+  1933	
+  1934	const startCreation = () => {
+  1935	  if (!aiPrompt.value.trim()) {
+  1936	    ElMessage.warning('请输入创作灵感或点击上方建议');
+  1937	    return;
+  1938	  }
+  1939	  
+  1940	  router.push('/ai-short-video-creator/index');
+  1941	};
+  1942	
+  1943	const handleFileUpload = async (file: any) => {
+  1944	  if (!file.raw) return;
+  1945	  
+  1946	  const fileName = file.name;
+  1947	  const extension = fileName.split('.').pop()?.toLowerCase();
+  1948	  
+  1949	  ElMessage({
+  1950	    message: '正在智能提取剧本关键信息...',
+  1951	    type: 'info',
+  1952	    duration: 2000
+  1953	  });
+  1954	
+  1955	  try {
+  1956	    let content = '';
+  1957	    
+  1958	    if (extension === 'docx') {
+  1959	      // 动态加载 mammoth.js
+  1960	      if (!(window as any).mammoth) {
+  1961	        await new Promise((resolve, reject) => {
+  1962	          const script = document.createElement('script');
+  1963	          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+  1964	          script.onload = resolve;
+  1965	          script.onerror = reject;
+  1966	          document.head.appendChild(script);
+  1967	        });
+  1968	      }
+  1969	      
+  1970	      const arrayBuffer = await file.raw.arrayBuffer();
+  1971	      const result = await (window as any).mammoth.extractRawText({ arrayBuffer });
+  1972	      content = result.value;
+  1973	    } else if (extension === 'pdf') {
+  1974	      // PDF 解析通常比较复杂，这里可以给个提示，或者如果项目有 PDF 库则调用
+  1975	      // 暂时先按文本读取试试，或者提示用户建议使用 docx/txt
+  1976	      ElMessage.warning('PDF 解析支持正在优化中，建议优先使用 docx 或 txt 格式');
+  1977	      const reader = new FileReader();
+  1978	      content = await new Promise((resolve) => {
+  1979	        reader.onload = (e) => resolve(e.target?.result as string);
+  1980	        reader.readAsText(file.raw);
+  1981	      });
+  1982	    } else {
+  1983	      // 默认按文本读取
+  1984	      const reader = new FileReader();
+  1985	      content = await new Promise((resolve) => {
+  1986	        reader.onload = (e) => resolve(e.target?.result as string);
+  1987	        reader.readAsText(file.raw);
+  1988	      });
+  1989	    }
+  1990	
+  1991	    if (!content) {
+  1992	      ElMessage.error('读取剧本内容失败，请检查文件是否损坏');
+  1993	      return;
+  1994	    }
+  1995	
+  1996	    // 存储提取出的纯文本到 store
+  1997	    dramaStore.setFullScriptContent(content);
+  1998	
+  1999	    // 辅助提取函数：提取关键词之后直到下一个主要部分之前的内容
+  2000	    const extractSection = (text: string, startRegex: RegExp, endRegex: RegExp) => {
+  2001	      const startMatch = text.match(startRegex);
+  2002	      if (!startMatch) return '';
+  2003	      const startIndex = startMatch.index! + startMatch[0].length;
+  2004	      const restOfText = text.substring(startIndex);
+  2005	      const endMatch = restOfText.match(endRegex);
+  2006	      if (endMatch) {
+  2007	        return restOfText.substring(0, endMatch.index).trim();
+  2008	      }
+  2009	      return restOfText.trim();
+  2010	    };
+  2011	
+  2012	    const firstLine = content.split('\n').find(l => l.trim().length > 0) || '';
+  2013	
+  2014	    // 核算总集数：统计“第X集”或“第X回”的出现次数
+  2015	    const episodeMatches = content.match(/第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]/g);
+  2016	    const calculatedEpisodesCount = episodeMatches ? episodeMatches.length.toString() : '80';
+  2017	
+  2018	    // 智能提取逻辑 (模拟 AI 提取)
+  2019	    const extractedInfo = {
+  2020	      title: content.match(/(?:剧名|书名|作品名)[:：]\s*(.*)/)?.[1] || firstLine.trim() || fileName.replace(/\.[^/.]+$/, ""),
+  2021	      genre: content.match(/(?:题材|类型)[:：]\s*(.*)/)?.[1] || '',
+  2022	      protagonistSetting: content.match(/(?:主角设定|主角身份|主角姓名)[:：]\s*(.*)/)?.[1] || '',
+  2023	      protagonistDesc: extractSection(content, /(?:人物小传|角色简介|人物设定)[:：]?/, /\n\s*(?:第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]|故事梗概|故事背景|$)/),
+  2024	      storySynopsis: extractSection(content, /(?:故事梗概|剧情简介|故事大纲)[:：]?/, /\n\s*(?:人物小传|第\s*(?:\d+|[一二三四五六七八九十百]+)\s*[集回]|故事背景|$)/),
+  2025	      storyBackground: content.match(/(?:故事背景|背景设定|世界观)[:：]\s*(.*)/)?.[1] || '',
+  2026	      storySetting: content.match(/(?:核心冲突|特殊设定|故事设定)[:：]\s*(.*)/)?.[1] || '',
+  2027	      targetAudience: content.match(/(?:目标受众|受众|频道)[:：]\s*(.*)/)?.[1] || '女频',
+  2028	      videoStyle: content.match(/(?:视频风格|视觉风格|画风)[:：]\s*(.*)/)?.[1] || '写实',
+  2029	      episodesCount: calculatedEpisodesCount,
+  2030	      expectedDuration: content.match(/(?:单集时长|剧集时长|时长)[:：]\s*(\d+)/)?.[1] || '120'
+  2031	    };
+  2032	
+  2033	    // 设置选中主题
+  2034	    selectedTopic.value = { label: '外部剧本导入', isCustom: true };
+  2035	    
+  2036	    // 重置并填充表单
+  2037	    Object.assign(configForm, {
+  2038	      title: extractedInfo.title,
+  2039	      genre: '',
+  2040	      customGenre: '',
+  2041	      protagonistSetting: '',
+  2042	      customProtagonistName: '',
+  2043	      protagonistDesc: extractedInfo.protagonistDesc,
+  2044	      storySynopsis: extractedInfo.storySynopsis,
+  2045	      storyBackground: extractedInfo.storyBackground,
+  2046	      storySetting: extractedInfo.storySetting,
+  2047	      videoAspectRatio: '9:16',
+  2048	      expectedDuration: parseInt(extractedInfo.expectedDuration) || 120,
+  2049	      episodesCount: extractedInfo.episodesCount
+  2050	    });
+  2051	    
+  2052	    // 题材匹配
+  2053	    if (extractedInfo.genre) {
+  2054	      const matchedTopic = hotTopics.find(t => extractedInfo.genre.includes(t.label));
+  2055	      if (matchedTopic) {
+  2056	        configForm.genre = matchedTopic.label;
+  2057	      } else {
+  2058	        configForm.genre = '自定义';
+  2059	        configForm.customGenre = extractedInfo.genre;
+  2060	      }
+  2061	    } else {
+  2062	      configForm.genre = 'AI 灵感创作';
+  2063	    }
+  2064	
+  2065	    // 主角设定匹配
+  2066	    if (extractedInfo.protagonistSetting) {
+  2067	      const matchedProtagonist = protagonistOptions.value.find(p => extractedInfo.protagonistSetting.includes(p.label));
+  2068	      if (matchedProtagonist) {
+  2069	        configForm.protagonistSetting = matchedProtagonist.label;
+  2070	      } else {
+  2071	        configForm.protagonistSetting = '自定义';
+  2072	        configForm.customProtagonistName = extractedInfo.protagonistSetting;
+  2073	      }
+  2074	    } else {
+  2075	      configForm.protagonistSetting = protagonistOptions.value[0].label;
+  2076	    }
+  2077	
+  2078	    // 受众匹配
+  2079	    if (extractedInfo.targetAudience) {
+  2080	      const matchedAudience = audienceOptions.find(a => extractedInfo.targetAudience.includes(a));
+  2081	      if (matchedAudience) configForm.targetAudience = matchedAudience;
+  2082	    }
+  2083	
+  2084	    // 风格匹配
+  2085	    if (extractedInfo.videoStyle) {
+  2086	      const matchedStyle = videoStyleOptions.find(s => extractedInfo.videoStyle.includes(s.label));
+  2087	      if (matchedStyle) configForm.videoStyle = matchedStyle.label;
+  2088	    }
+  2089	
+  2090	    // 立即显示弹窗
+  2091	    currentStep.value = 1;
+  2092	    showHotTopicDialog.value = true;
+  2093	    ElMessage.success('剧本信息提取成功，已为您回显至配置页');
+  2094	
+  2095	  } catch (error) {
+  2096	    console.error('File parsing error:', error);
+  2097	    ElMessage.error('剧本解析失败，请尝试将文件另存为 txt 后重新上传');
+  2098	  }
+  2099	};
+  2100	</script>
+  2101	
+  2102	<style scoped>
+  2103	@keyframes fade-in-up {
+  2104	  from {
+  2105	    opacity: 0;
+  2106	    transform: translateY(10px);
+  2107	  }
+  2108	  to {
+  2109	    opacity: 1;
+  2110	    transform: translateY(0);
+  2111	  }
+  2112	}
+  2113	
+  2114	.animate-fade-in {
+  2115	  animation: fade-in-up 0.5s ease-out forwards;
+  2116	}
+  2117	
+  2118	.custom-scrollbar::-webkit-scrollbar {
+  2119	  width: 6px;
+  2120	}
+  2121	.custom-scrollbar::-webkit-scrollbar-thumb {
+  2122	  background: #e2e8f0;
+  2123	  border-radius: 10px;
+  2124	}
+  2125	.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  2126	  background: #334155;
+  2127	}
+  2128	
+  2129	:deep(.custom-input-v2 .el-input__wrapper) {
+  2130	  border-radius: 12px;
+  2131	  background-color: #f8fafc;
+  2132	  border: 1px solid #e2e8f0;
+  2133	  box-shadow: none !important;
+  2134	  padding: 4px 12px;
+  2135	}
+  2136	.dark :deep(.custom-input-v2 .el-input__wrapper) {
+  2137	  background-color: #0f172a;
+  2138	  border-color: #334155;
+  2139	}
+  2140	:deep(.custom-input-v2 .el-input__wrapper.is-focus) {
+  2141	  border-color: #6366f1;
+  2142	}
+  2143	
+  2144	:deep(.custom-textarea-v2 .el-textarea__inner) {
+  2145	  border-radius: 16px;
+  2146	  background-color: #f8fafc;
+  2147	  border: 1px solid #e2e8f0;
+  2148	  box-shadow: none !important;
+  2149	  padding: 12px;
+  2150	  font-size: 13px;
+  2151	  line-height: 1.6;
+  2152	  resize: none;
+  2153	}
+  2154	.dark :deep(.custom-textarea-v2 .el-textarea__inner) {
+  2155	  background-color: #0f172a;
+  2156	  border-color: #334155;
+  2157	  color: #f1f5f9;
+  2158	}
+  2159	:deep(.custom-textarea-v2 .el-textarea__inner:focus) {
+  2160	  border-color: #6366f1;
+  2161	}
+  2162	
+  2163	:deep(.el-tooltip__wrapper) {
+  2164	  display: inline-block;
+  2165	}
+  2166	
+  2167	:deep(.custom-upload-v2) {
+  2168	  height: 100%;
+  2169	}
+  2170	:deep(.custom-upload-v2 .el-upload) {
+  2171	  height: 100%;
+  2172	}
+  2173	:deep(.custom-upload-v2 .el-upload-dragger) {
+  2174	  border-radius: 32px;
+  2175	  border: 2px dashed #e2e8f0;
+  2176	  background-color: rgba(248, 250, 252, 0.5);
+  2177	  transition: all 0.3s ease;
+  2178	  width: 100% !important;
+  2179	  height: 100% !important;
+  2180	  display: flex;
+  2181	  flex-direction: column;
+  2182	  justify-content: center;
+  2183	  align-items: center;
+  2184	}
+  2185	.dark :deep(.custom-upload-v2 .el-upload-dragger) {
+  2186	  border-color: #334155;
+  2187	  background-color: rgba(15, 23, 42, 0.5);
+  2188	}
+  2189	:deep(.custom-upload-v2 .el-upload-dragger:hover) {
+  2190	  border-color: #6366f1;
+  2191	  background-color: rgba(99, 102, 241, 0.05);
+  2192	}
+  2193	
+  2194	/* Premium Upload Styles V3 */
+  2195	:deep(.custom-upload-v3 .el-upload-dragger) {
+  2196	  border-radius: 24px;
+  2197	  border: 2px dashed #e2e8f0;
+  2198	  background-color: rgba(255, 255, 255, 0.4);
+  2199	  backdrop-filter: blur(10px);
+  2200	  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  2201	  width: 100% !important;
+  2202	  height: 100% !important;
+  2203	  display: flex;
+  2204	  flex-direction: column;
+  2205	  justify-content: center;
+  2206	  align-items: center;
+  2207	}
+  2208	.dark :deep(.custom-upload-v3 .el-upload-dragger) {
+  2209	  border-color: rgba(255, 255, 255, 0.25);
+  2210	  background-color: rgba(15, 23, 42, 0.75);
+  2211	  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+  2212	}
+  2213	.dark :deep(.custom-upload-v3 .el-upload__text) {
+  2214	   color: #ffffff;
+  2215	 }
+  2216	 .dark :deep(.custom-upload-v3 .el-upload__text em) {
+  2217	   color: #a5b4fc !important; /* text-indigo-300 */
+  2218	 }
+  2219	:deep(.custom-upload-v3 .el-upload-dragger:hover) {
+  2220	  border-color: #6366f1;
+  2221	  background-color: rgba(99, 102, 241, 0.1);
+  2222	  transform: translateY(-2px);
+  2223	}
+  2224	
+  2225	:deep(.custom-slider .el-slider__bar) {
+  2226	  background-color: #6366f1;
+  2227	}
+  2228	:deep(.custom-slider .el-slider__button) {
+  2229	  border-color: #6366f1;
+  2230	}
+  2231	
+  2232	/* New V3 UI Styles */
+  2233	.hot-topic-dialog-v3 :deep(.el-dialog) {
+  2234	  background: transparent !important;
+  2235	  box-shadow: none !important;
+  2236	  padding: 0 !important;
+  2237	}
+  2238	
+  2239	.custom-scrollbar-v2::-webkit-scrollbar {
+  2240	  width: 6px;
+  2241	}
+  2242	.custom-scrollbar-v2::-webkit-scrollbar-track {
+  2243	  background: transparent;
+  2244	}
+  2245	.custom-scrollbar-v2::-webkit-scrollbar-thumb {
+  2246	  background: rgba(99, 102, 241, 0.1);
+  2247	  border-radius: 10px;
+  2248	  transition: all 0.3s;
+  2249	}
+  2250	.custom-scrollbar-v2::-webkit-scrollbar-thumb:hover {
+  2251	  background: rgba(99, 102, 241, 0.3);
+  2252	}
+  2253	.dark .custom-scrollbar-v2::-webkit-scrollbar-thumb {
+  2254	  background: rgba(99, 102, 241, 0.2);
+  2255	}
+  2256	.dark .custom-scrollbar-v2::-webkit-scrollbar-thumb:hover {
+  2257	  background: rgba(99, 102, 241, 0.4);
+  2258	}
+  2259	
+  2260	/* Premium Input Styles V5 */
+  2261	:deep(.custom-input-v5 .el-input__wrapper) {
+  2262	  border-radius: 10px;
+  2263	  background-color: #fff;
+  2264	  border: 1px solid #e2e8f0;
+  2265	  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  2266	  padding: 4px 10px;
+  2267	  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  2268	}
+  2269	.dark :deep(.custom-input-v5 .el-input__wrapper) {
+  2270	  background-color: #0f172a;
+  2271	  border-color: #334155;
+  2272	}
+  2273	.dark :deep(.custom-input-v5 .el-input__inner) {
+  2274	  color: #f1f5f9;
+  2275	}
+  2276	.dark :deep(.custom-input-v5 .el-input__wrapper:hover) {
+  2277	  border-color: #6366f1;
+  2278	  background-color: #1e293b !important;
+  2279	}
+  2280	:deep(.custom-input-v5 .el-input__wrapper.is-focus) {
+  2281	  border-color: #6366f1;
+  2282	  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+  2283	}
+  2284	
+  2285	/* Premium Select Styles V4 */
+  2286	:deep(.custom-select-v4 .el-input__wrapper) {
+  2287	  border-radius: 10px;
+  2288	  background-color: #fff;
+  2289	  border: 1px solid #e2e8f0;
+  2290	  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+  2291	  padding: 4px 10px;
+  2292	  transition: all 0.3s ease;
+  2293	}
+  2294	.dark :deep(.custom-select-v4 .el-input__wrapper) {
+  2295	  background-color: #0f172a;
+  2296	  border-color: #334155;
+  2297	}
+  2298	.dark :deep(.custom-select-v4 .el-input__inner) {
+  2299	  color: #f1f5f9;
+  2300	}
+  2301	.dark :deep(.custom-select-v4 .el-input__wrapper:hover) {
+  2302	  border-color: #6366f1;
+  2303	  background-color: #1e293b !important;
+  2304	}
+  2305	:deep(.custom-select-v4 .el-input__wrapper.is-focus) {
+  2306	  border-color: #6366f1;
+  2307	  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+  2308	}
+  2309	
+  2310	/* Dark Theme Dashboard Inputs */
+  2311	:deep(.custom-input-dark .el-input__wrapper) {
+  2312	  border-radius: 10px;
+  2313	  background-color: rgba(255, 255, 255, 0.05);
+  2314	  border: 1px solid rgba(255, 255, 255, 0.1);
+  2315	  box-shadow: none !important;
+  2316	  padding: 0 8px;
+  2317	}
+  2318	:deep(.custom-input-dark .el-input__inner) {
+  2319	  color: #fff !important;
+  2320	  font-weight: 900;
+  2321	  font-size: 11px;
+  2322	}
+  2323	:deep(.custom-input-dark .el-input__wrapper.is-focus) {
+  2324	  border-color: #6366f1;
+  2325	  background-color: rgba(255, 255, 255, 0.1);
+  2326	}
+  2327	
+  2328	:deep(.custom-number-dark .el-input__wrapper) {
+  2329	  border-radius: 10px;
+  2330	  background-color: rgba(255, 255, 255, 0.05);
+  2331	  border: 1px solid rgba(255, 255, 255, 0.1);
+  2332	  box-shadow: none !important;
+  2333	}
+  2334	:deep(.custom-number-dark .el-input__inner) {
+  2335	  color: #fff !important;
+  2336	  font-weight: 900;
+  2337	  font-size: 11px;
+  2338	}
+  2339	:deep(.custom-number-dark .el-input-number__increase),
+  2340	:deep(.custom-number-dark .el-input-number__decrease) {
+  2341	  background-color: transparent;
+  2342	  border-color: rgba(255, 255, 255, 0.1);
+  2343	  color: #fff;
+  2344	}
+  2345	
+  2346	/* Premium Number V5 */
+  2347	:deep(.custom-number-v5 .el-input__wrapper) {
+  2348	  border-radius: 10px;
+  2349	  background-color: #fff;
+  2350	  border: 1px solid #e2e8f0;
+  2351	  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+  2352	  padding: 0 8px;
+  2353	  transition: all 0.3s ease;
+  2354	}
+  2355	.dark :deep(.custom-number-v5 .el-input__wrapper) {
+  2356	  background-color: #0f172a;
+  2357	  border-color: #334155;
+  2358	}
+  2359	.dark :deep(.custom-number-v5 .el-input__inner) {
+  2360	  color: #f1f5f9;
+  2361	}
+  2362	:deep(.custom-number-v5 .el-input__inner) {
+  2363	  font-weight: 700;
+  2364	  font-size: 11px;
+  2365	}
+  2366	:deep(.custom-number-v5 .el-input-number__increase),
+  2367	:deep(.custom-number-v5 .el-input-number__decrease) {
+  2368	  background-color: #f8fafc;
+  2369	  border-color: #e2e8f0;
+  2370	  color: #64748b;
+  2371	}
+  2372	.dark :deep(.custom-number-v5 .el-input-number__increase),
+  2373	.dark :deep(.custom-number-v5 .el-input-number__decrease) {
+  2374	  background-color: #1e293b;
+  2375	  border-color: #334155;
+  2376	  color: #94a3b8;
+  2377	}
+  2378	:deep(.custom-number-v5 .el-input-number__increase:hover),
+  2379	:deep(.custom-number-v5 .el-input-number__decrease:hover) {
+  2380	  color: #6366f1;
+  2381	}
+  2382	
+  2383	/* Premium Textarea V4 */
+  2384	:deep(.custom-textarea-v4 .el-textarea__inner) {
+  2385	  border-radius: 10px;
+  2386	  background-color: #f8fafc;
+  2387	  border: 1px solid #e2e8f0;
+  2388	  box-shadow: none !important;
+  2389	  padding: 6px 10px;
+  2390	  font-size: 11px;
+  2391	  font-weight: 500;
+  2392	  line-height: 1.4;
+  2393	  resize: none;
+  2394	  transition: all 0.3s ease;
+  2395	  min-height: unset !important;
+  2396	}
+  2397	.dark :deep(.custom-textarea-v4 .el-textarea__inner) {
+  2398	  background-color: #0f172a;
+  2399	  border-color: #334155;
+  2400	  color: #f1f5f9;
+  2401	}
+  2402	:deep(.custom-textarea-v4 .el-textarea__inner:focus) {
+  2403	  border-color: #6366f1;
+  2404	  background-color: #fff;
+  2405	  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.05) !important;
+  2406	}
+  2407	.dark :deep(.custom-textarea-v4 .el-textarea__inner:focus) {
+  2408	  background-color: #0f172a;
+  2409	}
+  2410	
+  2411	/* Animations */
+  2412	@keyframes shimmer {
+  2413	  0% { transform: translateX(-100%); }
+  2414	  100% { transform: translateX(100%); }
+  2415	}
+  2416	.animate-shimmer {
+  2417	  animation: shimmer 2s infinite;
+  2418	}
+  2419	
+  2420	/* Cinematic Background Elements */
+  2421	.bg-noise-pattern {
+  2422	  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  2423	}
+  2424	
+  2425	@keyframes pulse-slow {
+  2426	  0%, 100% { opacity: 0.3; transform: scale(1); }
+  2427	  50% { opacity: 0.5; transform: scale(1.1); }
+  2428	}
+  2429	
+  2430	@keyframes pulse-slow-delayed {
+  2431	  0%, 100% { opacity: 0.2; transform: scale(1.1); }
+  2432	  50% { opacity: 0.4; transform: scale(1); }
+  2433	}
+  2434	
+  2435	.animate-pulse-slow {
+  2436	  animation: pulse-slow 8s ease-in-out infinite;
+  2437	}
+  2438	
+  2439	.animate-pulse-slow-delayed {
+  2440	  animation: pulse-slow-delayed 10s ease-in-out infinite;
+  2441	  animation-delay: 2s;
+  2442	}
+  2443	
+  2444	@keyframes pulse-indigo {
+  2445	  0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+  2446	  70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); }
+  2447	  100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+  2448	}
+  2449	.animate-pulse-indigo {
+  2450	  animation: pulse-indigo 2s infinite;
+  2451	}
+  2452	
+  2453	@keyframes float {
+  2454	  0%, 100% { transform: translateY(0); }
+  2455	  50% { transform: translateY(-5px); }
+  2456	}
+  2457	.animate-float {
+  2458	  animation: float 3s infinite ease-in-out;
+  2459	}
+  2460	
+  2461	/* Legacy Styles Cleanup */
+  2462	:deep(.custom-select-v3 .el-input__wrapper),
+  2463	:deep(.custom-input-v3 .el-input__wrapper),
+  2464	:deep(.custom-textarea-v3 .el-textarea__inner),
+  2465	:deep(.custom-number-v3 .el-input__wrapper),
+  2466	:deep(.custom-input-v4 .el-input__wrapper),
+  2467	:deep(.custom-number-v4 .el-input__wrapper) {
+  2468	  /* Keep these for now if used elsewhere, but v5/v4 are preferred for the dialog */
+  2469	}
+  2470	
+  2471	@keyframes light-streak {
+  2472	  0% { left: -100%; }
+  2473	  50% { left: 100%; }
+  2474	  100% { left: 100%; }
+  2475	}
+  2476	
+  2477	.animate-light-streak {
+  2478	  animation: light-streak 3s infinite ease-in-out;
+  2479	}
+  2480	
+  2481	/* Global Popper Styles for Selects */
+  2482	:global(.custom-select-popper) {
+  2483	  background-color: #ffffff !important;
+  2484	  border: 1px solid #e2e8f0 !important;
+  2485	  border-radius: 12px !important;
+  2486	  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  2487	  --el-bg-color-overlay: #ffffff !important;
+  2488	  --el-border-color-light: #e2e8f0 !important;
+  2489	  --el-fill-color-light: #f8fafc !important;
+  2490	  --el-text-color-regular: #64748b !important;
+  2491	  --el-text-color-primary: #1e293b !important;
+  2492	}
+  2493	
+  2494	/* Dark Theme Overrides */
+  2495	:global(.custom-select-popper.dark) {
+  2496	  background-color: #0f172a !important;
+  2497	  border: 1px solid #334155 !important;
+  2498	  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  2499	  --el-bg-color-overlay: #0f172a !important;
+  2500	  --el-border-color-light: #334155 !important;
+  2501	  --el-fill-color-light: #1e293b !important;
+  2502	  --el-text-color-regular: #94a3b8 !important;
+  2503	  --el-text-color-primary: #f1f5f9 !important;
+  2504	}
+  2505	
+  2506	:global(.custom-select-popper .el-select-dropdown__list) {
+  2507	  background-color: transparent !important;
+  2508	  padding: 4px 0 !important;
+  2509	}
+  2510	
+  2511	:global(.custom-select-popper .el-select-dropdown__item) {
+  2512	  color: #64748b !important;
+  2513	  font-weight: 500 !important;
+  2514	  transition: all 0.2s ease !important;
+  2515	  background: transparent !important;
+  2516	}
+  2517	
+  2518	:global(.custom-select-popper.dark .el-select-dropdown__item) {
+  2519	  color: #94a3b8 !important;
+  2520	}
+  2521	
+  2522	/* Selected state */
+  2523	:global(.custom-select-popper .el-select-dropdown__item.selected) {
+  2524	  color: #fff !important;
+  2525	  background-color: #6366f1 !important;
+  2526	}
+  2527	
+  2528	/* Normal item - when hovered or highlighted */
+  2529	:global(.custom-select-popper .el-select-dropdown__item.hover),
+  2530	:global(.custom-select-popper .el-select-dropdown__item.is-hovering),
+  2531	:global(.custom-select-popper .el-select-dropdown__item:hover) {
+  2532	  background-color: #f8fafc !important;
+  2533	  color: #1e293b !important;
+  2534	}
+  2535	
+  2536	:global(.custom-select-popper.dark .el-select-dropdown__item.hover),
+  2537	:global(.custom-select-popper.dark .el-select-dropdown__item.is-hovering),
+  2538	:global(.custom-select-popper.dark .el-select-dropdown__item:hover) {
+  2539	  background-color: #1e293b !important;
+  2540	  color: #fff !important;
+  2541	}
+  2542	
+  2543	/* Selected state - when hovered */
+  2544	:global(.custom-select-popper .el-select-dropdown__item.selected.hover),
+  2545	:global(.custom-select-popper .el-select-dropdown__item.selected.is-hovering),
+  2546	:global(.custom-select-popper .el-select-dropdown__item.selected:hover) {
+  2547	  background-color: #4f46e5 !important;
+  2548	  color: #fff !important;
+  2549	}
+  2550	
+  2551	:global(.custom-select-popper .el-popper__arrow::before) {
+  2552	  background-color: #ffffff !important;
+  2553	  border-color: #e2e8f0 !important;
+  2554	}
+  2555	
+  2556	:global(.custom-select-popper.dark .el-popper__arrow::before) {
+  2557	  background-color: #0f172a !important;
+  2558	  border-color: #334155 !important;
+  2559	}
+  2560	</style>
