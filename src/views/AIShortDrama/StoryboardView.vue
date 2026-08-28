@@ -489,7 +489,28 @@
                 </div>
 
                 <!-- Action Buttons Area -->
-                <div class="px-6 py-3 flex justify-end items-center gap-3 shrink-0 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50/80 to-white/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-md">
+                <div class="px-6 py-3 flex justify-between items-center gap-3 shrink-0 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50/80 to-white/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-md">
+                  <div class="flex items-center gap-2">
+                    <!-- Prompt 智能增强按钮 -->
+                    <button 
+                      @click="enhanceCurrentScenePrompt"
+                      :disabled="!timelineScenes[currentSceneIdx]?.script || isEnhancing"
+                      class="h-8 px-4 rounded-full text-[12px] font-black transition-all flex items-center gap-2"
+                      :class="timelineScenes[currentSceneIdx]?.script && !isEnhancing ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                    >
+                      <el-icon :class="isEnhancing ? 'is-loading' : 'animate-pulse'"><MagicStick /></el-icon>
+                      <span>{{ isEnhancing ? '增强中...' : 'Prompt智能增强' }}</span>
+                    </button>
+                    <!-- 查看增强结果按钮 -->
+                    <button 
+                      v-if="timelineScenes[currentSceneIdx]?.enhancedPrompt"
+                      @click="showPromptEnhancer = true; currentEnhancedPrompt = timelineScenes[currentSceneIdx]?.enhancedPrompt"
+                      class="h-8 px-3 rounded-full text-[11px] font-bold transition-all flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
+                    >
+                      <el-icon :size="12"><Document /></el-icon>
+                      <span>已增强</span>
+                    </button>
+                  </div>
                   <div class="flex items-center gap-3">
                     <!-- Auto-save Status Indicator -->
                     <div v-if="isAutoSaving" class="flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-500/30 rounded-full shadow-sm animate-pulse">
@@ -799,6 +820,13 @@
                       <div class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-black shadow-md"
                         :class="currentSceneIdx === idx ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'">
                         {{ idx + 1 }}
+                      </div>
+                    </div>
+
+                    <!-- Prompt 增强状态标识 -->
+                    <div v-if="scene.enhancedPrompt" class="absolute top-1.5 left-7 z-20" title="已进行Prompt智能增强">
+                      <div class="w-4 h-4 rounded bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                        <el-icon :size="9" class="text-white"><MagicStick /></el-icon>
                       </div>
                     </div>
 
@@ -1481,6 +1509,148 @@
     }"
   />
 
+    <!-- Prompt 智能增强结果弹窗 -->
+    <el-dialog 
+      v-model="showPromptEnhancer" 
+      title="Prompt 智能增强结果" 
+      width="900px" 
+      :class="['prompt-enhancer-dialog', isLight ? 'is-light' : 'is-dark']"
+      :append-to-body="true"
+      destroy-on-close
+      align-center
+    >
+      <div v-if="currentEnhancedPrompt" class="space-y-5">
+        <!-- 增强概览 -->
+        <div class="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-500/20">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+              <el-icon :size="24"><MagicStick /></el-icon>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-800 dark:text-white">智能增强完成</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">命中 {{ currentEnhancedPrompt.matchedModules.length }} 个增强模块，模板库共 {{ promptTemplateStats.actionTemplates + promptTemplateStats.sceneTemplates }} 条规则</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span v-if="currentEnhancedPrompt.hasDialogue" class="px-3 py-1 rounded-full text-xs font-black bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-100 dark:border-blue-500/20">含台词</span>
+            <span v-if="currentEnhancedPrompt.isMultiShot" class="px-3 py-1 rounded-full text-xs font-black bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 border border-purple-100 dark:border-purple-500/20">多镜头</span>
+            <span v-if="currentEnhancedPrompt.hasReference" class="px-3 py-1 rounded-full text-xs font-black bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 border border-amber-100 dark:border-amber-500/20">带参考图</span>
+          </div>
+        </div>
+
+        <!-- 命中的增强模块 -->
+        <div>
+          <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+            <span class="w-1 h-4 bg-emerald-500 rounded-full"></span>
+            命中增强模块
+          </h4>
+          <div class="grid grid-cols-5 gap-2">
+            <div 
+              v-for="module in promptEnhancerModules" 
+              :key="module.name"
+              class="p-3 rounded-xl border text-center transition-all"
+              :class="currentEnhancedPrompt.matchedModules.includes(module.name) 
+                ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-400 shadow-lg shadow-emerald-500/20' 
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 opacity-50'"
+            >
+              <div class="text-xs font-black mb-1">{{ module.name }}</div>
+              <div class="text-[10px] opacity-80 leading-tight">{{ currentEnhancedPrompt.matchedModules.includes(module.name) ? '已命中' : '未命中' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 匹配详情 -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- 动作模板匹配 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+              <el-icon class="text-indigo-500"><Cpu /></el-icon>
+              精细动作匹配
+            </h4>
+            <div v-if="currentEnhancedPrompt.matchedActions.length > 0" class="flex flex-wrap gap-1.5">
+              <span v-for="action in currentEnhancedPrompt.matchedActions" :key="action" class="px-2 py-1 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20">
+                {{ action }}
+              </span>
+            </div>
+            <p v-else class="text-xs text-slate-400">未匹配到动作关键词</p>
+          </div>
+          <!-- 场景光影匹配 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+              <el-icon class="text-amber-500"><Star /></el-icon>
+              场景光影匹配
+            </h4>
+            <div v-if="currentEnhancedPrompt.matchedScenes.length > 0" class="flex flex-wrap gap-1.5">
+              <span v-for="scene in currentEnhancedPrompt.matchedScenes" :key="scene" class="px-2 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 border border-amber-100 dark:border-amber-500/20">
+                {{ scene }}
+              </span>
+            </div>
+            <p v-else class="text-xs text-slate-400">未匹配到场景关键词</p>
+          </div>
+        </div>
+
+        <!-- 原始 Prompt -->
+        <div>
+          <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <span class="w-1 h-4 bg-slate-400 rounded-full"></span>
+            原始分镜脚本
+          </h4>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-h-32 overflow-y-auto custom-scrollbar">
+            {{ currentEnhancedPrompt.originalPrompt || '（无内容）' }}
+          </div>
+        </div>
+
+        <!-- 增强后正向 Prompt -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <span class="w-1 h-4 bg-emerald-500 rounded-full"></span>
+              增强后正向 Prompt
+            </h4>
+            <button 
+              @click="copyToClipboard(currentEnhancedPrompt.enhancedPrompt)"
+              class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 flex items-center gap-1"
+            >
+              <el-icon :size="12"><Document /></el-icon>
+              复制
+            </button>
+          </div>
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/10 dark:to-teal-900/10 border border-emerald-200 dark:border-emerald-500/20 text-sm text-slate-700 dark:text-slate-200 leading-relaxed max-h-48 overflow-y-auto custom-scrollbar whitespace-pre-wrap font-mono">
+            {{ currentEnhancedPrompt.enhancedPrompt }}
+          </div>
+        </div>
+
+        <!-- 负向 Prompt -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <span class="w-1 h-4 bg-rose-500 rounded-full"></span>
+              负向约束 Prompt
+            </h4>
+            <button 
+              @click="copyToClipboard(currentEnhancedPrompt.negativePrompt)"
+              class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 flex items-center gap-1"
+            >
+              <el-icon :size="12"><Document /></el-icon>
+              复制
+            </button>
+          </div>
+          <div class="p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-500/20 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            {{ currentEnhancedPrompt.negativePrompt }}
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <el-button @click="showPromptEnhancer = false" class="!rounded-xl !h-10 !px-6">关闭</el-button>
+          <el-button type="primary" @click="handleBatchGenerate; showPromptEnhancer = false" class="!rounded-xl !h-10 !px-6 !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-none">
+            使用增强结果生成
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 
 </template>
@@ -1588,6 +1758,7 @@ import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { enhancePrompt, getModuleDescriptions, getTemplateStats, type EnhancedPrompt } from '@/utils/promptEnhancer';
 
 const route = useRoute();
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
@@ -1625,6 +1796,30 @@ const isLeftCollapsed = ref(false);
 const activeLeftTab = ref('basic-settings');
 const showDesignDialog = ref(false);
 const showUIDesignSpecsDialog = ref(false);
+
+// Prompt 智能增强状态
+const showPromptEnhancer = ref(false);
+const currentEnhancedPrompt = ref<EnhancedPrompt | null>(null);
+const isEnhancing = ref(false);
+const promptEnhancerModules = getModuleDescriptions();
+const promptTemplateStats = getTemplateStats();
+
+// 复制文本到剪贴板
+const copyToClipboard = (text: string) => {
+  if (window.navigator.clipboard) {
+    window.navigator.clipboard.writeText(text);
+    ElMessage.success('已复制到剪贴板');
+  } else {
+    // 降级方案
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    ElMessage.success('已复制到剪贴板');
+  }
+};
 
 // AI Assistant State (with enhanced floating UI)
 const aiAssistantOpen = ref(false);
@@ -3522,6 +3717,90 @@ const downloadVideo = () => {
   }, 1500);
 };
 
+// --- Prompt 智能增强功能 ---
+// 对当前分镜脚本进行智能增强
+const enhanceCurrentScenePrompt = () => {
+  const scene = timelineScenes.value[currentSceneIdx.value];
+  if (!scene || !scene.script) {
+    ElMessage.warning('请先输入分镜脚本内容');
+    return;
+  }
+  
+  isEnhancing.value = true;
+  
+  // 模拟异步增强过程
+  setTimeout(() => {
+    const result = enhancePrompt(scene.script, {
+      hasReference: !!scene.image,
+      isMultiShot: timelineScenes.value.length > 1
+    });
+    
+    currentEnhancedPrompt.value = result;
+    // 保存增强结果到场景数据
+    scene.enhancedPrompt = result;
+    scene.modified = true;
+    persistStoryboardForEpisode(episodeId.value);
+    
+    isEnhancing.value = false;
+    showPromptEnhancer.value = true;
+    
+    ElMessage.success(`Prompt 智能增强完成，命中 ${result.matchedModules.length} 个增强模块`);
+  }, 800);
+};
+
+// 批量增强所有分镜
+const enhanceAllScenesPrompt = () => {
+  if (timelineScenes.value.length === 0) {
+    ElMessage.warning('暂无分镜内容');
+    return;
+  }
+  
+  isEnhancing.value = true;
+  let enhancedCount = 0;
+  
+  timelineScenes.value.forEach((scene, idx) => {
+    if (scene.script) {
+      const result = enhancePrompt(scene.script, {
+        hasReference: !!scene.image,
+        isMultiShot: timelineScenes.value.length > 1
+      });
+      scene.enhancedPrompt = result;
+      scene.modified = true;
+      enhancedCount++;
+    }
+  });
+  
+  persistStoryboardForEpisode(episodeId.value);
+  
+  setTimeout(() => {
+    isEnhancing.value = false;
+    ElMessage.success(`已完成 ${enhancedCount} 个分镜的 Prompt 智能增强`);
+  }, 500);
+};
+
+// 查看指定分镜的增强结果
+const viewEnhancedPrompt = (idx: number) => {
+  const scene = timelineScenes.value[idx];
+  if (!scene) return;
+  
+  if (!scene.enhancedPrompt) {
+    // 如果没有增强结果，自动增强
+    if (scene.script) {
+      const result = enhancePrompt(scene.script, {
+        hasReference: !!scene.image,
+        isMultiShot: timelineScenes.value.length > 1
+      });
+      scene.enhancedPrompt = result;
+      currentEnhancedPrompt.value = result;
+    }
+  } else {
+    currentEnhancedPrompt.value = scene.enhancedPrompt;
+  }
+  
+  currentSceneIdx.value = idx;
+  showPromptEnhancer.value = true;
+};
+
 // --- Scene Generation Core (Async, Task-Registerable) ---
 // Core generation logic as an async function that returns a promise
 const executeGenerateSingleScene = async (idx: number) => {
@@ -3531,14 +3810,26 @@ const executeGenerateSingleScene = async (idx: number) => {
   timelineScenes.value[idx].status = 'generating';
   timelineScenes.value[idx].progress = 0;
   
-  // 模拟参数传递
+  // 生成前自动进行 Prompt 智能增强
+  const scene = timelineScenes.value[idx];
+  if (scene.script && !scene.enhancedPrompt) {
+    const enhanced = enhancePrompt(scene.script, {
+      hasReference: !!scene.image,
+      isMultiShot: timelineScenes.value.length > 1
+    });
+    scene.enhancedPrompt = enhanced;
+  }
+  
+  // 模拟参数传递（包含增强后的 Prompt）
   const params = {
     model: modelStore.selectedVideoModel,
     withSubtitle: modelStore.isSubtitled,
     removeWatermark: modelStore.isWatermarkRemoved,
-    resolution: resolution.value
+    resolution: resolution.value,
+    prompt: scene.enhancedPrompt?.enhancedPrompt || scene.script,
+    negativePrompt: scene.enhancedPrompt?.negativePrompt || ''
   };
-  console.log(`Generating scene ${idx + 1} with:`, params);
+  console.log(`Generating scene ${idx + 1} with enhanced prompt:`, params);
 
   await new Promise<void>((resolve) => {
     const interval = setInterval(() => {
@@ -3777,7 +4068,8 @@ const addTimelineScene = () => {
     image: '',
     progress: 0,
     modified: false,
-    script: ''
+    script: '',
+    enhancedPrompt: null
   });
   currentSceneIdx.value = timelineScenes.value.length - 1;
   persistStoryboardForEpisode(episodeId.value);
@@ -3840,7 +4132,8 @@ const processImportText = (text: string, isAllEpisodes: boolean = false) => {
     image: '',
     progress: 0,
     modified: false,
-    script: content.split('\n').map(line => `<p>${line}</p>`).join('')
+    script: content.split('\n').map(line => `<p>${line}</p>`).join(''),
+    enhancedPrompt: null
   }));
 
   timelineScenes.value = [...timelineScenes.value, ...newScenes];
