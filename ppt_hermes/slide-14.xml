@@ -1,0 +1,64 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>异常降级机制：保障系统可用性</p>
+      </content>
+    </shape>
+    <line startX="80" startY="78" endX="160" endY="78">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="90" width="800" height="25">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>系统设计了 5 类异常场景的降级策略，确保任何情况下用户都能获得可用的输出</p>
+      </content>
+    </shape>
+    <table topLeftX="50" topLeftY="130" width="860" height="370">
+      <colgroup>
+        <col width="160"/>
+        <col width="350"/>
+        <col width="350"/>
+      </colgroup>
+      <tr height="40">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>异常场景</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>降级策略</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>用户体验</p></content></td>
+      </tr>
+      <tr height="65">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>Hermes 服务不可用</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>降级为基础模板模式：分镜拆解模板 + 镜头拆解模板直接填充，跳过多轮对话和自检</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>仍可获得基础提示词，缺少自检和上下文优化，结果标记为"基础版"</p></content></td>
+      </tr>
+      <tr height="65">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="12" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>单轮对话超时</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>终止当前分镜优化，使用已有最优结果，继续处理下一分镜；超时阈值 30 秒</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>部分分镜可能未经过完整 5 轮优化，标记为"基础版"，不影响其他分镜处理</p></content></td>
+      </tr>
+      <tr height="65">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>上下文文件缺失</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>提示用户补充文件，或使用无上下文模式（仅基于当前分镜内容生成，不注入人物/场景设定）</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>提示"未检测到人物/场景设定，将使用通用描述"，用户可后续补充后重新优化</p></content></td>
+      </tr>
+      <tr height="65">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="12" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>参考图文件缺失</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>提示词中标注"待补充参考图"，保留参考图配置的位置和说明，用户可后续手动添加</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>提示词结构完整，参考图部分留空，用户补充参考图后可直接使用</p></content></td>
+      </tr>
+      <tr height="65">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>Seedance API 不可用</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>仅生成提示词，不执行视频生成；系统正常完成提示词优化全流程，跳过最终视频生成步骤</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>用户获得完整提示词后可手动在其他平台生成，不影响提示词优化质量</p></content></td>
+      </tr>
+    </table>
+  </data>
+  <note>
+    <content textType="body">
+      <p>系统设计了5类异常场景的降级策略：Hermes服务不可用时降级为基础模板模式；单轮对话超时时使用已有最优结果继续处理；上下文文件缺失时使用无上下文模式；参考图缺失时标注待补充；Seedance API不可用时仅生成提示词。核心原则是任何情况下用户都能获得可用的输出，不会因为某个环节故障导致完全无法使用。</p>
+    </content>
+  </note>
+</slide>

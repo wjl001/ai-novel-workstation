@@ -1,0 +1,96 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>方案核心优势：5 大差异化能力</p>
+      </content>
+    </shape>
+    <line startX="80" startY="78" endX="160" endY="78">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="rect" topLeftX="50" topLeftY="105" width="420" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="120" width="60" height="50">
+      <content textType="title" fontSize="42" color="rgba(191,215,255,1)" fontFamily="思源黑体" bold="true"><p>01</p></content>
+    </shape>
+    <shape type="text" topLeftX="140" topLeftY="125" width="310" height="30">
+      <content textType="body" fontSize="18" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true"><p>多轮对话自我优化机制</p></content>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="170" width="380" height="110">
+      <content textType="body" fontSize="12" color="rgba(191,215,255,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>区别于传统"一次生成"模式，Hermes Agent 通过 3-5 轮自我对话完成"生成-自检-修正"闭环，模拟资深提示词工程师的工作流程。每一轮都有明确目标，第 4 轮执行 10 项专项自检，第 5 轮针对性修正，确保输出质量。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="490" topLeftY="105" width="420" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="120" width="60" height="50">
+      <content textType="title" fontSize="42" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>02</p></content>
+    </shape>
+    <shape type="text" topLeftX="580" topLeftY="125" width="310" height="30">
+      <content textType="body" fontSize="18" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>分镜级统一提示词架构</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="170" width="380" height="110">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>采用 v3.8 六段式结构（风格前缀/场景描述/参考图/时间轴分段/统一收尾/负面词），通过时间轴分段指定镜头动作，一个分镜一次生成，帧对齐在时间轴内自动完成。替代旧版"逐镜头首尾帧提示词"模式，大幅降低拼接成本。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="50" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="65" topLeftY="325" width="50" height="40">
+      <content textType="title" fontSize="32" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>03</p></content>
+    </shape>
+    <shape type="text" topLeftX="120" topLeftY="330" width="185" height="30">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>上下文注入机制</p></content>
+    </shape>
+    <shape type="text" topLeftX="65" topLeftY="370" width="240" height="120">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.6">
+        <p>7 类数据源自动注入对话上下文：人物设定（含服装变体）、场景设定（含时间变体）、全局属性、帧连续状态、参考图路径、历史对话、Skills 规范。确保每个分镜的提示词都与全局设定一致，角色和场景跨分镜保持统一。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="360" topLeftY="325" width="50" height="40">
+      <content textType="title" fontSize="32" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>04</p></content>
+    </shape>
+    <shape type="text" topLeftX="415" topLeftY="330" width="185" height="30">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>10 项专项自检体系</p></content>
+    </shape>
+    <shape type="text" topLeftX="360" topLeftY="370" width="240" height="120">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.6">
+        <p>视频生成场景的"质量守门员"，覆盖帧对齐、时间轴、总时长、景别变化、参考图配置、负面提示词、台词情绪、动作连贯、单一动作、提示词语言 10 个维度。每项有明确通过标准，发现问题后第 5 轮自动修正，输出自检评分和报告。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="325" width="50" height="40">
+      <content textType="title" fontSize="32" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>05</p></content>
+    </shape>
+    <shape type="text" topLeftX="710" topLeftY="330" width="185" height="30">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>低门槛快速落地</p></content>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="370" width="240" height="120">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.6">
+        <p>复用现有 Java + Vue 技术栈，无新增学习成本；核心模型通过 HTTP API 集成，无新技术引入；2-3 周核心能力上线，依托现有团队即可交付。5 类异常场景降级策略保障系统可用性，任何情况下用户都能获得可用输出。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>方案有5大核心优势：1）多轮对话自我优化机制，通过3-5轮自我对话完成生成-自检-修正闭环；2）分镜级统一提示词架构，v3.8六段式结构，时间轴分段指定镜头动作；3）上下文注入机制，7类数据源自动注入确保一致性；4）10项专项自检体系，视频生成场景的质量守门员；5）低门槛快速落地，复用现有技术栈，2-3周核心能力上线。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,76 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="50" width="200" height="50">
+      <content textType="title" fontSize="32" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>目录</p>
+      </content>
+    </shape>
+    <line startX="80" startY="105" endX="160" endY="105">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="140" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">01</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">现状与目标</span></p>
+        <p>业务痛点分析与三阶段建设目标</p>
+      </content>
+    </shape>
+    <line startX="80" startY="220" endX="440" endY="220">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="240" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">02</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">核心设计思路</span></p>
+        <p>Hermes 多轮对话增强网关与原方案对比</p>
+      </content>
+    </shape>
+    <line startX="80" startY="320" endX="440" endY="320">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="340" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">03</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">产品整体架构</span></p>
+        <p>三层系统架构与各层核心模块详解</p>
+      </content>
+    </shape>
+    <line startX="80" startY="420" endX="440" endY="420">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="500" topLeftY="140" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">04</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">多轮对话机制</span></p>
+        <p>5 轮对话流程与上下文注入机制</p>
+      </content>
+    </shape>
+    <line startX="500" startY="220" endX="860" endY="220">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="500" topLeftY="240" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">05</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">端到端业务流程</span></p>
+        <p>泳道图、核心功能模块与自检体系</p>
+      </content>
+    </shape>
+    <line startX="500" startY="320" endX="860" endY="320">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="500" topLeftY="340" width="380" height="70">
+      <content textType="body" fontSize="14" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p><span bold="true" color="rgba(37,99,235,1)" fontSize="28">06</span>  <span bold="true" color="rgba(13,19,38,1)" fontSize="18">落地与价值</span></p>
+        <p>实施路径、效果衡量指标与长期价值</p>
+      </content>
+    </shape>
+    <line startX="500" startY="420" endX="860" endY="420">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+  </data>
+  <note>
+    <content textType="body">
+      <p>本次汇报分为六个部分：先讲现状痛点和目标，再讲核心设计思路和产品架构，然后深入多轮对话机制和业务流程，最后讲落地路径和价值。</p>
+    </content>
+  </note>
+</slide>

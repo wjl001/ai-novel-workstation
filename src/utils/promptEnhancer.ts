@@ -1,14 +1,26 @@
 /**
  * 短剧生成 Prompt 智能增强系统
- * 基于《短剧生成Prompt智能增强系统产品解决方案》实现
- * 
- * 核心能力：
- * 1. 通用质量增强模块 - 全场景默认植入影视级基础参数与负向约束
- * 2. 精细动作拆解模块 - 将笼统动作描述替换为分步连续的专业动作拆解
- * 3. 人物一致性锁定模块 - 提取人物特征多点重复强化
- * 4. 台词匹配校验模块 - 结构化隔离台词内容，明确指令权重
- * 5. 光影风格对齐模块 - 自动补全场景光影属性描述
+ * 基于《视频生成 Prompt 智能增强系统产品解决方案（Hermes Agent 多轮对话版）》实现
+ *
+ * 双模式架构：
+ * - V1.0 关键词匹配模式（同步，降级用）：enhancePrompt()
+ *   基于预置模板库的关键词匹配+模板拼装，单次调用即输出
+ *
+ * - V2.0 Hermes Agent 多轮对话模式（异步，推荐）：enhancePromptWithHermes()
+ *   底层执行5轮自我对话（解析→加载上下文→生成→自检→修正），
+ *   界面不显示对话内容，自动注入剧本/角色/场景上下文，
+ *   调用Skills知识库，第4轮自检第5轮修正
+ *
+ * 核心能力（V2.0）：
+ * 1. Hermes多轮对话引擎 - 5轮底层自对话，界面不可见
+ * 2. 上下文注入 - 自动加载剧本/角色/场景/前后分镜信息
+ * 3. Skills知识库 - 16个专业Skills，语义检索自动匹配
+ * 4. 质量自检 - 帧对齐/时间轴/参考图/负面提示词/动作连贯性校验
+ * 5. 自动修正 - 根据自检结果自动优化输出
  */
+
+import { hermesEnhancePrompt, type HermesEnhanceResult, type HermesOptions } from './hermesAgent';
+import { contextManager, type StoryboardContext } from './contextManager';
 
 // ==================== 模板库定义 ====================
 
@@ -131,12 +143,34 @@ export interface EnhancedPrompt {
   dialogueContent: string;
   isMultiShot: boolean;
   hasReference: boolean;
+  // === V2.0 Hermes 多轮对话扩展字段（可选） ===
+  /** 使用的增强引擎版本 */
+  engineVersion?: 'v1-keyword' | 'v2-hermes';
+  /** Hermes多轮对话日志（界面不展示，用于调试） */
+  dialogueLog?: HermesEnhanceResult['dialogueLog'];
+  /** 匹配的Skills名称列表 */
+  matchedSkills?: string[];
+  /** 自检报告 */
+  selfCheckReport?: HermesEnhanceResult['selfCheckReport'];
+  /** 优化说明 */
+  optimizationNotes?: string[];
+  /** 上下文摘要 */
+  contextSummary?: string;
 }
 
 export interface EnhanceOptions {
   hasReference?: boolean;
   isMultiShot?: boolean;
   referenceImage?: string;
+  // === V2.0 Hermes 选项 ===
+  /** 是否使用Hermes多轮对话引擎（默认true） */
+  useHermes?: boolean;
+  /** 剧本/剧集上下文 */
+  context?: Partial<StoryboardContext>;
+  /** 进度回调 */
+  onProgress?: (round: number, phase: string) => void;
+  /** 最大对话轮次（默认5） */
+  maxRounds?: number;
 }
 
 /**
@@ -375,6 +409,149 @@ export function getTemplateStats() {
     actionTemplates: ACTION_TEMPLATES.length,
     sceneTemplates: SCENE_LIGHTING_TEMPLATES.length,
     characterTemplates: Object.keys(CHARACTER_CONSISTENCY_TEMPLATES).length,
-    dialogueTemplates: Object.keys(DIALOGUE_TEMPLATES).length
+    dialogueTemplates: Object.keys(DIALOGUE_TEMPLATES).length,
+    // V2.0 新增
+    engine: 'dual-mode (v1-keyword + v2-hermes)',
+  };
+}
+
+// ==================== V2.0 Hermes Agent 多轮对话增强 ====================
+
+/**
+ * V2.0 主入口：使用 Hermes Agent 多轮对话增强 Prompt
+ *
+ * 与 V1.0 enhancePrompt 的区别：
+ * - 异步执行，底层进行5轮自我对话（界面不可见）
+ * - 自动注入剧本/角色/场景/前后分镜上下文
+ * - 调用Skills知识库（16个专业Skills）
+ * - 第4轮质量自检，第5轮自动修正
+ * - 输出包含对话日志、自检报告、优化说明
+ *
+ * @param script 原始分镜脚本
+ * @param options 增强选项（含上下文、进度回调等）
+ * @returns 增强后的Prompt（含Hermes扩展字段）
+ */
+export async function enhancePromptWithHermes(
+  script: string,
+  options: EnhanceOptions = {}
+): Promise<EnhancedPrompt> {
+  if (!script || !script.trim()) {
+    return {
+      originalPrompt: '',
+      enhancedPrompt: '',
+      negativePrompt: QUALITY_TEMPLATES.negativeBase,
+      matchedModules: [],
+      matchedActions: [],
+      matchedScenes: [],
+      hasDialogue: false,
+      dialogueContent: '',
+      isMultiShot: false,
+      hasReference: !!options.hasReference,
+      engineVersion: 'v2-hermes',
+    };
+  }
+
+  try {
+    // 构建上下文
+    const context = contextManager.buildContext({
+      ...options.context,
+      isMultiShot: options.isMultiShot,
+    });
+
+    // 调用Hermes Agent执行多轮对话
+    const hermesResult = await hermesEnhancePrompt(script, {
+      hasReference: options.hasReference,
+      isMultiShot: options.isMultiShot,
+      referenceImage: options.referenceImage,
+      context,
+      maxRounds: options.maxRounds || 5,
+      onProgress: options.onProgress,
+    });
+
+    // 转换为EnhancedPrompt格式（兼容V1.0接口）
+    return {
+      originalPrompt: hermesResult.originalPrompt,
+      enhancedPrompt: hermesResult.enhancedPrompt,
+      negativePrompt: hermesResult.negativePrompt,
+      matchedModules: hermesResult.matchedModules,
+      matchedActions: hermesResult.matchedActions,
+      matchedScenes: hermesResult.matchedScenes,
+      hasDialogue: hermesResult.hasDialogue,
+      dialogueContent: hermesResult.dialogueContent,
+      isMultiShot: hermesResult.isMultiShot,
+      hasReference: hermesResult.hasReference,
+      // V2.0扩展字段
+      engineVersion: 'v2-hermes',
+      dialogueLog: hermesResult.dialogueLog,
+      matchedSkills: hermesResult.matchedSkills,
+      selfCheckReport: hermesResult.selfCheckReport,
+      optimizationNotes: hermesResult.optimizationNotes,
+      contextSummary: contextManager.generateContextSummary(context),
+    };
+  } catch (error) {
+    console.warn('[PromptEnhancer] Hermes增强失败，降级为V1.0关键词匹配:', error);
+    // 降级：使用V1.0关键词匹配
+    const fallbackResult = enhancePrompt(script, options);
+    fallbackResult.engineVersion = 'v1-keyword';
+    return fallbackResult;
+  }
+}
+
+/**
+ * 智能增强入口：自动选择最优引擎
+ * - 默认使用Hermes多轮对话（V2.0）
+ * - Hermes失败时自动降级为关键词匹配（V1.0）
+ * - 当 options.useHermes === false 时直接使用V1.0
+ */
+export async function enhancePromptSmart(
+  script: string,
+  options: EnhanceOptions = {}
+): Promise<EnhancedPrompt> {
+  if (options.useHermes === false) {
+    const result = enhancePrompt(script, options);
+    result.engineVersion = 'v1-keyword';
+    return result;
+  }
+  return enhancePromptWithHermes(script, options);
+}
+
+/**
+ * V2.0 批量增强（使用Hermes多轮对话）
+ * 支持进度回调，逐个分镜依次处理
+ */
+export async function batchEnhancePromptsWithHermes(
+  scripts: { id: string; script: string }[],
+  options: EnhanceOptions = {},
+  onItemProgress?: (index: number, total: number, result: EnhancedPrompt) => void
+): Promise<{ id: string; result: EnhancedPrompt }[]> {
+  const results: { id: string; result: EnhancedPrompt }[] = [];
+
+  for (let i = 0; i < scripts.length; i++) {
+    const item = scripts[i];
+    const result = await enhancePromptWithHermes(item.script, options);
+    results.push({ id: item.id, result });
+
+    if (onItemProgress) {
+      onItemProgress(i + 1, scripts.length, result);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * 获取Hermes引擎状态信息
+ */
+export function getHermesEngineInfo() {
+  return {
+    version: 'v2.0',
+    name: 'Hermes Agent 多轮对话引擎',
+    maxRounds: 5,
+    phases: ['需求解析', '上下文加载', '初稿生成', '质量自检', '修正输出'],
+    skillsCount: 16,
+    contextInjection: true,
+    selfCheck: true,
+    autoCorrection: true,
+    dialogueVisible: false, // 界面不显示对话内容
   };
 }

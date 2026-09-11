@@ -1,0 +1,85 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>长期价值：从工具到方法论沉淀</p>
+      </content>
+    </shape>
+    <line startX="80" startY="78" endX="160" endY="78">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="rect" topLeftX="50" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="50" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="120" width="235" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>方法论沉淀</p></content>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="155" width="235" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>将资深提示词工程师的经验固化为可复用的 Skills 知识库和自检规则，形成企业级 AI 视频生产方法论。</p>
+        <p> </p>
+        <p>新人无需长期培训即可产出高质量提示词，经验不再依赖个人。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="120" width="235" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>数据驱动迭代</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="155" width="235" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>Bad Case 反馈机制形成自循环优化体系，优质案例持续沉淀为 Skills，Hermes 对话策略持续优化。</p>
+        <p> </p>
+        <p>系统越用越聪明，质量持续提升，形成数据飞轮。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(191,215,255,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="660" topLeftY="120" width="235" height="30">
+      <content textType="body" fontSize="16" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true"><p>全自动化生产基础</p></content>
+    </shape>
+    <shape type="text" topLeftX="660" topLeftY="155" width="235" height="130">
+      <content textType="body" fontSize="11" color="rgba(191,215,255,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>提示词自动生成为 AI 视频全自动化生产打下基础，后续可扩展剧本自动生成、分镜自动拆解、视频自动生成、后期自动剪辑的全链路。</p>
+        <p> </p>
+        <p>为 AI 短剧工业化生产提供核心能力。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="50" topLeftY="315" width="860" height="185" presetHandlers="6">
+      <fill><fillColor color="rgba(37,99,235,0.05)"/></fill>
+      <border color="rgba(37,99,235,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="330" width="820" height="30">
+      <content textType="body" fontSize="18" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>总结：用 Agent 多轮对话解决 AI 视频提示词质量难题</p></content>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="370" width="820" height="120">
+      <content textType="body" fontSize="13" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p>本方案通过 Hermes Agent 多轮对话机制，将资深提示词工程师的"生成-自检-修正"工作流程自动化，配合分镜级统一提示词架构、7 类上下文注入、10 项专项自检，实现一次生成合格率从 30% 提升至 80%，抽卡次数从 5-8 次降至 1-2 次，单分镜处理时长从 15-20 分钟降至 2-3 分钟。</p>
+        <p>方案复用现有技术栈，2-3 周核心能力上线，无新增人员编制，具备明确的实施路径和效果衡量指标，是 AI 视频生产提效的可行方案。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>长期价值体现在三个层面：方法论沉淀（将资深工程师经验固化为可复用的Skills知识库）、数据驱动迭代（Bad Case反馈形成自循环优化体系，系统越用越聪明）、全自动化生产基础（为AI短剧工业化生产提供核心能力）。总结来说，本方案通过Hermes Agent多轮对话机制，将资深提示词工程师的工作流程自动化，实现一次生成合格率从30%提升到80%，抽卡次数从5-8次降到1-2次，单分镜处理时长从15-20分钟降到2-3分钟。方案复用现有技术栈，2-3周核心能力上线，是AI视频生产提效的可行方案。</p>
+    </content>
+  </note>
+</slide>

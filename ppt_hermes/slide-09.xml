@@ -1,0 +1,123 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="800" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>上下文注入机制：让系统"看懂"剧本前后文</p>
+      </content>
+    </shape>
+    <line startX="80" startY="72" endX="160" endY="72">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="85" width="800" height="25">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>没有上下文会导致：人物服装变体用错、场景时间不对、帧连续关系错误、情绪状态偏离、公共属性丢失</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="50" topLeftY="125" width="340" height="380" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="65" topLeftY="135" width="310" height="25">
+      <content textType="body" fontSize="13" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>上下文数据来源（7 类）</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="170" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="176" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">1. 剧本解析文档</span> → 分镜公共属性（画面比例/时长/重点角色/风格）</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="218" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="224" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">2. 分镜列表</span> → 画面描述/原始剧本/时长建议/桢连续标注</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="266" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="272" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">3. 人物设定文档</span> → 角色描述/变体列表（日常/战斗/特殊）/脸部特征</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="314" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="320" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">4. 场景设定文档</span> → 场景描述/时间变体（日景/夜景/黄昏）/光影参数</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="362" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="368" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">5. 道具设定文档</span> → 道具描述/状态变体，涉及道具时匹配参考图</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="410" width="310" height="42" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="416" width="290" height="32">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">6. 固定风格前缀</span> → 全片统一渲染风格，确保所有视频风格一致</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="458" width="310" height="38" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="463" width="290" height="30">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" lineSpacing="multiple:1.3"><p><span bold="true">7. 上一分镜尾帧</span> → 桢连续标注/尾帧画面，生成本分镜首帧时复用</p></content>
+    </shape>
+    <line startX="395" startY="315" endX="455" endY="315">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="med" heightScale="med"/>
+    </line>
+    <shape type="rect" topLeftX="460" topLeftY="230" width="180" height="170" presetHandlers="8">
+      <fill><fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(37,99,235,1) 100%)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="470" topLeftY="260" width="160" height="30">
+      <content textType="body" fontSize="15" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>上下文管理器</p></content>
+    </shape>
+    <shape type="text" topLeftX="470" topLeftY="300" width="160" height="90">
+      <content textType="body" fontSize="11" color="rgba(191,215,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.6">
+        <p>定位剧本解析文档</p>
+        <p>匹配人物服装变体</p>
+        <p>匹配场景时间变体</p>
+        <p>追踪帧连续状态</p>
+        <p>结构化注入对话</p>
+      </content>
+    </shape>
+    <line startX="645" startY="315" endX="705" endY="315">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="med" heightScale="med"/>
+    </line>
+    <shape type="rect" topLeftX="710" topLeftY="180" width="200" height="270" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="720" topLeftY="195" width="180" height="25">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>注入 Hermes 多轮对话</p></content>
+    </shape>
+    <line startX="730" startY="228" endX="890" endY="228">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="720" topLeftY="240" width="180" height="200">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p><span bold="true" color="rgba(13,19,38,1)">第 2 轮加载：</span></p>
+        <p>全局属性 + 人物变体</p>
+        <p>+ 场景变体 + 参考图</p>
+        <p>+ 上一镜尾帧状态</p>
+        <p> </p>
+        <p><span bold="true" color="rgba(13,19,38,1)">作用：</span></p>
+        <p>保证人物一致性</p>
+        <p>保证光影风格统一</p>
+        <p>保证帧连续衔接</p>
+        <p>保证情绪符合剧情</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>上下文注入是本方案区别于原方案的关键能力。系统从7个数据源提取信息，通过上下文管理器结构化注入到Hermes的第2轮对话中。这样系统就知道这个分镜在剧本中的位置、人物该穿什么衣服、场景是什么时间、上一镜的尾帧是什么，从根本上解决一致性问题。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,141 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>效果衡量指标：12 项基线 vs 目标</p>
+      </content>
+    </shape>
+    <line startX="80" startY="68" endX="160" endY="68">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="80" width="800" height="22">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>系统上线后通过以下 12 项指标衡量效果，核心目标：一次生成合格率从 30% 提升至 80%，抽卡次数从 5-8 次降至 1-2 次</p>
+      </content>
+    </shape>
+    <table topLeftX="40" topLeftY="112" width="880" height="420">
+      <colgroup>
+        <col width="40"/>
+        <col width="180"/>
+        <col width="140"/>
+        <col width="140"/>
+        <col width="140"/>
+        <col width="240"/>
+      </colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>#</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>指标名称</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>当前基线</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>目标值</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>提升幅度</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>衡量方式</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>1</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>一次生成合格率</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>30%</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>80%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+50pp</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>无需修改直接可用的分镜占比</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>2</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>平均抽卡次数</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>5-8 次</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>1-2 次</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>降低 70%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>每个分镜平均重新生成次数</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>3</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>帧对齐准确率</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>40%</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>90%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+50pp</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>相邻镜头首帧=上镜尾帧的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>4</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>角色一致性</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>50%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>85%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+35pp</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>同一角色跨分镜外观一致的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>5</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>场景一致性</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>55%</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>88%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+33pp</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>同一场景跨分镜环境一致的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>6</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>单分镜处理时长</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>15-20 分钟</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>2-3 分钟</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>降低 85%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>从输入分镜到输出提示词的时间</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>7</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>提示词结构完整率</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>60%</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>98%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+38pp</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>包含六段式结构全部要素的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>8</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>负面提示词覆盖率</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>30%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>100%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+70pp</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>包含基础负面词+场景专属词的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>9</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>参考图配置准确率</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>45%</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>95%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+50pp</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>参考图类型/数量/引用格式正确的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>10</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>时间轴连贯性</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>50%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>95%</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+45pp</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>时间段首尾严密衔接无重叠断裂的比例</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>11</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>用户满意度</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>3.2/5</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>4.5/5</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>+1.3 分</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>用户对生成结果的主观评分</p></content></td>
+      </tr>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>12</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="left"><p>单集制作周期</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(201,48,44,1)" bold="true" textAlign="center"><p>3-5 天</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>1-2 天</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>降低 60%</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="9" color="rgba(83,97,116,1)" textAlign="left"><p>从剧本到成片的总制作时间</p></content></td>
+      </tr>
+    </table>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是系统上线后的12项效果衡量指标，核心指标是一次生成合格率从30%提升到80%，平均抽卡次数从5-8次降到1-2次。其他指标包括帧对齐准确率、角色一致性、场景一致性、单分镜处理时长、提示词结构完整率、负面提示词覆盖率、参考图配置准确率、时间轴连贯性、用户满意度、单集制作周期。所有指标都有明确的当前基线和目标值，以及衡量方式。</p>
+    </content>
+  </note>
+</slide>

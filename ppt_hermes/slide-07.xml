@@ -1,0 +1,169 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>产品整体架构：三层系统架构</p>
+      </content>
+    </shape>
+    <line startX="80" startY="72" endX="160" endY="72">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="rect" topLeftX="50" topLeftY="90" width="860" height="110" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="95" width="150" height="25">
+      <content textType="body" fontSize="12" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>第一层 · 用户接入层</p></content>
+    </shape>
+    <shape type="rect" topLeftX="70" topLeftY="125" width="190" height="60" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.08)"/></fill>
+      <border color="rgba(37,99,235,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="135" width="180" height="45">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">分镜拆解入口</span></p><p>上传剧本 → 分镜列表 + 设定文档</p></content>
+    </shape>
+    <shape type="rect" topLeftX="275" topLeftY="125" width="190" height="60" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.08)"/></fill>
+      <border color="rgba(37,99,235,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="280" topLeftY="135" width="180" height="45">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">镜头拆解入口</span></p><p>上传分镜 → 镜头列表 + AI 提示词</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="125" width="190" height="60" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.08)"/></fill>
+      <border color="rgba(37,99,235,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="485" topLeftY="135" width="180" height="45">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">提示词优化入口</span></p><p>单条 / 批量优化，支持针对性调整</p></content>
+    </shape>
+    <shape type="rect" topLeftX="685" topLeftY="125" width="190" height="60" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.08)"/></fill>
+      <border color="rgba(37,99,235,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="690" topLeftY="135" width="180" height="45">
+      <content textType="body" fontSize="11" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">结果展示面板</span></p><p>提示词 + 参考图清单 + 转场说明</p></content>
+    </shape>
+    <line startX="480" startY="200" endX="480" endY="220">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="med" heightScale="med"/>
+    </line>
+    <shape type="rect" topLeftX="50" topLeftY="220" width="860" height="180" presetHandlers="6">
+      <fill><fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(30,50,100,1) 100%)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="226" width="350" height="30">
+      <content textType="body" fontSize="12" color="rgba(191,215,255,1)" fontFamily="思源黑体" bold="true"><p>第二层 · Hermes Agent 多轮对话增强层（系统核心）</p></content>
+    </shape>
+    <shape type="rect" topLeftX="65" topLeftY="260" width="155" height="125" presetHandlers="4">
+      <fill><fillColor color="rgba(255,255,255,0.1)"/></fill>
+      <border color="rgba(191,215,255,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="275" width="145" height="100">
+      <content textType="body" fontSize="11" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true" fontSize="13">分镜/镜头</span></p>
+        <p><span bold="true" fontSize="13">解析器</span></p>
+        <p> </p>
+        <p>语义理解分镜内容</p>
+        <p>识别镜头类型</p>
+        <p>提取动作/角色/场景</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="232" topLeftY="260" width="155" height="125" presetHandlers="4">
+      <fill><fillColor color="rgba(255,255,255,0.1)"/></fill>
+      <border color="rgba(191,215,255,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="237" topLeftY="275" width="145" height="100">
+      <content textType="body" fontSize="11" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true" fontSize="13">上下文</span></p>
+        <p><span bold="true" fontSize="13">管理器</span></p>
+        <p> </p>
+        <p>注入剧本/人物/场景</p>
+        <p>匹配人物服装变体</p>
+        <p>追踪帧连续状态</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="399" topLeftY="260" width="155" height="125" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.4)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="404" topLeftY="275" width="145" height="100">
+      <content textType="body" fontSize="11" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true" fontSize="13">多轮对话</span></p>
+        <p><span bold="true" fontSize="13">引擎</span></p>
+        <p> </p>
+        <p>3-5 轮底层自我对话</p>
+        <p>解析→加载→生成</p>
+        <p>→自检→修正</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="566" topLeftY="260" width="155" height="125" presetHandlers="4">
+      <fill><fillColor color="rgba(255,255,255,0.1)"/></fill>
+      <border color="rgba(191,215,255,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="571" topLeftY="275" width="145" height="100">
+      <content textType="body" fontSize="11" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true" fontSize="13">Skills</span></p>
+        <p><span bold="true" fontSize="13">知识库</span></p>
+        <p> </p>
+        <p>分镜/镜头拆解规范</p>
+        <p>帧对齐/时间轴规则</p>
+        <p>负面提示词库</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="733" topLeftY="260" width="155" height="125" presetHandlers="4">
+      <fill><fillColor color="rgba(255,255,255,0.1)"/></fill>
+      <border color="rgba(191,215,255,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="738" topLeftY="275" width="145" height="100">
+      <content textType="body" fontSize="11" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true" fontSize="13">提示词</span></p>
+        <p><span bold="true" fontSize="13">自检器</span></p>
+        <p> </p>
+        <p>校验帧对齐/时间轴</p>
+        <p>参考图/负面提示词</p>
+        <p>台词情绪描述</p>
+      </content>
+    </shape>
+    <line startX="480" startY="400" endX="480" endY="420">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="med" heightScale="med"/>
+    </line>
+    <shape type="rect" topLeftX="50" topLeftY="420" width="860" height="100" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="426" width="200" height="25">
+      <content textType="body" fontSize="12" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>第三层 · 模型服务层</p></content>
+    </shape>
+    <shape type="rect" topLeftX="100" topLeftY="455" width="220" height="55" presetHandlers="4">
+      <fill><fillColor color="rgba(13,19,38,0.05)"/></fill>
+      <border color="rgba(13,19,38,0.2)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="105" topLeftY="462" width="210" height="45">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">通用大语言模型</span></p><p>Hermes 对话推理引擎</p></content>
+    </shape>
+    <shape type="rect" topLeftX="370" topLeftY="455" width="220" height="55" presetHandlers="4">
+      <fill><fillColor color="rgba(37,99,235,0.1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="375" topLeftY="462" width="210" height="45">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">Seedance 2.0</span></p><p>视频生成最终执行模型（4-15 秒）</p></content>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="455" width="220" height="55" presetHandlers="4">
+      <fill><fillColor color="rgba(13,19,38,0.05)"/></fill>
+      <border color="rgba(13,19,38,0.2)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="645" topLeftY="462" width="210" height="45">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p><span bold="true">向量知识库</span></p><p>Skills 模板 + 历史优质案例 + 语义检索</p></content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是系统的整体架构图，分为三层。第一层是用户接入层，提供四个入口；第二层是核心的Hermes Agent多轮对话增强层，包含5个子模块，其中多轮对话引擎是核心中的核心；第三层是模型服务层，包括通用大语言模型、Seedance 2.0和向量知识库。</p>
+    </content>
+  </note>
+</slide>

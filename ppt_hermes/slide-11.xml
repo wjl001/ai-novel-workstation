@@ -1,0 +1,135 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>六大核心功能模块</p>
+      </content>
+    </shape>
+    <line startX="80" startY="78" endX="160" endY="78">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="rect" topLeftX="60" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="120" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>1. 分镜/镜头解析模块</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>语义理解分镜内容（谁在哪做什么）</p>
+        <p>自动识别镜头类型（对话/动作/情绪/环境）</p>
+        <p>按单一动作单元原则拆分镜头</p>
+        <p>动态分配时长（对话4-6秒/动作3-4秒）</p>
+        <p>提取角色和场景，匹配参考图</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="120" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>2. 上下文管理模块</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="155" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>加载全局属性（画面比例/时长/风格）</p>
+        <p>自动匹配人物服装变体（日常/战斗）</p>
+        <p>匹配场景时间变体（日景/夜景/黄昏）</p>
+        <p>追踪帧连续状态（复用/独立首帧）</p>
+        <p>关联参考图路径，生成上传顺序清单</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="630" topLeftY="105" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="rect" topLeftX="630" topLeftY="105" width="6" height="190">
+      <fill><fillColor color="rgba(191,215,255,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="650" topLeftY="120" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true"><p>3. 多轮对话引擎（核心）</p></content>
+    </shape>
+    <shape type="text" topLeftX="650" topLeftY="155" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(191,215,255,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>分镜级独立执行3-5轮自我对话</p>
+        <p>批量处理支持，自动排队依次处理</p>
+        <p>维护对话状态（轮次/上下文/自检结果）</p>
+        <p>实时进度反馈（第X集第Y分镜）</p>
+        <p>结果聚合，按集数分组输出</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="310" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="325" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>4. Skills 知识库调用</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="360" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>四大类16个专业Skills（分镜/镜头/视觉/工程）</p>
+        <p>Hermes自主判断需要哪些Skills</p>
+        <p>语义检索加载相关规范到对话上下文</p>
+        <p>生成时参考规范，自检时调用校验类</p>
+        <p>指导式而非填鸭式，结构相同内容不同</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="310" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="325" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>5. 提示词自检模块</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="360" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>视频生成场景的"质量守门员"</p>
+        <p>10项专项校验（帧对齐/时间轴/参考图等）</p>
+        <p>每项有明确通过标准和修正方式</p>
+        <p>发现问题后第5轮自动修正</p>
+        <p>输出自检评分和检查报告</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="630" topLeftY="310" width="270" height="190" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="630" topLeftY="310" width="6" height="190">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="650" topLeftY="325" width="240" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>6. 结果输出与展示</p></content>
+    </shape>
+    <shape type="text" topLeftX="650" topLeftY="360" width="240" height="130">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>分镜级提示词展示（含时间轴分段）</p>
+        <p>参考图上传顺序清单（类型/路径/重点）</p>
+        <p>镜头列表展示（编号/动作/景别/运镜）</p>
+        <p>后期转场清单（转场效果/工具/时长）</p>
+        <p>自检报告+批量导出Markdown</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>系统包含六大核心功能模块：分镜/镜头解析、上下文管理、多轮对话引擎（核心）、Skills知识库调用、提示词自检、结果输出与展示。其中多轮对话引擎是系统的核心，负责编排整个3-5轮的对话流程；提示词自检是质量保障的关键。</p>
+    </content>
+  </note>
+</slide>

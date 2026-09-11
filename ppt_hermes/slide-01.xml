@@ -1,0 +1,64 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(20,35,70,1) 60%,rgba(37,99,235,1) 100%)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="0" topLeftY="0" width="960" height="540">
+      <fill>
+        <fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(20,35,70,1) 60%,rgba(37,99,235,1) 100%)"/>
+      </fill>
+    </shape>
+    <line startX="80" startY="180" endX="200" endY="180">
+      <border color="rgba(191,215,255,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="200" width="580" height="100">
+      <content textType="title" fontSize="40" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" letterSpacing="2" lineSpacing="multiple:1.2">
+        <p>视频生成 Prompt</p>
+        <p>智能增强系统</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="315" width="580" height="40">
+      <content textType="sub-headline" fontSize="22" color="rgba(191,215,255,1)" fontFamily="思源黑体">
+        <p>基于 Hermes Agent 多轮对话架构的产品方案汇报</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="420" width="400" height="30">
+      <content textType="caption" fontSize="13" color="rgba(191,215,255,0.8)" fontFamily="思源黑体">
+        <p>版本 V2.0  |  2026 年 09 月</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="450" width="500" height="30">
+      <content textType="caption" fontSize="12" color="rgba(191,215,255,0.6)" fontFamily="思源黑体">
+        <p>适用范围：分镜拆解 → 镜头拆解 → AI 视频提示词生成 → 后期转场</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="700" topLeftY="100" width="180" height="180" presetHandlers="8">
+      <fill>
+        <fillColor color="rgba(37,99,235,0.15)"/>
+      </fill>
+      <border color="rgba(191,215,255,0.3)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="710" topLeftY="140" width="160" height="40">
+      <content textType="body" fontSize="14" color="rgba(191,215,255,0.9)" fontFamily="思源黑体" textAlign="center">
+        <p>底层模型</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="705" topLeftY="175" width="170" height="50">
+      <content textType="headline" fontSize="24" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center" wrap="false">
+        <p>Seedance 2.0</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="710" topLeftY="225" width="160" height="30">
+      <content textType="caption" fontSize="11" color="rgba(191,215,255,0.7)" fontFamily="思源黑体" textAlign="center">
+        <p>图生视频 4-15 秒</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>各位领导好，今天汇报的是视频生成Prompt智能增强系统的产品方案。核心是引入Hermes Agent多轮对话架构，解决当前视频生成中分镜拆解不专业、帧对齐断裂、时间轴混乱等高频问题。</p>
+    </content>
+  </note>
+</slide>

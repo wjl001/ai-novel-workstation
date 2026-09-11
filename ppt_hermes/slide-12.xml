@@ -1,0 +1,101 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="800" height="35">
+      <content textType="title" fontSize="24" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>提示词自检体系：第 4 轮对话的 10 项专项校验</p>
+      </content>
+    </shape>
+    <line startX="80" startY="67" endX="160" endY="67">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="78" width="800" height="22">
+      <content textType="body" fontSize="11" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>视频生成场景的"质量守门员"，每项校验有明确通过标准，发现问题后第 5 轮自动修正</p>
+      </content>
+    </shape>
+    <table topLeftX="50" topLeftY="108" width="860" height="410">
+      <colgroup>
+        <col width="40"/>
+        <col width="110"/>
+        <col width="320"/>
+        <col width="390"/>
+      </colgroup>
+      <tr height="32">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>序号</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>自检项</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>检查内容</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>通过标准 / 修正方式</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>1</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>帧对齐链</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>相邻镜头首帧是否 = 上一镜尾帧；分镜间桢连续关系是否正确</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>同场景连续动作必须帧对齐；场景切换必须有转场设计；不通过则补充帧对齐标注</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>2</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>时间轴连贯性</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>各时间段首尾是否严密衔接；有无重叠或断裂</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>上一段结束秒 = 下一段起始秒；无重叠无断裂；不通过则调整时间段确保首尾衔接</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>3</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>总时长控制</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>分镜总时长是否在 4-15 秒范围内</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>4 秒 ≤ 总时长 ≤ 15 秒，最佳 4-8 秒；不通过则增加或减少镜头，调整各镜头时长</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>4</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>景别变化</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>相邻镜头景别是否有变化，避免视觉疲劳</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>无连续 3 个以上相同景别；无特写到极大远景的跳跃；不通过则调整中间镜头景别</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>5</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>参考图配置</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>参考图数量 ≤ 9 张；提示词内用"图片 N"引用；路径在下方独立区域</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>数量合规；引用格式正确；路径清单完整；不通过则补充或删除参考图，修正引用格式</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>6</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>负面提示词</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>是否包含基础负面词；角色行走时是否追加走路专属 14 项</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>基础负面词必含（畸形/水印/穿模等）；行走场景必含 14 项走路专属负面词；不通过则补充</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>7</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>台词情绪描述</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>有台词的镜头是否包含声学情绪特征描述</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>格式："声学特征。台词：原话"；禁止抽象情绪词（如"悲伤地说"）；不通过则补充声学描述</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>8</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>动作连贯性</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>角色位置/姿态/表情是否相邻镜头连贯</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>无瞬移/姿态跳跃/情绪突变；道具状态一致；不通过则调整动作描述，增加过渡镜头</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>9</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>单一动作原则</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>每个时间段是否只有一个核心动作</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>闭上眼睛看画面，不需要移动目光就能看完；不通过则拆分包含多个动作的时间段</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>10</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" bold="true" textAlign="center"><p>提示词语言</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>提示词是否全部使用中文（面向 Seedance 中文模式）</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>无英文混杂（专业术语除外）；不通过则翻译为中文</p></content></td>
+      </tr>
+    </table>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是第4轮对话中执行的10项专项自检，是整个系统质量保障的核心。每一项都有明确的检查内容、通过标准和修正方式。自检发现问题后，第5轮对话会自动修正。比如帧对齐不通过就补充帧对齐标注，时间轴不连贯就调整时间段，负面提示词遗漏就补充缺失的词。</p>
+    </content>
+  </note>
+</slide>

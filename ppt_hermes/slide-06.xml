@@ -1,0 +1,88 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="800" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>与原方案（V1.0 模板匹配版）的核心区别</p>
+      </content>
+    </shape>
+    <line startX="80" startY="80" endX="160" endY="80">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <table topLeftX="60" topLeftY="100" width="840" height="410">
+      <colgroup>
+        <col width="120"/>
+        <col width="340"/>
+        <col width="380"/>
+      </colgroup>
+      <tr height="36">
+        <td>
+          <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>对比维度</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>原方案 V1.0（模板匹配版）</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>本方案 V2.0（Hermes 多轮对话版）</p></content>
+        </td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>优化机制</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>关键词匹配 + 预置模板拼装，单次调用</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>Hermes 底层 3-5 轮自我对话，逐步迭代优化</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>分镜理解</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>基于关键词识别场景类型</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>语义理解分镜内容，识别动作 / 情绪 / 对话类型</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>上下文感知</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>无上下文，每条分镜独立处理</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>注入剧本 / 人物设定 / 场景设定 / 上一分镜尾帧状态</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>帧对齐</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>无帧对齐概念</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>自动校验帧连续链，确保相邻镜头首帧 = 上一镜尾帧</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>时间轴分段</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>无时间轴概念</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>自动生成 0-X 秒分段，各段首尾严密衔接</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>参考图配置</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>固定模板配置</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>根据分镜内容自动匹配人物 / 场景 / 道具变体，最多 9 张</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>提示词粒度</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>每镜头独立首尾帧提示词</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>分镜级统一提示词（v3.8 架构），时间轴分段</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>自检能力</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>无自检</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>第 4 轮专门校验帧对齐 / 时间轴 / 参考图 / 负面提示词</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" bold="true" color="rgba(13,19,38,1)" textAlign="center"><p>界面展示</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(83,97,116,1)" textAlign="left"><p>展示匹配过程</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="left"><p>不展示对话过程，仅展示最终优化结果</p></content></td>
+      </tr>
+    </table>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这张对比表从9个维度展示了V2.0和V1.0的核心区别。最关键的三个变化：一是从单次规则匹配变成3-5轮多轮对话迭代；二是从无上下文变成注入完整剧本/人物/场景上下文；三是从无自检变成第4轮专项自检+第5轮自动修正。</p>
+    </content>
+  </note>
+</slide>

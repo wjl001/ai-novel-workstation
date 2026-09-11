@@ -504,6 +504,7 @@
                 <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
               </button>
               <button 
+                v-if="creationMode === 'full'"
                 class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
                 :class="activeTab === 'upload'
                   ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
@@ -527,6 +528,17 @@
               <div class="min-h-[180px] flex flex-col">
                 <!-- AI Tab Content -->
                 <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
+                  <!-- 快捷模式提示 -->
+                  <div v-if="creationMode === 'quick'" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-500/20">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0">
+                      <el-icon :size="16"><Lightning /></el-icon>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-[13px] font-black text-emerald-700 dark:text-emerald-300">快捷创作模式</p>
+                      <p class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 font-medium">无需剧本，直接进入主体设置，输入灵感为可选项</p>
+                    </div>
+                    <el-icon :size="20" class="text-emerald-500"><ArrowRight /></el-icon>
+                  </div>
                   <div class="relative group mt-2">
                     <!-- Dynamic Glowing Border -->
                     <div 
@@ -542,7 +554,7 @@
                         v-model="aiPrompt"
                         class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
                         :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
-                        placeholder="在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探...."
+                        :placeholder="creationMode === 'quick' ? '（可选）输入创作灵感，帮助AI更好地生成主体和分镜...' : '在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探....'"
                       ></textarea>
                       
                       <!-- Textarea Bottom Toolbar -->
@@ -582,12 +594,15 @@
                            </span>
                            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
                            <button 
-                            class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-[14px] font-black hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
-                            :disabled="!aiPrompt.trim() || isGenerating"
+                            class="flex items-center gap-2 px-6 py-2 rounded-2xl text-[14px] font-black hover:shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                            :class="creationMode === 'quick' 
+                              ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:shadow-emerald-500/30' 
+                              : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-indigo-500/30'"
+                            :disabled="(creationMode === 'full' && !aiPrompt.trim()) || isGenerating"
                             @click="startCreation"
                           >
                             <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
-                            <span>立即创作</span>
+                            <span>{{ creationMode === 'quick' ? '直接进入创作' : '立即创作' }}</span>
                           </button>
                         </div>
                       </div>
@@ -1979,19 +1994,22 @@ const typeText = (text: string) => {
 };
 
 const startCreation = () => {
-  if (!aiPrompt.value.trim()) {
-    ElMessage.warning('请输入创作灵感或点击上方建议');
-    return;
-  }
-  
   // 设置创作模式到 store
   dramaStore.setCreationMode(creationMode.value);
   
-  // 快捷模式：直接跳转到主体设置页，不弹灵感之门
+  // 快捷模式：直接跳转到主体设置页，不需要输入灵感或上传剧本
   if (creationMode.value === 'quick') {
-    // 将用户输入的灵感存入 store，供主体设置页使用
-    dramaStore.setQuickCreationPrompt(aiPrompt.value.trim());
+    // 如果用户输入了灵感，存入 store 供主体设置页使用
+    if (aiPrompt.value.trim()) {
+      dramaStore.setQuickCreationPrompt(aiPrompt.value.trim());
+    }
     router.push('/ai-short-drama-creator/assets');
+    return;
+  }
+  
+  // 完整模式：需要输入灵感
+  if (!aiPrompt.value.trim()) {
+    ElMessage.warning('请输入创作灵感或点击上方建议');
     return;
   }
   

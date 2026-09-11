@@ -1,0 +1,143 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>实施落地路径：三阶段推进</p>
+      </content>
+    </shape>
+    <line startX="80" startY="72" endX="160" endY="72">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="85" width="800" height="22">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>依托现有 Java 开发团队落地，无新增人员编制，2-3 周核心能力上线，持续迭代优化</p>
+      </content>
+    </shape>
+    <shape type="ellipse" topLeftX="85" topLeftY="245" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="85" topLeftY="250" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>1</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="120" width="260" height="110" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="130" width="230" height="25">
+      <content textType="body" fontSize="14" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>阶段一：核心能力上线</p></content>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="158" width="230" height="20">
+      <content textType="body" fontSize="11" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>周期：2-3 周  |  负责：Java 团队 + 产品</p></content>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="182" width="230" height="45">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.4">
+        <p>Hermes 多轮对话引擎 + 分镜/镜头解析 + 上下文管理器 + 8 个核心 Skills + 提示词生成与自检 + 灰度上线</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="290" width="260" height="200" presetHandlers="6">
+      <fill><fillColor color="rgba(37,99,235,0.05)"/></fill>
+      <border color="rgba(37,99,235,0.2)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="300" width="230" height="22">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>产出：</p></content>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="325" width="230" height="155">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>分镜拆解 + 镜头拆解两个场景可用</p>
+        <p>8 个核心 Skills 知识库</p>
+        <p>基础自检能力（帧对齐/时间轴）</p>
+        <p>参考图配置校验</p>
+        <p>负面提示词自动追加</p>
+        <p>前端结果展示面板</p>
+        <p>灰度上线，收集用户反馈</p>
+      </content>
+    </shape>
+    <shape type="ellipse" topLeftX="465" topLeftY="245" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="465" topLeftY="250" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>2</p></content>
+    </shape>
+    <shape type="rect" topLeftX="350" topLeftY="120" width="260" height="110" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="130" width="230" height="25">
+      <content textType="body" fontSize="14" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>阶段二：全流程覆盖</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="158" width="230" height="20">
+      <content textType="body" fontSize="11" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>周期：3-4 周  |  负责：Java + 产品 + 运营</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="182" width="230" height="45">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.4">
+        <p>批量处理/单条优化/重新优化 + Skills 扩充至 16 个 + 10 项自检全覆盖 + 后期转场清单 + Seedream 参考图联动 + 数据埋点</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="350" topLeftY="290" width="260" height="200" presetHandlers="6">
+      <fill><fillColor color="rgba(37,99,235,0.05)"/></fill>
+      <border color="rgba(37,99,235,0.2)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="300" width="230" height="22">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>产出：</p></content>
+    </shape>
+    <shape type="text" topLeftX="365" topLeftY="325" width="230" height="155">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>视频生成全流程覆盖</p>
+        <p>16 个专业 Skills 知识库</p>
+        <p>10 项自检完整体系</p>
+        <p>后期转场清单自动生成</p>
+        <p>参考图生成联动（Seedream）</p>
+        <p>数据埋点（合格率/抽卡次数）</p>
+        <p>效果可量化，正式上线</p>
+      </content>
+    </shape>
+    <shape type="ellipse" topLeftX="845" topLeftY="245" width="30" height="30">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="845" topLeftY="250" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>3</p></content>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="120" width="260" height="110" presetHandlers="6">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="130" width="230" height="25">
+      <content textType="body" fontSize="14" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true"><p>阶段三：数据驱动迭代</p></content>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="158" width="230" height="20">
+      <content textType="body" fontSize="11" color="rgba(191,215,255,1)" fontFamily="思源黑体" bold="true"><p>周期：持续  |  负责：产品 + 运营 + 算法</p></content>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="182" width="230" height="45">
+      <content textType="body" fontSize="10" color="rgba(191,215,255,1)" fontFamily="思源黑体" lineSpacing="multiple:1.4">
+        <p>Bad Case 反馈机制 + 优质案例沉淀为 Skills + Hermes 对话策略优化 + 多模型支持 + 个性化风格学习</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="640" topLeftY="290" width="260" height="200" presetHandlers="6">
+      <fill><fillColor color="rgba(13,19,38,0.05)"/></fill>
+      <border color="rgba(13,19,38,0.2)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="300" width="230" height="22">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>产出：</p></content>
+    </shape>
+    <shape type="text" topLeftX="655" topLeftY="325" width="230" height="155">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.7">
+        <p>形成自循环优化体系</p>
+        <p>沉淀行业级方法论</p>
+        <p>Skills 知识库持续积累</p>
+        <p>支持多视频生成模型扩展</p>
+        <p>个性化风格学习能力</p>
+        <p>用户数据驱动模型微调</p>
+        <p>为 AI 视频全自动化生产打底</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>实施落地分三个阶段：阶段一2-3周完成核心能力上线，包括Hermes多轮对话引擎、分镜/镜头解析、上下文管理器、8个核心Skills、提示词生成与自检，灰度上线；阶段二3-4周完成全流程覆盖，Skills扩充至16个，10项自检全覆盖，后期转场清单自动生成，数据埋点，正式上线；阶段三持续迭代，形成数据驱动的自循环优化体系，沉淀行业级方法论，支持多模型扩展。</p>
+    </content>
+  </note>
+</slide>

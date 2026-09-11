@@ -1,0 +1,112 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="40" width="700" height="45">
+      <content textType="title" fontSize="28" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>当前视频生成的六大核心痛点</p>
+      </content>
+    </shape>
+    <line startX="80" startY="90" endX="160" endY="90">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="rect" topLeftX="80" topLeftY="115" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="130" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>01</p></content>
+    </shape>
+    <shape type="text" topLeftX="145" topLeftY="135" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>分镜拆解不专业</p></content>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="175" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>不了解"单一动作单元原则"，一个镜头常包含多个动作（走进来→看见→停住→红眼眶），导致视频动作混乱、逻辑不清。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="350" topLeftY="115" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="370" topLeftY="130" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>02</p></content>
+    </shape>
+    <shape type="text" topLeftX="415" topLeftY="135" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>帧对齐链断裂</p></content>
+    </shape>
+    <shape type="text" topLeftX="370" topLeftY="175" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>相邻镜头无帧对齐设计，上一镜尾帧人物在左侧，下一镜首帧突然在右侧；角色"正在转身"下一镜已"转完了"，拼接跳变明显。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="620" topLeftY="115" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="640" topLeftY="130" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>03</p></content>
+    </shape>
+    <shape type="text" topLeftX="685" topLeftY="135" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>时间轴分段错误</p></content>
+    </shape>
+    <shape type="text" topLeftX="640" topLeftY="175" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>时间段重叠（0-4秒+3-7秒）、断裂（0-2秒+3-5秒）、总时长超15秒上限或低于4秒下限，时长控制完全混乱。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="305" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="320" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>04</p></content>
+    </shape>
+    <shape type="text" topLeftX="145" topLeftY="325" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>参考图配置错误</p></content>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="365" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>战斗场景用日常服装变体，夜景用日景参考图，参考图超9张上限，提示词内写路径而非"图片1"引用，人物场景一致性差。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="350" topLeftY="305" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="370" topLeftY="320" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>05</p></content>
+    </shape>
+    <shape type="text" topLeftX="415" topLeftY="325" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>负面提示词遗漏</p></content>
+    </shape>
+    <shape type="text" topLeftX="370" topLeftY="365" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>畸形肢体、文字水印、穿模等基础负面词遗漏；角色行走时必须追加的14项走路专属负面词（垫步、原地踏步、脚底打滑等）经常缺失。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="620" topLeftY="305" width="260" height="175">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(191,215,255,0.6)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="640" topLeftY="320" width="40" height="35">
+      <content textType="headline" fontSize="28" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>06</p></content>
+    </shape>
+    <shape type="text" topLeftX="685" topLeftY="325" width="180" height="30">
+      <content textType="body" fontSize="16" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true"><p>无剧本上下文</p></content>
+    </shape>
+    <shape type="text" topLeftX="640" topLeftY="365" width="220" height="100">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.5">
+        <p>优化分镜时不知道其在剧本中的位置、前后剧情、角色情绪状态、上一分镜尾帧画面，导致优化方向错误（愤怒爆发优化成平静对话）。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这六大痛点是当前视频生成流程中最高频、影响最大的问题。前三个是技术规范问题，中间两个是配置问题，最后一个是上下文缺失问题。本方案的核心就是系统性解决这六大痛点。</p>
+    </content>
+  </note>
+</slide>

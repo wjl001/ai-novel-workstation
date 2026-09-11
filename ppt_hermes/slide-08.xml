@@ -1,0 +1,136 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="30" width="800" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>Hermes 多轮对话机制：分镜级提示词生成的 5 轮流程</p>
+      </content>
+    </shape>
+    <line startX="80" startY="72" endX="160" endY="72">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="85" width="800" height="25">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>界面不可见的底层自我对话，每轮完成一个明确任务，逐步迭代优化</p>
+      </content>
+    </shape>
+    <shape type="ellipse" topLeftX="85" topLeftY="235" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="85" topLeftY="240" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>1</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="130" width="155" height="90" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="65" topLeftY="140" width="145" height="25">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>分镜解析</p></content>
+    </shape>
+    <shape type="text" topLeftX="65" topLeftY="165" width="145" height="50">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p>语义理解分镜内容</p><p>识别镜头类型</p><p>拆分镜头+时长建议</p></content>
+    </shape>
+    <line startX="215" startY="175" endX="228" endY="175">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="ellipse" topLeftX="255" topLeftY="235" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="255" topLeftY="240" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>2</p></content>
+    </shape>
+    <shape type="rect" topLeftX="230" topLeftY="130" width="155" height="90" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="235" topLeftY="140" width="145" height="25">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>上下文加载</p></content>
+    </shape>
+    <shape type="text" topLeftX="235" topLeftY="165" width="145" height="50">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p>注入剧本/人物/场景</p><p>匹配人物服装变体</p><p>配置参考图（≤9张）</p></content>
+    </shape>
+    <line startX="385" startY="175" endX="398" endY="175">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="ellipse" topLeftX="425" topLeftY="235" width="30" height="30">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="425" topLeftY="240" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>3</p></content>
+    </shape>
+    <shape type="rect" topLeftX="400" topLeftY="120" width="170" height="110" presetHandlers="6">
+      <fill><fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(37,99,235,1) 100%)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="405" topLeftY="132" width="160" height="25">
+      <content textType="body" fontSize="13" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>提示词初稿生成</p></content>
+    </shape>
+    <shape type="text" topLeftX="405" topLeftY="160" width="160" height="65">
+      <content textType="body" fontSize="10" color="rgba(191,215,255,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p>分镜级统一提示词</p><p>风格前缀+场景描述</p><p>时间轴分段+收尾要求</p><p>负面提示词+参考图清单</p></content>
+    </shape>
+    <line startX="570" startY="175" endX="583" endY="175">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="ellipse" topLeftX="610" topLeftY="235" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="610" topLeftY="240" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>4</p></content>
+    </shape>
+    <shape type="rect" topLeftX="585" topLeftY="130" width="155" height="90" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="590" topLeftY="140" width="145" height="25">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>质量自检</p></content>
+    </shape>
+    <shape type="text" topLeftX="590" topLeftY="165" width="145" height="50">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p>10 项专项校验</p><p>帧对齐/时间轴/参考图</p><p>负面词/动作连贯</p></content>
+    </shape>
+    <line startX="740" startY="175" endX="753" endY="175">
+      <border color="rgba(37,99,235,1)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="ellipse" topLeftX="780" topLeftY="235" width="30" height="30">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="780" topLeftY="240" width="30" height="20">
+      <content textType="body" fontSize="12" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>5</p></content>
+    </shape>
+    <shape type="rect" topLeftX="755" topLeftY="130" width="155" height="90" presetHandlers="6">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(37,99,235,0.4)" width="2"/>
+    </shape>
+    <shape type="text" topLeftX="760" topLeftY="140" width="145" height="25">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" textAlign="center"><p>修正优化输出</p></content>
+    </shape>
+    <shape type="text" topLeftX="760" topLeftY="165" width="145" height="50">
+      <content textType="body" fontSize="10" color="rgba(83,97,116,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.4"><p>根据自检结果修正</p><p>输出最终提示词</p><p>+参考图清单+自检报告</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="300" width="840" height="60" presetHandlers="6">
+      <fill><fillColor color="rgba(37,99,235,0.06)"/></fill>
+      <border color="rgba(37,99,235,0.2)" width="1" dashArray="dash"/>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="312" width="800" height="40">
+      <content textType="body" fontSize="12" color="rgba(37,99,235,1)" fontFamily="思源黑体" textAlign="center" lineSpacing="multiple:1.5">
+        <p><span bold="true">终止条件：</span>正常终止（5轮完成且自检≥8分）| 提前终止（第3轮初稿自检≥9分，简单分镜）| 强制终止（达到5轮上限）| 异常终止（单轮超时>30秒，降级为基础模板）</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="385" width="800" height="120">
+      <content textType="body" fontSize="13" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p><span bold="true" color="rgba(13,19,38,1)">为什么视频生成必须多轮对话？</span>分镜级提示词包含风格前缀、场景描述、参考图配置、时间轴分段、收尾要求、负面提示词六大要素，单次生成很难全部正确；帧对齐需要跨镜头校验、时间轴需要精确计算、参考图需要结合上下文判断——这些校验在单次生成中无法完成，必须通过"生成→自检→修正"的多轮迭代保证质量。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是Hermes多轮对话的核心流程图，5轮对话分别完成：分镜解析、上下文加载、提示词初稿生成、质量自检、修正优化输出。其中第3轮是生成核心，第4轮是质量保障关键。整个过程对用户完全不可见，用户只看到最终优化结果。</p>
+    </content>
+  </note>
+</slide>

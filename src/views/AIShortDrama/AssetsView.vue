@@ -160,6 +160,53 @@
 
       <!-- Model Selector & Batch Download Overlay - Aligned with Script Title Row -->
       <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
+        <!-- 资产库按钮 -->
+        <button
+          @click="showLibraryModal = true"
+          class="h-10 px-4 flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md text-slate-600 dark:text-slate-300 border border-white/60 dark:border-slate-700/50 rounded-full font-bold text-[13px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all duration-300 active:scale-95 mr-3"
+          title="从资产库选择已有主体"
+        >
+          <el-icon :size="15"><FolderOpened /></el-icon>
+          <span>资产库</span>
+        </button>
+        <!-- 添加主体下拉按钮 -->
+        <el-dropdown @command="(cmd) => addAsset(cmd)" trigger="click" class="mr-3">
+          <button
+            class="h-10 px-4 flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-bold text-[13px] shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20"
+          >
+            <el-icon :size="15"><Plus /></el-icon>
+            <span>添加主体</span>
+            <el-icon :size="11" class="opacity-70"><ArrowDown /></el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="character">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <el-icon :size="10" class="text-white"><User /></el-icon>
+                  </div>
+                  <span class="text-[12px] font-bold">添加角色</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item command="scene" divided>
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                    <el-icon :size="10" class="text-white"><Picture /></el-icon>
+                  </div>
+                  <span class="text-[12px] font-bold">添加场景</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item command="prop" divided>
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <el-icon :size="10" class="text-white"><Box /></el-icon>
+                  </div>
+                  <span class="text-[12px] font-bold">添加道具</span>
+                </div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
         <el-select v-model="selectedResolution" placeholder="选择分辨率" class="w-[150px] h-10 mr-3">
           <el-option label="1K (1280x720)" value="1280/720"></el-option>
           <el-option label="1.5K (1920x1080)" value="1920/1080"></el-option>
@@ -257,7 +304,7 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
               <!-- Multi-select Toggle -->
               <button 
                 @click="toggleMultiSelect"
@@ -337,21 +384,6 @@
                   <Loading v-else />
                 </el-icon>
                 <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
-              </button>
-              <!-- 新增角色入口 -->
-              <button 
-                @click="showLibraryModal = true"
-                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
-              >
-                <el-icon><Menu /></el-icon>
-                从资产库导入
-              </button>
-              <button 
-                @click="addAsset('character')"
-                class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-              >
-                <el-icon><Plus /></el-icon>
-                新增角色
               </button>
             </div>
           </div>
@@ -461,6 +493,22 @@
                   <div class="text-[13px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="char.description">{{ char.description || '暂无描述' }}</div>
                 </div>
               </div>
+
+              <!-- 手动添加角色卡片 -->
+              <div 
+                @click="addAsset('character')"
+                class="group relative flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border-2 border-dashed border-indigo-200 dark:border-indigo-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(99,102,241,0.15)] hover:border-indigo-400 dark:hover:border-indigo-600 transition-all duration-300 cursor-pointer min-h-[180px]"
+              >
+                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <el-icon :size="28"><EditPen /></el-icon>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[15px] font-black text-indigo-600 dark:text-indigo-400">手动添加角色</div>
+                    <div class="text-[11px] text-indigo-400 dark:text-indigo-500 font-medium mt-1">填写名称、描述、风格等信息</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -474,7 +522,7 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
               <!-- Multi-select Toggle -->
               <button 
                 @click="toggleMultiSelect"
@@ -554,21 +602,6 @@
                   <Loading v-else />
                 </el-icon>
                 <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
-              </button>
-              <!-- 新增场景入口 -->
-              <button 
-                @click="showLibraryModal = true"
-                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
-              >
-                <el-icon><Menu /></el-icon>
-                从资产库导入
-              </button>
-              <button 
-                @click="addAsset('scene')"
-                class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-              >
-                <el-icon><Plus /></el-icon>
-                新增场景
               </button>
             </div>
           </div>
@@ -678,6 +711,22 @@
                   <div class="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="scene.description">{{ scene.description || '暂无描述' }}</div>
                 </div>
               </div>
+
+              <!-- 手动添加场景卡片 -->
+              <div 
+                @click="addAsset('scene')"
+                class="group relative flex flex-col bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-2 border-dashed border-emerald-200 dark:border-emerald-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 cursor-pointer min-h-[200px]"
+              >
+                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <el-icon :size="28"><EditPen /></el-icon>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[15px] font-black text-emerald-600 dark:text-emerald-400">手动添加场景</div>
+                    <div class="text-[11px] text-emerald-400 dark:text-emerald-500 font-medium mt-1">填写场景名称、描述、风格等信息</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -691,7 +740,7 @@
               <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
               <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
               <!-- Multi-select Toggle -->
               <button 
                 @click="toggleMultiSelect"
@@ -771,21 +820,6 @@
                   <Loading v-else />
                 </el-icon>
                 <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
-              </button>
-              <!-- 新增道具入口 -->
-              <button 
-                @click="showLibraryModal = true"
-                class="h-10 px-6 bg-indigo-50 text-indigo-600 rounded-full text-[14px] font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
-              >
-                <el-icon><Menu /></el-icon>
-                从资产库导入
-              </button>
-              <button 
-                @click="addAsset('prop')"
-                class="h-10 px-6 bg-indigo-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-              >
-                <el-icon><Plus /></el-icon>
-                新增道具
               </button>
             </div>
           </div>
@@ -893,6 +927,22 @@
                 <div class="p-4 flex flex-col gap-1.5">
                   <div class="font-bold text-[15px] text-slate-800 dark:text-slate-100 truncate">{{ prop.name }}</div>
                   <div class="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" :title="prop.description">{{ prop.description || '暂无描述' }}</div>
+                </div>
+              </div>
+
+              <!-- 手动添加道具卡片 -->
+              <div 
+                @click="addAsset('prop')"
+                class="group relative flex flex-col bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-dashed border-amber-200 dark:border-amber-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(245,158,11,0.15)] hover:border-amber-400 dark:hover:border-amber-600 transition-all duration-300 cursor-pointer min-h-[180px]"
+              >
+                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <el-icon :size="28"><EditPen /></el-icon>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[15px] font-black text-amber-600 dark:text-amber-400">手动添加道具</div>
+                    <div class="text-[11px] text-amber-400 dark:text-amber-500 font-medium mt-1">填写道具名称、描述、风格等信息</div>
+                  </div>
                 </div>
               </div>
             </div>

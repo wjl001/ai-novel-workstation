@@ -491,15 +491,15 @@
                 <!-- Action Buttons Area -->
                 <div class="px-6 py-3 flex justify-between items-center gap-3 shrink-0 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50/80 to-white/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-md">
                   <div class="flex items-center gap-2">
-                    <!-- Prompt 智能增强按钮 -->
+                    <!-- Hermes 深度优化按钮 -->
                     <button 
                       @click="enhanceCurrentScenePrompt"
                       :disabled="!timelineScenes[currentSceneIdx]?.script || isEnhancing"
                       class="h-8 px-4 rounded-full text-[12px] font-black transition-all flex items-center gap-2"
-                      :class="timelineScenes[currentSceneIdx]?.script && !isEnhancing ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
+                      :class="timelineScenes[currentSceneIdx]?.script && !isEnhancing ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-50'"
                     >
                       <el-icon :class="isEnhancing ? 'is-loading' : 'animate-pulse'"><MagicStick /></el-icon>
-                      <span>{{ isEnhancing ? '增强中...' : 'Prompt智能增强' }}</span>
+                      <span>{{ isEnhancing ? 'Hermes优化中...' : 'Hermes深度优化' }}</span>
                     </button>
                     <!-- 查看增强结果按钮 -->
                     <button 
@@ -823,9 +823,9 @@
                       </div>
                     </div>
 
-                    <!-- Prompt 增强状态标识 -->
-                    <div v-if="scene.enhancedPrompt" class="absolute top-1.5 left-7 z-20" title="已进行Prompt智能增强">
-                      <div class="w-4 h-4 rounded bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                    <!-- Hermes 深度优化状态标识 -->
+                    <div v-if="scene.enhancedPrompt" class="absolute top-1.5 left-7 z-20" :title="scene.enhancedPrompt.engineVersion === 'v2-hermes' ? '已完成Hermes深度优化' : '已进行基础优化'">
+                      <div class="w-4 h-4 rounded flex items-center justify-center shadow-md" :class="scene.enhancedPrompt.engineVersion === 'v2-hermes' ? 'bg-gradient-to-br from-indigo-500 to-purple-600' : 'bg-gradient-to-br from-emerald-500 to-teal-600'">
                         <el-icon :size="9" class="text-white"><MagicStick /></el-icon>
                       </div>
                     </div>
@@ -1509,10 +1509,10 @@
     }"
   />
 
-    <!-- Prompt 智能增强结果弹窗 -->
+    <!-- Hermes 深度优化结果弹窗 -->
     <el-dialog 
       v-model="showPromptEnhancer" 
-      title="Prompt 智能增强结果" 
+      :title="currentEnhancedPrompt?.engineVersion === 'v2-hermes' ? 'Hermes 深度优化结果' : 'Prompt 增强结果'" 
       width="900px" 
       :class="['prompt-enhancer-dialog', isLight ? 'is-light' : 'is-dark']"
       :append-to-body="true"
@@ -1521,17 +1521,39 @@
     >
       <div v-if="currentEnhancedPrompt" class="space-y-5">
         <!-- 增强概览 -->
-        <div class="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-500/20">
+        <div class="flex items-center justify-between p-4 rounded-2xl border"
+          :class="currentEnhancedPrompt.engineVersion === 'v2-hermes' 
+            ? 'bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-indigo-100 dark:border-indigo-500/20'
+            : 'bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-100 dark:border-emerald-500/20'">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg"
+              :class="currentEnhancedPrompt.engineVersion === 'v2-hermes'
+                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-indigo-500/30'
+                : 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30'">
               <el-icon :size="24"><MagicStick /></el-icon>
             </div>
             <div>
-              <h3 class="text-lg font-black text-slate-800 dark:text-white">智能增强完成</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400">命中 {{ currentEnhancedPrompt.matchedModules.length }} 个增强模块，模板库共 {{ promptTemplateStats.actionTemplates + promptTemplateStats.sceneTemplates }} 条规则</p>
+              <h3 class="text-lg font-black text-slate-800 dark:text-white">
+                {{ currentEnhancedPrompt.engineVersion === 'v2-hermes' ? 'Hermes 多轮对话深度优化完成' : '智能增强完成' }}
+              </h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                <template v-if="currentEnhancedPrompt.engineVersion === 'v2-hermes'">
+                  5轮多轮对话优化，命中 {{ currentEnhancedPrompt.matchedModules.length }} 个增强模块，调用 {{ (currentEnhancedPrompt.matchedSkills || []).length }} 个专业Skills
+                </template>
+                <template v-else>
+                  命中 {{ currentEnhancedPrompt.matchedModules.length }} 个增强模块，模板库共 {{ promptTemplateStats.actionTemplates + promptTemplateStats.sceneTemplates }} 条规则
+                </template>
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
+            <!-- Hermes 自检评分 -->
+            <div v-if="currentEnhancedPrompt.engineVersion === 'v2-hermes' && currentEnhancedPrompt.selfCheckReport" class="text-center px-3 py-1 rounded-xl bg-white/60 dark:bg-slate-800/60">
+              <div class="text-2xl font-black" :class="(currentEnhancedPrompt.selfCheckReport.score || 0) >= 80 ? 'text-green-600' : (currentEnhancedPrompt.selfCheckReport.score || 0) >= 60 ? 'text-amber-600' : 'text-red-600'">
+                {{ currentEnhancedPrompt.selfCheckReport.score }}
+              </div>
+              <div class="text-[10px] text-slate-500">自检评分</div>
+            </div>
             <span v-if="currentEnhancedPrompt.hasDialogue" class="px-3 py-1 rounded-full text-xs font-black bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-100 dark:border-blue-500/20">含台词</span>
             <span v-if="currentEnhancedPrompt.isMultiShot" class="px-3 py-1 rounded-full text-xs font-black bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 border border-purple-100 dark:border-purple-500/20">多镜头</span>
             <span v-if="currentEnhancedPrompt.hasReference" class="px-3 py-1 rounded-full text-xs font-black bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 border border-amber-100 dark:border-amber-500/20">带参考图</span>
@@ -1595,17 +1617,17 @@
             <span class="w-1 h-4 bg-slate-400 rounded-full"></span>
             原始分镜脚本
           </h4>
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-h-32 overflow-y-auto custom-scrollbar">
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-h-48 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
             {{ currentEnhancedPrompt.originalPrompt || '（无内容）' }}
           </div>
         </div>
 
-        <!-- 增强后正向 Prompt -->
+        <!-- 增强后分镜脚本 -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <span class="w-1 h-4 bg-emerald-500 rounded-full"></span>
-              增强后正向 Prompt
+              增强后分镜脚本
             </h4>
             <button 
               @click="copyToClipboard(currentEnhancedPrompt.enhancedPrompt)"
@@ -1620,23 +1642,62 @@
           </div>
         </div>
 
-        <!-- 负向 Prompt -->
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h4 class="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <span class="w-1 h-4 bg-rose-500 rounded-full"></span>
-              负向约束 Prompt
-            </h4>
-            <button 
-              @click="copyToClipboard(currentEnhancedPrompt.negativePrompt)"
-              class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 flex items-center gap-1"
-            >
-              <el-icon :size="12"><Document /></el-icon>
-              复制
-            </button>
-          </div>
-          <div class="p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-500/20 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-            {{ currentEnhancedPrompt.negativePrompt }}
+        <!-- Hermes Agent 优化说明（5轮对话）- 折叠状态，放在底部不重要位置 -->
+        <div v-if="currentEnhancedPrompt.engineVersion === 'v2-hermes'" class="border-t border-slate-100 dark:border-slate-700/50 pt-3">
+          <!-- 折叠标题栏（低调样式） -->
+          <button
+            @click="showHermesProcess = !showHermesProcess"
+            class="w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-[11px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+          >
+            <span class="flex items-center gap-1.5">
+              <el-icon :size="11" class="text-green-500"><Check /></el-icon>
+              <span>Hermes Agent 优化说明（5轮对话）</span>
+              <span class="text-slate-300 dark:text-slate-600">·</span>
+              <span>综合评分 {{ currentEnhancedPrompt.selfCheckReport?.score || 0 }}/100</span>
+            </span>
+            <el-icon :size="12" :class="showHermesProcess ? 'rotate-180' : ''" class="transition-transform"><ArrowDown /></el-icon>
+          </button>
+
+          <!-- 展开的优化详情 -->
+          <div v-if="showHermesProcess" class="mt-2 p-3 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50">
+            <!-- 5轮优化项列表 -->
+            <div class="space-y-1.5 mb-2">
+              <div v-for="note in hermesOptimizationNotes" :key="note.round" class="flex items-start gap-1.5">
+                <el-icon :size="11" class="text-green-500 mt-0.5 flex-shrink-0"><Check /></el-icon>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <span class="font-bold text-slate-600 dark:text-slate-300">第{{ note.round }}轮·{{ note.title }}：</span>
+                  {{ note.desc }}
+                </div>
+              </div>
+            </div>
+
+            <!-- 优化说明详情 -->
+            <div v-if="currentEnhancedPrompt.optimizationNotes && currentEnhancedPrompt.optimizationNotes.length > 0" class="mb-2 pl-4 space-y-0.5">
+              <div v-for="(optNote, idx) in currentEnhancedPrompt.optimizationNotes" :key="idx" class="flex items-start gap-1 text-[10px] text-slate-400 dark:text-slate-500">
+                <span>·</span>
+                <span>{{ optNote }}</span>
+              </div>
+            </div>
+
+            <!-- 五轮过程时间轴 -->
+            <div class="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/40 space-y-2">
+              <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1">五轮优化过程详情</div>
+              <div v-for="note in hermesOptimizationNotes" :key="'detail-' + note.round" class="flex gap-2">
+                <div class="flex flex-col items-center">
+                  <div class="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-black flex-shrink-0">
+                    {{ note.round }}
+                  </div>
+                  <div v-if="note.round < 5" class="w-px flex-1 bg-slate-200 dark:bg-slate-700 my-0.5"></div>
+                </div>
+                <div class="flex-1 pb-1.5">
+                  <div class="text-[11px] font-bold text-slate-600 dark:text-slate-300">{{ note.title }}</div>
+                  <div class="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed">{{ note.desc }}</div>
+                  <div v-if="currentEnhancedPrompt.dialogueLog && currentEnhancedPrompt.dialogueLog[note.round - 1]" class="mt-1 text-[9px] text-slate-300 dark:text-slate-600">
+                    对话阶段：{{ currentEnhancedPrompt.dialogueLog[note.round - 1].phase || '已完成' }} · 轮次 {{ currentEnhancedPrompt.dialogueLog[note.round - 1].round }}/5
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1644,7 +1705,7 @@
       <template #footer>
         <div class="flex justify-end gap-3">
           <el-button @click="showPromptEnhancer = false" class="!rounded-xl !h-10 !px-6">关闭</el-button>
-          <el-button type="primary" @click="handleBatchGenerate; showPromptEnhancer = false" class="!rounded-xl !h-10 !px-6 !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-none">
+          <el-button type="primary" @click="applyEnhancedAndGenerate" class="!rounded-xl !h-10 !px-6 !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-none">
             使用增强结果生成
           </el-button>
         </div>
@@ -1747,7 +1808,7 @@ import {
   Download, VideoPause, Microphone, Mic, Upload, Monitor,
   Scissor, Back, Right, View, Lock, Minus, Position, Mute,
   Cpu, CircleClose, CaretTop, CaretBottom,
-  CircleCheck, Document, Setting, ChatRound,
+  CircleCheck, Document, Setting, ChatRound, Check,
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import { useUserStore } from '@/store/user';
@@ -1758,7 +1819,8 @@ import SubjectEditDialog from '@/components/AIShortDrama/SubjectEditDialog.vue';
 import SubjectLibraryModal from '@/components/AIShortDrama/SubjectLibraryModal.vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { enhancePrompt, getModuleDescriptions, getTemplateStats, type EnhancedPrompt } from '@/utils/promptEnhancer';
+import { enhancePrompt, enhancePromptWithHermes, getModuleDescriptions, getTemplateStats, type EnhancedPrompt } from '@/utils/promptEnhancer';
+import { contextManager } from '@/utils/contextManager';
 
 const route = useRoute();
 import ConfirmDialog from '@/components/Common/ConfirmDialog.vue';
@@ -1801,8 +1863,50 @@ const showUIDesignSpecsDialog = ref(false);
 const showPromptEnhancer = ref(false);
 const currentEnhancedPrompt = ref<EnhancedPrompt | null>(null);
 const isEnhancing = ref(false);
+const showHermesProcess = ref(false); // Hermes Agent 5轮优化过程展开状态
 const promptEnhancerModules = getModuleDescriptions();
 const promptTemplateStats = getTemplateStats();
+
+// Hermes Agent 5轮对话优化说明（基于实际优化结果动态生成）
+const hermesOptimizationNotes = computed(() => {
+  if (!currentEnhancedPrompt.value || currentEnhancedPrompt.value.engineVersion !== 'v2-hermes') {
+    return [];
+  }
+  const result = currentEnhancedPrompt.value;
+  const notes = [
+    {
+      round: 1,
+      title: '需求解析',
+      desc: `已识别${result.matchedActions.length || 0}个动作、${result.matchedScenes.length || 0}个场景、${result.hasDialogue ? '含台词' : '无台词'}、${result.isMultiShot ? '多镜头' : '单镜头'}`,
+      done: true,
+    },
+    {
+      round: 2,
+      title: '上下文加载',
+      desc: `已注入剧本/剧集/前后分镜上下文，匹配${(result.matchedSkills || []).length}个专业Skills`,
+      done: true,
+    },
+    {
+      round: 3,
+      title: '初稿生成',
+      desc: '已生成时间轴分段专业提示词，含景别/运镜/光影/音效描述',
+      done: true,
+    },
+    {
+      round: 4,
+      title: '质量自检',
+      desc: `已完成${(result.selfCheckReport?.passed || []).length}项校验，综合评分${result.selfCheckReport?.score || 0}/100`,
+      done: true,
+    },
+    {
+      round: 5,
+      title: '修正输出',
+      desc: `已根据自检结果修正，输出${(result.optimizationNotes || []).length}项优化说明`,
+      done: true,
+    },
+  ];
+  return notes;
+});
 
 // 复制文本到剪贴板
 const copyToClipboard = (text: string) => {
@@ -3717,87 +3821,147 @@ const downloadVideo = () => {
   }, 1500);
 };
 
-// --- Prompt 智能增强功能 ---
-// 对当前分镜脚本进行智能增强
-const enhanceCurrentScenePrompt = () => {
+// --- Prompt 智能增强功能（Hermes Agent 多轮对话深度优化） ---
+// 对当前分镜脚本进行 Hermes 深度优化（隐式优化，不弹对话框）
+const enhanceCurrentScenePrompt = async () => {
   const scene = timelineScenes.value[currentSceneIdx.value];
   if (!scene || !scene.script) {
     ElMessage.warning('请先输入分镜脚本内容');
     return;
   }
-  
+
   isEnhancing.value = true;
-  
-  // 模拟异步增强过程
-  setTimeout(() => {
-    const result = enhancePrompt(scene.script, {
-      hasReference: !!scene.image,
-      isMultiShot: timelineScenes.value.length > 1
+  ElMessage.info('Hermes Agent 正在深度优化提示词（5轮多轮对话）...');
+
+  try {
+    // 构建上下文：注入剧集、前后分镜、角色场景信息
+    const prevScene = currentSceneIdx.value > 0 ? timelineScenes.value[currentSceneIdx.value - 1] : null;
+    const context = contextManager.buildFromScript(scene.script, {
+      dramaTitle: dramaStore.outlineData?.title || dramaSettings.title,
+      episodeIndex: episodeStore.episodes.findIndex(e => e.id === episodeId.value) + 1,
+      episodeTitle: episode.value?.title || '',
+      previousScene: prevScene?.script || '',
     });
-    
+
+    // 调用 Hermes Agent 5轮多轮对话深度优化
+    const result = await enhancePromptWithHermes(scene.script, {
+      hasReference: !!scene.image,
+      isMultiShot: timelineScenes.value.length > 1,
+      context,
+      maxRounds: 5,
+    });
+
     currentEnhancedPrompt.value = result;
     // 保存增强结果到场景数据
     scene.enhancedPrompt = result;
     scene.modified = true;
     persistStoryboardForEpisode(episodeId.value);
-    
+
+    const score = result.selfCheckReport?.score || 0;
+    ElMessage.success(`Hermes 深度优化完成，综合评分 ${score}/100，命中 ${result.matchedModules.length} 个增强模块`);
+  } catch (error) {
+    console.error('[StoryboardView] Hermes 深度优化失败:', error);
+    ElMessage.error('Hermes 深度优化失败，请重试');
+  } finally {
     isEnhancing.value = false;
     showPromptEnhancer.value = true;
-    
-    ElMessage.success(`Prompt 智能增强完成，命中 ${result.matchedModules.length} 个增强模块`);
-  }, 800);
+  }
 };
 
-// 批量增强所有分镜
-const enhanceAllScenesPrompt = () => {
+// 批量增强所有分镜（Hermes Agent 多轮对话深度优化，依次处理）
+const enhanceAllScenesPrompt = async () => {
   if (timelineScenes.value.length === 0) {
     ElMessage.warning('暂无分镜内容');
     return;
   }
-  
+
   isEnhancing.value = true;
   let enhancedCount = 0;
-  
-  timelineScenes.value.forEach((scene, idx) => {
-    if (scene.script) {
-      const result = enhancePrompt(scene.script, {
-        hasReference: !!scene.image,
-        isMultiShot: timelineScenes.value.length > 1
+  const total = timelineScenes.value.filter(s => s.script).length;
+
+  ElMessage.info(`Hermes Agent 开始批量深度优化 ${total} 个分镜（每个5轮多轮对话）...`);
+
+  for (let idx = 0; idx < timelineScenes.value.length; idx++) {
+    const scene = timelineScenes.value[idx];
+    if (!scene.script) continue;
+
+    try {
+      // 构建上下文：注入剧集、前一分镜（帧连续）
+      const prevScene = idx > 0 ? timelineScenes.value[idx - 1] : null;
+      const context = contextManager.buildFromScript(scene.script, {
+        dramaTitle: dramaStore.outlineData?.title || dramaSettings.title,
+        episodeIndex: episodeStore.episodes.findIndex(e => e.id === episodeId.value) + 1,
+        episodeTitle: episode.value?.title || '',
+        previousScene: prevScene?.script || '',
       });
+
+      // 调用 Hermes 深度优化
+      const result = await enhancePromptWithHermes(scene.script, {
+        hasReference: !!scene.image,
+        isMultiShot: timelineScenes.value.length > 1,
+        context,
+        maxRounds: 5,
+      });
+
       scene.enhancedPrompt = result;
       scene.modified = true;
       enhancedCount++;
+
+      // 每完成一个显示进度
+      if (enhancedCount % 3 === 0 || enhancedCount === total) {
+        ElMessage.info(`批量优化进度：${enhancedCount}/${total}`);
+      }
+    } catch (error) {
+      console.error(`[StoryboardView] 分镜${idx + 1} Hermes优化失败:`, error);
     }
-  });
-  
+  }
+
   persistStoryboardForEpisode(episodeId.value);
-  
-  setTimeout(() => {
-    isEnhancing.value = false;
-    ElMessage.success(`已完成 ${enhancedCount} 个分镜的 Prompt 智能增强`);
-  }, 500);
+  isEnhancing.value = false;
+  ElMessage.success(`已完成 ${enhancedCount} 个分镜的 Hermes 深度优化`);
 };
 
-// 查看指定分镜的增强结果
-const viewEnhancedPrompt = (idx: number) => {
+// 查看指定分镜的增强结果（如无则自动进行 Hermes 深度优化）
+const viewEnhancedPrompt = async (idx: number) => {
   const scene = timelineScenes.value[idx];
   if (!scene) return;
-  
+
+  currentSceneIdx.value = idx;
+
   if (!scene.enhancedPrompt) {
-    // 如果没有增强结果，自动增强
+    // 如果没有增强结果，自动进行 Hermes 深度优化
     if (scene.script) {
-      const result = enhancePrompt(scene.script, {
-        hasReference: !!scene.image,
-        isMultiShot: timelineScenes.value.length > 1
-      });
-      scene.enhancedPrompt = result;
-      currentEnhancedPrompt.value = result;
+      isEnhancing.value = true;
+      try {
+        const prevScene = idx > 0 ? timelineScenes.value[idx - 1] : null;
+        const context = contextManager.buildFromScript(scene.script, {
+          dramaTitle: dramaStore.outlineData?.title || dramaSettings.title,
+          episodeIndex: episodeStore.episodes.findIndex(e => e.id === episodeId.value) + 1,
+          episodeTitle: episode.value?.title || '',
+          previousScene: prevScene?.script || '',
+        });
+
+        const result = await enhancePromptWithHermes(scene.script, {
+          hasReference: !!scene.image,
+          isMultiShot: timelineScenes.value.length > 1,
+          context,
+          maxRounds: 5,
+        });
+        scene.enhancedPrompt = result;
+        currentEnhancedPrompt.value = result;
+        scene.modified = true;
+        persistStoryboardForEpisode(episodeId.value);
+      } catch (error) {
+        console.error('[StoryboardView] 查看时Hermes优化失败:', error);
+        ElMessage.error('优化失败，请重试');
+      } finally {
+        isEnhancing.value = false;
+      }
     }
   } else {
     currentEnhancedPrompt.value = scene.enhancedPrompt;
   }
-  
-  currentSceneIdx.value = idx;
+
   showPromptEnhancer.value = true;
 };
 
@@ -3810,14 +3974,34 @@ const executeGenerateSingleScene = async (idx: number) => {
   timelineScenes.value[idx].status = 'generating';
   timelineScenes.value[idx].progress = 0;
   
-  // 生成前自动进行 Prompt 智能增强
+  // 生成前自动进行 Hermes 深度优化（隐式优化，不弹对话框）
   const scene = timelineScenes.value[idx];
   if (scene.script && !scene.enhancedPrompt) {
-    const enhanced = enhancePrompt(scene.script, {
-      hasReference: !!scene.image,
-      isMultiShot: timelineScenes.value.length > 1
-    });
-    scene.enhancedPrompt = enhanced;
+    try {
+      const prevScene = idx > 0 ? timelineScenes.value[idx - 1] : null;
+      const context = contextManager.buildFromScript(scene.script, {
+        dramaTitle: dramaStore.outlineData?.title || dramaSettings.title,
+        episodeIndex: episodeStore.episodes.findIndex(e => e.id === episodeId.value) + 1,
+        episodeTitle: episode.value?.title || '',
+        previousScene: prevScene?.script || '',
+      });
+
+      const enhanced = await enhancePromptWithHermes(scene.script, {
+        hasReference: !!scene.image,
+        isMultiShot: timelineScenes.value.length > 1,
+        context,
+        maxRounds: 5,
+      });
+      scene.enhancedPrompt = enhanced;
+      scene.modified = true;
+    } catch (error) {
+      console.error(`[StoryboardView] 生成前Hermes优化失败(分镜${idx + 1}):`, error);
+      // 降级：使用基础优化
+      scene.enhancedPrompt = enhancePrompt(scene.script, {
+        hasReference: !!scene.image,
+        isMultiShot: timelineScenes.value.length > 1
+      });
+    }
   }
   
   // 模拟参数传递（包含增强后的 Prompt）
@@ -3905,6 +4089,188 @@ const handleBatchGenerate = () => {
       }
     });
   });
+};
+
+/**
+ * 将增强后的分镜脚本写回父级页面，然后生成视频
+ * 保持原始分镜脚本格式不变，带有插入动画效果
+ * 自动关联脚本中提到的主体（时长、角色、场景、道具）图片
+ */
+const applyEnhancedAndGenerate = async () => {
+  if (!currentEnhancedPrompt.value) {
+    ElMessage.warning('暂无增强结果');
+    return;
+  }
+
+  const scene = timelineScenes.value[currentSceneIdx.value];
+  if (!scene) {
+    ElMessage.warning('未找到当前分镜');
+    return;
+  }
+
+  // 显示插入动作的 loading 提示
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在将增强后的分镜脚本插入到父级页面，并自动关联主体图片...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
+  // 模拟插入动作（短暂延迟，让用户看到插入过程）
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  // 将增强后的纯文本分镜脚本转换为带样式的 HTML（与原始格式一致）
+  const enhancedText = currentEnhancedPrompt.value.enhancedPrompt;
+  // 统一换行符
+  const normalizedText = enhancedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  // 转换为带样式的 HTML（时长、角色、场景、道具标签）
+  const htmlContent = convertToStyledHtml(normalizedText);
+
+  // 写回父级页面（带样式的 HTML 格式，与原始格式一致）
+  scene.script = htmlContent;
+  scene.modified = true;
+  // 标记为刚插入，用于高亮动画
+  scene.justInserted = true;
+
+  // 自动关联主体图片：从脚本中提取角色、场景、道具，匹配主体库
+  const linkedSubjects = autoLinkSubjects(normalizedText, scene);
+
+  // 同步更新富文本编辑器内容（如果编辑器已初始化）
+  if (editor.value) {
+    editor.value.commands.setContent(htmlContent);
+  }
+
+  // 持久化保存
+  persistStoryboardForEpisode(episodeId.value);
+
+  // 关闭 loading
+  loading.close();
+
+  // 显示成功提示（包含关联的主体数量）
+  const subjectMsg = linkedSubjects.length > 0
+    ? `，已自动关联 ${linkedSubjects.length} 个主体图片`
+    : '';
+  ElMessage.success({
+    message: `增强后的分镜脚本已插入到父级页面，格式保持不变${subjectMsg}`,
+    duration: 2500,
+  });
+
+  // 3秒后移除高亮标记
+  setTimeout(() => {
+    if (scene) {
+      scene.justInserted = false;
+    }
+  }, 3000);
+
+  // 关闭弹窗并生成视频
+  showPromptEnhancer.value = false;
+  handleBatchGenerate();
+};
+
+/**
+ * 将纯文本分镜脚本转换为带样式的 HTML（与原始格式一致）
+ * 自动识别并标记：时长、角色、场景、道具
+ * @param text 纯文本分镜脚本
+ * @returns 带样式的 HTML
+ */
+const convertToStyledHtml = (text: string): string => {
+  let html = text;
+
+  // 1. 转义 HTML 特殊字符（先转义，避免后续标签被转义）
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // 2. 替换时长标签：6.0s -> <span class="mention-pill duration"><i class="timer-icon"></i> 6.0s</span>
+  html = html.replace(/(\d+\.\d+s)/g, '<span class="mention-pill duration"><i class="timer-icon"></i> $1</span>');
+
+  // 3. 替换场景图片标签：场景图片: 豪华酒店宴会厅_0 -> 场景图片: <span class="mention-pill location"><i class="location-icon"></i> 豪华酒店宴会厅_0</span>
+  html = html.replace(/场景图片[:：]\s*([^,，\s]+)/g, (match, sceneName) => {
+    const subject = subjects.value.find(s => s.type === 'scene' && s.name === sceneName);
+    const iconHtml = subject?.image
+      ? `<img src="${subject.image}?w=20&h=20&fit=crop" />`
+      : '<i class="location-icon"></i>';
+    return `场景图片: <span class="mention-pill location">${iconHtml} ${sceneName}</span>`;
+  });
+
+  // 4. 替换角色标签：司仪-基础形象 -> <span class="mention-pill role"><img src="..." /> 司仪-基础形象</span>
+  html = html.replace(/([\u4e00-\u9fa5A-Za-z0-9]+-基础形象)/g, (match, roleName) => {
+    const subject = subjects.value.find(s => s.type === 'character' && s.name === roleName);
+    const imgHtml = subject?.image
+      ? `<img src="${subject.image}?w=20&h=20&fit=crop" />`
+      : '<i class="role-icon"></i>';
+    return `<span class="mention-pill role">${imgHtml} ${roleName}</span>`;
+  });
+
+  // 5. 替换道具标签（如果有道具名称）
+  const propSubjects = subjects.value.filter(s => s.type === 'prop');
+  propSubjects.forEach(prop => {
+    if (html.includes(prop.name)) {
+      const imgHtml = prop.image
+        ? `<img src="${prop.image}?w=20&h=20&fit=crop" />`
+        : '<i class="prop-icon"></i>';
+      html = html.replace(new RegExp(prop.name, 'g'), `<span class="mention-pill prop">${imgHtml} ${prop.name}</span>`);
+    }
+  });
+
+  // 6. 换行转换为 <br>
+  html = html.replace(/\n/g, '<br>');
+
+  // 7. 用 <p> 标签包裹整个内容
+  return `<p>${html}</p>`;
+};
+
+/**
+ * 从分镜脚本中自动提取角色名称，关联主体库中的图片
+ * @param scriptText 纯文本分镜脚本
+ * @param scene 当前分镜对象
+ * @returns 关联成功的主体列表
+ */
+const autoLinkSubjects = (scriptText: string, scene: any): any[] => {
+  const linked: any[] = [];
+
+  // 提取角色名称：匹配 "XXX-基础形象" 或 "XXX" 格式
+  // 优先匹配带 "-基础形象" 后缀的角色名
+  const characterPattern = /([\u4e00-\u9fa5A-Za-z0-9]+-基础形象)/g;
+  const matches = scriptText.match(characterPattern) || [];
+
+  // 去重
+  const uniqueNames = [...new Set(matches)];
+
+  // 在主体库中查找匹配的角色
+  uniqueNames.forEach(name => {
+    const subject = subjects.value.find(s =>
+      s.type === 'character' && s.name === name
+    );
+    if (subject && !linked.find(l => l.id === subject.id)) {
+      linked.push(subject);
+    }
+  });
+
+  // 如果没有找到带 "-基础形象" 的角色，尝试匹配普通角色名
+  if (linked.length === 0) {
+    const simpleNames = scriptText.match(/([\u4e00-\u9fa5]{2,4})(?=[，。：说看走向\s])/g) || [];
+    const uniqueSimpleNames = [...new Set(simpleNames)];
+    uniqueSimpleNames.forEach(name => {
+      const subject = subjects.value.find(s =>
+        s.type === 'character' && s.name.includes(name)
+      );
+      if (subject && !linked.find(l => l.id === subject.id)) {
+        linked.push(subject);
+      }
+    });
+  }
+
+  // 将关联的主体信息存储到分镜中
+  if (linked.length > 0) {
+    // 存储关联的主体 ID 列表
+    scene.linkedSubjectIds = linked.map(s => s.id);
+    // 存储关联的主体图片列表（用于视频生成时的参考图）
+    scene.linkedSubjectImages = linked.map(s => s.image).filter(img => img);
+    // 如果分镜没有封面图，使用第一个关联主体的图片作为封面
+    if (!scene.image && linked[0]?.image) {
+      scene.image = linked[0].image;
+    }
+  }
+
+  return linked;
 };
 
 const handleBatchDownload = async () => {

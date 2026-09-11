@@ -1,0 +1,37 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="linear-gradient(135deg,rgba(13,19,38,1) 0%,rgba(37,99,235,1) 100%)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="140" width="800" height="60">
+      <content textType="title" fontSize="44" color="rgba(255,255,255,1)" fontFamily="思源黑体" bold="true" textAlign="center">
+        <p>感谢聆听</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="210" width="800" height="40">
+      <content textType="body" fontSize="18" color="rgba(191,215,255,1)" fontFamily="思源黑体" textAlign="center">
+        <p>视频生成 Prompt 智能增强系统 · Hermes Agent 多轮对话版</p>
+      </content>
+    </shape>
+    <line startX="380" startY="270" endX="580" endY="270">
+      <border color="rgba(191,215,255,0.5)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="295" width="800" height="30">
+      <content textType="body" fontSize="14" color="rgba(255,255,255,1)" fontFamily="思源黑体" textAlign="center">
+        <p>下一步：确认方案 → 启动阶段一开发（2-3 周）→ 灰度上线验证效果</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="460" width="800" height="25">
+      <content textType="body" fontSize="11" color="rgba(191,215,255,0.7)" fontFamily="思源黑体" textAlign="center">
+        <p>版本 V2.0  |  2026 年 9 月  |  面向 Seedance 2.0 图生视频模式</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>结尾页，感谢领导聆听，明确下一步行动：确认方案后启动阶段一开发，2-3周核心能力上线，灰度上线验证效果。</p>
+    </content>
+  </note>
+</slide>

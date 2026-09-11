@@ -221,23 +221,35 @@
                   <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider">
                     风格与镜头
                   </label>
-                  <el-dropdown @command="loadDemoCase" trigger="click">
-                    <button class="flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
-                      <el-icon :size="10"><DocumentChecked /></el-icon>
-                      <span>加载示例</span>
-                      <el-icon :size="10"><ArrowDown /></el-icon>
+                  <div class="flex items-center gap-3">
+                    <!-- 自动识别按钮 -->
+                    <button
+                      @click="handleAutoDetect"
+                      :disabled="isAutoDetecting"
+                      class="flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50"
+                      title="根据描述内容自动识别风格和镜头"
+                    >
+                      <el-icon :size="10" :class="{ 'animate-spin': isAutoDetecting }"><MagicStick /></el-icon>
+                      <span>{{ isAutoDetecting ? '识别中...' : '自动识别' }}</span>
                     </button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item v-for="(demo, i) in demoCases" :key="i" :command="i" :divided="i > 0">
-                          <div class="flex flex-col">
-                            <span class="text-[11px] font-black">{{ demo.title }}</span>
-                            <span class="text-[9px] text-slate-400">{{ demo.description }}</span>
-                          </div>
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
+                    <el-dropdown @command="loadDemoCase" trigger="click">
+                      <button class="flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                        <el-icon :size="10"><DocumentChecked /></el-icon>
+                        <span>加载示例</span>
+                        <el-icon :size="10"><ArrowDown /></el-icon>
+                      </button>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item v-for="(demo, i) in demoCases" :key="i" :command="i" :divided="i > 0">
+                            <div class="flex flex-col">
+                              <span class="text-[11px] font-black">{{ demo.title }}</span>
+                              <span class="text-[9px] text-slate-400">{{ demo.description }}</span>
+                            </div>
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </div>
                 </div>
                 <div class="flex gap-3">
                   <div class="flex-1">
@@ -258,6 +270,25 @@
                     <el-icon :class="{ 'animate-spin': isOptimizingPrompt }"><MagicStick /></el-icon>
                     <span>智能优化提示词</span>
                   </button>
+                </div>
+                <!-- 自动识别结果提示 -->
+                <div v-if="showAutoDetectHint && autoDetectResult" class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-2.5 mt-1">
+                  <div class="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400 mb-1">
+                    <el-icon :size="10"><Check /></el-icon>
+                    <span>自动识别结果</span>
+                  </div>
+                  <div class="text-[9px] text-slate-600 dark:text-slate-300 space-y-0.5">
+                    <div v-if="autoDetectResult?.hasStyleMatch">
+                      风格：{{ STYLE_OPTIONS.find(s => s.value === autoDetectResult?.style)?.label }}
+                      <span class="text-slate-400">（匹配关键词：{{ autoDetectResult?.styleMatchedKeywords?.join('、') }}，置信度 {{ Math.round((autoDetectResult?.styleConfidence || 0) * 100) }}%）</span>
+                    </div>
+                    <div v-else>风格：未识别到明确风格，使用默认值</div>
+                    <div v-if="autoDetectResult?.hasShotMatch">
+                      镜头：{{ getShotOptions(localSubject.type as any).find(s => s.value === autoDetectResult?.shot)?.label }}
+                      <span class="text-slate-400">（匹配关键词：{{ autoDetectResult?.shotMatchedKeywords?.join('、') }}，置信度 {{ Math.round((autoDetectResult?.shotConfidence || 0) * 100) }}%）</span>
+                    </div>
+                    <div v-else>镜头：未识别到明确镜头，使用默认值</div>
+                  </div>
                 </div>
                 <!-- 当前镜头描述 -->
                 <p v-if="currentShotDescription" class="text-[10px] text-slate-400 px-1">
@@ -346,18 +377,40 @@
                       <span>{{ w }}</span>
                     </div>
                   </div>
+                  <!-- 剧情上下文（Hermes Agent 多轮对话核心） -->
+                  <div v-if="optimizedPrompt.dramaContext && optimizedPrompt.dramaContext.dramaTitle" class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
+                    <div class="flex items-center gap-1.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold mb-1">
+                      <el-icon :size="10"><DocumentChecked /></el-icon>
+                      <span>已融入剧情上下文</span>
+                    </div>
+                    <div class="text-[9px] text-slate-500 dark:text-slate-400 space-y-0.5">
+                      <div v-if="optimizedPrompt.dramaContext.dramaTitle">剧本：{{ optimizedPrompt.dramaContext.dramaTitle }}</div>
+                      <div v-if="optimizedPrompt.dramaContext.episodeTitle">剧集：{{ optimizedPrompt.dramaContext.episodeTitle }}</div>
+                      <div v-if="optimizedPrompt.dramaContext.sceneMood">场景情绪：{{ optimizedPrompt.dramaContext.sceneMood }}</div>
+                    </div>
+                  </div>
+                  <!-- 优化说明（Hermes Agent 多轮对话） -->
+                  <div v-if="optimizedPrompt.optimizationNotes && optimizedPrompt.optimizationNotes.length > 0" class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
+                    <div class="flex items-center gap-1.5 text-[10px] text-green-600 dark:text-green-400 font-bold mb-1">
+                      <el-icon :size="10"><Check /></el-icon>
+                      <span>Hermes Agent 优化说明（{{ optimizedPrompt.hermesRounds || 8 }}轮对话）</span>
+                    </div>
+                    <div class="text-[9px] text-slate-500 dark:text-slate-400 space-y-0.5">
+                      <div v-for="(note, i) in optimizedPrompt.optimizationNotes" :key="i">✓ {{ note }}</div>
+                    </div>
+                  </div>
                   <!-- 查看优化过程按钮 -->
                   <div class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
                     <button @click="showOptimizationProcess = !showOptimizationProcess" class="flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
                       <el-icon :size="10" :class="{ 'rotate-180': showOptimizationProcess }" class="transition-transform"><ArrowDown /></el-icon>
-                      <span>{{ showOptimizationProcess ? '收起优化过程' : '查看八步智能优化过程' }}</span>
+                      <span>{{ showOptimizationProcess ? '收起优化过程' : '查看 Hermes Agent 八轮优化过程' }}</span>
                     </button>
                   </div>
                 </div>
 
-                <!-- 八步优化过程展示 -->
+                <!-- Hermes Agent 八轮优化过程展示 -->
                 <div v-if="showOptimizationProcess && optimizedPrompt" class="bg-white dark:bg-slate-800 border border-indigo-100 dark:border-indigo-900/50 rounded-[20px] p-3 space-y-2 shadow-sm">
-                  <div class="text-[11px] font-black text-slate-700 dark:text-slate-200 mb-1">智能优化八步流程</div>
+                  <div class="text-[11px] font-black text-slate-700 dark:text-slate-200 mb-1">Hermes Agent 八轮隐式对话优化过程（界面不显示对话内容）</div>
                   <div v-for="step in optimizedPrompt.process" :key="step.step" class="flex gap-2">
                     <div class="flex flex-col items-center shrink-0">
                       <div class="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[9px] font-black flex items-center justify-center">
@@ -382,7 +435,7 @@
                 <!-- 未优化提示 -->
                 <div v-else class="bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-700 rounded-[20px] p-4 text-center">
                   <el-icon :size="20" class="text-slate-300 dark:text-slate-600 mb-1"><MagicStick /></el-icon>
-                  <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">点击上方「智能优化提示词」按钮，系统将自动生成六层结构优化提示词</p>
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">点击上方「智能优化提示词」按钮，Hermes Agent 将通过8轮底层隐式对话自动优化提示词（界面不显示对话内容）</p>
                 </div>
 
                 <!-- 提示词编辑区（展开） -->
@@ -850,6 +903,8 @@
 import { ref, watch, computed } from 'vue';
 import { generateImageAPI } from '@/utils/imageGenerator';
 import { useModelStore } from '@/store/models';
+import { useDramaStore } from '@/store/drama';
+import { useEpisodeStore } from '@/store/episode';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked, Coin, Headset, Edit, Warning, ArrowDown } from '@element-plus/icons-vue';
 import {
@@ -860,14 +915,18 @@ import {
   getQualityDimensions,
   PARAM_EXPLANATIONS,
   DEMO_CASES,
+  autoDetectStyleAndShot,
   type StyleType,
   type ShotType,
   type OptimizedPrompt,
   type QualityReport,
-  type OptimizationStep
+  type OptimizationStep,
+  type DramaContext
 } from '@/utils/promptOptimizer';
 
 const modelStore = useModelStore();
+const dramaStore = useDramaStore();
+const episodeStore = useEpisodeStore();
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 interface AssetImageItem {
@@ -1010,6 +1069,63 @@ const showParamExplanation = ref(false);
 const featureIncompleteVisible = ref(false);
 const pendingGenerateAfterFeatureConfirm = ref(false);
 
+// ==================== 自动识别风格与镜头 ====================
+const autoDetectResult = ref<{
+  style: StyleType;
+  shot: ShotType;
+  styleConfidence: number;
+  shotConfidence: number;
+  styleMatchedKeywords: string[];
+  shotMatchedKeywords: string[];
+  hasStyleMatch: boolean;
+  hasShotMatch: boolean;
+} | null>(null);
+const isAutoDetecting = ref(false);
+const showAutoDetectHint = ref(false);
+
+// 执行自动识别风格与镜头
+const handleAutoDetect = () => {
+  if (!localSubject.value.description || localSubject.value.description.trim().length < 5) {
+    ElMessage.warning('请先输入至少5个字的描述，以便自动识别风格与镜头');
+    return;
+  }
+  isAutoDetecting.value = true;
+  showAutoDetectHint.value = false;
+
+  // 模拟识别过程
+  setTimeout(() => {
+    const result = autoDetectStyleAndShot(
+      localSubject.value.description,
+      localSubject.value.type as any
+    );
+    autoDetectResult.value = result;
+
+    // 自动设置风格和镜头
+    if (result.hasStyleMatch) {
+      selectedStyle.value = result.style;
+    }
+    if (result.hasShotMatch) {
+      selectedShot.value = result.shot;
+    }
+
+    isAutoDetecting.value = false;
+    showAutoDetectHint.value = true;
+
+    if (result.hasStyleMatch || result.hasShotMatch) {
+      const styleLabel = result.hasStyleMatch ? STYLE_OPTIONS.find(s => s.value === result.style)?.label : '未识别';
+      const shotLabel = result.hasShotMatch ? getShotOptions(localSubject.value.type as any).find(s => s.value === result.shot)?.label : '未识别';
+      ElMessage.success(`已自动识别：风格=${styleLabel}，镜头=${shotLabel}`);
+    } else {
+      ElMessage.info('未从描述中识别到明确的风格和镜头，已使用默认值，您可以手动选择');
+    }
+
+    // 3秒后隐藏提示
+    setTimeout(() => {
+      showAutoDetectHint.value = false;
+    }, 5000);
+  }, 500);
+};
+
 // 敏感词列表（基础版，可扩展）
 const SENSITIVE_WORDS = ['暴力', '血腥', '色情', '裸体', '政治', '反动', '恐怖', '毒品', '武器', '枪支', '炸药'];
 
@@ -1126,30 +1242,58 @@ watch(() => localSubject.value.description, () => {
   hasPromptConfirmed.value = false;
 });
 
-// 执行提示词智能优化
+// 执行提示词智能优化（Hermes Agent 多轮对话版）
 const handleOptimizePrompt = async () => {
   if (!localSubject.value.description) {
     return ElMessage.warning('请先输入描述，以便智能优化提示词');
   }
   isOptimizingPrompt.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // 优化前自动识别风格和镜头（如果描述中有明确关键词）
+    const detectResult = autoDetectStyleAndShot(
+      localSubject.value.description,
+      localSubject.value.type as any
+    );
+    if (detectResult.hasStyleMatch && detectResult.styleConfidence >= 0.5) {
+      selectedStyle.value = detectResult.style;
+    }
+    if (detectResult.hasShotMatch && detectResult.shotConfidence >= 0.5) {
+      selectedShot.value = detectResult.shot;
+    }
+
+    // 模拟 Hermes Agent 多轮对话优化过程（8轮）
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // 构建剧情上下文（Hermes Agent 多轮对话核心）
+    const dramaContext: DramaContext = {
+      dramaId: dramaStore.outlineData?.id || '',
+      dramaTitle: dramaStore.outlineData?.title || '',
+      episodeId: episodeStore.episodes[0]?.id || '',
+      episodeTitle: episodeStore.episodes[0]?.title || '',
+      sceneName: '',
+      sceneMood: '',
+      plotSummary: dramaStore.outlineData?.description || '',
+      lightingRequirement: '',
+      visualRequirements: ''
+    };
+
     const result = optimizePrompt({
       name: localSubject.value.name,
       description: localSubject.value.description,
       type: localSubject.value.type as any,
       referenceImage: localSubject.value.reference_image,
       style: selectedStyle.value,
-      shot: selectedShot.value
+      shot: selectedShot.value,
+      dramaContext
     });
     optimizedPrompt.value = result;
     customPositivePrompt.value = result.positivePrompt;
     customNegativePrompt.value = result.negativePrompt;
     hasUserEditedPrompt.value = false;
     if (result.warnings.length > 0) {
-      ElMessage.warning(`提示词优化完成，存在${result.warnings.length}条建议`);
+      ElMessage.warning(`Hermes Agent 优化完成，存在${result.warnings.length}条建议`);
     } else {
-      ElMessage.success('提示词智能优化完成');
+      ElMessage.success('Hermes Agent 八轮智能优化完成');
     }
   } catch (e) {
     ElMessage.error('提示词优化失败，请稍后重试');

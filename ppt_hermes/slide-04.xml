@@ -1,0 +1,85 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="40" width="700" height="45">
+      <content textType="title" fontSize="28" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>三阶段建设目标与衡量指标</p>
+      </content>
+    </shape>
+    <line startX="80" startY="90" endX="160" endY="90">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <line startX="140" startY="280" endX="820" endY="280">
+      <border color="rgba(191,215,255,0.8)" width="2"/>
+    </line>
+    <shape type="ellipse" topLeftX="120" topLeftY="268" width="24" height="24">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="ellipse" topLeftX="468" topLeftY="268" width="24" height="24">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="ellipse" topLeftX="816" topLeftY="268" width="24" height="24">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="130" width="240" height="30">
+      <content textType="body" fontSize="14" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>短期  |  1-2 个月</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="165" width="240" height="60">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" lineSpacing="multiple:1.4">
+        <p>核心场景上线，</p>
+        <p>提示词一次合格率提升 40%</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="310" width="240" height="160">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p>帧对齐合格率 ≥ 85%</p>
+        <p>时间轴准确率 ≥ 90%</p>
+        <p>参考图配置正确率 ≥ 95%</p>
+        <p>分镜拆解 + 镜头拆解可用</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="428" topLeftY="130" width="240" height="30">
+      <content textType="body" fontSize="14" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>中期  |  3-4 个月</p></content>
+    </shape>
+    <shape type="text" topLeftX="428" topLeftY="165" width="240" height="60">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" lineSpacing="multiple:1.4">
+        <p>全流程覆盖，</p>
+        <p>批量优化能力上线</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="428" topLeftY="310" width="240" height="160">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p>视频一次生成合格率 ≥ 50%</p>
+        <p>平均抽卡次数降低 50%</p>
+        <p>16 个专业 Skills 全覆盖</p>
+        <p>后期转场清单自动生成</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="776" topLeftY="130" width="140" height="30">
+      <content textType="body" fontSize="14" color="rgba(37,99,235,1)" fontFamily="思源黑体" bold="true"><p>长期  |  持续</p></content>
+    </shape>
+    <shape type="text" topLeftX="776" topLeftY="165" width="140" height="60">
+      <content textType="body" fontSize="15" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true" lineSpacing="multiple:1.4">
+        <p>沉淀行业级</p>
+        <p>优化标准</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="776" topLeftY="310" width="140" height="160">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体" lineSpacing="multiple:1.8">
+        <p>形成方法论</p>
+        <p>支持多模型扩展</p>
+        <p>数据驱动自循环</p>
+        <p>个性化风格学习</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>建设目标分三个阶段：短期1-2个月先把核心场景做出来，让提示词一次合格率提升40%；中期3-4个月覆盖全流程，把视频一次生成合格率做到50%以上；长期持续沉淀，形成行业级的优化标准，并支持多模型扩展。</p>
+    </content>
+  </note>
+</slide>

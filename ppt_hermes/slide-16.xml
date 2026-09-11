@@ -1,0 +1,77 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(242,244,248)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="35" width="700" height="40">
+      <content textType="title" fontSize="26" color="rgba(13,19,38,1)" fontFamily="思源黑体" bold="true">
+        <p>技术选型：复用现有技术栈，无新增学习成本</p>
+      </content>
+    </shape>
+    <line startX="80" startY="78" endX="160" endY="78">
+      <border color="rgba(37,99,235,1)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="90" width="800" height="25">
+      <content textType="body" fontSize="12" color="rgba(83,97,116,1)" fontFamily="思源黑体">
+        <p>系统基于现有 Java 后端 + 前端技术栈构建，核心模型调用通过 HTTP API 集成，无新技术引入</p>
+      </content>
+    </shape>
+    <table topLeftX="50" topLeftY="130" width="860" height="370">
+      <colgroup>
+        <col width="140"/>
+        <col width="200"/>
+        <col width="260"/>
+        <col width="260"/>
+      </colgroup>
+      <tr height="40">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>技术领域</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>选型方案</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>选型理由</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>替代方案 / 扩展性</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>后端框架</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>Spring Boot + MyBatis</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>现有项目技术栈，团队熟悉，可快速开发；与现有 AI 小说工作站系统无缝集成</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可扩展为微服务架构；支持 Redis 缓存会话状态</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>大语言模型</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>Hermes Agent（豆包）</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>支持多轮对话和工具调用；中文理解能力强；API 稳定；成本可控</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可替换为 GPT-4 / Claude / 通义千问；支持多模型路由和降级</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>视频生成模型</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>Seedance 2.0（图生视频）</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>支持参考图控制；中文提示词理解好；生成质量高；与 Seedream 参考图联动</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可扩展支持 Sora / Runway / Pika；提示词架构可适配多模型</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>前端框架</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>Vue 3 + Element Plus</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>现有前端技术栈；组件丰富；开发效率高；与现有系统 UI 风格统一</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可升级为 React / Next.js；支持实时进度推送（WebSocket）</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>数据存储</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>MySQL + 文件存储</p></content></td>
+        <td><fill><fillColor color="rgba(255,255,255,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>结构化数据存 MySQL（会话/分镜/结果）；参考图和导出文件存本地或对象存储</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可扩展 Redis 缓存会话；MongoDB 存储对话历史；OSS 对象存储</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="12" color="rgba(37,99,235,1)" bold="true" textAlign="center"><p>Skills 知识库</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="11" color="rgba(13,19,38,1)" textAlign="center"><p>Markdown 文件 + 语义检索</p></content></td>
+        <td><fill><fillColor color="rgba(248,249,252,1)"/></fill><content textType="body" fontSize="10" color="rgba(83,97,116,1)" textAlign="left"><p>Skills 以 Markdown 格式维护，便于编辑；通过语义检索加载相关规范到对话上下文</p></content></td>
+        <td><fill><fillColor color="rgba(37,99,235,0.05)"/></fill><content textType="body" fontSize="10" color="rgba(13,19,38,1)" textAlign="left"><p>可升级为向量数据库（Milvus / Pinecone）；支持 RAG 增强检索</p></content></td>
+      </tr>
+    </table>
+  </data>
+  <note>
+    <content textType="body">
+      <p>技术选型的核心原则是复用现有技术栈，无新增学习成本。后端用Spring Boot + MyBatis，前端用Vue 3 + Element Plus，都是现有AI小说工作站系统的技术栈。大语言模型用Hermes Agent（豆包），视频生成模型用Seedance 2.0，都通过HTTP API集成。数据存储用MySQL + 文件存储。Skills知识库用Markdown文件 + 语义检索。所有选型都有明确的替代方案和扩展路径，不会被单一技术锁定。</p>
+    </content>
+  </note>
+</slide>
