@@ -1,0 +1,91 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>小云雀 积分收费规格明细</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="80" topLeftY="120" width="800" height="192">
+      <colgroup>
+        <col width="120"/>
+        <col width="130"/>
+        <col width="140"/>
+        <col width="130"/>
+        <col width="140"/>
+        <col width="140"/>
+      </colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>会员档位</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>月费</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>每月积分</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单积分成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>加速通道</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>水印/授权</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(118,118,118)" textAlign="center"><p>免费版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>¥0</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>每日赠（当日清零）</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>标准队列</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>带水印</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>基础会员</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥79/月</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>830</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.095</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>加速</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>去水印 · 商用</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>标准会员</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥209/月</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2,320</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.090</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>更快</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>去水印 · 商用</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>高级会员</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥529/月</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>6,330</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.084</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>最快</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>去水印 · 商用</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="332" width="380" height="26">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>积分充值包（超额补充）</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="362" width="380" height="60">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p>500积分 / ¥50（约¥0.10/积分）</p></li>
+          <li><p>750积分 / ¥75（约¥0.10/积分）</p></li>
+          <li><p>包年会员享8折优惠</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="332" width="380" height="26">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>消耗规则与创作者激励</p></content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="362" width="380" height="90">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p>视频消耗：Seedance 2.0 约11积分/秒，界面实时标注成本</p></li>
+          <li><p>创作者计划：入围月赠6000积分+标准会员，爆款奖5万元</p></li>
+          <li><p>超级创作者：月赠20000积分+年度高级会员，爆款奖25万元</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：watcha.cn · App Store内购信息 · 中国青年网（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>10 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>小云雀采用月会员加积分充值模式。基础会员79元/月含830积分，高级会员529元/月含6330积分，单积分成本约0.084至0.095元。积分包统一0.1元/积分。视频消耗约11积分每秒。创作者激励计划提供积分和现金双重奖励，最高爆款奖励25万元。</p></content></note>
+</slide>

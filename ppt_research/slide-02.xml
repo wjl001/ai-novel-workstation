@@ -1,0 +1,103 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(255,255,255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="56" width="200" height="36">
+      <content textType="caption" fontSize="13" fontFamily="微软雅黑" color="rgba(27,58,92,0.5)" letterSpacing="2" wrap="false">
+        <p>CONTENTS</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="88" width="400" height="50">
+      <content textType="title" fontSize="32" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>目  录</p>
+      </content>
+    </shape>
+    <line startX="80" startY="150" endX="880" endY="150">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="185" width="60" height="50">
+      <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27,58,92,0.2)" bold="true" wrap="false">
+        <p>01</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="155" topLeftY="190" width="300" height="30">
+      <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>调研背景与本项目积分体系</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="155" topLeftY="222" width="300" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>调研方法论 · 算力豆规则 · 会员套餐与模型定价</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="185" width="60" height="50">
+      <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27,58,92,0.2)" bold="true" wrap="false">
+        <p>02</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="595" topLeftY="190" width="300" height="30">
+      <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>五家竞品积分收费规格详解</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="595" topLeftY="222" width="300" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>LibTV · 小云雀 · 纳米AI · 天工AI · 万兴喵影</p>
+      </content>
+    </shape>
+    <line startX="80" startY="280" endX="880" endY="280">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="315" width="60" height="50">
+      <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27,58,92,0.2)" bold="true" wrap="false">
+        <p>03</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="155" topLeftY="320" width="300" height="30">
+      <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>横向对比与商业模式分析</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="155" topLeftY="352" width="300" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>积分单价对比 · 会员权益对比 · 盈利模式拆解</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="315" width="60" height="50">
+      <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27,58,92,0.2)" bold="true" wrap="false">
+        <p>04</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="595" topLeftY="320" width="300" height="30">
+      <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>结论与优化建议</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="595" topLeftY="352" width="300" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>核心发现 · 对本项目的启示 · 行动建议</p>
+      </content>
+    </shape>
+    <line startX="80" startY="410" endX="880" endY="410">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="490" width="400" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>AI短剧创作平台竞品积分收费与商业模式调研报告</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false">
+        <p>02 / 22</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>本报告共分四个章节：第一章介绍调研背景和本项目的算力豆积分体系；第二章逐一拆解五家竞品的积分收费规格；第三章进行横向对比并分析各平台的盈利模式；第四章给出核心结论和对本项目的优化建议。</p>
+    </content>
+  </note>
+</slide>

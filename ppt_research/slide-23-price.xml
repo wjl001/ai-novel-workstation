@@ -1,0 +1,116 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="760" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>核心对比：视频生成单价差距达100-4940倍</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="50" topLeftY="114" width="860" height="312">
+      <colgroup><col width="140"/><col width="120"/><col width="120"/><col width="130"/><col width="150"/><col width="200"/></colgroup>
+      <tr height="32">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台 / 模型</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单价（元/秒）</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>10秒视频成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>1分钟视频成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>vs本项目2.5差距</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>备注</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(200,134,26)" textAlign="center"><p>本项目 seedance-2.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>¥0.00005</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0005</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.003</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>基准（低10倍）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>稳定经典模型</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(200,134,26)" textAlign="center"><p>本项目 seedance-2.5</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>¥0.0005</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.005</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.03</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>基准（1倍）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>新一代高质量</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(200,134,26)" textAlign="center"><p>本项目 可灵3.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>¥0.001</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.01</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.06</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>顶级物理模拟</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工 Wan 3.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.05</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.5</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥3.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>100倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>限时低价，竞品中最低</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV Seedance2.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.35</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥3.5</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥21.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>700倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>真人模式，会员39折</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工 Seedance2.5 720P</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.40</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥4.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥24.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>800倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>4折价格战</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影 图生视频</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.12-3.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥1.2-30</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥7.2-180</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>240-6000倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>按次计费，复杂度差异大</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀 Lite</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.95</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥9.5</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥57.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>1900倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>标准画质</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI Seedance2.0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥1.33</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥13.3</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥79.8</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>2660倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>15秒720P约200纳米币</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀 Seedance2.5</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥2.47</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥24.7</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥148.2</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>4940倍</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>30秒720P需780积分</p></content></td>
+      </tr>
+    </table>
+    <shape type="rect" topLeftX="50" topLeftY="430" width="860" height="56">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="70" topLeftY="438" width="820" height="44">
+      <content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.5">
+        <p><span bold="true" color="rgb(200,134,26)">核心结论：</span>本项目视频生成单价处于行业绝对低位。以seedance-2.5为例，本项目¥0.0005/秒，生成1分钟仅需3分钱；竞品中最低的天工Wan 3.0也要¥0.05/秒（贵100倍），最高的小云雀Seedance2.5达¥2.47/秒（贵4940倍）。同样生成一条1分钟720P视频，本项目花费¥0.03，小云雀需¥148.2，差距近5000倍。<span bold="true">极低的视频成本是本项目最核心的价格护城河，应作为定价页和营销页的第一卖点。</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="50" topLeftY="498" width="600" height="24">
+      <content textType="caption" fontSize="10" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：各平台官网定价页 · 源码配置 · 第三方实测（2026年9月）；差距倍数以本项目seedance-2.5为基准</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="498" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>24 / 24</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>这是本次调研最核心的发现。本项目视频生成单价远低于所有竞品。seedance2.5仅0.0005元每秒，生成1分钟视频只要3分钱。竞品中最便宜的天工Wan3.0也要0.05元每秒，贵100倍。最贵的小云雀Seedance2.5达2.47元每秒，贵4940倍。同样一条1分钟视频，本项目3分钱，小云雀148元。极低视频成本是本项目最核心的价格护城河，必须作为第一卖点突出。</p></content></note>
+</slide>

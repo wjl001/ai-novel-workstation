@@ -1,0 +1,83 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>横向对比二：会员档位与核心权益</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="60" topLeftY="118" width="840" height="340">
+      <colgroup><col width="100"/><col width="80"/><col width="80"/><col width="110"/><col width="90"/><col width="200"/><col width="180"/></colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>档位数</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>入门月费</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>月度积分/算力</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>并发/速度</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>核心权益差异</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>有效期规则</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>本项目<br/>（算力豆）</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>3档</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥99</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>9,900豆</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2-8并发</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1080P+去水印（专业版起）；API（工作室版）；年付8折</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员积分到期清零；充值积分永久有效</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>5档</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥499/年</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,800/月</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按档提速</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI短剧全流程；高端档含商用授权；2026年7月涨价1000元</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>年仅付；月度积分当月清零</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>3档</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥79</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>830积分</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按档提速</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>Seedance模型；创作者现金激励；视频约11积分/秒</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月付/季付/年付；积分当月有效</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>3档</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥39</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,180算力</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>标准/极速</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>全模态AI；至尊年卡月赠15000算力；GPT-4o等高级模型</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月卡/年卡；算力按周期重置</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2档+免费</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥45</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>每日赠1200</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>标准/优先</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>全品类工作区；SkyProduction短剧台；4折视频价格战</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月付；积分包购买后长期有效</p></content></td>
+      </tr>
+      <tr height="50">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>3档+免费</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥269/年</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>赠3000+月4000</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>无并发限制</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>桌面剪辑+AI功能；1500万素材；企业版月赠8000</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>积分包1年有效；SVIP月赠当月清零</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="60" topLeftY="472" width="840" height="24">
+      <content textType="caption" fontSize="10" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>注：本项目入门月费99元在六家中最高；LibTV年仅付无月付选项；天工和万兴喵影提供免费层降低试用门槛。各家"积分"定义不同，月度积分额度不可直接比较。</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="498" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>18 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>会员权益对比显示，本项目入门月费99元在六家中最高，但提供2-8并发和API能力。LibTV年仅付且档位最多（5档），高端档有强定价权。天工和万兴喵影提供免费层降低试用门槛。各家积分定义不同，月度积分额度不可直接比较。有效期规则方面，本项目充值积分永久有效是独特优势。</p></content></note>
+</slide>

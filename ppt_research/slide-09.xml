@@ -1,0 +1,67 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>小云雀——字节跳动旗下AI短剧创作平台</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="120" width="380" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>产品定位与核心能力</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="380" height="200">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p>剪映出品的AI创作助手，核心方向为短剧创作</p></li>
+          <li><p>双Agent模式：创作Agent（自然语言出片）+ 短剧Agent（剧本→资产→分集）</p></li>
+          <li><p>Seedance全家桶优先体验，新模型首发平台</p></li>
+          <li><p>分镜级精细编辑、风格库、真人角色扫码授权</p></li>
+          <li><p>开放CLI/API，支持Agent控制Agent的架构</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="480" startY="120" endX="480" endY="380"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="510" topLeftY="120" width="370" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>商业模式与盈利来源</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="155" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">01  月度会员订阅</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="180" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>基础79元/标准209元/高级529元，包年享8折</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="210" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">02  积分充值包</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="235" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>500积分/50元、750积分/75元，高频创作补充消耗</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="265" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">03  创作者激励计划</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="290" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>优质创作者月赠6000积分，爆款最高25万元现金</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="320" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">04  API/CLI企业服务</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="345" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>短剧模式API需申请，面向批量生产的专业团队</p></content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="400" width="800" height="60">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="412" width="760" height="40">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgb(200,134,26)">盈利逻辑：</span>背靠火山引擎Seedance模型，以月会员锁定C端用户，积分包补充超额消耗；创作者激励计划以积分+现金培育内容生态，爆款反哺平台影响力；API/CLI面向B端短剧团队，构建"模型+工具+生态"闭环。视频消耗约11积分/秒。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：watcha.cn · App Store · 中国青年网（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>09 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>小云雀是字节跳动剪映出品的AI短剧创作平台，采用月会员加积分充值模式。基础会员79元/月含830积分，高级会员529元/月含6330积分。视频消耗约11积分每秒。平台通过创作者激励计划培育内容生态，爆款最高奖励25万元现金，并开放API面向专业团队。</p></content></note>
+</slide>

@@ -1,0 +1,92 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>纳米AI 积分收费规格明细</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="80" topLeftY="120" width="800" height="216">
+      <colgroup>
+        <col width="140"/>
+        <col width="140"/>
+        <col width="160"/>
+        <col width="140"/>
+        <col width="220"/>
+      </colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>会员档位</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>价格</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>每月纳米算力</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单算力成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>说明</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>月卡</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥39/月</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,180</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.033</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>入门首选，短期体验</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>季卡</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥99/季</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,180</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.028</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>折合33元/月，性价比提升</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>半年卡</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥189/半年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,180</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.027</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>折合31.5元/月</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>年卡</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥399/年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,180</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.028</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>折合33.25元/月，长期用户</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>尊享年卡</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>官方未公开</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>5,000</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>高频创作者，算力约为普通版4倍</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="356" width="380" height="26">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>智能体动态计费</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="386" width="380" height="70">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p>固定使用费：如"纳米视频PPT"智能体10纳米币/次</p></li>
+          <li><p>动态调用费：MCP工具按实际调用消耗算力</p></li>
+          <li><p>算力与纳米币可互通使用</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="356" width="380" height="26">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>渠道与促销</p></content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="386" width="380" height="70">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p>淘宝旗舰店直充，30天有效期快速到账</p></li>
+          <li><p>第三方分销价格低于官方，走量模式</p></li>
+          <li><p>低价月卡拉新，高阶年卡提升ARPU</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：zxnavi.com · 淘宝纳米AI旗舰店（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>12 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>纳米AI采用多周期会员订阅，月卡39元含1180算力，年卡399元，单算力成本约0.028至0.033元。尊享年卡每月赠5000算力，至尊年卡每月赠15000算力。智能体采用固定使用费加MCP工具动态调用的双层计费。平台通过淘宝等渠道广泛分销，低价拉新高阶变现。</p></content></note>
+</slide>

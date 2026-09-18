@@ -1,0 +1,78 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="760" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>横向对比五：生文/生图/生视频人民币价格总览</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="50" topLeftY="114" width="860" height="330">
+      <colgroup><col width="90"/><col width="150"/><col width="150"/><col width="150"/><col width="160"/><col width="160"/></colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>生文（元/次）</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>生图（元/张）</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>生视频（元/秒）</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>积分汇率（元/积分）</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>价格口径说明</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(200,134,26)" textAlign="center"><p>本项目<br/>（算力豆）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>含于会员<br/>未单独定价</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>基础 ¥0.05/张<br/>高端 ¥0.50/张</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>2.0 ¥0.00005/s<br/>2.5 ¥0.0005/s<br/>可灵3.0 ¥0.001/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.01/豆<br/>（1元=100豆）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>源码配置价<br/>等面值发放</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>未单独定价<br/>含于会员</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>约 ¥0.006/张<br/>（估算，因模型而异）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>Seedance2.0<br/>低至 ¥0.35/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>约¥0.023/积分<br/>（专业版折算）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>年仅付<br/>按模型差异化扣减</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>未单独定价<br/>含于会员</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>未公开<br/>单独消耗标准</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>Lite ¥0.95/s<br/>Pro ¥2.38/s<br/>2.5 ¥2.47/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.095/积分<br/>（79元/830积分）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>按秒计费<br/>五档模型差异化</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>未单独定价<br/>含于会员</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>API低至<br/>¥0.07/张</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>Seedance2.0<br/>约 ¥1.33/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.1/纳米币<br/>（1纳米币=0.1元）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>纳米币+算力<br/>双单位制</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>约 ¥1.44-3.84/次<br/>（300-800积分）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>约 ¥0.14/张<br/>（30积分/张）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2.5 720P ¥0.4/s<br/>Wan3.0 ¥0.05/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0048/积分<br/>（10000/48元）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>SkyProduction<br/>按秒直接定价</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.40/次<br/>（40积分/次）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.40/张<br/>（40积分/张）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>图生视频约¥0.12-3/s<br/>文生视频¥0.3-7.4/s</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.01/积分<br/>（1000/9.99元）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>按次/按分镜<br/>复杂度差异化</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="50" topLeftY="456" width="860" height="36">
+      <content textType="caption" fontSize="10" fontFamily="微软雅黑" color="rgb(118,118,118)" lineSpacing="multiple:1.4">
+        <p>注：本项目价格来自源码配置（1元=100算力豆）；竞品价格按各自会员/积分包汇率换算为人民币。生文功能多数平台未单独定价，包含在会员权益中。视频价格为各平台主力模型参考价，实际消耗因分辨率、时长、模型版本而异。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="504" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>23 / 24</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>这一页是六家平台生文生图生视频的人民币价格总对比。本项目视频价格极低，seedance2.5仅0.0005元每秒，而竞品从0.05元到2.47元每秒不等。生图方面本项目基础0.05元每张也远低于万兴喵影的0.4元每张。生文多数平台未单独定价。所有价格均按各平台积分汇率换算为人民币，实际消耗因模型和参数而异。</p></content></note>
+</slide>

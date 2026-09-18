@@ -1,0 +1,100 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>横向对比一：入门月费与单积分成本</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="116" width="400" height="22">
+      <content textType="sub-headline" fontSize="13" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>入门级月度会员价格对比（元/月）</p></content>
+    </shape>
+    <chart width="420" height="240" topLeftX="70" topLeftY="142">
+      <chartPlotArea>
+        <chartPlot type="column">
+          <chartExtra/>
+        </chartPlot>
+        <chartAxes>
+          <chartAxis type="x">
+            <chartLabel fontSize="10"/>
+          </chartAxis>
+          <chartAxis type="y" position="left">
+            <chartGridLine color="rgb(230,230,230)"/>
+            <chartLabel fontSize="9"/>
+          </chartAxis>
+        </chartAxes>
+      </chartPlotArea>
+      <chartData>
+        <dim1>
+          <chartField name="平台">本项目,LibTV,小云雀,纳米AI,天工,万兴喵影</chartField>
+        </dim1>
+        <dim2>
+          <chartField name="入门月费(元)">99,42,79,39,45,22</chartField>
+        </dim2>
+      </chartData>
+      <chartStyle>
+        <chartBackground color="rgba(0,0,0,0)"/>
+        <chartBorder color="rgb(222,224,227)" width="0"/>
+        <chartColorTheme>
+          <color value="rgb(27,58,92)"/>
+        </chartColorTheme>
+      </chartStyle>
+    </chart>
+    <shape type="text" topLeftX="520" topLeftY="116" width="360" height="22">
+      <content textType="sub-headline" fontSize="13" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>单积分成本对比（元/积分，入门档）</p></content>
+    </shape>
+    <table topLeftX="520" topLeftY="142" width="360" height="240">
+      <colgroup><col width="120"/><col width="100"/><col width="140"/></colgroup>
+      <tr height="32">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单积分成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>积分口径</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>本项目（算力豆）</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.010</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>1元=100豆</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.023</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>年仅付折算</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.095</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>月付79元/830积分</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.033</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>月卡39元/1180算力</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0048</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>积分包10000/48元</p></content></td>
+      </tr>
+      <tr height="34">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.010</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>积分包1000/9.99元</p></content></td>
+      </tr>
+    </table>
+    <shape type="rect" topLeftX="80" topLeftY="395" width="800" height="84">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="405" width="760" height="68">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.5">
+        <p><span bold="true" color="rgb(200,134,26)">关键发现：</span>各家积分口径差异巨大，单积分成本不可直接横向比较。天工积分汇率最低（0.0048元）但消耗单位大（单次任务300-800积分）；小云雀单积分成本最高（0.095元）但视频消耗约11积分/秒，实际每秒约1.05元。本项目0.01元/豆处于中位，seedance-2.5约0.0005元/秒，是五家中视频生成单价最低的平台。入门月费方面，万兴喵影（22元/月折算）和纳米AI（39元）最低，本项目99元偏高。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：各平台官方定价页 · App Store内购信息（2026年9月整理）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>17 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>横向对比显示，各家积分口径差异巨大。天工积分汇率最低但消耗单位大，小云雀单积分成本最高但视频质量好。本项目0.01元每豆处于中位，但seedance-2.5视频生成约0.0005元每秒，是五家中最低的。入门月费方面本项目99元偏高，万兴喵影和纳米AI最低。</p></content></note>
+</slide>

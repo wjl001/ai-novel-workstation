@@ -1,0 +1,67 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>天工AI——昆仑万维全品类AI工作空间</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="120" width="380" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>产品定位与核心能力</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="380" height="200">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p>一体化AI工作区，覆盖PPT/文档/表格/图片/视频</p></li>
+          <li><p>Skill架构，内置官方技能+自定义技能+模板复用</p></li>
+          <li><p>SkyClaw多智能体团队，7×24云端自主处理任务</p></li>
+          <li><p>SkyProduction短剧工作台，剧本直达成片</p></li>
+          <li><p>定时任务、知识库、语音纪要等办公能力</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="480" startY="120" endX="480" endY="380"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="510" topLeftY="120" width="370" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>商业模式与盈利来源</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="155" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">01  会员订阅 + 积分包</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="180" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>Basic 45元/Plus 85元，积分包10000起售</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="210" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">02  SkyProduction短剧工作台</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="235" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>Seedance 2.5 720P低至0.4元/秒，4折价格战</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="265" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">03  短剧平台流水</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="290" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>DramaWave付费+FreeReels免费，月流水超4800万美元</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="320" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">04  API与企业定制</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="345" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>SkyClaw API按Token计费，企业级可定制套餐</p></content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="395" width="800" height="72">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="405" width="760" height="56">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.5">
+        <p><span bold="true" color="rgb(200,134,26)">盈利逻辑：</span>昆仑万维构建"工具+内容+平台"三轮驱动。C端以会员和积分包覆盖办公创作需求；SkyProduction以4折低价抢占短剧工具市场；DramaWave/FreeReels短剧平台贡献规模化流水（ARR超5.7亿美元）；API面向企业客户。形成从创作工具到内容分发的完整闭环。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：App Store · 36氪 · 中国经济网 · 昆仑万维财报（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>13 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>天工AI是昆仑万维的全品类AI工作空间，采用会员加积分包模式。Basic会员45元/月，Plus 85元/月，积分包10000积分48元起。SkyProduction短剧工作台以4折低价抢占市场，Seedance 2.5 720P低至0.4元每秒。昆仑万维短剧平台业务月流水超4800万美元，ARR突破5.7亿美元，形成工具加内容加平台的完整闭环。</p></content></note>
+</slide>

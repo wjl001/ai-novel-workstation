@@ -1,0 +1,4666 @@
+<presentation id="YP47sIccjlV0YcdCujucchJZnjd" xmlns="https://www.larkoffice.com/sml/2.0" width="960" height="540">
+  <title>AI短剧创作平台竞品积分收费与商业模式调研报告</title>
+  <theme>
+    <textStyles>
+      <headline fontColor="rgba(31, 35, 41, 1)"/>
+      <sub-headline fontColor="rgba(31, 35, 41, 1)"/>
+      <body fontColor="rgba(31, 35, 41, 1)"/>
+      <caption fontColor="rgba(155, 158, 162, 1)" fontSize="14"/>
+    </textStyles>
+  </theme>
+  <slide id="pBB">
+    <style>
+      <fill id="fBB">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="960" height="6" topLeftX="0" topLeftY="0" presetHandlers="0" type="rect" id="byt">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="40" topLeftX="80" topLeftY="120" type="text" id="byq">
+        <content textType="caption" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.6)" letterSpacing="3" wrap="false">
+          <p>COMPETITIVE INTELLIGENCE REPORT · 2026</p>
+        </content>
+      </shape>
+      <shape width="800" height="120" topLeftX="80" topLeftY="175" type="text" id="byH">
+        <content textType="title" fontSize="40" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" lineSpacing="multiple:1.3">
+          <p>AI短剧创作平台竞品</p>
+          <p>积分收费与商业模式调研报告</p>
+        </content>
+      </shape>
+      <line id="byz" startX="80" startY="320" endX="200.00416659433122" endY="320">
+        <border color="rgba(200, 134, 26, 1)" width="3"/>
+      </line>
+      <shape width="800" height="36" topLeftX="80" topLeftY="340" type="text" id="byk">
+        <content fontSize="16" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>LibTV · 小云雀 · 纳米AI · 天工AI · 万兴喵影 五家竞品深度对标</p>
+        </content>
+      </shape>
+      <shape width="380" height="60" topLeftX="80" topLeftY="430" type="text" id="byw">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" lineSpacing="multiple:1.6">
+          <p>参考项目积分规则（算力豆体系 v2.8）</p>
+          <p>覆盖：积分定价 · 会员档位 · 消耗规则 · 盈利模式</p>
+        </content>
+      </shape>
+      <shape width="200" height="60" topLeftX="680" topLeftY="430" type="text" id="byD">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" lineSpacing="multiple:1.6" textAlign="right">
+          <p>2026年9月</p>
+          <p>竞品研究专项</p>
+        </content>
+      </shape>
+      <shape width="960" height="6" topLeftX="0" topLeftY="534" presetHandlers="0" type="rect" id="byh">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+    </data>
+    <note id="byG">
+      <content>
+        <p>本报告围绕AI短剧创作平台的积分收费体系展开，对标LibTV、小云雀、纳米AI、天工AI、万兴喵影五家主流竞品，从积分定价、会员档位、消耗规则和盈利模式四个维度进行深度分析，并结合本项目算力豆体系给出优化建议。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBW">
+    <style>
+      <fill id="fBW">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="200" height="36" topLeftX="80" topLeftY="56" type="text" id="byP">
+        <content textType="caption" fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.502)" letterSpacing="2" wrap="false">
+          <p>CONTENTS</p>
+        </content>
+      </shape>
+      <shape width="400" height="50" topLeftX="80" topLeftY="88" type="text" id="byO">
+        <content textType="title" fontSize="32" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>目 录</p>
+        </content>
+      </shape>
+      <line id="byC" startX="80" startY="150" endX="880.0006249997559" endY="150">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="60" height="50" topLeftX="80" topLeftY="185" type="text" id="bya">
+        <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.2)" bold="true" wrap="false">
+          <p>01</p>
+        </content>
+      </shape>
+      <shape width="300" height="30" topLeftX="155" topLeftY="190" type="text" id="byI">
+        <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>调研背景与本项目积分体系</p>
+        </content>
+      </shape>
+      <shape width="300" height="24" topLeftX="155" topLeftY="222" type="text" id="byb">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>调研方法论 · 算力豆规则 · 会员套餐与模型定价</p>
+        </content>
+      </shape>
+      <shape width="60" height="50" topLeftX="520" topLeftY="185" type="text" id="byR">
+        <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.2)" bold="true" wrap="false">
+          <p>02</p>
+        </content>
+      </shape>
+      <shape width="300" height="30" topLeftX="595" topLeftY="190" type="text" id="byZ">
+        <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>五家竞品积分收费规格详解</p>
+        </content>
+      </shape>
+      <shape width="300" height="24" topLeftX="595" topLeftY="222" type="text" id="byo">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>LibTV · 小云雀 · 纳米AI · 天工AI · 万兴喵影</p>
+        </content>
+      </shape>
+      <line id="byV" startX="80" startY="280" endX="880.0006249997559" endY="280">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="60" height="50" topLeftX="80" topLeftY="315" type="text" id="byE">
+        <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.2)" bold="true" wrap="false">
+          <p>03</p>
+        </content>
+      </shape>
+      <shape width="300" height="30" topLeftX="155" topLeftY="320" type="text" id="bye">
+        <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>横向对比与商业模式分析</p>
+        </content>
+      </shape>
+      <shape width="300" height="24" topLeftX="155" topLeftY="352" type="text" id="byW">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>积分单价对比 · 会员权益对比 · 盈利模式拆解</p>
+        </content>
+      </shape>
+      <shape width="60" height="50" topLeftX="520" topLeftY="315" type="text" id="byc">
+        <content textType="title" fontSize="36" fontFamily="微软雅黑" color="rgba(27, 58, 92, 0.2)" bold="true" wrap="false">
+          <p>04</p>
+        </content>
+      </shape>
+      <shape width="300" height="30" topLeftX="595" topLeftY="320" type="text" id="byn">
+        <content textType="headline" fontSize="18" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>结论与优化建议</p>
+        </content>
+      </shape>
+      <shape width="300" height="24" topLeftX="595" topLeftY="352" type="text" id="byu">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>核心发现 · 对本项目的启示 · 行动建议</p>
+        </content>
+      </shape>
+      <line id="byY" startX="80" startY="410" endX="880.0006249997559" endY="410">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="400" height="24" topLeftX="80" topLeftY="490" type="text" id="byA">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>AI短剧创作平台竞品积分收费与商业模式调研报告</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="byN">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>02 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="byK">
+      <content>
+        <p>本报告共分四个章节：第一章介绍调研背景和本项目的算力豆积分体系；第二章逐一拆解五家竞品的积分收费规格；第三章进行横向对比并分析各平台的盈利模式；第四章给出核心结论和对本项目的优化建议。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBn">
+    <style>
+      <fill id="fBn">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="byU">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="600" height="32" topLeftX="96" topLeftY="56" type="text" id="byr">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>调研背景与方法论</p>
+        </content>
+      </shape>
+      <line id="byM" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="28" topLeftX="80" topLeftY="125" type="text" id="byF">
+        <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>调研背景</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="160" type="text" id="byp">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8">
+          <p>AI视频与短剧创作赛道进入商业化深水区，积分计费已成为行业主流变现手段。各平台在积分定价、会员档位、消耗规则和盈利模式上差异显著。</p>
+          <p>本项目（AI短剧创作平台）已建立&quot;算力豆&quot;积分体系（v2.8 敬龙版），采用1元=100算力豆的等面值发放机制。为优化定价策略、提升竞争力，需对头部竞品进行系统性对标研究。</p>
+        </content>
+      </shape>
+      <shape width="380" height="28" topLeftX="500" topLeftY="125" type="text" id="byd">
+        <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>调研方法与覆盖维度</p>
+        </content>
+      </shape>
+      <shape width="380" height="30" topLeftX="500" topLeftY="160" type="text" id="bym">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">四维分析框架：</span></strong></p>
+        </content>
+      </shape>
+      <shape width="380" height="170" topLeftX="500" topLeftY="195" type="text" id="byS">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p><strong>积分定价</strong>：汇率、套餐档位、单积分成本</p>
+            </li>
+            <li>
+              <p><strong>会员体系</strong>：月/年订阅、权益差异、并发与分辨率</p>
+            </li>
+            <li>
+              <p><strong>消耗规则</strong>：模型单价、有效期、升级与清零机制</p>
+            </li>
+            <li>
+              <p><strong>盈利模式</strong>：收入结构、增值服务、API与生态变现</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="byL" startX="80" startY="400" endX="880.0006249997559" endY="400">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="800" height="28" topLeftX="80" topLeftY="420" type="text" id="byj">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p><strong>数据来源：</strong>各平台官方定价页、App Store内购信息、第三方评测与用户实测、公开财报与行业报道（截至2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="800" height="28" topLeftX="80" topLeftY="455" type="text" id="byy">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p><strong>对标竞品：</strong>LibTV（LiblibAI）· 小云雀（字节跳动）· 纳米AI · 天工AI（昆仑万维）· 万兴喵影（万兴科技）</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="80" topLeftY="490" type="text" id="byi">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>AI短剧创作平台竞品积分收费与商业模式调研报告</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="byB">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>03 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="byv">
+      <content>
+        <p>本次调研采用四维分析框架，覆盖积分定价、会员体系、消耗规则和盈利模式。数据来源于各平台官方定价页、App Store内购信息、第三方评测和公开财报，数据截至2026年9月。对标五家主流竞品：LibTV、小云雀、纳米AI、天工AI和万兴喵影。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBE">
+    <style>
+      <fill id="fBE">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="byT">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bdM">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>本项目积分体系——算力豆规则（v2.8 敬龙版）</p>
+        </content>
+      </shape>
+      <line id="bdU" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="bdr">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>一、核心发放机制</p>
+        </content>
+      </shape>
+      <shape width="380" height="24" topLeftX="80" topLeftY="155" type="text" id="bdp">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 单一积分池</span></strong></p>
+        </content>
+      </shape>
+      <shape width="380" height="36" topLeftX="80" topLeftY="180" type="text" id="bdz">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>会员套餐赠送与充值购买的算力豆合并到同一池，无月度豆与长效豆区分。</p>
+        </content>
+      </shape>
+      <shape width="380" height="24" topLeftX="80" topLeftY="222" type="text" id="byQ">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 等面值发放</span></strong></p>
+        </content>
+      </shape>
+      <shape width="380" height="36" topLeftX="80" topLeftY="247" type="text" id="byg">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>统一按&quot;1元 = 100算力豆&quot;发放，档位间无赠送比例差异，溢价体现在功能权益。</p>
+        </content>
+      </shape>
+      <shape width="380" height="24" topLeftX="80" topLeftY="289" type="text" id="byJ">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 会员周期月</span></strong></p>
+        </content>
+      </shape>
+      <shape width="380" height="36" topLeftX="80" topLeftY="314" type="text" id="bdv">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>&quot;当月&quot;按开通日起30天计算，非自然月，避免月中开通用户权益受损。</p>
+        </content>
+      </shape>
+      <line id="bdi" startX="479.99999999999994" startY="120" endX="479.99999999999994" endY="370.00199999200004">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="bdB">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>二、有效期与升级规则</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="byX">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 会员积分到期清零</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="36" topLeftX="510" topLeftY="180" type="text" id="byf">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>会员套餐赠送的算力豆随会员到期日一起清零，不结转、不返还。</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="222" type="text" id="bdy">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">05 充值积分永久有效</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="36" topLeftX="510" topLeftY="247" type="text" id="bdm">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>单独充值（非会员）的算力豆永久有效，会员过期后仍可按非会员权限使用。</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="289" type="text" id="bdL">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">06 跨档位升级合并</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="56" topLeftX="510" topLeftY="314" type="text" id="byx">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" lineSpacing="multiple:1.6">
+          <p>升级时：剩余积分+新套餐积分合并，剩余天数+新套餐天数延长，权益即时切换为新档位。</p>
+        </content>
+      </shape>
+      <shape width="800" height="70" topLeftX="80" topLeftY="395" presetHandlers="0" type="rect" id="byl">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="24" topLeftX="100" topLeftY="408" type="text" id="bdd">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>非会员限制：带水印 · 仅480P/720P · 并发1个 · 标准队列 · 无API · 仅个人用途授权</p>
+        </content>
+      </shape>
+      <shape width="760" height="24" topLeftX="100" topLeftY="436" type="text" id="bdS">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>1080P/4K、去水印商用授权、多并发、优先队列、API均为会员专属权益。</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="80" topLeftY="490" type="text" id="bdF">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：项目 docs/member-center-rules.md · MemberRulesDialog.vue</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bdj">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>04 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bys">
+      <content>
+        <p>本项目采用算力豆单一积分池，1元等于100算力豆等面值发放。会员赠送积分随到期清零，充值积分永久有效。跨档位升级时积分合并、有效期延长、权益即时升级。非会员可使用基础功能但受水印、分辨率、并发等限制。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBN">
+    <style>
+      <fill id="fBN">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bMJ">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bvu">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>本项目会员套餐与模型消耗定价</p>
+        </content>
+      </shape>
+      <line id="bMV" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bMX" width="800" height="188" topLeftX="80" topLeftY="120">
+        <colgroup>
+          <col span="1" width="140"/>
+          <col span="1" width="180"/>
+          <col span="1" width="220"/>
+          <col span="1" width="260"/>
+        </colgroup>
+        <tr height="32">
+          <td id="bvF">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>对比维度</p>
+            </content>
+          </td>
+          <td id="bva">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>基础版</p>
+            </content>
+          </td>
+          <td id="bMP">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>专业版（最受欢迎）</p>
+            </content>
+          </td>
+          <td id="bMs">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>工作室版（最超值）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bvr">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>月费 / 年费</p>
+            </content>
+          </td>
+          <td id="bvK">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥99 / ¥950</p>
+            </content>
+          </td>
+          <td id="bMu">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥299 / ¥2,870</p>
+            </content>
+          </td>
+          <td id="bMg">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥999 / ¥9,590</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bvB">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>每月算力豆</p>
+            </content>
+          </td>
+          <td id="bvn">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>9,900</p>
+            </content>
+          </td>
+          <td id="bMN">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>29,900</p>
+            </content>
+          </td>
+          <td id="bvm">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>99,900</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bvD">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>并发任务</p>
+            </content>
+          </td>
+          <td id="bMW">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>2</p>
+            </content>
+          </td>
+          <td id="bvS">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>4</p>
+            </content>
+          </td>
+          <td id="bvH">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>8</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bMZ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>视频分辨率</p>
+            </content>
+          </td>
+          <td id="bvU">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>480P / 720P</p>
+            </content>
+          </td>
+          <td id="bvi">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>+ 1080P / 4K</p>
+            </content>
+          </td>
+          <td id="bvh">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>+ 1080P / 4K</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bMn">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>水印 / 授权</p>
+            </content>
+          </td>
+          <td id="bMQ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>带水印 · 个人用途</p>
+            </content>
+          </td>
+          <td id="bvk">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>去水印 · 商用授权</p>
+            </content>
+          </td>
+          <td id="bvc">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>去水印 · 商用授权</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bMA">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>API 接入</p>
+            </content>
+          </td>
+          <td id="bvy">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>不支持</p>
+            </content>
+          </td>
+          <td id="bvt">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>不支持</p>
+            </content>
+          </td>
+          <td id="bMe">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>支持</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="26" topLeftX="80" topLeftY="320" type="text" id="bvL">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>模型消耗定价（算力豆）</p>
+        </content>
+      </shape>
+      <table id="bvo" width="800" height="124" topLeftX="80" topLeftY="352">
+        <colgroup>
+          <col span="1" width="200"/>
+          <col span="1" width="120"/>
+          <col span="1" width="140"/>
+          <col span="1" width="340"/>
+        </colgroup>
+        <tr height="28">
+          <td id="bvd">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>模型名称</p>
+            </content>
+          </td>
+          <td id="bvw">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>类型</p>
+            </content>
+          </td>
+          <td id="bMR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>单价</p>
+            </content>
+          </td>
+          <td id="bvM">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>适用场景</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="24">
+          <td id="bvq">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>doubao-seedance-2.0</p>
+            </content>
+          </td>
+          <td id="bMC">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>视频</p>
+            </content>
+          </td>
+          <td id="bvv">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>0.005 豆/秒</p>
+            </content>
+          </td>
+          <td id="bvj">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>稳定经典视频生成</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="24">
+          <td id="bMY">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>doubao-seedance-2.5</p>
+            </content>
+          </td>
+          <td id="bMf">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>视频</p>
+            </content>
+          </td>
+          <td id="bvp">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>0.05 豆/秒</p>
+            </content>
+          </td>
+          <td id="bvV">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>新一代高质量视频生成</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="24">
+          <td id="bME">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>可灵3.0 Omni</p>
+            </content>
+          </td>
+          <td id="bMl">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>视频</p>
+            </content>
+          </td>
+          <td id="bvz">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>0.1 豆/秒</p>
+            </content>
+          </td>
+          <td id="bvI">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>顶级物理模拟视频生成（旗舰）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="24">
+          <td id="bMb">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>ChatGPT Images 2.0</p>
+            </content>
+          </td>
+          <td id="bMT">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>图片</p>
+            </content>
+          </td>
+          <td id="bvG">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>50 豆/张</p>
+            </content>
+          </td>
+          <td id="bvP">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>顶尖精美绘图（高端）</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bMI">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：项目 MemberCenterView.vue · activeTiers 配置 · 年付享8折优惠</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bMx">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>05 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bMO">
+      <content>
+        <p>本项目设三档会员：基础版99元/月、专业版299元/月、工作室版999元/月，年付享8折。各档均按1元=100算力豆等面值发放。模型消耗按秒或按张计费，seedance-2.0低至0.005豆/秒，旗舰可灵3.0为0.1豆/秒。API仅工作室版开放。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBh">
+    <style>
+      <fill id="fBh">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bMK">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bdC">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>五家竞品全景总览</p>
+        </content>
+      </shape>
+      <line id="bdX" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bdg" width="800" height="340" topLeftX="80" topLeftY="120">
+        <colgroup>
+          <col span="2" width="110"/>
+          <col span="1" width="170"/>
+          <col span="1" width="100"/>
+          <col span="1" width="130"/>
+          <col span="1" width="180"/>
+        </colgroup>
+        <tr height="43">
+          <td id="bds">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>平台</p>
+            </content>
+          </td>
+          <td id="bMM">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>所属公司</p>
+            </content>
+          </td>
+          <td id="bMB">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>产品定位</p>
+            </content>
+          </td>
+          <td id="bMq">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>积分名称</p>
+            </content>
+          </td>
+          <td id="bdW">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>计费模式</p>
+            </content>
+          </td>
+          <td id="bMS">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>核心特色</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="60">
+          <td id="bMr">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>LibTV</p>
+            </content>
+          </td>
+          <td id="bMw">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>LiblibAI</p>
+            </content>
+          </td>
+          <td id="bdN">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI视频无限画布创作平台</p>
+            </content>
+          </td>
+          <td id="bdl">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>积分</p>
+            </content>
+          </td>
+          <td id="bMm">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>年订阅+月度积分</p>
+            </content>
+          </td>
+          <td id="bMp">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>多模型聚合、高并发、顶级模型专属折扣包</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="60">
+          <td id="bMH">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>小云雀</p>
+            </content>
+          </td>
+          <td id="bMD">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>字节跳动</p>
+            </content>
+          </td>
+          <td id="bdO">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI视频与短剧创作助手</p>
+            </content>
+          </td>
+          <td id="bdQ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>积分</p>
+            </content>
+          </td>
+          <td id="bdf">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月会员+积分充值</p>
+            </content>
+          </td>
+          <td id="bMi">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>Seedance全家桶、短剧Agent流水线、CLI/API</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="60">
+          <td id="bMj">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>纳米AI</p>
+            </content>
+          </td>
+          <td id="bMa">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>独立平台</p>
+            </content>
+          </td>
+          <td id="bdZ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>全能AI创作多智能体平台</p>
+            </content>
+          </td>
+          <td id="bdJ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>纳米算力</p>
+            </content>
+          </td>
+          <td id="bMU">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员订阅+纳米币</p>
+            </content>
+          </td>
+          <td id="bMG">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>多智能体协作、无代码、MCP工具动态计费</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="60">
+          <td id="bMc">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>天工AI</p>
+            </content>
+          </td>
+          <td id="bMo">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>昆仑万维</p>
+            </content>
+          </td>
+          <td id="bde">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI工作空间/超级智能体</p>
+            </content>
+          </td>
+          <td id="bdT">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>积分</p>
+            </content>
+          </td>
+          <td id="bMd">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月会员+积分包</p>
+            </content>
+          </td>
+          <td id="bMz">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>PPT/文档/表格/视频全品类、SkyProduction短剧工作台</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="57">
+          <td id="bMh">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>万兴喵影</p>
+            </content>
+          </td>
+          <td id="bdA">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>万兴科技</p>
+            </content>
+          </td>
+          <td id="bdx">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI视频剪辑桌面软件</p>
+            </content>
+          </td>
+          <td id="bMy">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI积分</p>
+            </content>
+          </td>
+          <td id="bMF">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>软件订阅+AI积分包</p>
+            </content>
+          </td>
+          <td id="bMt">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>桌面剪辑、1500万素材、丰富AI功能矩阵</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="24" topLeftX="80" topLeftY="480" type="text" id="bMv">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p><strong>关键发现：</strong>五家均采用&quot;会员订阅 + 积分消耗&quot;混合模式，但积分汇率、有效期规则和盈利侧重点差异显著。</p>
+        </content>
+      </shape>
+      <shape width="400" height="20" topLeftX="80" topLeftY="510" type="text" id="bML">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：各平台官网及App Store信息（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="20" topLeftX="800" topLeftY="510" type="text" id="bdR">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>06 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bMk">
+      <content>
+        <p>五家竞品均采用会员订阅加积分消耗的混合计费模式。LibTV主打多模型聚合和高并发，小云雀背靠字节拥有Seedance模型优势和短剧Agent流水线，纳米AI侧重多智能体协作，天工AI覆盖全品类办公加短剧工作台，万兴喵影则是桌面剪辑软件加AI功能矩阵。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBf">
+    <style>
+      <fill id="fBf">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bdD">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bdo">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>LibTV——多模型聚合的AI视频无限画布平台</p>
+        </content>
+      </shape>
+      <line id="bdI" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="bdE">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>产品定位与核心能力</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="155" type="text" id="bdt">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>LiblibAI推出的AI视频创作平台，采用无限画布工作流</p>
+            </li>
+            <li>
+              <p>聚合Seedance 2.0/2.5、可灵、Libnano Pro等多模型</p>
+            </li>
+            <li>
+              <p>支持图片生成、图生视频、文生视频全链路</p>
+            </li>
+            <li>
+              <p>主打&quot;不排队&quot;体验，会员享无限次加速通道</p>
+            </li>
+            <li>
+              <p>提供API接口，支持Agent调用与批量生产</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="bdH" startX="480" startY="120" endX="480" endY="380.00192306981114">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="bda">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>商业模式与盈利来源</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="bdP">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 年订阅会员费（核心收入）</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="180" type="text" id="bdb">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>四档年付套餐，499元至6599元，高阶档位溢价显著</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="210" type="text" id="bdw">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 顶级模型专属折扣包</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="235" type="text" id="bdh">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>Kling/Libnano顶级模型专享包，比原厂价格低约30%</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="265" type="text" id="bdK">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 API与企业级服务</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="290" type="text" id="bdu">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>面向短剧公司和超创团队的规模化API调用</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="320" type="text" id="bdG">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 积分超额消耗与云存储</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="345" type="text" id="bdq">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>月度积分用完后需额外购买，50GB至500GB存储分级</p>
+        </content>
+      </shape>
+      <shape width="800" height="60" topLeftX="80" topLeftY="400" presetHandlers="0" type="rect" id="bdc">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="40" topLeftX="100" topLeftY="412" type="text" id="bdn">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(200, 134, 26, 1)">盈利逻辑：</span></strong>通过年订阅锁定长期用户，以高并发和不排队体验吸引重度创作者；顶级模型折扣包走量获利；API服务面向B端短剧团队，客单价高。2026年7月曾对至尊版涨价1000元，体现强定价权。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bdV">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：libtv.gongke.net/pricing · 36氪 · 钛媒体（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bdY">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>07 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bdk">
+      <content>
+        <p>LibTV是LiblibAI推出的多模型聚合AI视频平台，核心收入来自四档年订阅会员（499至6599元），辅以顶级模型专属折扣包、API企业服务和积分超额消耗。其&quot;不排队&quot;体验和高并发能力对重度创作者吸引力强，2026年7月曾对高端档位涨价1000元，显示出较强的定价权。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBR">
+    <style>
+      <fill id="fBR">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bvs">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bmM">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>LibTV 积分收费规格明细</p>
+        </content>
+      </shape>
+      <line id="bmr" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bmq" width="800" height="220" topLeftX="80" topLeftY="120">
+        <colgroup>
+          <col span="2" width="120"/>
+          <col span="1" width="140"/>
+          <col span="2" width="120"/>
+          <col span="1" width="180"/>
+        </colgroup>
+        <tr height="37">
+          <td id="bmw">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>会员档位</p>
+            </content>
+          </td>
+          <td id="bvN">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>年费</p>
+            </content>
+          </td>
+          <td id="bvf">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>每月积分</p>
+            </content>
+          </td>
+          <td id="bmm">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单积分成本</p>
+            </content>
+          </td>
+          <td id="bmj">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>并发任务</p>
+            </content>
+          </td>
+          <td id="bmH">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>存储空间</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="37">
+          <td id="bvE">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>专业版</p>
+            </content>
+          </td>
+          <td id="bvQ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥499/年</p>
+            </content>
+          </td>
+          <td id="bvJ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,800</p>
+            </content>
+          </td>
+          <td id="bmi">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.023</p>
+            </content>
+          </td>
+          <td id="bmG">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>6</p>
+            </content>
+          </td>
+          <td id="bmD">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>50GB</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="37">
+          <td id="bvY">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>大师版</p>
+            </content>
+          </td>
+          <td id="bvZ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥1,299/年</p>
+            </content>
+          </td>
+          <td id="bvT">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>5,800</p>
+            </content>
+          </td>
+          <td id="bmU">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.019</p>
+            </content>
+          </td>
+          <td id="bmz">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>10</p>
+            </content>
+          </td>
+          <td id="bmc">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>130GB</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="37">
+          <td id="bvO">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>旗舰版</p>
+            </content>
+          </td>
+          <td id="bve">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥2,999/年</p>
+            </content>
+          </td>
+          <td id="bvx">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>15,800</p>
+            </content>
+          </td>
+          <td id="bmd">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.016</p>
+            </content>
+          </td>
+          <td id="bmF">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>20</p>
+            </content>
+          </td>
+          <td id="bmh">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>200GB</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="37">
+          <td id="bvb">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>尊享版</p>
+            </content>
+          </td>
+          <td id="bvA">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥6,599/年</p>
+            </content>
+          </td>
+          <td id="bvX">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>34,000</p>
+            </content>
+          </td>
+          <td id="bmy">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.016</p>
+            </content>
+          </td>
+          <td id="bmL">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>无限</p>
+            </content>
+          </td>
+          <td id="bmt">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>500GB + 300条可灵</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="bvC">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" bold="true">
+              <p>免费版</p>
+            </content>
+          </td>
+          <td id="bvg">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>¥0</p>
+            </content>
+          </td>
+          <td id="bmv">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>每日赠20</p>
+            </content>
+          </td>
+          <td id="bmB">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bmk">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>1</p>
+            </content>
+          </td>
+          <td id="bmo">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>3GB · 带水印</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="26" topLeftX="80" topLeftY="360" type="text" id="bvW">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>关键规则</p>
+        </content>
+      </shape>
+      <shape width="800" height="80" topLeftX="80" topLeftY="392" type="text" id="bvl">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>计费模式：年仅付订阅制，不设月付；积分按月发放，当月有效</p>
+            </li>
+            <li>
+              <p>产能估算：1积分约可生成4张图片或0.1个视频（专业版月均180个视频）</p>
+            </li>
+            <li>
+              <p>高阶权益：会员享无限次加速通道、每日登录赠积分、顶级模型专属折扣包</p>
+            </li>
+            <li>
+              <p>2026年7月至尊版（8499/10999元档）涨价1000元，Seedance 2.0最低调用价从0.37元/秒升至0.41元/秒</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bmS">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：libtv.gongke.net/pricing · 36氪《Token杀死了AI应用》（2026年7月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bmp">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>08 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bvR">
+      <content>
+        <p>LibTV采用年仅付订阅制，四档套餐从499到6599元，月积分从1800到34000。单积分成本随档位升高而降低，旗舰版最低约0.016元/积分。免费版每日赠20积分。所有会员享无限次加速通道，尊享版赠300条可灵额度。2026年7月曾对高端档位涨价。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBo">
+    <style>
+      <fill id="fBo">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bmu">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bmO">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>小云雀——字节跳动旗下AI短剧创作平台</p>
+        </content>
+      </shape>
+      <line id="bmC" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="bmQ">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>产品定位与核心能力</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="155" type="text" id="bmK">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>剪映出品的AI创作助手，核心方向为短剧创作</p>
+            </li>
+            <li>
+              <p>双Agent模式：创作Agent（自然语言出片）+ 短剧Agent（剧本→资产→分集）</p>
+            </li>
+            <li>
+              <p>Seedance全家桶优先体验，新模型首发平台</p>
+            </li>
+            <li>
+              <p>分镜级精细编辑、风格库、真人角色扫码授权</p>
+            </li>
+            <li>
+              <p>开放CLI/API，支持Agent控制Agent的架构</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="bmP" startX="480" startY="120" endX="480" endY="380.00192306981114">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="bmb">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>商业模式与盈利来源</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="bmR">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 月度会员订阅</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="180" type="text" id="bmZ">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>基础79元/标准209元/高级529元，包年享8折</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="210" type="text" id="bma">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 积分充值包</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="235" type="text" id="bmI">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>500积分/50元、750积分/75元，高频创作补充消耗</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="265" type="text" id="bmE">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 创作者激励计划</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="290" type="text" id="bme">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>优质创作者月赠6000积分，爆款最高25万元现金</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="320" type="text" id="bmW">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 API/CLI企业服务</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="345" type="text" id="bmV">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>短剧模式API需申请，面向批量生产的专业团队</p>
+        </content>
+      </shape>
+      <shape width="800" height="60" topLeftX="80" topLeftY="400" presetHandlers="0" type="rect" id="bmY">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="40" topLeftX="100" topLeftY="412" type="text" id="bmA">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(200, 134, 26, 1)">盈利逻辑：</span></strong>背靠火山引擎Seedance模型，以月会员锁定C端用户，积分包补充超额消耗；创作者激励计划以积分+现金培育内容生态，爆款反哺平台影响力；API/CLI面向B端短剧团队，构建&quot;模型+工具+生态&quot;闭环。视频消耗约11积分/秒。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bmN">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：watcha.cn · App Store · 中国青年网（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bmX">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>09 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bmn">
+      <content>
+        <p>小云雀是字节跳动剪映出品的AI短剧创作平台，采用月会员加积分充值模式。基础会员79元/月含830积分，高级会员529元/月含6330积分。视频消耗约11积分每秒。平台通过创作者激励计划培育内容生态，爆款最高奖励25万元现金，并开放API面向专业团队。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBu">
+    <style>
+      <fill id="fBu">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bSA">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bSX">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>小云雀 积分收费规格明细</p>
+        </content>
+      </shape>
+      <line id="bUy" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bSp" width="800" height="192" topLeftX="80" topLeftY="120">
+        <colgroup>
+          <col span="1" width="120"/>
+          <col span="1" width="130"/>
+          <col span="1" width="140"/>
+          <col span="1" width="130"/>
+          <col span="2" width="140"/>
+        </colgroup>
+        <tr height="38">
+          <td id="bSh">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>会员档位</p>
+            </content>
+          </td>
+          <td id="bSI">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>月费</p>
+            </content>
+          </td>
+          <td id="bSR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>每月积分</p>
+            </content>
+          </td>
+          <td id="bSs">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单积分成本</p>
+            </content>
+          </td>
+          <td id="bSG">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>加速通道</p>
+            </content>
+          </td>
+          <td id="bSc">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>水印/授权</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="38">
+          <td id="bSP">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" bold="true">
+              <p>免费版</p>
+            </content>
+          </td>
+          <td id="bSC">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>¥0</p>
+            </content>
+          </td>
+          <td id="bSg">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>每日赠（当日清零）</p>
+            </content>
+          </td>
+          <td id="bSk">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bSo">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>标准队列</p>
+            </content>
+          </td>
+          <td id="bSu">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>带水印</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="38">
+          <td id="bSY">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>基础会员</p>
+            </content>
+          </td>
+          <td id="bSN">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥79/月</p>
+            </content>
+          </td>
+          <td id="bSf">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>830</p>
+            </content>
+          </td>
+          <td id="bSt">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.095</p>
+            </content>
+          </td>
+          <td id="bSa">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>加速</p>
+            </content>
+          </td>
+          <td id="bSE">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>去水印 · 商用</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="38">
+          <td id="bSW">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>标准会员</p>
+            </content>
+          </td>
+          <td id="bSl">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥209/月</p>
+            </content>
+          </td>
+          <td id="bSw">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>2,320</p>
+            </content>
+          </td>
+          <td id="bSK">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.090</p>
+            </content>
+          </td>
+          <td id="bSb">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>更快</p>
+            </content>
+          </td>
+          <td id="bSZ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>去水印 · 商用</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="40">
+          <td id="bST">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>高级会员</p>
+            </content>
+          </td>
+          <td id="bSq">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥529/月</p>
+            </content>
+          </td>
+          <td id="bSn">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>6,330</p>
+            </content>
+          </td>
+          <td id="bSO">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.084</p>
+            </content>
+          </td>
+          <td id="bSQ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>最快</p>
+            </content>
+          </td>
+          <td id="bSJ">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>去水印 · 商用</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="380" height="26" topLeftX="80" topLeftY="332" type="text" id="bSH">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>积分充值包（超额补充）</p>
+        </content>
+      </shape>
+      <shape width="380" height="60" topLeftX="80" topLeftY="362" type="text" id="bSV">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>500积分 / ¥50（约¥0.10/积分）</p>
+            </li>
+            <li>
+              <p>750积分 / ¥75（约¥0.10/积分）</p>
+            </li>
+            <li>
+              <p>包年会员享8折优惠</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="380" height="26" topLeftX="500" topLeftY="332" type="text" id="bSe">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>消耗规则与创作者激励</p>
+        </content>
+      </shape>
+      <shape width="380" height="90" topLeftX="500" topLeftY="362" type="text" id="bSx">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>视频消耗：Seedance 2.0 约11积分/秒，界面实时标注成本</p>
+            </li>
+            <li>
+              <p>创作者计划：入围月赠6000积分+标准会员，爆款奖5万元</p>
+            </li>
+            <li>
+              <p>超级创作者：月赠20000积分+年度高级会员，爆款奖25万元</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bUd">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：watcha.cn · App Store内购信息 · 中国青年网（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bSz">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>10 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bSD">
+      <content>
+        <p>小云雀采用月会员加积分充值模式。基础会员79元/月含830积分，高级会员529元/月含6330积分，单积分成本约0.084至0.095元。积分包统一0.1元/积分。视频消耗约11积分每秒。创作者激励计划提供积分和现金双重奖励，最高爆款奖励25万元。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBI">
+    <style>
+      <fill id="fBI">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bmJ">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bSv">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>纳米AI——多智能体协作的全能创作平台</p>
+        </content>
+      </shape>
+      <line id="bSi" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="bSm">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>产品定位与核心能力</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="155" type="text" id="bSL">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>全能AI创作平台，主打多智能体无代码协作</p>
+            </li>
+            <li>
+              <p>内置&quot;纳米视频PPT&quot;等智能体，固定费+动态调用费</p>
+            </li>
+            <li>
+              <p>支持MCP工具生态，智能体可动态调用外部工具</p>
+            </li>
+            <li>
+              <p>覆盖问答、视频生成、PPT制作等多场景</p>
+            </li>
+            <li>
+              <p>淘宝等第三方渠道广泛分销，触达下沉用户</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="bSj" startX="480" startY="120" endX="480" endY="380.00192306981114">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="bmx">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>商业模式与盈利来源</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="bmf">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 多层级会员订阅</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="180" type="text" id="bSy">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>月卡39元至至尊年卡，按月赠送纳米算力</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="210" type="text" id="bSS">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 纳米币动态计费</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="235" type="text" id="bSF">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>智能体固定使用费 + MCP工具动态调用消耗</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="265" type="text" id="bms">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 第三方渠道分销</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="290" type="text" id="bml">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>淘宝旗舰店直充，覆盖大量价格敏感型用户</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="320" type="text" id="bSd">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 智能体生态抽成</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="345" type="text" id="bSU">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>开发者创建智能体，用户调用时平台抽取算力费</p>
+        </content>
+      </shape>
+      <shape width="800" height="60" topLeftX="80" topLeftY="400" presetHandlers="0" type="rect" id="bSr">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="40" topLeftX="100" topLeftY="412" type="text" id="bmg">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(200, 134, 26, 1)">盈利逻辑：</span></strong>以低价月卡（39元）降低入门门槛，通过高阶年卡（至尊15000算力/月）提升ARPU；智能体采用&quot;固定费+动态调用费&quot;双层计费，MCP工具调用按实际消耗扣算力；淘宝分销扩大用户基数，走量获利。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bmT">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：zxnavi.com · 淘宝商品页 · 纳米AI官网（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bSM">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>11 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bSB">
+      <content>
+        <p>纳米AI是多智能体协作创作平台，采用会员订阅加纳米币动态计费模式。月卡39元含1180算力，至尊年卡每月赠15000算力。智能体采用固定使用费加MCP工具动态调用的双层计费。平台通过淘宝等第三方渠道广泛分销，以低价入门吸引用户，高阶年卡提升客单价。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBy">
+    <style>
+      <fill id="fBy">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bUD">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bUI">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>纳米AI 积分收费规格明细</p>
+        </content>
+      </shape>
+      <line id="bUe" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bUM" width="800" height="216" topLeftX="80" topLeftY="120">
+        <colgroup>
+          <col span="2" width="140"/>
+          <col span="1" width="160"/>
+          <col span="1" width="140"/>
+          <col span="1" width="220"/>
+        </colgroup>
+        <tr height="36">
+          <td id="bUK">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>会员档位</p>
+            </content>
+          </td>
+          <td id="bUO">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>价格</p>
+            </content>
+          </td>
+          <td id="bUr">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>每月纳米算力</p>
+            </content>
+          </td>
+          <td id="bUq">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单算力成本</p>
+            </content>
+          </td>
+          <td id="bUo">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>说明</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bUn">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>月卡</p>
+            </content>
+          </td>
+          <td id="bUY">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥39/月</p>
+            </content>
+          </td>
+          <td id="bUN">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,180</p>
+            </content>
+          </td>
+          <td id="bUB">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.033</p>
+            </content>
+          </td>
+          <td id="bUL">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>入门首选，短期体验</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bUk">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>季卡</p>
+            </content>
+          </td>
+          <td id="bUa">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥99/季</p>
+            </content>
+          </td>
+          <td id="bUE">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,180</p>
+            </content>
+          </td>
+          <td id="bUW">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.028</p>
+            </content>
+          </td>
+          <td id="bUU">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>折合33元/月，性价比提升</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bUF">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>半年卡</p>
+            </content>
+          </td>
+          <td id="bUt">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥189/半年</p>
+            </content>
+          </td>
+          <td id="bUP">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,180</p>
+            </content>
+          </td>
+          <td id="bUR">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.027</p>
+            </content>
+          </td>
+          <td id="bUi">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>折合31.5元/月</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bUz">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>年卡</p>
+            </content>
+          </td>
+          <td id="bUh">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥399/年</p>
+            </content>
+          </td>
+          <td id="bUu">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,180</p>
+            </content>
+          </td>
+          <td id="bUC">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.028</p>
+            </content>
+          </td>
+          <td id="bUm">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>折合33.25元/月，长期用户</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bUG">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>尊享年卡</p>
+            </content>
+          </td>
+          <td id="bUc">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>官方未公开</p>
+            </content>
+          </td>
+          <td id="bUV">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>5,000</p>
+            </content>
+          </td>
+          <td id="bUA">
+            <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bUS">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" textAlign="left">
+              <p>高频创作者，算力约为普通版4倍</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="380" height="26" topLeftX="80" topLeftY="356" type="text" id="bUp">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>智能体动态计费</p>
+        </content>
+      </shape>
+      <shape width="380" height="70" topLeftX="80" topLeftY="386" type="text" id="bUH">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>固定使用费：如&quot;纳米视频PPT&quot;智能体10纳米币/次</p>
+            </li>
+            <li>
+              <p>动态调用费：MCP工具按实际调用消耗算力</p>
+            </li>
+            <li>
+              <p>算力与纳米币可互通使用</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="380" height="26" topLeftX="500" topLeftY="356" type="text" id="bUb">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>渠道与促销</p>
+        </content>
+      </shape>
+      <shape width="380" height="70" topLeftX="500" topLeftY="386" type="text" id="bUZ">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>淘宝旗舰店直充，30天有效期快速到账</p>
+            </li>
+            <li>
+              <p>第三方分销价格低于官方，走量模式</p>
+            </li>
+            <li>
+              <p>低价月卡拉新，高阶年卡提升ARPU</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bUv">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：zxnavi.com · 淘宝纳米AI旗舰店（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bUw">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>12 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUj">
+      <content>
+        <p>纳米AI采用多周期会员订阅，月卡39元含1180算力，年卡399元，单算力成本约0.028至0.033元。尊享年卡每月赠5000算力，至尊年卡每月赠15000算力。智能体采用固定使用费加MCP工具动态调用的双层计费。平台通过淘宝等渠道广泛分销，低价拉新高阶变现。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBQ">
+    <style>
+      <fill id="fBQ">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="biv">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bii">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>天工AI——昆仑万维全品类AI工作空间</p>
+        </content>
+      </shape>
+      <line id="bUQ" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="bUg">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>产品定位与核心能力</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="155" type="text" id="biM">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>一体化AI工作区，覆盖PPT/文档/表格/图片/视频</p>
+            </li>
+            <li>
+              <p>Skill架构，内置官方技能+自定义技能+模板复用</p>
+            </li>
+            <li>
+              <p>SkyClaw多智能体团队，7×24云端自主处理任务</p>
+            </li>
+            <li>
+              <p>SkyProduction短剧工作台，剧本直达成片</p>
+            </li>
+            <li>
+              <p>定时任务、知识库、语音纪要等办公能力</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="biU" startX="480" startY="120" endX="480" endY="380.00192306981114">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="bir">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>商业模式与盈利来源</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="bUs">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 会员订阅 + 积分包</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="180" type="text" id="bUT">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>Basic 45元/Plus 85元，积分包10000起售</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="210" type="text" id="bid">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 SkyProduction短剧工作台</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="235" type="text" id="biS">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>Seedance 2.5 720P低至0.4元/秒，4折价格战</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="265" type="text" id="biF">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 短剧平台流水</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="290" type="text" id="bUx">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>DramaWave付费+FreeReels免费，月流水超4800万美元</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="320" type="text" id="bUl">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 API与企业定制</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="345" type="text" id="biy">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>SkyClaw API按Token计费，企业级可定制套餐</p>
+        </content>
+      </shape>
+      <shape width="800" height="72" topLeftX="80" topLeftY="395" presetHandlers="0" type="rect" id="bim">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="56" topLeftX="100" topLeftY="405" type="text" id="biL">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+          <p><strong><span color="rgba(200, 134, 26, 1)">盈利逻辑：</span></strong>昆仑万维构建&quot;工具+内容+平台&quot;三轮驱动。C端以会员和积分包覆盖办公创作需求；SkyProduction以4折低价抢占短剧工具市场；DramaWave/FreeReels短剧平台贡献规模化流水（ARR超5.7亿美元）；API面向企业客户。形成从创作工具到内容分发的完整闭环。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bUX">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：App Store · 36氪 · 中国经济网 · 昆仑万维财报（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bUf">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>13 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUJ">
+      <content>
+        <p>天工AI是昆仑万维的全品类AI工作空间，采用会员加积分包模式。Basic会员45元/月，Plus 85元/月，积分包10000积分48元起。SkyProduction短剧工作台以4折低价抢占市场，Seedance 2.5 720P低至0.4元每秒。昆仑万维短剧平台业务月流水超4800万美元，ARR突破5.7亿美元，形成工具加内容加平台的完整闭环。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBK">
+    <style>
+      <fill id="fBK">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="biT">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bLz">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>天工AI 积分收费规格明细</p>
+        </content>
+      </shape>
+      <line id="bLP" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="80" topLeftY="118" type="text" id="biO">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>会员订阅</p>
+        </content>
+      </shape>
+      <table id="biJ" width="380" height="110" topLeftX="80" topLeftY="146">
+        <colgroup>
+          <col span="3" width="100"/>
+          <col span="1" width="80"/>
+        </colgroup>
+        <tr height="31">
+          <td id="bil">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>档位</p>
+            </content>
+          </td>
+          <td id="bLp">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>连续包月</p>
+            </content>
+          </td>
+          <td id="bLI">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>月度</p>
+            </content>
+          </td>
+          <td id="bis">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>权益</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bLr">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>Basic</p>
+            </content>
+          </td>
+          <td id="bLK">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥45</p>
+            </content>
+          </td>
+          <td id="biu">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥48</p>
+            </content>
+          </td>
+          <td id="big">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>基础</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bLB">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>Plus</p>
+            </content>
+          </td>
+          <td id="bLn">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥85</p>
+            </content>
+          </td>
+          <td id="biX">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥88</p>
+            </content>
+          </td>
+          <td id="bLL">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>高级</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="27">
+          <td id="bLo">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" bold="true">
+              <p>免费</p>
+            </content>
+          </td>
+          <td id="bix">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>¥0</p>
+            </content>
+          </td>
+          <td id="bLF">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bLa">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>每日赠</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="380" height="24" topLeftX="500" topLeftY="118" type="text" id="bLG">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>积分充值包</p>
+        </content>
+      </shape>
+      <table id="bLu" width="380" height="110" topLeftX="500" topLeftY="146">
+        <colgroup>
+          <col span="1" width="120"/>
+          <col span="2" width="100"/>
+          <col span="1" width="60"/>
+        </colgroup>
+        <tr height="31">
+          <td id="bLR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>积分额度</p>
+            </content>
+          </td>
+          <td id="biZ">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>价格</p>
+            </content>
+          </td>
+          <td id="bLU">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单积分成本</p>
+            </content>
+          </td>
+          <td id="bLh">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>备注</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="biQ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>10,000</p>
+            </content>
+          </td>
+          <td id="bLi">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥48</p>
+            </content>
+          </td>
+          <td id="bLc">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0048</p>
+            </content>
+          </td>
+          <td id="bLA">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>入门</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="biN">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>20,000</p>
+            </content>
+          </td>
+          <td id="bLm">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥91</p>
+            </content>
+          </td>
+          <td id="bLD">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0046</p>
+            </content>
+          </td>
+          <td id="bLe">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>常用</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="27">
+          <td id="biW">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>50,000</p>
+            </content>
+          </td>
+          <td id="bLS">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥200</p>
+            </content>
+          </td>
+          <td id="bLH">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.0040</p>
+            </content>
+          </td>
+          <td id="bLb">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>最划算</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="24" topLeftX="80" topLeftY="276" type="text" id="biY">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>SkyProduction 短剧工作台定价（按秒计费）</p>
+        </content>
+      </shape>
+      <table id="bif" width="800" height="82" topLeftX="80" topLeftY="304">
+        <colgroup>
+          <col span="1" width="200"/>
+          <col span="4" width="150"/>
+        </colgroup>
+        <tr height="30">
+          <td id="biR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>模型</p>
+            </content>
+          </td>
+          <td id="bLM">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>720P</p>
+            </content>
+          </td>
+          <td id="bLw">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>480P</p>
+            </content>
+          </td>
+          <td id="bLO">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>官方参考价</p>
+            </content>
+          </td>
+          <td id="biC">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>折扣力度</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bLv">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>Seedance 2.5</p>
+            </content>
+          </td>
+          <td id="bLq">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.4/秒</p>
+            </content>
+          </td>
+          <td id="bLY">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.3/秒</p>
+            </content>
+          </td>
+          <td id="biA">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>约¥1.3/秒</p>
+            </content>
+          </td>
+          <td id="bLy">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>约3折</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="26">
+          <td id="bLk">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>Wan 3.0</p>
+            </content>
+          </td>
+          <td id="bLE">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>低价计费</p>
+            </content>
+          </td>
+          <td id="bie">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bLd">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>—</p>
+            </content>
+          </td>
+          <td id="bLt">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>4折价格战</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="60" topLeftX="80" topLeftY="404" type="text" id="bLj">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.7" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>免费用户：新注册一次性赠2500积分，每日赠送1200积分；简单任务约消耗300-800积分</p>
+            </li>
+            <li>
+              <p>积分体系特点：积分汇率低（约0.004元/积分），消耗单位大，与其他平台积分口径不同</p>
+            </li>
+            <li>
+              <p>2026年中秋活动：Seedance 2.5专属积分首购加赠70%，每消耗20万积分可兑换福利</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bLV">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：App Store内购信息 · 36氪 · 中国网科技（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="biE">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>14 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bib">
+      <content>
+        <p>天工AI采用会员加积分包模式。Basic会员45元/月，Plus 85元/月。积分包从10000积分48元到50000积分200元，单积分成本约0.004至0.0048元。免费用户每日赠1200积分。SkyProduction短剧工作台以约3折低价提供Seedance 2.5，720P低至0.4元每秒，是五家中视频生成单价最低的平台之一。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBA">
+    <style>
+      <fill id="fBA">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="biV">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bip">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>万兴喵影——桌面剪辑软件的AI积分变现模式</p>
+        </content>
+      </shape>
+      <line id="bit" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="26" topLeftX="80" topLeftY="120" type="text" id="biD">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>产品定位与核心能力</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="80" topLeftY="155" type="text" id="bia">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p>万兴科技旗下桌面视频剪辑软件，内建1500万素材</p>
+            </li>
+            <li>
+              <p>AI功能矩阵：智小喵、AI绘画、AI音乐、图生视频、文生视频</p>
+            </li>
+            <li>
+              <p>语音转文字、AI消除、AI超清、AI视频翻译等</p>
+            </li>
+            <li>
+              <p>仅限桌面客户端消耗AI积分，移动端不支持</p>
+            </li>
+            <li>
+              <p>姊妹产品万兴播爆主打AI数字人视频创作</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="biI" startX="480" startY="120" endX="480" endY="380.00192306981114">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="26" topLeftX="510" topLeftY="120" type="text" id="biz">
+        <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>商业模式与盈利来源</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="155" type="text" id="biw">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">01 软件订阅（基础收入）</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="180" type="text" id="biH">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>VIP 269元/年、3年419元、5年599元；SVIP/企业版更高</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="210" type="text" id="bih">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">02 AI积分包（增量收入）</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="235" type="text" id="biK">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>1000积分9.99元至20万积分1299元，有效期1年</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="265" type="text" id="biP">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">03 会员月度积分赠送</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="290" type="text" id="biB">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>SVIP月赠4000积分（当月有效），企业版月赠8000</p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="320" type="text" id="biG">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p><strong><span color="rgba(27, 58, 92, 1)">04 素材生态与企业授权</span></strong></p>
+        </content>
+      </shape>
+      <shape width="370" height="24" topLeftX="510" topLeftY="345" type="text" id="biq">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)" wrap="false">
+          <p>特效/素材商城、企业批量授权、万兴播爆独立产品线</p>
+        </content>
+      </shape>
+      <shape width="800" height="72" topLeftX="80" topLeftY="395" presetHandlers="0" type="rect" id="bin">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="56" topLeftX="100" topLeftY="405" type="text" id="bij">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(200, 134, 26, 1)">盈利逻辑：</span></strong>传统剪辑软件订阅为基础盘，AI功能以积分制单独收费形成增量收入。AI积分包有效期1年，SVIP月度积分当月清零，双轨制促使用户持续付费。消耗按功能差异化定价（AI绘画40积分/次，图生视频60-1500积分/次），高复杂度功能消耗大，驱动积分包复购。企业版客单价高，贡献稳定B端收入。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bik">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：万兴喵影官网 · AI积分使用指南 · App Store（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bic">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>15 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bio">
+      <content>
+        <p>万兴喵影是万兴科技的桌面剪辑软件，采用软件订阅加AI积分包的双轨模式。VIP会员269元/年，AI积分包从1000积分9.99元到20万积分1299元。SVIP每月赠4000积分当月有效，积分包购买后有效期1年。AI功能按次消耗积分，从40积分每次的AI绘画到1500积分每次的复杂图生视频，差异化定价驱动复购。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBt">
+    <style>
+      <fill id="fBt">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bFy">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bFt">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>万兴喵影 积分收费规格明细</p>
+        </content>
+      </shape>
+      <line id="bFE" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="80" topLeftY="118" type="text" id="bFX">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>AI积分包（有效期1年）</p>
+        </content>
+      </shape>
+      <table id="bLJ" width="380" height="170" topLeftX="80" topLeftY="146">
+        <colgroup>
+          <col span="1" width="110"/>
+          <col span="1" width="90"/>
+          <col span="1" width="100"/>
+          <col span="1" width="80"/>
+        </colgroup>
+        <tr height="30">
+          <td id="brU">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>积分额度</p>
+            </content>
+          </td>
+          <td id="bLl">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>价格</p>
+            </content>
+          </td>
+          <td id="bFz">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单积分成本</p>
+            </content>
+          </td>
+          <td id="bFP">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>定位</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="brS">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,000</p>
+            </content>
+          </td>
+          <td id="bLf">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥9.99</p>
+            </content>
+          </td>
+          <td id="bFp">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.010</p>
+            </content>
+          </td>
+          <td id="bFI">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>体验</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="brm">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>5,000</p>
+            </content>
+          </td>
+          <td id="bFB">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥39</p>
+            </content>
+          </td>
+          <td id="bFj">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0078</p>
+            </content>
+          </td>
+          <td id="bFV">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>入门</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="brv">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>10,000</p>
+            </content>
+          </td>
+          <td id="brM">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥69</p>
+            </content>
+          </td>
+          <td id="bLg">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0069</p>
+            </content>
+          </td>
+          <td id="bFr">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>常用</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFn">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>50,000</p>
+            </content>
+          </td>
+          <td id="bFQ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥339</p>
+            </content>
+          </td>
+          <td id="bFZ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0068</p>
+            </content>
+          </td>
+          <td id="brd">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>高频</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bLx">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>200,000</p>
+            </content>
+          </td>
+          <td id="bLs">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥1,299</p>
+            </content>
+          </td>
+          <td id="bFF">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.0065</p>
+            </content>
+          </td>
+          <td id="bFK">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>最划算</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="380" height="24" topLeftX="500" topLeftY="118" type="text" id="bFk">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>软件订阅与月度赠送</p>
+        </content>
+      </shape>
+      <table id="bFY" width="380" height="170" topLeftX="500" topLeftY="146">
+        <colgroup>
+          <col span="1" width="120"/>
+          <col span="1" width="100"/>
+          <col span="1" width="160"/>
+        </colgroup>
+        <tr height="30">
+          <td id="bry">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>会员类型</p>
+            </content>
+          </td>
+          <td id="bLX">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>价格</p>
+            </content>
+          </td>
+          <td id="bFL">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>AI积分权益</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFa">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>VIP 1年</p>
+            </content>
+          </td>
+          <td id="bFW">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥269</p>
+            </content>
+          </td>
+          <td id="bFJ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>一次性赠3000（1年有效）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bLQ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>VIP 3年</p>
+            </content>
+          </td>
+          <td id="bFi">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥419</p>
+            </content>
+          </td>
+          <td id="bFo">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>一次性赠3000（1年有效）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFN">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>SVIP订阅</p>
+            </content>
+          </td>
+          <td id="bFT">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>订阅制</p>
+            </content>
+          </td>
+          <td id="bLZ">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>月赠4000（当月清零）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFU">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>企业VIP</p>
+            </content>
+          </td>
+          <td id="bFc">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>定制</p>
+            </content>
+          </td>
+          <td id="bFC">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>月赠8000（当月清零）</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFl">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" bold="true">
+              <p>免费用户</p>
+            </content>
+          </td>
+          <td id="bLW">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>¥0</p>
+            </content>
+          </td>
+          <td id="bFS">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)">
+              <p>基础剪辑，无AI积分</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="24" topLeftX="80" topLeftY="334" type="text" id="bri">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>AI功能消耗规则（按次/按分钟）</p>
+        </content>
+      </shape>
+      <table id="bLT" width="800" height="112" topLeftX="80" topLeftY="362">
+        <colgroup>
+          <col span="5" width="160"/>
+        </colgroup>
+        <tr height="28">
+          <td id="bFh">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>AI绘画</p>
+            </content>
+          </td>
+          <td id="bFR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>智小喵/写文案</p>
+            </content>
+          </td>
+          <td id="bFf">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>语音转文字</p>
+            </content>
+          </td>
+          <td id="bLN">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>AI消除</p>
+            </content>
+          </td>
+          <td id="bFm">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>图生视频</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFH">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>40积分/次</p>
+            </content>
+          </td>
+          <td id="bFe">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>40积分/次</p>
+            </content>
+          </td>
+          <td id="bFg">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>4积分/分钟</p>
+            </content>
+          </td>
+          <td id="bLC">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>400积分/次</p>
+            </content>
+          </td>
+          <td id="bFv">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>60-1500积分/次</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFD">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>文生视频</p>
+            </content>
+          </td>
+          <td id="bFA">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>AI音乐</p>
+            </content>
+          </td>
+          <td id="bFM">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>AI超清</p>
+            </content>
+          </td>
+          <td id="bFq">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>文字转语音</p>
+            </content>
+          </td>
+          <td id="bFO">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 0.08)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>灵感成片</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="28">
+          <td id="bFs">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>55-740积分/次</p>
+            </content>
+          </td>
+          <td id="bFd">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>120-2000积分/次</p>
+            </content>
+          </td>
+          <td id="bFw">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>80积分/次</p>
+            </content>
+          </td>
+          <td id="bFb">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1积分/400字符</p>
+            </content>
+          </td>
+          <td id="bFx">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>240-1200积分/分镜</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bFG">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：万兴喵影AI积分使用指南 · 官网购买页（2026年9月）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bFu">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>16 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="brL">
+      <content>
+        <p>万兴喵影AI积分包从1000积分9.99元到20万积分1299元，单积分成本约0.0065至0.01元，购买后有效期1年。VIP会员269元/年，一次性赠3000积分。SVIP每月赠4000积分当月清零。AI功能按次消耗，从40积分每次的AI绘画到1500积分每次的复杂图生视频，差异化定价明显。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBP">
+    <style>
+      <fill id="fBP">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="brt">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bra">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>横向对比一：入门月费与单积分成本</p>
+        </content>
+      </shape>
+      <line id="brE" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="400" height="22" topLeftX="80" topLeftY="116" type="text" id="brW">
+        <content textType="sub-headline" fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>入门级月度会员价格对比（元/月）</p>
+        </content>
+      </shape>
+      <chart width="420" height="240" topLeftX="70" topLeftY="142" id="brk">
+        <chartPlotArea>
+          <chartPlot type="column">
+            <chartExtra/>
+          </chartPlot>
+          <chartAxes>
+            <chartAxis type="x">
+              <chartLabel fontSize="10"/>
+            </chartAxis>
+            <chartAxis type="y" position="left">
+              <chartGridLine color="rgb(230, 230, 230)"/>
+              <chartLabel fontSize="9"/>
+            </chartAxis>
+          </chartAxes>
+        </chartPlotArea>
+        <chartData isStaticData="true">
+          <dim1>
+            <chartField name="平台">本项目,LibTV,小云雀,纳米AI,天工,万兴喵影<chartParsedValues>本项目</chartParsedValues><chartParsedValues>LibTV</chartParsedValues><chartParsedValues>小云雀</chartParsedValues><chartParsedValues>纳米AI</chartParsedValues><chartParsedValues>天工</chartParsedValues><chartParsedValues>万兴喵影</chartParsedValues></chartField>
+          </dim1>
+          <dim2>
+            <chartField name="入门月费(元)">99,42,79,39,45,22</chartField>
+          </dim2>
+        </chartData>
+        <chartStyle>
+          <chartBackground color="rgba(0, 0, 0, 0)"/>
+          <chartBorder color="rgb(222, 224, 227)" width="0"/>
+          <chartColorTheme>
+            <color value="rgb(27, 58, 92)"/>
+          </chartColorTheme>
+        </chartStyle>
+      </chart>
+      <shape width="360" height="22" topLeftX="520" topLeftY="116" type="text" id="bro">
+        <content textType="sub-headline" fontSize="13" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>单积分成本对比（元/积分，入门档）</p>
+        </content>
+      </shape>
+      <table id="brY" width="360" height="240" topLeftX="520" topLeftY="142">
+        <colgroup>
+          <col span="1" width="120"/>
+          <col span="1" width="100"/>
+          <col span="1" width="140"/>
+        </colgroup>
+        <tr height="33">
+          <td id="brC">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>平台</p>
+            </content>
+          </td>
+          <td id="brz">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>单积分成本</p>
+            </content>
+          </td>
+          <td id="brh">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>积分口径</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="brP">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>本项目（算力豆）</p>
+            </content>
+          </td>
+          <td id="brR">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.010</p>
+            </content>
+          </td>
+          <td id="brp">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>1元=100豆</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="brH">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>LibTV</p>
+            </content>
+          </td>
+          <td id="brI">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.023</p>
+            </content>
+          </td>
+          <td id="bre">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>年仅付折算</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="brj">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>小云雀</p>
+            </content>
+          </td>
+          <td id="brD">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>¥0.095</p>
+            </content>
+          </td>
+          <td id="brV">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>月付79元/830积分</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="brA">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>纳米AI</p>
+            </content>
+          </td>
+          <td id="brB">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.033</p>
+            </content>
+          </td>
+          <td id="brq">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>月卡39元/1180算力</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="35">
+          <td id="brn">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>天工AI</p>
+            </content>
+          </td>
+          <td id="brO">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.0048</p>
+            </content>
+          </td>
+          <td id="brr">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>积分包10000/48元</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="32">
+          <td id="brw">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>万兴喵影</p>
+            </content>
+          </td>
+          <td id="brK">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥0.010</p>
+            </content>
+          </td>
+          <td id="brb">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(90, 90, 90, 1)">
+              <p>积分包1000/9.99元</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="800" height="84" topLeftX="80" topLeftY="395" presetHandlers="0" type="rect" id="brN">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="760" height="68" topLeftX="100" topLeftY="405" type="text" id="brG">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+          <p><strong><span color="rgba(200, 134, 26, 1)">关键发现：</span></strong>各家积分口径差异巨大，单积分成本不可直接横向比较。天工积分汇率最低（0.0048元）但消耗单位大（单次任务300-800积分）；小云雀单积分成本最高（0.095元）但视频消耗约11积分/秒，实际每秒约1.05元。本项目0.01元/豆处于中位，seedance-2.5约0.0005元/秒，是五家中视频生成单价最低的平台。入门月费方面，万兴喵影（22元/月折算）和纳米AI（39元）最低，本项目99元偏高。</p>
+        </content>
+      </shape>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="brc">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>来源：各平台官方定价页 · App Store内购信息（2026年9月整理）</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bru">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>17 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="brF">
+      <content>
+        <p>横向对比显示，各家积分口径差异巨大。天工积分汇率最低但消耗单位大，小云雀单积分成本最高但视频质量好。本项目0.01元每豆处于中位，但seedance-2.5视频生成约0.0005元每秒，是五家中最低的。入门月费方面本项目99元偏高，万兴喵影和纳米AI最低。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBG">
+    <style>
+      <fill id="fBG">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bBW">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="brX">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>横向对比二：会员档位与核心权益</p>
+        </content>
+      </shape>
+      <line id="bBr" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bBo" width="840" height="340" topLeftX="60" topLeftY="118">
+        <colgroup>
+          <col span="1" width="100"/>
+          <col span="2" width="80"/>
+          <col span="1" width="110"/>
+          <col span="1" width="90"/>
+          <col span="1" width="200"/>
+          <col span="1" width="180"/>
+        </colgroup>
+        <tr height="36">
+          <td id="bBF">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>平台</p>
+            </content>
+          </td>
+          <td id="bBu">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>档位数</p>
+            </content>
+          </td>
+          <td id="brT">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>入门月费</p>
+            </content>
+          </td>
+          <td id="bBL">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>月度积分/算力</p>
+            </content>
+          </td>
+          <td id="bBP">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>并发/速度</p>
+            </content>
+          </td>
+          <td id="brl">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>核心权益差异</p>
+            </content>
+          </td>
+          <td id="bBG">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>有效期规则</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="51">
+          <td id="bBI">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>本项目<br/>（算力豆）</p>
+            </content>
+          </td>
+          <td id="bBx">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>3档</p>
+            </content>
+          </td>
+          <td id="brf">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥99</p>
+            </content>
+          </td>
+          <td id="bBz">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>9,900豆</p>
+            </content>
+          </td>
+          <td id="bBV">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>2-8并发</p>
+            </content>
+          </td>
+          <td id="bBX">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1080P+去水印（专业版起）；API（工作室版）；年付8折</p>
+            </content>
+          </td>
+          <td id="bBv">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员积分到期清零；充值积分永久有效</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="51">
+          <td id="bBp">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>LibTV</p>
+            </content>
+          </td>
+          <td id="bBO">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>5档</p>
+            </content>
+          </td>
+          <td id="bBM">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥499/年</p>
+            </content>
+          </td>
+          <td id="bBj">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,800/月</p>
+            </content>
+          </td>
+          <td id="bBb">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按档提速</p>
+            </content>
+          </td>
+          <td id="bBd">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI短剧全流程；高端档含商用授权；2026年7月涨价1000元</p>
+            </content>
+          </td>
+          <td id="bBq">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>年仅付；月度积分当月清零</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="51">
+          <td id="bBE">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>小云雀</p>
+            </content>
+          </td>
+          <td id="bBy">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>3档</p>
+            </content>
+          </td>
+          <td id="bBw">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥79</p>
+            </content>
+          </td>
+          <td id="bBt">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>830积分</p>
+            </content>
+          </td>
+          <td id="bBY">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按档提速</p>
+            </content>
+          </td>
+          <td id="brQ">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>Seedance模型；创作者现金激励；视频约11积分/秒</p>
+            </content>
+          </td>
+          <td id="bBk">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月付/季付/年付；积分当月有效</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="51">
+          <td id="bBC">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>纳米AI</p>
+            </content>
+          </td>
+          <td id="brZ">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>3档</p>
+            </content>
+          </td>
+          <td id="bBc">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥39</p>
+            </content>
+          </td>
+          <td id="bBR">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>1,180算力</p>
+            </content>
+          </td>
+          <td id="bBi">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>标准/极速</p>
+            </content>
+          </td>
+          <td id="bBh">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>全模态AI；至尊年卡月赠15000算力；GPT-4o等高级模型</p>
+            </content>
+          </td>
+          <td id="bBe">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月卡/年卡；算力按周期重置</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="51">
+          <td id="bBU">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>天工AI</p>
+            </content>
+          </td>
+          <td id="bBH">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>2档+免费</p>
+            </content>
+          </td>
+          <td id="bBD">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥45</p>
+            </content>
+          </td>
+          <td id="bBA">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>每日赠1200</p>
+            </content>
+          </td>
+          <td id="brg">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>标准/优先</p>
+            </content>
+          </td>
+          <td id="bBS">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>全品类工作区；SkyProduction短剧台；4折视频价格战</p>
+            </content>
+          </td>
+          <td id="bBn">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月付；积分包购买后长期有效</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="49">
+          <td id="bBQ">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>万兴喵影</p>
+            </content>
+          </td>
+          <td id="brs">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>3档+免费</p>
+            </content>
+          </td>
+          <td id="bBm">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>¥269/年</p>
+            </content>
+          </td>
+          <td id="bBK">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>赠3000+月4000</p>
+            </content>
+          </td>
+          <td id="bBZ">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>无并发限制</p>
+            </content>
+          </td>
+          <td id="brx">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>桌面剪辑+AI功能；1500万素材；企业版月赠8000</p>
+            </content>
+          </td>
+          <td id="bBB">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>积分包1年有效；SVIP月赠当月清零</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="24" topLeftX="60" topLeftY="472" type="text" id="bBN">
+        <content textType="caption" fontSize="10" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>注：本项目入门月费99元在六家中最高；LibTV年仅付无月付选项；天工和万兴喵影提供免费层降低试用门槛。各家&quot;积分&quot;定义不同，月度积分额度不可直接比较。</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="498" type="text" id="brJ">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>18 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bBa">
+      <content>
+        <p>会员权益对比显示，本项目入门月费99元在六家中最高，但提供2-8并发和API能力。LibTV年仅付且档位最多（5档），高端档有强定价权。天工和万兴喵影提供免费层降低试用门槛。各家积分定义不同，月度积分额度不可直接比较。有效期规则方面，本项目充值积分永久有效是独特优势。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBD">
+    <style>
+      <fill id="fBD">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bjL">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bjk">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>横向对比三：商业模式与盈利路径</p>
+        </content>
+      </shape>
+      <line id="bjo" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bjY" width="840" height="310" topLeftX="60" topLeftY="118">
+        <colgroup>
+          <col span="1" width="90"/>
+          <col span="2" width="170"/>
+          <col span="2" width="140"/>
+          <col span="1" width="130"/>
+        </colgroup>
+        <tr height="34">
+          <td id="bji">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>平台</p>
+            </content>
+          </td>
+          <td id="bjG">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>核心收入</p>
+            </content>
+          </td>
+          <td id="bjc">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>增量收入</p>
+            </content>
+          </td>
+          <td id="bju">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>定价策略</p>
+            </content>
+          </td>
+          <td id="bjR">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>差异化优势</p>
+            </content>
+          </td>
+          <td id="bBT">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>盈利关键点</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjU">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>本项目</p>
+            </content>
+          </td>
+          <td id="bjz">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员订阅（99/299/999）</p>
+            </content>
+          </td>
+          <td id="bjh">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>算力豆充值；API调用</p>
+            </content>
+          </td>
+          <td id="bjP">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>等面值发放；年付8折</p>
+            </content>
+          </td>
+          <td id="bje">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>多模型聚合；充值积分永久有效</p>
+            </content>
+          </td>
+          <td id="bBl">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>提升工作室版转化率</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjS">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>LibTV</p>
+            </content>
+          </td>
+          <td id="bjp">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>年仅付订阅（499-6599）</p>
+            </content>
+          </td>
+          <td id="bjH">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>高端档商用授权溢价</p>
+            </content>
+          </td>
+          <td id="bjI">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>年仅付；2026年涨价1000</p>
+            </content>
+          </td>
+          <td id="bjA">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI短剧全流程闭环；强定价权</p>
+            </content>
+          </td>
+          <td id="bBf">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>高端档ARPU值极高</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjm">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>小云雀</p>
+            </content>
+          </td>
+          <td id="bjj">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员订阅（79/209/529）</p>
+            </content>
+          </td>
+          <td id="bjD">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>创作者现金激励分成</p>
+            </content>
+          </td>
+          <td id="bjV">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月/季/年付；积分高汇率</p>
+            </content>
+          </td>
+          <td id="bBg">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>字节Seedance模型；创作者生态</p>
+            </content>
+          </td>
+          <td id="bjv">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>视频消耗驱动复购</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjB">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>纳米AI</p>
+            </content>
+          </td>
+          <td id="bjq">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月卡/年卡订阅（39/399）</p>
+            </content>
+          </td>
+          <td id="bjn">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>至尊年卡高端溢价</p>
+            </content>
+          </td>
+          <td id="bjO">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>低价入门；算力制</p>
+            </content>
+          </td>
+          <td id="bjQ">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>全模态聚合；GPT-4o等高级模型</p>
+            </content>
+          </td>
+          <td id="bBs">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>低价获客+年卡锁定</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjM">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>天工AI</p>
+            </content>
+          </td>
+          <td id="bjr">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员+积分包（45/85）</p>
+            </content>
+          </td>
+          <td id="bjw">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>短剧平台流水；API企业</p>
+            </content>
+          </td>
+          <td id="bjK">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>4折低价抢占市场</p>
+            </content>
+          </td>
+          <td id="bjb">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>工具+内容+平台三轮驱动</p>
+            </content>
+          </td>
+          <td id="bjZ">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>短剧平台规模化流水</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bjd">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>万兴喵影</p>
+            </content>
+          </td>
+          <td id="bjF">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>软件订阅（269/年起）</p>
+            </content>
+          </td>
+          <td id="bjt">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>AI积分包；企业授权</p>
+            </content>
+          </td>
+          <td id="bja">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>软件+AI双轨制</p>
+            </content>
+          </td>
+          <td id="bjE">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>桌面剪辑存量用户；素材生态</p>
+            </content>
+          </td>
+          <td id="bjW">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>AI功能增量变现</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="50" topLeftX="60" topLeftY="442" presetHandlers="0" type="rect" id="bjC">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="36" topLeftX="80" topLeftY="450" type="text" id="bjN">
+        <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+          <p><strong><span color="rgba(200, 134, 26, 1)">共性规律：</span></strong>五家均采用&quot;会员订阅+积分消耗&quot;混合模式，但盈利重心不同。LibTV靠高端档高ARPU；天工靠短剧平台规模化流水；万兴靠软件存量用户的AI增量；小云雀靠视频高消耗驱动复购；纳米AI靠低价获客+年卡锁定。本项目当前盈利重心在会员订阅，API和算力豆充值增量尚未充分释放。</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="504" type="text" id="bBJ">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>19 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bjy">
+      <content>
+        <p>商业模式对比显示，五家均采用会员加积分混合模式，但盈利重心不同。LibTV靠高端档高ARPU值，天工靠短剧平台规模化流水，万兴靠软件存量用户的AI增量变现，小云雀靠视频高消耗驱动复购，纳米AI靠低价获客加年卡锁定。本项目当前盈利重心在会员订阅，API和算力豆充值增量尚未充分释放。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBJ">
+    <style>
+      <fill id="fBJ">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bpN">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bpf">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>横向对比四：积分有效期与消耗规则</p>
+        </content>
+      </shape>
+      <line id="bzm" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <table id="bzp" width="840" height="300" topLeftX="60" topLeftY="118">
+        <colgroup>
+          <col span="1" width="100"/>
+          <col span="2" width="140"/>
+          <col span="1" width="130"/>
+          <col span="1" width="170"/>
+          <col span="1" width="160"/>
+        </colgroup>
+        <tr height="34">
+          <td id="bpl">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>平台</p>
+            </content>
+          </td>
+          <td id="bzS">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>会员赠送积分</p>
+            </content>
+          </td>
+          <td id="bzz">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>充值购买积分</p>
+            </content>
+          </td>
+          <td id="bzh">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>消耗单位</p>
+            </content>
+          </td>
+          <td id="bpb">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>视频生成消耗</p>
+            </content>
+          </td>
+          <td id="bpZ">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>清零/过期规则</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bpT">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>本项目</p>
+            </content>
+          </td>
+          <td id="bzU">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员期内有效，到期清零</p>
+            </content>
+          </td>
+          <td id="bzG">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>永久有效（独特优势）</p>
+            </content>
+          </td>
+          <td id="bzc">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按秒计费（豆/秒）</p>
+            </content>
+          </td>
+          <td id="bpn">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>seedance2.0=0.005豆/秒；2.5=0.05豆/秒</p>
+            </content>
+          </td>
+          <td id="bpO">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>会员积分到期清零；充值永不过期</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bpQ">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>LibTV</p>
+            </content>
+          </td>
+          <td id="bpJ">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月度发放，当月有效</p>
+            </content>
+          </td>
+          <td id="bzi">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>无单独充值包</p>
+            </content>
+          </td>
+          <td id="bzL">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按次/按任务</p>
+            </content>
+          </td>
+          <td id="bzk">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按短剧生成任务整体扣减</p>
+            </content>
+          </td>
+          <td id="bpV">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月度积分当月清零；年仅付</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bpA">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>小云雀</p>
+            </content>
+          </td>
+          <td id="bpX">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月度发放，当月有效</p>
+            </content>
+          </td>
+          <td id="bzy">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>可额外购买积分包</p>
+            </content>
+          </td>
+          <td id="bzF">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按秒计费（积分/秒）</p>
+            </content>
+          </td>
+          <td id="bzt">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>约11积分/秒（高消耗）</p>
+            </content>
+          </td>
+          <td id="bzo">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月度积分当月清零</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bpI">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>纳米AI</p>
+            </content>
+          </td>
+          <td id="bpe">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>周期内有效，到期重置</p>
+            </content>
+          </td>
+          <td id="bpx">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>无单独充值（算力制）</p>
+            </content>
+          </td>
+          <td id="bzd">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按Token/按次</p>
+            </content>
+          </td>
+          <td id="bzr">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>视频按次扣减算力</p>
+            </content>
+          </td>
+          <td id="bzw">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月卡/年卡到期重置</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bpP">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>天工AI</p>
+            </content>
+          </td>
+          <td id="bpR">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>每日赠送1200积分</p>
+            </content>
+          </td>
+          <td id="bps">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)">
+              <p>积分包购买后长期有效</p>
+            </content>
+          </td>
+          <td id="bzM">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按任务（300-800积分/次）</p>
+            </content>
+          </td>
+          <td id="bzB">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>SkyProduction按秒0.3-0.4元</p>
+            </content>
+          </td>
+          <td id="bzq">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>每日赠积分当日有效；充值长期</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bpu">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true">
+              <p>万兴喵影</p>
+            </content>
+          </td>
+          <td id="bpC">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>SVIP月赠4000，当月清零</p>
+            </content>
+          </td>
+          <td id="bpg">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>积分包有效期1年</p>
+            </content>
+          </td>
+          <td id="bzv">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>按次/按分钟</p>
+            </content>
+          </td>
+          <td id="bzj">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>图生视频60-1500积分/次</p>
+            </content>
+          </td>
+          <td id="bzD">
+            <content fontSize="9" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>月赠当月清零；充值包1年有效</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="60" topLeftX="60" topLeftY="432" presetHandlers="0" type="rect" id="bzH">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 0.06)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="44" topLeftX="80" topLeftY="442" type="text" id="bpE">
+        <content fontSize="11" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+          <p><strong><span color="rgba(200, 134, 26, 1)">规则对比结论：</span></strong>本项目&quot;充值积分永久有效&quot;是六家中最宽松的政策，可作为核心卖点突出。多数竞品采用&quot;会员积分当月清零+充值积分有限期（1年/长期）&quot;的双轨制，通过过期焦虑促使用户持续消费。小云雀视频消耗最高（11积分/秒），驱动高频复购；天工每日赠积分降低试用门槛。建议本项目保留永久有效优势的同时，考虑增加&quot;月度任务奖励&quot;机制提升活跃度。</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="504" type="text" id="bpW">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>20 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bpY">
+      <content>
+        <p>积分有效期对比显示，本项目充值积分永久有效是六家中最宽松的政策，可作为核心卖点。多数竞品采用会员积分当月清零加充值积分有限期的双轨制，通过过期焦虑促进消费。小云雀视频消耗最高驱动高频复购，天工每日赠积分降低试用门槛。建议本项目保留永久有效优势，同时增加月度任务奖励提升活跃度。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBw">
+    <style>
+      <fill id="fBw">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="4" height="28" topLeftX="80" topLeftY="56" presetHandlers="0" type="rect" id="bpH">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="700" height="32" topLeftX="96" topLeftY="56" type="text" id="bpa">
+        <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>对本项目的启示与行动建议</p>
+        </content>
+      </shape>
+      <line id="bpm" startX="80" startY="100" endX="880.0006249997559" endY="100">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="80" topLeftY="118" type="text" id="bpL">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>定价与积分体系优化</p>
+        </content>
+      </shape>
+      <shape width="380" height="170" topLeftX="80" topLeftY="148" type="text" id="bpp">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">增设入门档：</span></strong>参考纳米AI 39元/天工45元，新增49-69元轻量版，降低首单门槛</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">突出永久有效：</span></strong>&quot;充值算力豆永不过期&quot;是独家卖点，应在定价页首屏强化</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">积分包阶梯定价：</span></strong>参考万兴喵影，推出1000/5000/10000豆充值包，大额包折扣</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">月度任务奖励：</span></strong>参考天工每日赠积分，设置签到/分享任务赠豆，提升活跃度</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <line id="bpt" startX="480.00000000000006" startY="118" endX="480.00000000000006" endY="320.0024752323594">
+        <border color="rgba(216, 216, 216, 1)" width="1"/>
+      </line>
+      <shape width="370" height="24" topLeftX="510" topLeftY="118" type="text" id="bph">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>盈利模式拓展</p>
+        </content>
+      </shape>
+      <shape width="370" height="170" topLeftX="510" topLeftY="148" type="text" id="bpK">
+        <content fontSize="12" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" lineSpacing="multiple:1.8" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">API企业服务：</span></strong>工作室版999元已含API，可单独推出按调用量计费的API套餐</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">创作者激励：</span></strong>参考小云雀，上线作品分享/分销机制，优质创作者获现金或豆奖励</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">商用授权溢价：</span></strong>参考LibTV高端档，为企业用户提供商用授权和品牌定制服务</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(27, 58, 92, 1)">素材生态：</span></strong>参考万兴喵影，搭建剧本/分镜/音乐素材商城，抽成变现</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="800" height="24" topLeftX="80" topLeftY="330" type="text" id="bpS">
+        <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgba(27, 58, 92, 1)" bold="true" wrap="false">
+          <p>竞争策略与优先级</p>
+        </content>
+      </shape>
+      <table id="bpF" width="800" height="100" topLeftX="80" topLeftY="358">
+        <colgroup>
+          <col span="1" width="60"/>
+          <col span="1" width="200"/>
+          <col span="1" width="340"/>
+          <col span="1" width="200"/>
+        </colgroup>
+        <tr height="28">
+          <td id="bpw">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>优先级</p>
+            </content>
+          </td>
+          <td id="bpq">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>行动项</p>
+            </content>
+          </td>
+          <td id="bpc">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>具体做法</p>
+            </content>
+          </td>
+          <td id="bpM">
+            <fill>
+              <fillColor color="rgba(27, 58, 92, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>预期效果</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bpU">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)" bold="true">
+              <p>P0</p>
+            </content>
+          </td>
+          <td id="bpr">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>新增轻量入门档</p>
+            </content>
+          </td>
+          <td id="bpj">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>49-69元/月，含基础算力和1并发，降低首单转化门槛</p>
+            </content>
+          </td>
+          <td id="bpD">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>付费转化率提升30%+</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="36">
+          <td id="bpo">
+            <content fontSize="11" fontFamily="微软雅黑" color="rgba(200, 134, 26, 1)" bold="true">
+              <p>P1</p>
+            </content>
+          </td>
+          <td id="bpv">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)" bold="true">
+              <p>上线算力豆充值包</p>
+            </content>
+          </td>
+          <td id="bpi">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>三档充值包，大额8折，永久有效，承接超量消耗需求</p>
+            </content>
+          </td>
+          <td id="bpB">
+            <content fontSize="10" fontFamily="微软雅黑" color="rgba(60, 60, 60, 1)">
+              <p>ARPU值提升20%+</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="500" height="24" topLeftX="80" topLeftY="490" type="text" id="bpz">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" wrap="false">
+          <p>建议基于五家竞品调研结论，结合本项目算力豆体系现状制定</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bpG">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(118, 118, 118, 1)" textAlign="right" wrap="false">
+          <p>21 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bpk">
+      <content>
+        <p>对本项目的建议包括四个方面。定价方面，增设49到69元轻量入门档降低首单门槛，突出充值积分永久有效的独家卖点，推出阶梯定价积分包，设置月度任务奖励。盈利模式方面，拓展API企业服务、创作者激励、商用授权溢价和素材生态。优先级最高的是新增轻量入门档和上线算力豆充值包，预期可分别提升付费转化率和ARPU值。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pBs">
+    <style>
+      <fill id="fBs">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="960" height="540" topLeftX="0" topLeftY="0" presetHandlers="0" type="rect" id="bjJ">
+        <fill>
+          <fillColor color="rgba(27, 58, 92, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="48" topLeftX="80" topLeftY="80" type="text" id="bpd">
+        <content textType="headline" fontSize="32" fontFamily="微软雅黑" color="rgba(255, 255, 255, 1)" bold="true" wrap="false">
+          <p>核心结论与行动方向</p>
+        </content>
+      </shape>
+      <line id="bjx" startX="80" startY="140" endX="200.00416659433122" endY="140">
+        <border color="rgba(200, 134, 26, 1)" width="3"/>
+      </line>
+      <shape width="800" height="30" topLeftX="80" topLeftY="165" type="text" id="bjg">
+        <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.902)" bold="true" wrap="false">
+          <p>五家竞品积分体系的三大共性规律</p>
+        </content>
+      </shape>
+      <shape width="800" height="90" topLeftX="80" topLeftY="205" type="text" id="bjf">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.851)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">混合收费是标配：</span></strong>会员订阅打底 + 积分消耗增量，无一例外</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">过期焦虑促复购：</span></strong>会员积分当月清零是主流，充值积分设1年/长期有效期</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">视频消耗是核心引擎：</span></strong>高消耗功能（视频生成）驱动积分包复购和会员升级</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="800" height="30" topLeftX="80" topLeftY="310" type="text" id="bjT">
+        <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.902)" bold="true" wrap="false">
+          <p>本项目的差异化优势与立即行动项</p>
+        </content>
+      </shape>
+      <shape width="800" height="90" topLeftX="80" topLeftY="350" type="text" id="bpy">
+        <content fontSize="13" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.851)" lineSpacing="multiple:1.9" list="bullet" listStyle="circle-hollow-square">
+          <ul>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">独家优势：</span></strong>充值算力豆永久有效 + 多模型聚合 + 视频生成单价行业最低</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">立即行动：</span></strong>新增49-69元轻量入门档（P0）；上线三档算力豆充值包（P1）</p>
+            </li>
+            <li>
+              <p><strong><span color="rgba(200, 134, 26, 1)">中期布局：</span></strong>API按量计费、创作者激励、商用授权、素材生态四位一体拓展</p>
+            </li>
+          </ul>
+        </content>
+      </shape>
+      <shape width="800" height="30" topLeftX="80" topLeftY="470" type="text" id="bjX">
+        <content textType="caption" fontSize="12" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.502)" wrap="false">
+          <p>调研时间：2026年9月 ｜ 数据来源：各平台官方定价页、App Store、第三方评测、公开财报</p>
+        </content>
+      </shape>
+      <shape width="80" height="24" topLeftX="800" topLeftY="490" type="text" id="bjs">
+        <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(255, 255, 255, 0.502)" textAlign="right" wrap="false">
+          <p>22 / 22</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bjl">
+      <content>
+        <p>总结本次调研的核心结论。五家竞品均采用会员订阅加积分消耗的混合收费模式，会员积分当月清零是主流，视频高消耗是复购核心引擎。本项目的差异化优势在于充值算力豆永久有效、多模型聚合和视频生成单价行业最低。立即行动项是新增轻量入门档和上线算力豆充值包，中期布局API、创作者激励、商用授权和素材生态四位一体拓展。</p>
+      </content>
+    </note>
+  </slide>
+</presentation>

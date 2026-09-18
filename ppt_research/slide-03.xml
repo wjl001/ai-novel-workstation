@@ -1,0 +1,81 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(255,255,255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28">
+      <fill>
+        <fillColor color="rgb(27,58,92)"/>
+      </fill>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="600" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>调研背景与方法论</p>
+      </content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="125" width="380" height="28">
+      <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>调研背景</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="160" width="380" height="200">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <p>AI视频与短剧创作赛道进入商业化深水区，积分计费已成为行业主流变现手段。各平台在积分定价、会员档位、消耗规则和盈利模式上差异显著。</p>
+        <p>本项目（AI短剧创作平台）已建立"算力豆"积分体系（v2.8 敬龙版），采用1元=100算力豆的等面值发放机制。为优化定价策略、提升竞争力，需对头部竞品进行系统性对标研究。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="125" width="380" height="28">
+      <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>调研方法与覆盖维度</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="160" width="380" height="30">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">四维分析框架：</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="195" width="380" height="170">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p><span bold="true">积分定价</span>：汇率、套餐档位、单积分成本</p></li>
+          <li><p><span bold="true">会员体系</span>：月/年订阅、权益差异、并发与分辨率</p></li>
+          <li><p><span bold="true">消耗规则</span>：模型单价、有效期、升级与清零机制</p></li>
+          <li><p><span bold="true">盈利模式</span>：收入结构、增值服务、API与生态变现</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="80" startY="400" endX="880" endY="400">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="420" width="800" height="28">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p><span bold="true">数据来源：</span>各平台官方定价页、App Store内购信息、第三方评测与用户实测、公开财报与行业报道（截至2026年9月）</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="455" width="800" height="28">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p><span bold="true">对标竞品：</span>LibTV（LiblibAI）· 小云雀（字节跳动）· 纳米AI · 天工AI（昆仑万维）· 万兴喵影（万兴科技）</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="400" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>AI短剧创作平台竞品积分收费与商业模式调研报告</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false">
+        <p>03 / 22</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>本次调研采用四维分析框架，覆盖积分定价、会员体系、消耗规则和盈利模式。数据来源于各平台官方定价页、App Store内购信息、第三方评测和公开财报，数据截至2026年9月。对标五家主流竞品：LibTV、小云雀、纳米AI、天工AI和万兴喵影。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,114 @@
+<slide>
+  <style>
+    <fill><fillColor color="rgb(255,255,255)"/></fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28">
+      <fill><fillColor color="rgb(27,58,92)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>五家竞品全景总览</p>
+      </content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <table topLeftX="80" topLeftY="120" width="800" height="340">
+      <colgroup>
+        <col width="110"/>
+        <col width="110"/>
+        <col width="170"/>
+        <col width="100"/>
+        <col width="130"/>
+        <col width="180"/>
+      </colgroup>
+      <tr height="40">
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>所属公司</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>产品定位</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>积分名称</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>计费模式</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>核心特色</p></content>
+        </td>
+      </tr>
+      <tr height="56">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>LiblibAI</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI视频无限画布创作平台</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>积分</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>年订阅+月度积分</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>多模型聚合、高并发、顶级模型专属折扣包</p></content></td>
+      </tr>
+      <tr height="56">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>字节跳动</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI视频与短剧创作助手</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>积分</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月会员+积分充值</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>Seedance全家桶、短剧Agent流水线、CLI/API</p></content></td>
+      </tr>
+      <tr height="56">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>独立平台</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>全能AI创作多智能体平台</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>纳米算力</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员订阅+纳米币</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>多智能体协作、无代码、MCP工具动态计费</p></content></td>
+      </tr>
+      <tr height="56">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>昆仑万维</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI工作空间/超级智能体</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>积分</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月会员+积分包</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>PPT/文档/表格/视频全品类、SkyProduction短剧工作台</p></content></td>
+      </tr>
+      <tr height="56">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>万兴科技</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI视频剪辑桌面软件</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI积分</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>软件订阅+AI积分包</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>桌面剪辑、1500万素材、丰富AI功能矩阵</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="480" width="800" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p><span bold="true">关键发现：</span>五家均采用"会员订阅 + 积分消耗"混合模式，但积分汇率、有效期规则和盈利侧重点差异显著。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="510" width="400" height="20">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>来源：各平台官网及App Store信息（2026年9月）</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="510" width="80" height="20">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false">
+        <p>06 / 22</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>五家竞品均采用会员订阅加积分消耗的混合计费模式。LibTV主打多模型聚合和高并发，小云雀背靠字节拥有Seedance模型优势和短剧Agent流水线，纳米AI侧重多智能体协作，天工AI覆盖全品类办公加短剧工作台，万兴喵影则是桌面剪辑软件加AI功能矩阵。</p>
+    </content>
+  </note>
+</slide>

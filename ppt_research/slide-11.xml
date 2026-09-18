@@ -1,0 +1,67 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>纳米AI——多智能体协作的全能创作平台</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="120" width="380" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>产品定位与核心能力</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="380" height="200">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p>全能AI创作平台，主打多智能体无代码协作</p></li>
+          <li><p>内置"纳米视频PPT"等智能体，固定费+动态调用费</p></li>
+          <li><p>支持MCP工具生态，智能体可动态调用外部工具</p></li>
+          <li><p>覆盖问答、视频生成、PPT制作等多场景</p></li>
+          <li><p>淘宝等第三方渠道广泛分销，触达下沉用户</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="480" startY="120" endX="480" endY="380"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="510" topLeftY="120" width="370" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>商业模式与盈利来源</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="155" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">01  多层级会员订阅</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="180" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>月卡39元至至尊年卡，按月赠送纳米算力</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="210" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">02  纳米币动态计费</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="235" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>智能体固定使用费 + MCP工具动态调用消耗</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="265" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">03  第三方渠道分销</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="290" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>淘宝旗舰店直充，覆盖大量价格敏感型用户</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="320" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">04  智能体生态抽成</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="345" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>开发者创建智能体，用户调用时平台抽取算力费</p></content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="400" width="800" height="60">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="412" width="760" height="40">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgb(200,134,26)">盈利逻辑：</span>以低价月卡（39元）降低入门门槛，通过高阶年卡（至尊15000算力/月）提升ARPU；智能体采用"固定费+动态调用费"双层计费，MCP工具调用按实际消耗扣算力；淘宝分销扩大用户基数，走量获利。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：zxnavi.com · 淘宝商品页 · 纳米AI官网（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>11 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>纳米AI是多智能体协作创作平台，采用会员订阅加纳米币动态计费模式。月卡39元含1180算力，至尊年卡每月赠15000算力。智能体采用固定使用费加MCP工具动态调用的双层计费。平台通过淘宝等第三方渠道广泛分销，以低价入门吸引用户，高阶年卡提升客单价。</p></content></note>
+</slide>

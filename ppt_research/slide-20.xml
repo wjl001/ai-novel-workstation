@@ -1,0 +1,81 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>横向对比四：积分有效期与消耗规则</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="60" topLeftY="118" width="840" height="300">
+      <colgroup><col width="100"/><col width="140"/><col width="140"/><col width="130"/><col width="170"/><col width="160"/></colgroup>
+      <tr height="34">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>会员赠送积分</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>充值购买积分</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>消耗单位</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>视频生成消耗</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>清零/过期规则</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>本项目</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员期内有效，到期清零</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>永久有效（独特优势）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按秒计费（豆/秒）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>seedance2.0=0.005豆/秒；2.5=0.05豆/秒</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员积分到期清零；充值永不过期</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月度发放，当月有效</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>无单独充值包</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按次/按任务</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按短剧生成任务整体扣减</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月度积分当月清零；年仅付</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月度发放，当月有效</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>可额外购买积分包</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按秒计费（积分/秒）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>约11积分/秒（高消耗）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月度积分当月清零</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>周期内有效，到期重置</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>无单独充值（算力制）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按Token/按次</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>视频按次扣减算力</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月卡/年卡到期重置</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>每日赠送1200积分</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>积分包购买后长期有效</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按任务（300-800积分/次）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>SkyProduction按秒0.3-0.4元</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>每日赠积分当日有效；充值长期</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>SVIP月赠4000，当月清零</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>积分包有效期1年</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>按次/按分钟</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>图生视频60-1500积分/次</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月赠当月清零；充值包1年有效</p></content></td>
+      </tr>
+    </table>
+    <shape type="rect" topLeftX="60" topLeftY="432" width="840" height="60">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="442" width="800" height="44">
+      <content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.5">
+        <p><span bold="true" color="rgb(200,134,26)">规则对比结论：</span>本项目"充值积分永久有效"是六家中最宽松的政策，可作为核心卖点突出。多数竞品采用"会员积分当月清零+充值积分有限期（1年/长期）"的双轨制，通过过期焦虑促使用户持续消费。小云雀视频消耗最高（11积分/秒），驱动高频复购；天工每日赠积分降低试用门槛。建议本项目保留永久有效优势的同时，考虑增加"月度任务奖励"机制提升活跃度。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="504" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>20 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>积分有效期对比显示，本项目充值积分永久有效是六家中最宽松的政策，可作为核心卖点。多数竞品采用会员积分当月清零加充值积分有限期的双轨制，通过过期焦虑促进消费。小云雀视频消耗最高驱动高频复购，天工每日赠积分降低试用门槛。建议本项目保留永久有效优势，同时增加月度任务奖励提升活跃度。</p></content></note>
+</slide>

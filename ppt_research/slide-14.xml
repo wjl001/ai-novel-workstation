@@ -1,0 +1,113 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>天工AI 积分收费规格明细</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="118" width="380" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>会员订阅</p></content>
+    </shape>
+    <table topLeftX="80" topLeftY="146" width="380" height="110">
+      <colgroup><col width="100"/><col width="100"/><col width="100"/><col width="80"/></colgroup>
+      <tr height="30">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>档位</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>连续包月</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>月度</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>权益</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>Basic</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥45</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥48</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>基础</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>Plus</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥85</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥88</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>高级</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(118,118,118)" textAlign="center"><p>免费</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>¥0</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>每日赠</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="500" topLeftY="118" width="380" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>积分充值包</p></content>
+    </shape>
+    <table topLeftX="500" topLeftY="146" width="380" height="110">
+      <colgroup><col width="120"/><col width="100"/><col width="100"/><col width="60"/></colgroup>
+      <tr height="30">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>积分额度</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>价格</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单积分成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>备注</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>10,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥48</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0048</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>入门</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>20,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥91</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0046</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>常用</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>50,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥200</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.0040</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>最划算</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="276" width="800" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>SkyProduction 短剧工作台定价（按秒计费）</p></content>
+    </shape>
+    <table topLeftX="80" topLeftY="304" width="800" height="82">
+      <colgroup><col width="200"/><col width="150"/><col width="150"/><col width="150"/><col width="150"/></colgroup>
+      <tr height="30">
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>模型</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>720P</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>480P</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>官方参考价</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>折扣力度</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>Seedance 2.5</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.4/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.3/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>约¥1.3/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>约3折</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>Wan 3.0</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>低价计费</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>4折价格战</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="404" width="800" height="60">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.7">
+        <ul>
+          <li><p>免费用户：新注册一次性赠2500积分，每日赠送1200积分；简单任务约消耗300-800积分</p></li>
+          <li><p>积分体系特点：积分汇率低（约0.004元/积分），消耗单位大，与其他平台积分口径不同</p></li>
+          <li><p>2026年中秋活动：Seedance 2.5专属积分首购加赠70%，每消耗20万积分可兑换福利</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：App Store内购信息 · 36氪 · 中国网科技（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>14 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>天工AI采用会员加积分包模式。Basic会员45元/月，Plus 85元/月。积分包从10000积分48元到50000积分200元，单积分成本约0.004至0.0048元。免费用户每日赠1200积分。SkyProduction短剧工作台以约3折低价提供Seedance 2.5，720P低至0.4元每秒，是五家中视频生成单价最低的平台之一。</p></content></note>
+</slide>

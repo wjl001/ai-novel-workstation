@@ -1,0 +1,88 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>LibTV 积分收费规格明细</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="80" topLeftY="120" width="800" height="220">
+      <colgroup>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="140"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="180"/>
+      </colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>会员档位</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>年费</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>每月积分</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单积分成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>并发任务</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>存储空间</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>专业版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥499/年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,800</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.023</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>6</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>50GB</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>大师版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥1,299/年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>5,800</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.019</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>10</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>130GB</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>旗舰版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥2,999/年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>15,800</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.016</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>20</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>200GB</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>尊享版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥6,599/年</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>34,000</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.016</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>无限</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>500GB + 300条可灵</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(118,118,118)" textAlign="center"><p>免费版</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>¥0</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>每日赠20</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>—</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>1</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>3GB · 带水印</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="360" width="800" height="26">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>关键规则</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="392" width="800" height="80">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p>计费模式：年仅付订阅制，不设月付；积分按月发放，当月有效</p></li>
+          <li><p>产能估算：1积分约可生成4张图片或0.1个视频（专业版月均180个视频）</p></li>
+          <li><p>高阶权益：会员享无限次加速通道、每日登录赠积分、顶级模型专属折扣包</p></li>
+          <li><p>2026年7月至尊版（8499/10999元档）涨价1000元，Seedance 2.0最低调用价从0.37元/秒升至0.41元/秒</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：libtv.gongke.net/pricing · 36氪《Token杀死了AI应用》（2026年7月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>08 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>LibTV采用年仅付订阅制，四档套餐从499到6599元，月积分从1800到34000。单积分成本随档位升高而降低，旗舰版最低约0.016元/积分。免费版每日赠20积分。所有会员享无限次加速通道，尊享版赠300条可灵额度。2026年7月曾对高端档位涨价。</p></content></note>
+</slide>

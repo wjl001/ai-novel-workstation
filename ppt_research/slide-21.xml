@@ -1,0 +1,68 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>对本项目的启示与行动建议</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="118" width="380" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>定价与积分体系优化</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="148" width="380" height="170">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p><span bold="true" color="rgb(27,58,92)">增设入门档：</span>参考纳米AI 39元/天工45元，新增49-69元轻量版，降低首单门槛</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">突出永久有效：</span>"充值算力豆永不过期"是独家卖点，应在定价页首屏强化</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">积分包阶梯定价：</span>参考万兴喵影，推出1000/5000/10000豆充值包，大额包折扣</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">月度任务奖励：</span>参考天工每日赠积分，设置签到/分享任务赠豆，提升活跃度</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="480" startY="118" endX="480" endY="320"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="510" topLeftY="118" width="370" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>盈利模式拓展</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="148" width="370" height="170">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.8">
+        <ul>
+          <li><p><span bold="true" color="rgb(27,58,92)">API企业服务：</span>工作室版999元已含API，可单独推出按调用量计费的API套餐</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">创作者激励：</span>参考小云雀，上线作品分享/分销机制，优质创作者获现金或豆奖励</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">商用授权溢价：</span>参考LibTV高端档，为企业用户提供商用授权和品牌定制服务</p></li>
+          <li><p><span bold="true" color="rgb(27,58,92)">素材生态：</span>参考万兴喵影，搭建剧本/分镜/音乐素材商城，抽成变现</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="330" width="800" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>竞争策略与优先级</p></content>
+    </shape>
+    <table topLeftX="80" topLeftY="358" width="800" height="100">
+      <colgroup><col width="60"/><col width="200"/><col width="340"/><col width="200"/></colgroup>
+      <tr height="28">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>优先级</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>行动项</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>具体做法</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>预期效果</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>P0</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>新增轻量入门档</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>49-69元/月，含基础算力和1并发，降低首单转化门槛</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>付费转化率提升30%+</p></content></td>
+      </tr>
+      <tr height="36">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" bold="true" textAlign="center"><p>P1</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>上线算力豆充值包</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>三档充值包，大额8折，永久有效，承接超量消耗需求</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>ARPU值提升20%+</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>建议基于五家竞品调研结论，结合本项目算力豆体系现状制定</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>21 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>对本项目的建议包括四个方面。定价方面，增设49到69元轻量入门档降低首单门槛，突出充值积分永久有效的独家卖点，推出阶梯定价积分包，设置月度任务奖励。盈利模式方面，拓展API企业服务、创作者激励、商用授权溢价和素材生态。优先级最高的是新增轻量入门档和上线算力豆充值包，预期可分别提升付费转化率和ARPU值。</p></content></note>
+</slide>

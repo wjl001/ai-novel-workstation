@@ -1,0 +1,129 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>万兴喵影 积分收费规格明细</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="118" width="380" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>AI积分包（有效期1年）</p></content>
+    </shape>
+    <table topLeftX="80" topLeftY="146" width="380" height="170">
+      <colgroup><col width="110"/><col width="90"/><col width="100"/><col width="80"/></colgroup>
+      <tr height="30">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>积分额度</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>价格</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>单积分成本</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>定位</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥9.99</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.010</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>体验</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>5,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥39</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0078</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>入门</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>10,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥69</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0069</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>常用</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>50,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥339</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥0.0068</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>高频</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>200,000</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥1,299</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>¥0.0065</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="center"><p>最划算</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="500" topLeftY="118" width="380" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>软件订阅与月度赠送</p></content>
+    </shape>
+    <table topLeftX="500" topLeftY="146" width="380" height="170">
+      <colgroup><col width="120"/><col width="100"/><col width="160"/></colgroup>
+      <tr height="30">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>会员类型</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>价格</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>AI积分权益</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>VIP 1年</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥269</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>一次性赠3000（1年有效）</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>VIP 3年</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥419</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>一次性赠3000（1年有效）</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>SVIP订阅</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>订阅制</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>月赠4000（当月清零）</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>企业VIP</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>定制</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>月赠8000（当月清零）</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(118,118,118)" textAlign="center"><p>免费用户</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>¥0</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="center"><p>基础剪辑，无AI积分</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="334" width="800" height="24">
+      <content textType="sub-headline" fontSize="14" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>AI功能消耗规则（按次/按分钟）</p></content>
+    </shape>
+    <table topLeftX="80" topLeftY="362" width="800" height="112">
+      <colgroup><col width="160"/><col width="160"/><col width="160"/><col width="160"/><col width="160"/></colgroup>
+      <tr height="28">
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>AI绘画</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>智小喵/写文案</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>语音转文字</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>AI消除</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>图生视频</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>40积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>40积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>4积分/分钟</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>400积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>60-1500积分/次</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>文生视频</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>AI音乐</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>AI超清</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>文字转语音</p></content></td>
+        <td><fill><fillColor color="rgba(27,58,92,0.08)"/></fill><content textType="body" fontSize="11" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>灵感成片</p></content></td>
+      </tr>
+      <tr height="28">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>55-740积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>120-2000积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>80积分/次</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>1积分/400字符</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>240-1200积分/分镜</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：万兴喵影AI积分使用指南 · 官网购买页（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>16 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>万兴喵影AI积分包从1000积分9.99元到20万积分1299元，单积分成本约0.0065至0.01元，购买后有效期1年。VIP会员269元/年，一次性赠3000积分。SVIP每月赠4000积分当月清零。AI功能按次消耗，从40积分每次的AI绘画到1500积分每次的复杂图生视频，差异化定价明显。</p></content></note>
+</slide>

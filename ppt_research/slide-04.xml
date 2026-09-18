@@ -1,0 +1,121 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgb(255,255,255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28">
+      <fill><fillColor color="rgb(27,58,92)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>本项目积分体系——算力豆规则（v2.8 敬龙版）</p>
+      </content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="120" width="380" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>一、核心发放机制</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="380" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">01  单一积分池</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="180" width="380" height="36">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>会员套餐赠送与充值购买的算力豆合并到同一池，无月度豆与长效豆区分。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="222" width="380" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">02  等面值发放</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="247" width="380" height="36">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>统一按"1元 = 100算力豆"发放，档位间无赠送比例差异，溢价体现在功能权益。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="289" width="380" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">03  会员周期月</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="314" width="380" height="36">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>"当月"按开通日起30天计算，非自然月，避免月中开通用户权益受损。</p>
+      </content>
+    </shape>
+    <line startX="480" startY="120" endX="480" endY="370">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="510" topLeftY="120" width="370" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>二、有效期与升级规则</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="155" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">04  会员积分到期清零</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="180" width="370" height="36">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>会员套餐赠送的算力豆随会员到期日一起清零，不结转、不返还。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="222" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">05  充值积分永久有效</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="247" width="370" height="36">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>单独充值（非会员）的算力豆永久有效，会员过期后仍可按非会员权限使用。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="289" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false">
+        <p><span bold="true" color="rgb(27,58,92)">06  跨档位升级合并</span></p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="314" width="370" height="56">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" lineSpacing="multiple:1.6">
+        <p>升级时：剩余积分+新套餐积分合并，剩余天数+新套餐天数延长，权益即时切换为新档位。</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="395" width="800" height="70">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="408" width="760" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>非会员限制：带水印 · 仅480P/720P · 并发1个 · 标准队列 · 无API · 仅个人用途授权</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="436" width="760" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false">
+        <p>1080P/4K、去水印商用授权、多并发、优先队列、API均为会员专属权益。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="400" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>来源：项目 docs/member-center-rules.md · MemberRulesDialog.vue</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false">
+        <p>04 / 22</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>本项目采用算力豆单一积分池，1元等于100算力豆等面值发放。会员赠送积分随到期清零，充值积分永久有效。跨档位升级时积分合并、有效期延长、权益即时升级。非会员可使用基础功能但受水印、分辨率、并发等限制。</p>
+    </content>
+  </note>
+</slide>

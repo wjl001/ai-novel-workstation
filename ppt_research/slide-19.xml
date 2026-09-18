@@ -1,0 +1,81 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>横向对比三：商业模式与盈利路径</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <table topLeftX="60" topLeftY="118" width="840" height="310">
+      <colgroup><col width="90"/><col width="170"/><col width="170"/><col width="140"/><col width="140"/><col width="130"/></colgroup>
+      <tr height="34">
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>平台</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>核心收入</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>增量收入</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>定价策略</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>差异化优势</p></content></td>
+        <td><fill><fillColor color="rgb(27,58,92)"/></fill><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>盈利关键点</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>本项目</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员订阅（99/299/999）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>算力豆充值；API调用</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>等面值发放；年付8折</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>多模型聚合；充值积分永久有效</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>提升工作室版转化率</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>LibTV</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>年仅付订阅（499-6599）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>高端档商用授权溢价</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>年仅付；2026年涨价1000</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI短剧全流程闭环；强定价权</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>高端档ARPU值极高</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>小云雀</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员订阅（79/209/529）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>创作者现金激励分成</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月/季/年付；积分高汇率</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>字节Seedance模型；创作者生态</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>视频消耗驱动复购</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>纳米AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>月卡/年卡订阅（39/399）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>至尊年卡高端溢价</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>低价入门；算力制</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>全模态聚合；GPT-4o等高级模型</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>低价获客+年卡锁定</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>天工AI</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>会员+积分包（45/85）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>短剧平台流水；API企业</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>4折低价抢占市场</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>工具+内容+平台三轮驱动</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>短剧平台规模化流水</p></content></td>
+      </tr>
+      <tr height="46">
+        <td><content textType="body" fontSize="10" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>万兴喵影</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>软件订阅（269/年起）</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>AI积分包；企业授权</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>软件+AI双轨制</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>桌面剪辑存量用户；素材生态</p></content></td>
+        <td><content textType="body" fontSize="9" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>AI功能增量变现</p></content></td>
+      </tr>
+    </table>
+    <shape type="rect" topLeftX="60" topLeftY="442" width="840" height="50">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="450" width="800" height="36">
+      <content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.5">
+        <p><span bold="true" color="rgb(200,134,26)">共性规律：</span>五家均采用"会员订阅+积分消耗"混合模式，但盈利重心不同。LibTV靠高端档高ARPU；天工靠短剧平台规模化流水；万兴靠软件存量用户的AI增量；小云雀靠视频高消耗驱动复购；纳米AI靠低价获客+年卡锁定。本项目当前盈利重心在会员订阅，API和算力豆充值增量尚未充分释放。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="504" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>19 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>商业模式对比显示，五家均采用会员加积分混合模式，但盈利重心不同。LibTV靠高端档高ARPU值，天工靠短剧平台规模化流水，万兴靠软件存量用户的AI增量变现，小云雀靠视频高消耗驱动复购，纳米AI靠低价获客加年卡锁定。本项目当前盈利重心在会员订阅，API和算力豆充值增量尚未充分释放。</p></content></note>
+</slide>

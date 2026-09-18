@@ -1,0 +1,150 @@
+<slide>
+  <style>
+    <fill><fillColor color="rgb(255,255,255)"/></fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28">
+      <fill><fillColor color="rgb(27,58,92)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>本项目会员套餐与模型消耗定价</p>
+      </content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100">
+      <border color="rgb(216,216,216)" width="1"/>
+    </line>
+    <table topLeftX="80" topLeftY="120" width="800" height="188">
+      <colgroup>
+        <col width="140"/>
+        <col width="180"/>
+        <col width="220"/>
+        <col width="260"/>
+      </colgroup>
+      <tr height="32">
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="13" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>对比维度</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="13" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>基础版</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="13" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>专业版（最受欢迎）</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(27,58,92)"/></fill>
+          <content textType="body" fontSize="13" fontFamily="微软雅黑" bold="true" color="rgb(255,255,255)" textAlign="center"><p>工作室版（最超值）</p></content>
+        </td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>月费 / 年费</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥99 / ¥950</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥299 / ¥2,870</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>¥999 / ¥9,590</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>每月算力豆</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>9,900</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>29,900</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>99,900</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>并发任务</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>2</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>4</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>8</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>视频分辨率</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>480P / 720P</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>+ 1080P / 4K</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>+ 1080P / 4K</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>水印 / 授权</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>带水印 · 个人用途</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>去水印 · 商用授权</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>去水印 · 商用授权</p></content></td>
+      </tr>
+      <tr height="26">
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(60,60,60)" textAlign="center"><p>API 接入</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>不支持</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>不支持</p></content></td>
+        <td><content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>支持</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="320" width="800" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false">
+        <p>模型消耗定价（算力豆）</p>
+      </content>
+    </shape>
+    <table topLeftX="80" topLeftY="352" width="800" height="124">
+      <colgroup>
+        <col width="200"/>
+        <col width="120"/>
+        <col width="140"/>
+        <col width="340"/>
+      </colgroup>
+      <tr height="28">
+        <td>
+          <fill><fillColor color="rgba(27,58,92,0.08)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>模型名称</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgba(27,58,92,0.08)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>类型</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgba(27,58,92,0.08)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>单价</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgba(27,58,92,0.08)"/></fill>
+          <content textType="body" fontSize="12" fontFamily="微软雅黑" bold="true" color="rgb(27,58,92)" textAlign="center"><p>适用场景</p></content>
+        </td>
+      </tr>
+      <tr height="24">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>doubao-seedance-2.0</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>视频</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>0.005 豆/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>稳定经典视频生成</p></content></td>
+      </tr>
+      <tr height="24">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>doubao-seedance-2.5</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>视频</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>0.05 豆/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>新一代高质量视频生成</p></content></td>
+      </tr>
+      <tr height="24">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>可灵3.0 Omni</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>视频</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(200,134,26)" textAlign="center"><p>0.1 豆/秒</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>顶级物理模拟视频生成（旗舰）</p></content></td>
+      </tr>
+      <tr height="24">
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>ChatGPT Images 2.0</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>图片</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(60,60,60)" textAlign="center"><p>50 豆/张</p></content></td>
+        <td><content textType="body" fontSize="11" fontFamily="微软雅黑" color="rgb(90,90,90)" textAlign="left"><p>顶尖精美绘图（高端）</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false">
+        <p>来源：项目 MemberCenterView.vue · activeTiers 配置 · 年付享8折优惠</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false">
+        <p>05 / 22</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>本项目设三档会员：基础版99元/月、专业版299元/月、工作室版999元/月，年付享8折。各档均按1元=100算力豆等面值发放。模型消耗按秒或按张计费，seedance-2.0低至0.005豆/秒，旗舰可灵3.0为0.1豆/秒。API仅工作室版开放。</p>
+    </content>
+  </note>
+</slide>

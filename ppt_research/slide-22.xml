@@ -1,0 +1,43 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="0" topLeftY="0" width="960" height="540">
+      <fill><fillColor color="rgb(27,58,92)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="80" width="800" height="48">
+      <content textType="headline" fontSize="32" fontFamily="微软雅黑" color="rgb(255,255,255)" bold="true" wrap="false"><p>核心结论与行动方向</p></content>
+    </shape>
+    <line startX="80" startY="140" endX="200" endY="140"><border color="rgb(200,134,26)" width="3"/></line>
+    <shape type="text" topLeftX="80" topLeftY="165" width="800" height="30">
+      <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(255,255,255,0.9)" bold="true" wrap="false"><p>五家竞品积分体系的三大共性规律</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="205" width="800" height="90">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgba(255,255,255,0.85)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p><span bold="true" color="rgb(200,134,26)">混合收费是标配：</span>会员订阅打底 + 积分消耗增量，无一例外</p></li>
+          <li><p><span bold="true" color="rgb(200,134,26)">过期焦虑促复购：</span>会员积分当月清零是主流，充值积分设1年/长期有效期</p></li>
+          <li><p><span bold="true" color="rgb(200,134,26)">视频消耗是核心引擎：</span>高消耗功能（视频生成）驱动积分包复购和会员升级</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="310" width="800" height="30">
+      <content textType="sub-headline" fontSize="16" fontFamily="微软雅黑" color="rgba(255,255,255,0.9)" bold="true" wrap="false"><p>本项目的差异化优势与立即行动项</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="350" width="800" height="90">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgba(255,255,255,0.85)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p><span bold="true" color="rgb(200,134,26)">独家优势：</span>充值算力豆永久有效 + 多模型聚合 + 视频生成单价行业最低</p></li>
+          <li><p><span bold="true" color="rgb(200,134,26)">立即行动：</span>新增49-69元轻量入门档（P0）；上线三档算力豆充值包（P1）</p></li>
+          <li><p><span bold="true" color="rgb(200,134,26)">中期布局：</span>API按量计费、创作者激励、商用授权、素材生态四位一体拓展</p></li>
+        </ul>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="470" width="800" height="30">
+      <content textType="caption" fontSize="12" fontFamily="微软雅黑" color="rgba(255,255,255,0.5)" wrap="false"><p>调研时间：2026年9月 ｜ 数据来源：各平台官方定价页、App Store、第三方评测、公开财报</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgba(255,255,255,0.5)" textAlign="right" wrap="false"><p>22 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>总结本次调研的核心结论。五家竞品均采用会员订阅加积分消耗的混合收费模式，会员积分当月清零是主流，视频高消耗是复购核心引擎。本项目的差异化优势在于充值算力豆永久有效、多模型聚合和视频生成单价行业最低。立即行动项是新增轻量入门档和上线算力豆充值包，中期布局API、创作者激励、商用授权和素材生态四位一体拓展。</p></content></note>
+</slide>

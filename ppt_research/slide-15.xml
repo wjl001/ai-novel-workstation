@@ -1,0 +1,67 @@
+<slide>
+  <style><fill><fillColor color="rgb(255,255,255)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="80" topLeftY="56" width="4" height="28"><fill><fillColor color="rgb(27,58,92)"/></fill></shape>
+    <shape type="text" topLeftX="96" topLeftY="56" width="700" height="32">
+      <content textType="headline" fontSize="22" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>万兴喵影——桌面剪辑软件的AI积分变现模式</p></content>
+    </shape>
+    <line startX="80" startY="100" endX="880" endY="100"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="80" topLeftY="120" width="380" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>产品定位与核心能力</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="155" width="380" height="200">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.9">
+        <ul>
+          <li><p>万兴科技旗下桌面视频剪辑软件，内建1500万素材</p></li>
+          <li><p>AI功能矩阵：智小喵、AI绘画、AI音乐、图生视频、文生视频</p></li>
+          <li><p>语音转文字、AI消除、AI超清、AI视频翻译等</p></li>
+          <li><p>仅限桌面客户端消耗AI积分，移动端不支持</p></li>
+          <li><p>姊妹产品万兴播爆主打AI数字人视频创作</p></li>
+        </ul>
+      </content>
+    </shape>
+    <line startX="480" startY="120" endX="480" endY="380"><border color="rgb(216,216,216)" width="1"/></line>
+    <shape type="text" topLeftX="510" topLeftY="120" width="370" height="26">
+      <content textType="sub-headline" fontSize="15" fontFamily="微软雅黑" color="rgb(27,58,92)" bold="true" wrap="false"><p>商业模式与盈利来源</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="155" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">01  软件订阅（基础收入）</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="180" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>VIP 269元/年、3年419元、5年599元；SVIP/企业版更高</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="210" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">02  AI积分包（增量收入）</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="235" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>1000积分9.99元至20万积分1299元，有效期1年</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="265" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">03  会员月度积分赠送</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="290" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>SVIP月赠4000积分（当月有效），企业版月赠8000</p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="320" width="370" height="24">
+      <content textType="body" fontSize="13" fontFamily="微软雅黑" color="rgb(60,60,60)" wrap="false"><p><span bold="true" color="rgb(27,58,92)">04  素材生态与企业授权</span></p></content>
+    </shape>
+    <shape type="text" topLeftX="510" topLeftY="345" width="370" height="24">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(90,90,90)" wrap="false"><p>特效/素材商城、企业批量授权、万兴播爆独立产品线</p></content>
+    </shape>
+    <shape type="rect" topLeftX="80" topLeftY="395" width="800" height="72">
+      <fill><fillColor color="rgba(27,58,92,0.06)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="100" topLeftY="405" width="760" height="56">
+      <content textType="body" fontSize="12" fontFamily="微软雅黑" color="rgb(60,60,60)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgb(200,134,26)">盈利逻辑：</span>传统剪辑软件订阅为基础盘，AI功能以积分制单独收费形成增量收入。AI积分包有效期1年，SVIP月度积分当月清零，双轨制促使用户持续付费。消耗按功能差异化定价（AI绘画40积分/次，图生视频60-1500积分/次），高复杂度功能消耗大，驱动积分包复购。企业版客单价高，贡献稳定B端收入。</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="490" width="500" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" wrap="false"><p>来源：万兴喵影官网 · AI积分使用指南 · App Store（2026年9月）</p></content>
+    </shape>
+    <shape type="text" topLeftX="800" topLeftY="490" width="80" height="24">
+      <content textType="caption" fontSize="11" fontFamily="微软雅黑" color="rgb(118,118,118)" textAlign="right" wrap="false"><p>15 / 22</p></content>
+    </shape>
+  </data>
+  <note><content textType="body"><p>万兴喵影是万兴科技的桌面剪辑软件，采用软件订阅加AI积分包的双轨模式。VIP会员269元/年，AI积分包从1000积分9.99元到20万积分1299元。SVIP每月赠4000积分当月有效，积分包购买后有效期1年。AI功能按次消耗积分，从40积分每次的AI绘画到1500积分每次的复杂图生视频，差异化定价驱动复购。</p></content></note>
+</slide>
