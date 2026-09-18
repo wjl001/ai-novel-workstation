@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="relative h-full p-6 overflow-y-auto transition-colors duration-300" :class="isLight ? 'bg-[#f5f6fb]' : 'bg-slate-900'">
     <!-- 视频背景 -->
     <div v-if="!isLight" class="video-background fixed inset-0 overflow-hidden pointer-events-none">
@@ -131,6 +131,30 @@
             </div>
           </div>
 
+          <!-- Marketing Agent Tool -->
+          <div
+            class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-500/80 to-orange-500/80 p-1 cursor-pointer group hover:shadow-2xl hover:shadow-rose-500/30 transition-all duration-300 hover:-translate-y-1"
+            @click="router.push('/marketing-agent')"
+          >
+            <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
+            <div class="relative h-full bg-white/10 backdrop-blur-md rounded-[22px] p-6 flex flex-col border border-white/20">
+              <div class="absolute top-4 right-4">
+                <span class="px-2 py-1 text-[10px] rounded-full font-bold bg-white/20 text-white border border-white/30">NEW</span>
+              </div>
+              <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 shadow-inner backdrop-blur-md">
+                <el-icon class="text-2xl text-white"><Promotion /></el-icon>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-2">营销 Agent</h3>
+              <p class="text-rose-100 text-sm mb-6 flex-1 line-clamp-2">输入商品信息，一键生成多风格爆款营销脚本与分镜，Hook库+多平台适配。</p>
+              <div class="flex items-center justify-between mt-auto">
+                <span class="px-2 py-1 bg-white/20 rounded text-xs text-white backdrop-blur-sm border border-white/30">爆款生成</span>
+                <div class="w-8 h-8 rounded-full bg-white text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+                  <el-icon><ArrowRight /></el-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -258,7 +282,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   EditPen, VideoCamera, ArrowRight, More, Headset, Grid, 
-  FolderOpened, Document, Clock, VideoPlay, MagicStick, Refresh, InfoFilled 
+  FolderOpened, Document, Clock, VideoPlay, MagicStick, Refresh, InfoFilled, Promotion
 } from '@element-plus/icons-vue'
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue'
 import { useThemeStore } from '@/store/theme'

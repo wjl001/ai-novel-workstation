@@ -40,7 +40,7 @@
     </div>
 
     <!-- NEW: Main Layout Container (Sidebar + Content) -->
-    <div class="flex flex-1 relative z-10">
+    <div class="flex flex-1 min-h-0 relative z-10">
       <!-- Left Sidebar -->
       <div class="relative bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-700/50 flex flex-col shrink-0 transition-all duration-300" :class="isSidebarCollapsed ? 'w-16' : 'w-35'">
         <div class="p-4 flex flex-col gap-2">
@@ -60,6 +60,15 @@
           >
             <el-icon :size="16"><VideoCamera /></el-icon>
             <span v-if="!isSidebarCollapsed">短剧</span>
+          </button>
+
+          <button
+            @click="activeChannel = 'marketing'"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
+            :class="activeChannel === 'marketing' ? 'bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'"
+          >
+            <el-icon :size="16"><Promotion /></el-icon>
+            <span v-if="!isSidebarCollapsed">营销Agent</span>
           </button>
           <button
             @click="activeChannel = 'assetLibrary'"
@@ -452,40 +461,6 @@
               AI全流程辅助，内置高转化剧情模板，让创意触手可及。
             </p>
             
-            <!-- 创作模式选择 -->
-            <div class="flex items-center gap-3 mt-4">
-              <div class="flex items-center gap-1.5 p-1 rounded-2xl" :class="isLight ? 'bg-slate-100/80 border border-slate-200' : 'bg-white/5 border border-white/10'">
-                <button
-                  @click="creationMode = 'full'"
-                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300"
-                  :class="creationMode === 'full'
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
-                    : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-white')"
-                >
-                  <el-icon :size="14"><Document /></el-icon>
-                  完整流程
-                </button>
-                <button
-                  @click="creationMode = 'quick'"
-                  class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-black transition-all duration-300"
-                  :class="creationMode === 'quick'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30'
-                    : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-white')"
-                >
-                  <el-icon :size="14"><Lightning /></el-icon>
-                  快捷创作
-                </button>
-              </div>
-              <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-bold"
-                :class="creationMode === 'full'
-                  ? (isLight ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/20')
-                  : (isLight ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20')"
-              >
-                <el-icon :size="12"><InfoFilled /></el-icon>
-                <span v-if="creationMode === 'full'">剧本 → 主体 → 分镜，全流程AI辅助</span>
-                <span v-else>无需剧本，直接设置主体生成分镜视频</span>
-              </div>
-            </div>
           </div>
 
           <!-- Creation Card: More compact and color-distinguished -->
@@ -504,7 +479,6 @@
                 <el-icon :size="16"><MagicStick /></el-icon> AI 灵感生成
               </button>
               <button 
-                v-if="creationMode === 'full'"
                 class="flex-1 py-1.5 text-[14px] font-black transition-all rounded-[14px] flex items-center justify-center gap-2"
                 :class="activeTab === 'upload'
                   ? (isLight ? 'bg-white text-indigo-600 shadow-sm scale-[1.01] border border-slate-100' : 'bg-white/10 text-white shadow-sm scale-[1.01]')
@@ -528,18 +502,7 @@
               <div class="min-h-[180px] flex flex-col">
                 <!-- AI Tab Content -->
                 <div v-if="activeTab === 'ai'" class="flex flex-col gap-3 animate-fade-in h-full">
-                  <!-- 快捷模式提示 -->
-                  <div v-if="creationMode === 'quick'" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-500/20">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0">
-                      <el-icon :size="16"><Lightning /></el-icon>
-                    </div>
-                    <div class="flex-1">
-                      <p class="text-[13px] font-black text-emerald-700 dark:text-emerald-300">快捷创作模式</p>
-                      <p class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 font-medium">无需剧本，直接进入主体设置，输入灵感为可选项</p>
-                    </div>
-                    <el-icon :size="20" class="text-emerald-500"><ArrowRight /></el-icon>
-                  </div>
-                  <div class="relative group mt-2">
+<div class="relative group mt-2">
                     <!-- Dynamic Glowing Border -->
                     <div 
                       class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[30px] blur-xl opacity-0 transition-all duration-1000"
@@ -554,7 +517,7 @@
                         v-model="aiPrompt"
                         class="w-full h-24 md:h-28 resize-none bg-transparent outline-none text-lg p-6 transition-all font-medium leading-relaxed"
                         :class="isLight ? 'text-slate-700 placeholder:text-slate-300' : 'text-white placeholder:text-slate-500'"
-                        :placeholder="creationMode === 'quick' ? '（可选）输入创作灵感，帮助AI更好地生成主体和分镜...' : '在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探....'"
+                        :placeholder="'在此输入你构想的故事内容。比如：一个在赛博朋克世界里寻找失踪妹妹的私家侦探....'"
                       ></textarea>
                       
                       <!-- Textarea Bottom Toolbar -->
@@ -594,15 +557,12 @@
                            </span>
                            <AIModelSelector v-model="modelStore.selectedTextModel" type="text" moduleId="new-drama-text-main" />
                            <button 
-                            class="flex items-center gap-2 px-6 py-2 rounded-2xl text-[14px] font-black hover:shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
-                            :class="creationMode === 'quick' 
-                              ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:shadow-emerald-500/30' 
-                              : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-indigo-500/30'"
-                            :disabled="(creationMode === 'full' && !aiPrompt.trim()) || isGenerating"
+                            class="flex items-center gap-2 px-6 py-2 rounded-2xl text-[14px] font-black hover:shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:grayscale bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-indigo-500/30"
+                            :disabled="!aiPrompt.trim() || isGenerating"
                             @click="startCreation"
                           >
                             <el-icon v-if="!isGenerating" :size="18"><MagicStick /></el-icon>
-                            <span>{{ creationMode === 'quick' ? '直接进入创作' : '立即创作' }}</span>
+                            <span>立即创作</span>
                           </button>
                         </div>
                       </div>
@@ -735,6 +695,10 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-else-if="activeChannel === 'marketing'" class="flex-1 overflow-hidden min-h-0 flex flex-col">
+        <MarketingChatView />
       </div>
 
       <div v-else-if="activeChannel === 'history'" class="flex-1 overflow-y-auto p-4 lg:p-6 flex flex-col min-h-0 custom-scrollbar">
@@ -1411,7 +1375,8 @@ import {
   Top,
   Plus,
   ArrowDown,
-  Edit // New
+  Edit, // New
+  Promotion
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ProductDesignDialog from '@/components/Common/ProductDesignDialog.vue';
@@ -1422,6 +1387,7 @@ import { useModelStore } from '@/store/models';
 import imgNewDramaCreate from '@/assets/images/design/1776419701211-0ff82d3e790e7432.png';
 
 import { useDramaStore } from '../../store/drama';
+import MarketingChatView from '../MarketingAgent/MarketingChatView.vue';
 
 const router = useRouter();
 const dramaStore = useDramaStore();
@@ -1434,8 +1400,6 @@ const autoMode = ref(false); // New
 const isSidebarCollapsed = ref(false);
 const activeChannel = ref('shortDrama');
 const currentStep = ref(1);
-// 创作模式：full=完整流程（剧本→主体→分镜），quick=快捷流程（主体→分镜）
-const creationMode = ref<'full' | 'quick'>('full');
 const selectedTopic = ref<any>(null);
 const inspirationTab = ref('basic');
 const isImportedScript = computed(() => selectedTopic.value?.label === '外部剧本导入');
@@ -1868,9 +1832,6 @@ const finishConfig = () => {
   isGenerating.value = true;
   showHotTopicDialog.value = false;
   
-  // 设置创作模式到 store
-  dramaStore.setCreationMode(creationMode.value);
-  
   // Combine all selections into a prompt
   const finalProtagonistName = isCustomProtagonist.value && configForm.customProtagonistName.trim()
     ? configForm.customProtagonistName.trim()
@@ -1898,14 +1859,8 @@ ${protagonist}
   dramaStore.setEpisodesCount(parseInt(configForm.episodesCount) || 80);
   
   setTimeout(() => {
-    // 根据创作模式跳转到不同页面
-    if (creationMode.value === 'quick') {
-      // 快捷流程：直接跳转到主体设置页
-      router.push('/ai-short-drama-creator/assets');
-    } else {
-      // 完整流程：跳转到剧本创作页
-      router.push('/ai-short-drama-creator/outline');
-    }
+    // 跳转到剧本创作页
+    router.push('/ai-short-drama-creator/outline');
     isGenerating.value = false;
   }, 1000);
 };
@@ -1994,26 +1949,12 @@ const typeText = (text: string) => {
 };
 
 const startCreation = () => {
-  // 设置创作模式到 store
-  dramaStore.setCreationMode(creationMode.value);
-  
-  // 快捷模式：直接跳转到主体设置页，不需要输入灵感或上传剧本
-  if (creationMode.value === 'quick') {
-    // 如果用户输入了灵感，存入 store 供主体设置页使用
-    if (aiPrompt.value.trim()) {
-      dramaStore.setQuickCreationPrompt(aiPrompt.value.trim());
-    }
-    router.push('/ai-short-drama-creator/assets');
-    return;
-  }
-  
-  // 完整模式：需要输入灵感
+  // 需要输入灵感
   if (!aiPrompt.value.trim()) {
     ElMessage.warning('请输入创作灵感或点击上方建议');
     return;
   }
   
-  // 完整模式：弹出灵感之门弹窗
   // 将用户输入的灵感填入故事梗概
   configForm.storySynopsis = aiPrompt.value.trim();
   // 跳转到故事梗概标签页

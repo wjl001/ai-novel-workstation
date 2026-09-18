@@ -1183,6 +1183,7 @@
           v-model="showSubjectEdit"
           :subject="editingSubject"
           :is-edit="isEdit"
+          :episode-id="episodeId"
           @save="saveSubject"
         />
 
@@ -1191,6 +1192,7 @@
           v-model="showStoryboardEdit"
           :subject="editingStoryboardScene"
           :is-edit="true"
+          :episode-id="episodeId"
           @save="saveStoryboardScene"
         />
 

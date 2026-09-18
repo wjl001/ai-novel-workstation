@@ -215,85 +215,31 @@
                 </div>
               </div>
 
-              <!-- 风格与镜头选择（新增） -->
-              <div v-if="type !== 'storyboard'" class="flex flex-col gap-1.5">
-                <div class="flex justify-between items-center px-1">
-                  <label class="text-[12px] text-slate-400 font-black uppercase tracking-wider">
-                    风格与镜头
-                  </label>
-                  <div class="flex items-center gap-3">
-                    <!-- 自动识别按钮 -->
-                    <button
-                      @click="handleAutoDetect"
-                      :disabled="isAutoDetecting"
-                      class="flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50"
-                      title="根据描述内容自动识别风格和镜头"
-                    >
-                      <el-icon :size="10" :class="{ 'animate-spin': isAutoDetecting }"><MagicStick /></el-icon>
-                      <span>{{ isAutoDetecting ? '识别中...' : '自动识别' }}</span>
-                    </button>
-                    <el-dropdown @command="loadDemoCase" trigger="click">
-                      <button class="flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
-                        <el-icon :size="10"><DocumentChecked /></el-icon>
-                        <span>加载示例</span>
-                        <el-icon :size="10"><ArrowDown /></el-icon>
-                      </button>
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <el-dropdown-item v-for="(demo, i) in demoCases" :key="i" :command="i" :divided="i > 0">
-                            <div class="flex flex-col">
-                              <span class="text-[11px] font-black">{{ demo.title }}</span>
-                              <span class="text-[9px] text-slate-400">{{ demo.description }}</span>
-                            </div>
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
-                  </div>
+              <!-- 提示词工具条（单行：风格·镜头自动识别 + 加载示例 + 智能优化提示词） -->
+              <div v-if="type !== 'storyboard'" class="flex items-center justify-between gap-3 bg-gradient-to-r from-indigo-50 via-purple-50/70 to-indigo-50 dark:from-indigo-950/70 dark:via-purple-950/60 dark:to-indigo-950/70 border border-indigo-100/80 dark:border-indigo-900/60 rounded-xl px-3.5 py-2 shadow-sm">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-[12px] text-slate-400 font-black uppercase tracking-wider whitespace-nowrap">提示词工具</span>
+                  <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400 text-[10px] font-black whitespace-nowrap">
+                    <el-icon :size="10"><MagicStick /></el-icon>
+                    风格・镜头 自动识别
+                  </span>
                 </div>
-                <div class="flex gap-3">
-                  <div class="flex-1">
-                    <el-select v-model="selectedStyle" class="w-full" size="default">
-                      <el-option v-for="opt in styleOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
-                    </el-select>
-                  </div>
-                  <div class="flex-1">
-                    <el-select v-model="selectedShot" class="w-full" size="default">
-                      <el-option v-for="opt in shotOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
-                    </el-select>
-                  </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button
+                    @click="loadDemoCase"
+                    class="h-8 px-3.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 text-[12px] font-bold hover:border-purple-400 hover:text-purple-600 dark:hover:border-purple-400 dark:hover:text-purple-300 transition-all active:scale-95 whitespace-nowrap"
+                  >
+                    加载示例
+                  </button>
                   <button
                     @click="handleOptimizePrompt"
                     :disabled="isOptimizingPrompt"
-                    class="px-4 h-[32px] flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-[12px] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-50 whitespace-nowrap"
+                    class="h-8 px-4 flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[12px] font-black hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95 transition-all shadow-md disabled:opacity-50 whitespace-nowrap"
                   >
                     <el-icon :class="{ 'animate-spin': isOptimizingPrompt }"><MagicStick /></el-icon>
-                    <span>智能优化提示词</span>
+                    <span>{{ isOptimizingPrompt ? '优化中...' : '智能优化提示词' }}</span>
                   </button>
                 </div>
-                <!-- 自动识别结果提示 -->
-                <div v-if="showAutoDetectHint && autoDetectResult" class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-2.5 mt-1">
-                  <div class="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400 mb-1">
-                    <el-icon :size="10"><Check /></el-icon>
-                    <span>自动识别结果</span>
-                  </div>
-                  <div class="text-[9px] text-slate-600 dark:text-slate-300 space-y-0.5">
-                    <div v-if="autoDetectResult?.hasStyleMatch">
-                      风格：{{ STYLE_OPTIONS.find(s => s.value === autoDetectResult?.style)?.label }}
-                      <span class="text-slate-400">（匹配关键词：{{ autoDetectResult?.styleMatchedKeywords?.join('、') }}，置信度 {{ Math.round((autoDetectResult?.styleConfidence || 0) * 100) }}%）</span>
-                    </div>
-                    <div v-else>风格：未识别到明确风格，使用默认值</div>
-                    <div v-if="autoDetectResult?.hasShotMatch">
-                      镜头：{{ getShotOptions(localSubject.type as any).find(s => s.value === autoDetectResult?.shot)?.label }}
-                      <span class="text-slate-400">（匹配关键词：{{ autoDetectResult?.shotMatchedKeywords?.join('、') }}，置信度 {{ Math.round((autoDetectResult?.shotConfidence || 0) * 100) }}%）</span>
-                    </div>
-                    <div v-else>镜头：未识别到明确镜头，使用默认值</div>
-                  </div>
-                </div>
-                <!-- 当前镜头描述 -->
-                <p v-if="currentShotDescription" class="text-[10px] text-slate-400 px-1">
-                  <span class="text-indigo-500 font-bold">{{ currentShotLabel }}：</span>{{ currentShotDescription }}
-                </p>
               </div>
 
               <!-- 参考图 (分镜类型隐藏) -->
@@ -377,16 +323,18 @@
                       <span>{{ w }}</span>
                     </div>
                   </div>
-                  <!-- 剧情上下文（Hermes Agent 多轮对话核心） -->
-                  <div v-if="optimizedPrompt.dramaContext && optimizedPrompt.dramaContext.dramaTitle" class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
+                  <!-- 剧情上下文（上下文注入器：主体级/剧本级/剧集级 自动获取） -->
+                  <div v-if="optimizedPrompt.dramaContext && (optimizedPrompt.dramaContext.dramaTitle || optimizedPrompt.dramaContext.episodeTitle || optimizedPrompt.dramaContext.sceneMood || optimizedPrompt.dramaContext.plotSummary || optimizedPrompt.dramaContext.visualRequirements)" class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
                     <div class="flex items-center gap-1.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold mb-1">
                       <el-icon :size="10"><DocumentChecked /></el-icon>
-                      <span>已融入剧情上下文</span>
+                      <span>已自动注入剧情上下文</span>
                     </div>
                     <div class="text-[9px] text-slate-500 dark:text-slate-400 space-y-0.5">
                       <div v-if="optimizedPrompt.dramaContext.dramaTitle">剧本：{{ optimizedPrompt.dramaContext.dramaTitle }}</div>
                       <div v-if="optimizedPrompt.dramaContext.episodeTitle">剧集：{{ optimizedPrompt.dramaContext.episodeTitle }}</div>
-                      <div v-if="optimizedPrompt.dramaContext.sceneMood">场景情绪：{{ optimizedPrompt.dramaContext.sceneMood }}</div>
+                      <div v-if="optimizedPrompt.dramaContext.plotSummary">梗概：{{ optimizedPrompt.dramaContext.plotSummary.slice(0, 40) }}{{ optimizedPrompt.dramaContext.plotSummary.length > 40 ? '…' : '' }}</div>
+                      <div v-if="optimizedPrompt.dramaContext.sceneMood">本集情绪：{{ optimizedPrompt.dramaContext.sceneMood }}</div>
+                      <div v-if="optimizedPrompt.dramaContext.visualRequirements">设定：{{ optimizedPrompt.dramaContext.visualRequirements.slice(0, 40) }}{{ optimizedPrompt.dramaContext.visualRequirements.length > 40 ? '…' : '' }}</div>
                     </div>
                   </div>
                   <!-- 优化说明（Hermes Agent 多轮对话） -->
@@ -435,7 +383,7 @@
                 <!-- 未优化提示 -->
                 <div v-else class="bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-700 rounded-[20px] p-4 text-center">
                   <el-icon :size="20" class="text-slate-300 dark:text-slate-600 mb-1"><MagicStick /></el-icon>
-                  <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">点击上方「智能优化提示词」按钮，Hermes Agent 将通过8轮底层隐式对话自动优化提示词（界面不显示对话内容）</p>
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">点击「生成图片」后，Hermes Agent 将自动依据主体描述与注入的剧本上下文，通过8轮底层隐式对话优化提示词（界面不显示对话内容）</p>
                 </div>
 
                 <!-- 提示词编辑区（展开） -->
@@ -910,8 +858,6 @@ import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Pl
 import {
   optimizePrompt,
   analyzeQuality,
-  STYLE_OPTIONS,
-  getShotOptions,
   getQualityDimensions,
   PARAM_EXPLANATIONS,
   DEMO_CASES,
@@ -947,6 +893,8 @@ const props = defineProps<{
   subject: any;
   isEdit: boolean;
   hideUpload?: boolean;
+  /** 当前选中的剧集ID（用于上下文注入器自动获取本集剧情/情绪曲线） */
+  episodeId?: string;
 }>();
 
 const emit = defineEmits(['update:modelValue', 'save']);
@@ -1053,9 +1001,7 @@ const videoPreviewVisible = ref(false);
 const videoPreviewUrl = ref('');
 const parentSelectedImageId = ref('');
 
-// ==================== 提示词优化与确认（新增） ====================
-const selectedStyle = ref<StyleType>('realistic');
-const selectedShot = ref<ShotType>('halfbody');
+// ==================== 提示词优化与确认 ====================
 const optimizedPrompt = ref<OptimizedPrompt | null>(null);
 const isOptimizingPrompt = ref(false);
 const showPromptEditor = ref(false);
@@ -1068,63 +1014,6 @@ const promptConfirmVisible = ref(false);
 const showParamExplanation = ref(false);
 const featureIncompleteVisible = ref(false);
 const pendingGenerateAfterFeatureConfirm = ref(false);
-
-// ==================== 自动识别风格与镜头 ====================
-const autoDetectResult = ref<{
-  style: StyleType;
-  shot: ShotType;
-  styleConfidence: number;
-  shotConfidence: number;
-  styleMatchedKeywords: string[];
-  shotMatchedKeywords: string[];
-  hasStyleMatch: boolean;
-  hasShotMatch: boolean;
-} | null>(null);
-const isAutoDetecting = ref(false);
-const showAutoDetectHint = ref(false);
-
-// 执行自动识别风格与镜头
-const handleAutoDetect = () => {
-  if (!localSubject.value.description || localSubject.value.description.trim().length < 5) {
-    ElMessage.warning('请先输入至少5个字的描述，以便自动识别风格与镜头');
-    return;
-  }
-  isAutoDetecting.value = true;
-  showAutoDetectHint.value = false;
-
-  // 模拟识别过程
-  setTimeout(() => {
-    const result = autoDetectStyleAndShot(
-      localSubject.value.description,
-      localSubject.value.type as any
-    );
-    autoDetectResult.value = result;
-
-    // 自动设置风格和镜头
-    if (result.hasStyleMatch) {
-      selectedStyle.value = result.style;
-    }
-    if (result.hasShotMatch) {
-      selectedShot.value = result.shot;
-    }
-
-    isAutoDetecting.value = false;
-    showAutoDetectHint.value = true;
-
-    if (result.hasStyleMatch || result.hasShotMatch) {
-      const styleLabel = result.hasStyleMatch ? STYLE_OPTIONS.find(s => s.value === result.style)?.label : '未识别';
-      const shotLabel = result.hasShotMatch ? getShotOptions(localSubject.value.type as any).find(s => s.value === result.shot)?.label : '未识别';
-      ElMessage.success(`已自动识别：风格=${styleLabel}，镜头=${shotLabel}`);
-    } else {
-      ElMessage.info('未从描述中识别到明确的风格和镜头，已使用默认值，您可以手动选择');
-    }
-
-    // 3秒后隐藏提示
-    setTimeout(() => {
-      showAutoDetectHint.value = false;
-    }, 5000);
-  }, 500);
-};
 
 // 敏感词列表（基础版，可扩展）
 const SENSITIVE_WORDS = ['暴力', '血腥', '色情', '裸体', '政治', '反动', '恐怖', '毒品', '武器', '枪支', '炸药'];
@@ -1185,11 +1074,20 @@ const missingFeatures = computed(() => {
   return missing;
 });
 
-const styleOptions = STYLE_OPTIONS;
-const shotOptions = computed(() => getShotOptions(localSubject.value.type as any));
 const qualityDimensions = computed(() => getQualityDimensions(localSubject.value.type as any));
 const paramExplanations = PARAM_EXPLANATIONS;
-const demoCases = DEMO_CASES;
+
+// 加载示例案例（轮询切换多个示例；风格/镜头由优化时自动识别）
+const demoCaseIndex = ref(0);
+const loadDemoCase = () => {
+  const demos = DEMO_CASES.filter(d => d.type === (localSubject.value.type as any));
+  if (demos.length === 0) return;
+  const demo = demos[demoCaseIndex.value % demos.length];
+  demoCaseIndex.value += 1;
+  localSubject.value.name = demo.input.name;
+  localSubject.value.description = demo.input.description;
+  ElMessage.success(`已加载示例：${demo.title}，点击「智能优化提示词」自动识别风格与镜头`);
+};
 
 // 优化过程展示
 const showOptimizationProcess = ref(false);
@@ -1206,41 +1104,79 @@ const issueMarkButtons = computed(() => {
   return ['形态扭曲', '材质错误', '色偏', '精度低'];
 });
 
-// 当前镜头描述
-const currentShotDescription = computed(() => {
-  const options = shotOptions.value;
-  const current = options.find(o => o.value === selectedShot.value);
-  return current?.description || '';
-});
-const currentShotLabel = computed(() => {
-  const options = shotOptions.value;
-  const current = options.find(o => o.value === selectedShot.value);
-  return current?.label || '';
-});
-
-// 加载示例案例
-const loadDemoCase = (index: number) => {
-  const demo = demoCases[index];
-  if (!demo) return;
-  localSubject.value.name = demo.input.name;
-  localSubject.value.description = demo.input.description;
-  selectedStyle.value = demo.input.style as StyleType;
-  selectedShot.value = demo.input.shot as ShotType;
-  ElMessage.success(`已加载示例：${demo.title}，点击「智能优化提示词」查看完整八步过程`);
-};
-
-// 主体类型变化时，重置镜头为该类型的默认值
-watch(() => localSubject.value.type, (newType) => {
-  const options = getShotOptions(newType as any);
-  if (options.length > 0 && !options.find(o => o.value === selectedShot.value)) {
-    selectedShot.value = options[0].value;
-  }
-});
-
 // 描述变化时重置确认状态，确保修改后重新生成会再次确认
 watch(() => localSubject.value.description, () => {
   hasPromptConfirmed.value = false;
 });
+
+// ==================== 上下文注入器：自动获取 主体级 / 剧本级 / 剧集级 上下文 ====================
+// 剧集级·情绪曲线：从本集剧情与分镜脚本文本中提取情绪/氛围摘要
+const detectEpisodeMood = (episode: any): string => {
+  if (!episode) return '';
+  const sources: string[] = [];
+  if (typeof episode.script === 'string' && episode.script.trim()) sources.push(episode.script);
+  if (Array.isArray(episode.storyboardScenes)) {
+    episode.storyboardScenes.forEach((s: any) => {
+      if (s && typeof s.script === 'string' && s.script.trim()) sources.push(s.script);
+    });
+  }
+  const text = sources.join(' ').replace(/<[^>]*>/g, '').trim();
+  if (!text) return '';
+
+  const moodRules: [RegExp, string][] = [
+    [/愤怒|暴怒|争吵|对峙|冲突|掌掴|摔|咆哮|怒吼|翻脸/g, '紧张愤怒'],
+    [/悲伤|哭泣|落泪|绝望|崩溃|委屈|哽咽|含泪|心碎/g, '悲伤压抑'],
+    [/甜蜜|幸福|喜悦|开心|欢笑|告白|拥抱|亲吻|宠溺/g, '温馨甜蜜'],
+    [/悬念|危机|阴谋|惊变|秘密|危险|威胁|恐惧/g, '紧张悬念'],
+    [/浪漫|温柔|心动|深情|依偎|悸动/g, '浪漫深情'],
+    [/恐怖|诡异|惊悚|阴森|灵异|毛骨悚然/g, '恐怖诡异'],
+    [/平静|日常|悠闲|宁静|惬意/g, '平静日常']
+  ];
+  const matched: string[] = [];
+  for (const [re, label] of moodRules) {
+    if (re.test(text) && !matched.includes(label)) matched.push(label);
+  }
+  return matched.slice(0, 2).join('、');
+};
+
+// 构建剧情上下文（上下文注入器：主体级=当前主体档案；剧本级=背景/设定/梗概；剧集级=本集剧情/情绪曲线）
+const buildDramaContext = (): DramaContext => {
+  const outline = dramaStore.outlineData || {};
+  const subjectType = localSubject.value.type as any;
+
+  // 定位当前剧集：父级传入的选中剧集 > 主体出场记录 > 第一集
+  let episode: any = null;
+  if (props.episodeId) {
+    episode = episodeStore.episodes.find((e: any) => e.id === props.episodeId) || null;
+  }
+  if (!episode && Array.isArray(localSubject.value.appeared_episodes) && localSubject.value.appeared_episodes.length > 0) {
+    const idx = localSubject.value.appeared_episodes[0];
+    episode = episodeStore.episodes.find((e: any) => e.index === idx) || null;
+  }
+  if (!episode) episode = episodeStore.episodes[0] || null;
+
+  // 剧本级·设定：题材 + 故事背景 + 设定扩展
+  const settingParts: string[] = [];
+  if (outline.genre) settingParts.push(outline.genre);
+  if (outline.background) settingParts.push(`故事背景：${outline.background}`);
+  if (dramaStore.expandedPrompt) settingParts.push(dramaStore.expandedPrompt);
+
+  return {
+    dramaId: outline.id || '',
+    dramaTitle: outline.title || '',
+    episodeId: episode?.id || '',
+    episodeTitle: episode?.title || '',
+    // 主体级：场景类型主体自带场景名
+    sceneName: subjectType === 'scene' ? localSubject.value.name || '' : '',
+    // 剧集级：情绪曲线摘要
+    sceneMood: detectEpisodeMood(episode),
+    // 剧本级：梗概（优先 synopsis，回退 description）
+    plotSummary: outline.synopsis || outline.description || '',
+    // 剧本级：设定（题材 + 设定扩展）
+    visualRequirements: settingParts.filter(Boolean).join('；') || '',
+    lightingRequirement: ''
+  };
+};
 
 // 执行提示词智能优化（Hermes Agent 多轮对话版）
 const handleOptimizePrompt = async () => {
@@ -1249,41 +1185,31 @@ const handleOptimizePrompt = async () => {
   }
   isOptimizingPrompt.value = true;
   try {
-    // 优化前自动识别风格和镜头（如果描述中有明确关键词）
+    // 自动识别风格与镜头：依据主体描述文本，无需手动选择
     const detectResult = autoDetectStyleAndShot(
       localSubject.value.description,
       localSubject.value.type as any
     );
-    if (detectResult.hasStyleMatch && detectResult.styleConfidence >= 0.5) {
-      selectedStyle.value = detectResult.style;
-    }
-    if (detectResult.hasShotMatch && detectResult.shotConfidence >= 0.5) {
-      selectedShot.value = detectResult.shot;
-    }
+    const style: StyleType | undefined = detectResult.hasStyleMatch && detectResult.styleConfidence >= 0.5
+      ? detectResult.style
+      : undefined;
+    const shot: ShotType | undefined = detectResult.hasShotMatch && detectResult.shotConfidence >= 0.5
+      ? detectResult.shot
+      : undefined;
 
     // 模拟 Hermes Agent 多轮对话优化过程（8轮）
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    // 构建剧情上下文（Hermes Agent 多轮对话核心）
-    const dramaContext: DramaContext = {
-      dramaId: dramaStore.outlineData?.id || '',
-      dramaTitle: dramaStore.outlineData?.title || '',
-      episodeId: episodeStore.episodes[0]?.id || '',
-      episodeTitle: episodeStore.episodes[0]?.title || '',
-      sceneName: '',
-      sceneMood: '',
-      plotSummary: dramaStore.outlineData?.description || '',
-      lightingRequirement: '',
-      visualRequirements: ''
-    };
+    // 上下文注入器：自动获取 主体级/剧本级/剧集级 上下文
+    const dramaContext = buildDramaContext();
 
     const result = optimizePrompt({
       name: localSubject.value.name,
       description: localSubject.value.description,
       type: localSubject.value.type as any,
       referenceImage: localSubject.value.reference_image,
-      style: selectedStyle.value,
-      shot: selectedShot.value,
+      style,
+      shot,
       dramaContext
     });
     optimizedPrompt.value = result;

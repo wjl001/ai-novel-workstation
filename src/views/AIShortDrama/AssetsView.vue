@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="h-full flex flex-col overflow-hidden relative bg-[#f8fafc] dark:bg-slate-900">
     <!-- Small Loading Floating Card for Assets Generation (Non-blocking) -->
     <teleport to="body">
@@ -158,232 +158,123 @@
 
       </div>
 
-      <!-- Model Selector & Batch Download Overlay - Aligned with Script Title Row -->
-      <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto">
-        <!-- 资产库按钮 -->
+      <!-- Top Toolbar Right: 资产库 | 分辨率 | 批量下载 | 图片模型 -->
+      <div class="absolute right-6 top-0 h-[56px] flex items-center z-[100] pointer-events-auto gap-2">
+        <!-- 资产库 -->
         <button
           @click="showLibraryModal = true"
-          class="h-10 px-4 flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md text-slate-600 dark:text-slate-300 border border-white/60 dark:border-slate-700/50 rounded-full font-bold text-[13px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all duration-300 active:scale-95 mr-3"
+          class="h-9 px-3.5 flex items-center gap-1.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/50 rounded-xl font-bold text-[12px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all duration-200 active:scale-95"
           title="从资产库选择已有主体"
         >
-          <el-icon :size="15"><FolderOpened /></el-icon>
+          <el-icon :size="14"><FolderOpened /></el-icon>
           <span>资产库</span>
         </button>
-        <!-- 添加主体下拉按钮 -->
-        <el-dropdown @command="(cmd) => addAsset(cmd)" trigger="click" class="mr-3">
-          <button
-            class="h-10 px-4 flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-bold text-[13px] shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20"
-          >
-            <el-icon :size="15"><Plus /></el-icon>
-            <span>添加主体</span>
-            <el-icon :size="11" class="opacity-70"><ArrowDown /></el-icon>
+        <!-- 分辨率切换 -->
+        <el-dropdown @command="(val) => selectedResolution = val" trigger="click">
+          <button class="h-9 px-3.5 flex items-center gap-1.5 bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/50 rounded-xl font-bold text-[12px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all duration-200 active:scale-95">
+            <el-icon :size="14"><Picture /></el-icon>
+            <span>{{ resolutionLabel }}</span>
+            <el-icon :size="11" class="opacity-60"><ArrowDown /></el-icon>
           </button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="character">
-                <div class="flex items-center gap-2">
-                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                    <el-icon :size="10" class="text-white"><User /></el-icon>
-                  </div>
-                  <span class="text-[12px] font-bold">添加角色</span>
-                </div>
-              </el-dropdown-item>
-              <el-dropdown-item command="scene" divided>
-                <div class="flex items-center gap-2">
-                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-                    <el-icon :size="10" class="text-white"><Picture /></el-icon>
-                  </div>
-                  <span class="text-[12px] font-bold">添加场景</span>
-                </div>
-              </el-dropdown-item>
-              <el-dropdown-item command="prop" divided>
-                <div class="flex items-center gap-2">
-                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                    <el-icon :size="10" class="text-white"><Box /></el-icon>
-                  </div>
-                  <span class="text-[12px] font-bold">添加道具</span>
-                </div>
-              </el-dropdown-item>
+              <el-dropdown-item command="1280/720" :class="selectedResolution === '1280/720' ? 'text-indigo-600 font-bold' : ''">1K (1280×720)</el-dropdown-item>
+              <el-dropdown-item command="1920/1080" :class="selectedResolution === '1920/1080' ? 'text-indigo-600 font-bold' : ''">1.5K (1920×1080)</el-dropdown-item>
+              <el-dropdown-item command="2560/1440" :class="selectedResolution === '2560/1440' ? 'text-indigo-600 font-bold' : ''">2K (2560×1440)</el-dropdown-item>
+              <el-dropdown-item command="2880/1620" :class="selectedResolution === '2880/1620' ? 'text-indigo-600 font-bold' : ''">3K (2880×1620)</el-dropdown-item>
+              <el-dropdown-item command="3840/2160" :class="selectedResolution === '3840/2160' ? 'text-indigo-600 font-bold' : ''">4K (3840×2160)</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <el-select v-model="selectedResolution" placeholder="选择分辨率" class="w-[150px] h-10 mr-3">
-          <el-option label="1K (1280x720)" value="1280/720"></el-option>
-          <el-option label="1.5K (1920x1080)" value="1920/1080"></el-option>
-          <el-option label="2K (2560x1440)" value="2560/1440"></el-option>
-          <el-option label="3K (2880x1620)" value="2880/1620"></el-option>
-          <el-option label="4K (3840x2160)" value="3840/2160"></el-option>
-        </el-select>
+        <!-- 批量下载 -->
         <button
           @click="batchDownloadAssets"
-          class="h-10 px-5 flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full font-bold text-[13px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all duration-300 active:scale-95 mr-3"
+          class="h-9 px-3.5 flex items-center gap-1.5 bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/50 rounded-xl font-bold text-[12px] shadow-sm hover:shadow-md hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all duration-200 active:scale-95"
           title="批量下载主体图片（角色/道具/场景，含历史图）"
         >
-          <el-icon :size="16"><Download /></el-icon>
+          <el-icon :size="14"><Download /></el-icon>
           <span>批量下载</span>
         </button>
+        <!-- 分隔线 -->
+        <div class="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+        <!-- 图片模型选择 -->
         <AIModelSelector v-model="modelStore.selectedImageModel" type="image" moduleId="assets-view-image" />
       </div>
 
-      <!-- Empty State: 3 Entry Cards -->
-      <div
-        v-if="isPageEmpty"
-        class="flex-1 flex flex-col items-center justify-center p-6 min-h-0"
-      >
-        <div class="flex flex-col items-center gap-6 max-w-2xl w-full">
-          <div class="relative mb-2">
-            <div class="absolute inset-0 bg-indigo-500 rounded-3xl blur-2xl opacity-15 animate-pulse"></div>
-            <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/25 rotate-3">
-              <el-icon :size="40"><MagicStick /></el-icon>
-            </div>
-          </div>
-          <div class="text-center">
-            <h2 class="text-[24px] font-black text-slate-800 dark:text-slate-100 tracking-tight">主体资产中心</h2>
-            <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-2">您的主体库目前是空的，请选择一种方式开始创建主体资产</p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full mt-4">
-            <!-- Card 1: 批量生成描述以及主体图片 -->
-            <button
-              @click="startSequentialGeneration"
-              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(79,70,229,0.15)] hover:border-indigo-200 dark:hover:border-indigo-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
-            >
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:rotate-3 transition-transform">
-                <el-icon :size="28"><MagicStick /></el-icon>
-              </div>
-              <div class="text-center">
-                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">批量生成描述+图片</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">AI 全自动解析剧本，批量生成所有主体的文字描述与图片</p>
-              </div>
-              <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-1 uppercase tracking-wider">推荐 · 全自动</span>
-            </button>
-
-            <!-- Card 2: 上传主体资产 -->
-            <button
-              @click="showUploadModal = true"
-              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(20,184,166,0.15)] hover:border-teal-200 dark:hover:border-teal-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
-            >
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/25 group-hover:rotate-3 transition-transform">
-                <el-icon :size="28"><Upload /></el-icon>
-              </div>
-              <div class="text-center">
-                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">上传主体资产</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">按格式上传本地图片，文件名即主体名称，自定义导入</p>
-              </div>
-              <span class="text-[11px] font-bold text-teal-600 dark:text-teal-400 mt-1 uppercase tracking-wider">手动导入</span>
-            </button>
-
-            <!-- Card 3: 批量生成主体文字描述 -->
-            <button
-              @click="handleTextOnlyGen"
-              class="group relative flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgb(234,88,12,0.15)] hover:border-orange-200 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
-            >
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/25 group-hover:rotate-3 transition-transform">
-                <el-icon :size="28"><Document /></el-icon>
-              </div>
-              <div class="text-center">
-                <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100">批量生成文字描述</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">仅生成所有主体的文字描述信息，后续手动上传图片</p>
-              </div>
-              <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400 mt-1 uppercase tracking-wider">仅文字</span>
-            </button>
-          </div>
-
-          <p class="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-2">💡 推荐使用「批量生成描述+图片」一键完成所有主体的创建</p>
-        </div>
-      </div>
-
       <!-- Main Content (Tabs + Footer) -->
-      <template v-if="!isPageEmpty">
-        <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent">
+      <el-tabs v-model="activeTab" class="flex-1 flex flex-col min-h-0 modern-tabs relative bg-transparent pt-14">
       <!-- 角色管理 -->
       <el-tab-pane label="角色管理" name="characters">
         <div class="flex flex-col h-full p-6 pt-4">
-          <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 角色 <span class="text-slate-500 font-normal ml-1">({{ characters.length }})</span></h2>
+          <div class="flex justify-between items-center mb-5">
+            <div class="flex items-center gap-3">
+              <span class="w-1.5 h-6 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full"></span>
+              <h2 class="text-[17px] font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">资产库 · 角色</h2>
+              <span class="px-2.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-[11px] font-bold">{{ characters.length }} 个</span>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <!-- Multi-select Toggle -->
-              <button 
-                @click="toggleMultiSelect"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
-                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- 新增角色 -->
+              <button
+                @click="addAsset('character')"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-[12px] font-bold shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon :size="16"><Pointer /></el-icon>
+                <el-icon :size="14"><Plus /></el-icon>
+                <span>新增角色</span>
+              </button>
+              <!-- 多选切换 -->
+              <button
+                @click="toggleMultiSelect"
+                class="h-9 px-3.5 flex items-center gap-1.5 rounded-xl font-bold text-[12px] border transition-all duration-200"
+                :class="isMultiSelect ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:border-indigo-300'"
+              >
+                <el-icon :size="14"><Pointer /></el-icon>
                 <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
               </button>
-
-              <!-- Select All / Deselect All -->
+              <!-- 全选 / 取消全选 -->
               <template v-if="isMultiSelect">
-                <button 
+                <button
                   @click="handleSelectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 rounded-xl font-bold text-[12px] border border-indigo-100 dark:border-indigo-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Finished /></el-icon>
+                  <el-icon :size="14"><Finished /></el-icon>
                   <span>全选</span>
                 </button>
-                <button 
+                <button
                   @click="handleDeselectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-xl font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Close /></el-icon>
+                  <el-icon :size="14"><Close /></el-icon>
                   <span>取消全选</span>
                 </button>
               </template>
-
-              <!-- Batch Delete Button -->
+              <!-- 批量删除 -->
               <transition name="fade">
-                <button 
+                <button
                   v-if="isMultiSelect && selectedAssetIds.size > 0"
                   @click="handleBatchDelete"
-                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 rounded-xl font-bold text-[12px] border border-red-100 dark:border-red-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Delete /></el-icon>
+                  <el-icon :size="14"><Delete /></el-icon>
                   <span>删除 ({{ selectedAssetIds.size }})</span>
                 </button>
               </transition>
-
-              <!-- Product Design Info Button -->
-              <button 
-                @click="showDesignDialog = true"
-                class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 transition-all duration-300"
-              >
-                <el-icon :size="14"><InfoFilled /></el-icon>
-                <span>产品设计说明</span>
-              </button>
               <!-- 批量生成角色图片 -->
-              <button 
+              <button
                 v-if="!isMultiSelect"
                 @click="toggleMultiSelect"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-violet-500/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
-                批量生成角色
+                <el-icon :size="14"><MagicStick /></el-icon>
+                批量生成
               </button>
-              <button 
+              <button
                 v-else
                 @click="handleBatchGenerate('character')"
                 :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-violet-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
+                <el-icon :size="14"><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('char')).length }})
-              </button>
-              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
-              <button
-                v-if="characters.length > 0"
-                @click="handleBatchGenerateSubjectInfo('character')"
-                :disabled="isBatchGenerating"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
-                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
-              >
-                <el-icon :class="{ 'is-loading': isBatchGenerating }">
-                  <Document v-if="!isBatchGenerating" />
-                  <Loading v-else />
-                </el-icon>
-                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
               </button>
             </div>
           </div>
@@ -392,7 +283,7 @@
                 <div 
                 v-for="char in characters" 
                 :key="char.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] hover:border-indigo-200 dark:hover:border-indigo-700/50 hover:-translate-y-1 transition-all duration-300"
                 :class="[
                   generatingAssetImages.has(`char-${char.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
                   isAssetSelected(char.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
@@ -494,21 +385,6 @@
                 </div>
               </div>
 
-              <!-- 手动添加角色卡片 -->
-              <div 
-                @click="addAsset('character')"
-                class="group relative flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border-2 border-dashed border-indigo-200 dark:border-indigo-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(99,102,241,0.15)] hover:border-indigo-400 dark:hover:border-indigo-600 transition-all duration-300 cursor-pointer min-h-[180px]"
-              >
-                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <el-icon :size="28"><EditPen /></el-icon>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-[15px] font-black text-indigo-600 dark:text-indigo-400">手动添加角色</div>
-                    <div class="text-[11px] text-indigo-400 dark:text-indigo-500 font-medium mt-1">填写名称、描述、风格等信息</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -517,91 +393,72 @@
       <!-- 场景管理 -->
       <el-tab-pane label="场景管理" name="scenes">
         <div class="flex flex-col h-full p-6 pt-4">
-          <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 场景 <span class="text-slate-400 font-normal ml-1">({{ scenes.length }})</span></h2>
+          <div class="flex justify-between items-center mb-5">
+            <div class="flex items-center gap-3">
+              <span class="w-1.5 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></span>
+              <h2 class="text-[17px] font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">资产库 · 场景</h2>
+              <span class="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full text-[11px] font-bold">{{ scenes.length }} 个</span>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <!-- Multi-select Toggle -->
-              <button 
-                @click="toggleMultiSelect"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
-                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- 新增场景 -->
+              <button
+                @click="addAsset('scene')"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl text-[12px] font-bold shadow-md shadow-emerald-500/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon :size="16"><Pointer /></el-icon>
+                <el-icon :size="14"><Plus /></el-icon>
+                <span>新增场景</span>
+              </button>
+              <!-- 多选切换 -->
+              <button
+                @click="toggleMultiSelect"
+                class="h-9 px-3.5 flex items-center gap-1.5 rounded-xl font-bold text-[12px] border transition-all duration-200"
+                :class="isMultiSelect ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-emerald-600 hover:border-emerald-300'"
+              >
+                <el-icon :size="14"><Pointer /></el-icon>
                 <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
               </button>
-
-              <!-- Select All / Deselect All -->
               <template v-if="isMultiSelect">
-                <button 
+                <button
                   @click="handleSelectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 rounded-xl font-bold text-[12px] border border-emerald-100 dark:border-emerald-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Finished /></el-icon>
+                  <el-icon :size="14"><Finished /></el-icon>
                   <span>全选</span>
                 </button>
-                <button 
+                <button
                   @click="handleDeselectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-emerald-600 rounded-xl font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Close /></el-icon>
+                  <el-icon :size="14"><Close /></el-icon>
                   <span>取消全选</span>
                 </button>
               </template>
-
-              <!-- Batch Delete Button -->
               <transition name="fade">
-                <button 
+                <button
                   v-if="isMultiSelect && selectedAssetIds.size > 0"
                   @click="handleBatchDelete"
-                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 rounded-xl font-bold text-[12px] border border-red-100 dark:border-red-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Delete /></el-icon>
+                  <el-icon :size="14"><Delete /></el-icon>
                   <span>删除 ({{ selectedAssetIds.size }})</span>
                 </button>
               </transition>
-
-              <!-- Product Design Info Button -->
-              <button 
-                @click="showDesignDialog = true"
-                class="h-10 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-300"
-              >
-                <el-icon :size="14"><InfoFilled /></el-icon>
-                <span>产品设计说明</span>
-              </button>
-              <!-- 批量生成场景图片 -->
-              <button 
+              <button
                 v-if="!isMultiSelect"
                 @click="toggleMultiSelect"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-cyan-500/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
-                批量生成场景
+                <el-icon :size="14"><MagicStick /></el-icon>
+                批量生成
               </button>
-              <button 
+              <button
                 v-else
                 @click="handleBatchGenerate('scene')"
                 :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
+                <el-icon :size="14"><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('scene')).length }})
-              </button>
-              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
-              <button
-                v-if="scenes.length > 0"
-                @click="handleBatchGenerateSubjectInfo('scene')"
-                :disabled="isBatchGenerating"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
-                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
-              >
-                <el-icon :class="{ 'is-loading': isBatchGenerating }">
-                  <Document v-if="!isBatchGenerating" />
-                  <Loading v-else />
-                </el-icon>
-                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
               </button>
             </div>
           </div>
@@ -610,7 +467,7 @@
               <div 
                 v-for="scene in scenes" 
                 :key="scene.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] hover:border-indigo-200 dark:hover:border-indigo-700/50 hover:-translate-y-1 transition-all duration-300"
                 :class="[
                   generatingAssetImages.has(`scene-${scene.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
                   isAssetSelected(scene.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
@@ -712,21 +569,6 @@
                 </div>
               </div>
 
-              <!-- 手动添加场景卡片 -->
-              <div 
-                @click="addAsset('scene')"
-                class="group relative flex flex-col bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-2 border-dashed border-emerald-200 dark:border-emerald-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 cursor-pointer min-h-[200px]"
-              >
-                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <el-icon :size="28"><EditPen /></el-icon>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-[15px] font-black text-emerald-600 dark:text-emerald-400">手动添加场景</div>
-                    <div class="text-[11px] text-emerald-400 dark:text-emerald-500 font-medium mt-1">填写场景名称、描述、风格等信息</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -735,91 +577,72 @@
       <!-- 道具管理 -->
       <el-tab-pane label="道具管理" name="props">
         <div class="flex flex-col h-full p-6 pt-4">
-          <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-2">
-              <span class="w-1 h-5 bg-indigo-600 rounded-full"></span>
-              <h2 class="text-[18px] font-extrabold text-slate-800 dark:text-slate-100">资产库 · 道具 <span class="text-slate-400 font-normal ml-1">({{ propsList.length }})</span></h2>
+          <div class="flex justify-between items-center mb-5">
+            <div class="flex items-center gap-3">
+              <span class="w-1.5 h-6 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full"></span>
+              <h2 class="text-[17px] font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">资产库 · 道具</h2>
+              <span class="px-2.5 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-full text-[11px] font-bold">{{ propsList.length }} 个</span>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <!-- Multi-select Toggle -->
-              <button 
-                @click="toggleMultiSelect"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[13px] border transition-all duration-300"
-                :class="isMultiSelect ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600'"
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- 新增道具 -->
+              <button
+                @click="addAsset('prop')"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl text-[12px] font-bold shadow-md shadow-amber-500/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon :size="16"><Pointer /></el-icon>
+                <el-icon :size="14"><Plus /></el-icon>
+                <span>新增道具</span>
+              </button>
+              <!-- 多选切换 -->
+              <button
+                @click="toggleMultiSelect"
+                class="h-9 px-3.5 flex items-center gap-1.5 rounded-xl font-bold text-[12px] border transition-all duration-200"
+                :class="isMultiSelect ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700 text-amber-600 dark:text-amber-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-amber-600 hover:border-amber-300'"
+              >
+                <el-icon :size="14"><Pointer /></el-icon>
                 <span>{{ isMultiSelect ? '取消多选' : '多选' }}</span>
               </button>
-
-              <!-- Select All / Deselect All -->
               <template v-if="isMultiSelect">
-                <button 
+                <button
                   @click="handleSelectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full font-bold text-[13px] border border-indigo-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:bg-amber-100 rounded-xl font-bold text-[12px] border border-amber-100 dark:border-amber-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Finished /></el-icon>
+                  <el-icon :size="14"><Finished /></el-icon>
                   <span>全选</span>
                 </button>
-                <button 
+                <button
                   @click="handleDeselectAll"
-                  class="h-10 px-4 flex items-center gap-2 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full font-bold text-[13px] border border-slate-200 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-amber-600 rounded-xl font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Close /></el-icon>
+                  <el-icon :size="14"><Close /></el-icon>
                   <span>取消全选</span>
                 </button>
               </template>
-
-              <!-- Batch Delete Button -->
               <transition name="fade">
-                <button 
+                <button
                   v-if="isMultiSelect && selectedAssetIds.size > 0"
                   @click="handleBatchDelete"
-                  class="h-10 px-4 flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-full font-bold text-[13px] border border-red-100 transition-all duration-300"
+                  class="h-9 px-3.5 flex items-center gap-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 rounded-xl font-bold text-[12px] border border-red-100 dark:border-red-800 transition-all duration-200"
                 >
-                  <el-icon :size="16"><Delete /></el-icon>
+                  <el-icon :size="14"><Delete /></el-icon>
                   <span>删除 ({{ selectedAssetIds.size }})</span>
                 </button>
               </transition>
-
-              <!-- Product Design Info Button -->
-              <button 
-                @click="showDesignDialog = true"
-                class="h-10 px-4 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 rounded-full font-bold text-[12px] border border-slate-200 dark:border-slate-700 transition-all duration-300"
-              >
-                <el-icon :size="14"><InfoFilled /></el-icon>
-                <span>产品设计说明</span>
-              </button>
-              <!-- 批量生成道具图片 -->
-              <button 
+              <button
                 v-if="!isMultiSelect"
                 @click="toggleMultiSelect"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-rose-500/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
-                批量生成道具
+                <el-icon :size="14"><MagicStick /></el-icon>
+                批量生成
               </button>
-              <button 
+              <button
                 v-else
                 @click="handleBatchGenerate('prop')"
                 :disabled="selectedAssetIds.size === 0 || generatingAssetImages.size > 0"
-                class="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-[14px] font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                class="h-9 px-4 flex items-center gap-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl text-[12px] font-bold shadow-md shadow-rose-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
-                <el-icon><MagicStick /></el-icon>
+                <el-icon :size="14"><MagicStick /></el-icon>
                 确认生成 ({{ Array.from(selectedAssetIds).filter(id => id.startsWith('prop')).length }})
-              </button>
-              <!-- 批量生成主体图和文字描述 (Mode 2 - Manual) -->
-              <button
-                v-if="propsList.length > 0"
-                @click="handleBatchGenerateSubjectInfo('prop')"
-                :disabled="isBatchGenerating"
-                class="h-10 px-4 flex items-center gap-2 rounded-full font-bold text-[12px] border transition-all duration-300"
-                :class="isBatchGenerating ? 'bg-indigo-100 border-indigo-200 text-indigo-600 opacity-60 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-transparent shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95'"
-              >
-                <el-icon :class="{ 'is-loading': isBatchGenerating }">
-                  <Document v-if="!isBatchGenerating" />
-                  <Loading v-else />
-                </el-icon>
-                <span>{{ isBatchGenerating ? `生成中... ${batchGenerationProgress}%` : '批量生成描述和图片' }}</span>
               </button>
             </div>
           </div>
@@ -828,7 +651,7 @@
               <div 
                 v-for="prop in propsList" 
                 :key="prop.id" 
-                class="group relative flex flex-col bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+                class="group relative flex flex-col bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] hover:border-indigo-200 dark:hover:border-indigo-700/50 hover:-translate-y-1 transition-all duration-300"
                 :class="[
                   generatingAssetImages.has(`prop-${prop.id}`) ? 'ring-2 ring-indigo-500 ring-offset-2' : '',
                   isAssetSelected(prop.id) ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/30' : 'border-slate-100 dark:border-slate-700',
@@ -930,27 +753,11 @@
                 </div>
               </div>
 
-              <!-- 手动添加道具卡片 -->
-              <div 
-                @click="addAsset('prop')"
-                class="group relative flex flex-col bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-dashed border-amber-200 dark:border-amber-800 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(245,158,11,0.15)] hover:border-amber-400 dark:hover:border-amber-600 transition-all duration-300 cursor-pointer min-h-[180px]"
-              >
-                <div class="flex-1 flex flex-col items-center justify-center gap-3 p-6">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <el-icon :size="28"><EditPen /></el-icon>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-[15px] font-black text-amber-600 dark:text-amber-400">手动添加道具</div>
-                    <div class="text-[11px] text-amber-400 dark:text-amber-500 font-medium mt-1">填写道具名称、描述、风格等信息</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
-      </template>
 
     <div class="flex justify-end items-center p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
       <el-tooltip
@@ -1007,6 +814,7 @@
       :subject="editingAsset"
       :is-edit="isEditAsset"
       :hide-upload="currentAssetType === 'character'"
+      :episode-id="episodeId"
       @save="saveAsset"
     />
 
@@ -1724,6 +1532,16 @@ const batchGenerationProgress = ref(0);
 const batchCurrentInfo = ref('');
 const batchSessionId = ref(0);
 const selectedResolution = ref('1280/720');
+const resolutionLabel = computed(() => {
+  const map: Record<string, string> = {
+    '1280/720': '1K',
+    '1920/1080': '1.5K',
+    '2560/1440': '2K',
+    '2880/1620': '3K',
+    '3840/2160': '4K',
+  };
+  return map[selectedResolution.value] || '分辨率';
+});
 
 // Mock descriptions database for batch generation
 const mockDescriptions: Record<string, Record<string, { description: string; prompt: string }>> = {
@@ -2229,10 +2047,10 @@ const goToEpisodes = () => {
 };
 
 onMounted(async () => {
-  // 主体数据为空时，不自动生成，直接展示空状态让用户选择操作方式
+  // 主体数据为空时，自动从剧本提取主体名称和描述（不生成图片）
   if (episodeStore.subjects.length === 0) {
-    console.log('主体数据为空，展示空状态入口页面');
-    return;
+    console.log('主体数据为空，自动从剧本提取主体名称与描述...');
+    await autoGenerateSubjectText();
   }
 
   // 数据修正逻辑：如果检测到旧版数字 ID 导致图片错位，进行自动修复
@@ -2267,6 +2085,60 @@ onMounted(async () => {
       episodeStore.updateSubject(asset.id, patch);
     }
 });
+
+
+// 自动从剧本提取主体名称、描述、音频描述，并生成默认图片占位符
+const autoGenerateSubjectText = async () => {
+  const sessionId = ++generationSessionId.value;
+  isGeneratingAssetsText.value = true;
+  currentAssetInfo.value = '正在解析剧本，提取核心角色与场景...';
+
+  const mockAssets = {
+    characters: [
+      { id: 'char-1', name: '林星', description: '28岁，广告公司创意总监，外表坚强内心柔软，职场女强人，一头利落的短发，眼神坚定。', prompt: '1个女孩，漂亮，头像，职业装，办公室女性，坚强独立，写实风格，8k分辨率', voice_description: '年轻女性，声音清亮坚定，语速偏快，职场精英气质，略带一丝疲惫感。' },
+      { id: 'char-2', name: '陈宇', description: '30岁，自由摄影师，随性洒脱，林星的青梅竹马，温和笑容，文艺气质。', prompt: '1个男孩，帅气，头像，休闲装，摄影师，轻松自然，写实风格，8k分辨率', voice_description: '年轻男性，声音低沉温和，语速舒缓，文艺青年气质，带有亲和力。' }
+    ],
+    scenes: [
+      { id: 'scene-1', name: '公司会议室', description: '现代感十足的会议室，落地窗，能看到繁华的都市夜景，冷色调灯光。', prompt: '现代办公室会议室，大落地窗，繁华城市夜景，电影级光影，8k分辨率', voice_description: '' },
+      { id: 'scene-2', name: '林星公寓', description: '温馨的单身公寓，布置得很有格调，暖色调灯光，简约北欧风。', prompt: '温馨单身公寓，室内设计时尚，暖色调灯光，写实风格，8k分辨率', voice_description: '' }
+    ],
+    props: [
+      { id: 'prop-1', name: '复古相机', description: '陈宇常用的老式胶片相机，带有岁月痕迹，金属质感机身。', prompt: '复古胶片相机，细节质感丰富，电影级光影，8k分辨率', voice_description: '' },
+      { id: 'prop-2', name: '定情项链', description: '一条星星形状的银质项链，闪耀光泽，象征两人的感情纽带。', prompt: '星形纯银项链，闪耀光泽，微距摄影，8k分辨率', voice_description: '' }
+    ]
+  };
+
+  const steps = ['提取角色特征', '规划场景氛围', '锁定核心道具'];
+  for (let i = 0; i < steps.length; i++) {
+    if (sessionId !== generationSessionId.value) return;
+    currentAssetInfo.value = steps[i];
+    generationProgress.value = Math.round(((i + 1) / steps.length) * 100);
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
+
+  // 填充文字信息（名称+描述+音频描述），并生成默认图片占位符
+  const allGeneratedSubjects = [
+    ...mockAssets.characters.map(c => {
+      const placeholder = createInstantAssetImage({ ...c, type: 'character' });
+      return { ...c, type: 'character' as const, image: placeholder, selectedImageId: '', imageHistory: [{ id: `placeholder-${c.id}`, url: placeholder, isSelected: true, createdAt: Date.now(), name: c.name, description: c.description }] };
+    }),
+    ...mockAssets.scenes.map(s => {
+      const placeholder = createInstantAssetImage({ ...s, type: 'scene' });
+      return { ...s, type: 'scene' as const, image: placeholder, selectedImageId: '', imageHistory: [{ id: `placeholder-${s.id}`, url: placeholder, isSelected: true, createdAt: Date.now(), name: s.name, description: s.description }] };
+    }),
+    ...mockAssets.props.map(p => {
+      const placeholder = createInstantAssetImage({ ...p, type: 'prop' });
+      return { ...p, type: 'prop' as const, image: placeholder, selectedImageId: '', imageHistory: [{ id: `placeholder-${p.id}`, url: placeholder, isSelected: true, createdAt: Date.now(), name: p.name, description: p.description }] };
+    })
+  ];
+
+  episodeStore.setSubjects(allGeneratedSubjects);
+
+  if (sessionId !== generationSessionId.value) return;
+  isGeneratingAssetsText.value = false;
+  generationProgress.value = 100;
+  ElMessage.success('已从剧本提取主体名称、描述与音频描述，请选择图片模型批量生成或单独生成图片');
+};
 
 const startSequentialGeneration = async () => {
   const sessionId = ++generationSessionId.value;
@@ -2569,9 +2441,10 @@ defineExpose({
   background-color: #fff;
   border-bottom: 1px solid #f1f5f9;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .dark .modern-tabs :deep(.el-tabs__header) {
+  margin-bottom: 0;
   padding: 0 24px;
   background-color: #1e293b;
   border-bottom-color: #334155;
@@ -2581,7 +2454,7 @@ defineExpose({
 }
 .modern-tabs :deep(.el-tabs__nav-scroll) {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .modern-tabs :deep(.el-tabs__nav-wrap::after) {
   display: none;

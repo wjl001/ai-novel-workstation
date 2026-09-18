@@ -132,6 +132,11 @@ const router = createRouter({
       component: () => import('../views/AIShortVideoCreation/index.vue')
     },
     {
+      path: '/marketing-agent',
+      name: 'marketing-agent',
+      component: () => import('../views/MarketingAgent/index.vue')
+    },
+    {
       path: '/ai-short-drama-creator',
       component: DramaCreatorLayout,
       children: [
