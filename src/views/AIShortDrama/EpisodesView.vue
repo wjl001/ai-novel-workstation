@@ -1825,14 +1825,14 @@ const getPosterUrl = (ep: any) => {
 
 const navigateToOutline = (ep: any) => {
   router.push({
-    path: '/ai-short-drama-creator/outline',
+    path: '/outline',
     query: { id: ep.id }
   });
 };
 
 const navigateToAssets = (ep: any) => {
   router.push({
-    path: '/ai-short-drama-creator/assets',
+    path: '/assets',
     query: { id: ep.id }
   });
 };
@@ -2029,7 +2029,7 @@ const navigateToDetail = (ep: any) => {
   drawerVisible.value = false;
   trackEvent('shortDrama_enter_detail', { episodeId: ep.id });
   router.push({
-    path: `/ai-short-drama-creator/storyboard`,
+    path: `/storyboard`,
     query: { subjectId: episodeStore.subjectId, id: ep.id }
   });
 };

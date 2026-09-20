@@ -49,7 +49,7 @@ onMounted(async () => {
           type: 'success',
           duration: 2000
         })
-        router.replace('/ai-short-drama-creator/new')
+        router.replace('/new')
       } catch (error) {
       ElMessage.error('认证失败，请重新登录')
       router.replace('/auth/login')

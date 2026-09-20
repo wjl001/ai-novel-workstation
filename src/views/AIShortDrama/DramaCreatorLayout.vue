@@ -22,7 +22,7 @@
         <!-- Step 1: 剧本创作 -->
         <div 
           class="flex items-center gap-3 cursor-pointer group relative py-0.5"
-          @click="goToStep(0, '/ai-short-drama-creator/outline')"
+          @click="goToStep(0, '/outline')"
         >
           <div 
             class="w-9 h-9 rounded-full flex items-center justify-center text-[13px] transition-all duration-500 relative z-10 group-hover:scale-105"
@@ -49,7 +49,7 @@
         <div 
           class="flex items-center gap-3 group relative py-0.5"
           :class="canGoToAssets ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
-          @click="goToStep(1, '/ai-short-drama-creator/assets')"
+          @click="goToStep(1, '/assets')"
         >
           <div 
             class="w-9 h-9 rounded-full flex items-center justify-center text-[13px] transition-all duration-500 relative z-10 group-hover:scale-105"
@@ -76,7 +76,7 @@
         <div 
           class="flex items-center gap-3 group py-0.5"
           :class="canGoToStoryboard ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
-          @click="goToStep(2, '/ai-short-drama-creator/storyboard')"
+          @click="goToStep(2, '/storyboard')"
         >
           <div 
             class="w-9 h-9 rounded-full flex items-center justify-center text-[13px] transition-all duration-500 relative z-10 group-hover:scale-105"

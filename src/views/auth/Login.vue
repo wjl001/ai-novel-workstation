@@ -543,7 +543,7 @@ const handlePwdLogin = async () => {
       try {
         await userStore.loginByPassword(pwdForm)
         ElMessage.success('欢迎回到智影')
-        router.push('/ai-short-drama-creator/new')
+        router.push('/new')
       } catch (e) {
         ElMessage.error('登录失败')
         pwdCaptchaRef.value?.refreshCaptcha()
@@ -566,7 +566,7 @@ const handleSmsLogin = async () => {
       try {
         await userStore.loginBySms(smsForm)
         ElMessage.success('欢迎回到智影')
-        router.push('/ai-short-drama-creator/new')
+        router.push('/new')
       } catch (e) {
         ElMessage.error('登录失败')
         smsCaptchaRef.value?.refreshCaptcha()
@@ -589,7 +589,7 @@ const handleRegister = async () => {
       try {
         await userStore.register(regForm)
         ElMessage.success('智影账号注册成功')
-        router.push('/ai-short-drama-creator/new')
+        router.push('/new')
       } catch (e) {
         ElMessage.error('注册失败')
         regCaptchaRef.value?.refreshCaptcha()
@@ -614,7 +614,7 @@ const handleResetPassword = async () => {
         await new Promise(resolve => setTimeout(resolve, 1000))
         await userStore.loginByPassword({ username: forgotForm.phone, password: forgotForm.newPassword })
         ElMessage.success('密码重置成功，已自动登录')
-        router.push('/ai-short-drama-creator/new')
+        router.push('/new')
       } catch (e) {
         ElMessage.error('重置失败')
         forgotCaptchaRef.value?.refreshCaptcha()

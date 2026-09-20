@@ -370,7 +370,7 @@
                 <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
               </h2>
               <button 
-                @click="router.push('/ai-short-drama-creator/works')" 
+                @click="router.push('/works')" 
                 class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
                 :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
               >
@@ -385,7 +385,7 @@
                 :key="work.id"
                 class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
                 :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
-                @click="router.push('/ai-short-drama-creator/outline')"
+                @click="router.push('/outline')"
               >
                 <!-- Previews Area: More compact -->
                 <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
@@ -631,7 +631,7 @@
                 <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Recent Projects</span>
               </h2>
               <button 
-                @click="router.push('/ai-short-drama-creator/works')" 
+                @click="router.push('/works')" 
                 class="group h-8 px-4 rounded-lg font-black text-[11px] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
                 :class="isLight ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
               >
@@ -646,7 +646,7 @@
                 :key="work.id"
                 class="rounded-[20px] overflow-hidden transition-all duration-500 cursor-pointer group flex flex-col"
                 :class="isLight ? 'bg-white/60 backdrop-blur-md border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1' : 'bg-black/40 backdrop-blur-xl border border-white/5 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20 hover:-translate-y-1'"
-                @click="router.push('/ai-short-drama-creator/outline')"
+                @click="router.push('/outline')"
               >
                 <!-- Previews Area: More compact -->
                 <div class="h-24 flex p-1 gap-1 overflow-hidden relative shrink-0" :class="isLight ? 'bg-slate-100' : 'bg-black/40'">
@@ -1436,12 +1436,12 @@ const openAssetLibrary = () => {
 };
 
 const viewAllHistory = () => {
-  router.push('/ai-short-drama-creator/works');
+  router.push('/works');
 };
 
 const goToHistoryDetail = (item: any) => {
   if (item.type === 'shortDrama') {
-    router.push('/ai-short-drama-creator/outline');
+    router.push('/outline');
   } else if (item.type === 'shortVideo') {
     router.push('/ai-short-video-creator/index');
   } else {
@@ -1860,7 +1860,7 @@ ${protagonist}
   
   setTimeout(() => {
     // 跳转到剧本创作页
-    router.push('/ai-short-drama-creator/outline');
+    router.push('/outline');
     isGenerating.value = false;
   }, 1000);
 };

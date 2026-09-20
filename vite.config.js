@@ -45,6 +45,8 @@ export default defineConfig({
     // 这里是 server 配置
     server: {
         host: true, // 或者 '0.0.0.0'
+        // Vite 5.4.x+ Host 白名单：nginx 反代域名/裸 IP 访问 dev server 时放行，避免 403 "Blocked request"
+        allowedHosts: ['ai-short-drama-creator.52swy.cn', '122.51.209.229', '.52swy.cn'],
     },
     css: {
         preprocessorOptions: {

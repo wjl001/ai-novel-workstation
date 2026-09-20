@@ -2043,7 +2043,7 @@ const handleNextStep = () => {
 
 const goToEpisodes = () => {
   confirmVisible.value = false;
-  router.push('/ai-short-drama-creator/storyboard');
+  router.push('/storyboard');
 };
 
 onMounted(async () => {

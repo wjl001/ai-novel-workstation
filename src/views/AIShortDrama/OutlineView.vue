@@ -1710,7 +1710,7 @@ const goToSubjectSettings = async () => {
     await new Promise(resolve => setTimeout(resolve, 800)); // 模拟网络请求
     
     ElMessage.success('剧本完全保存成功！正在前往主体设置...');
-    router.push('/ai-short-drama-creator/assets');
+    router.push('/assets');
   } catch (error) {
     ElMessage.error('保存失败，请检查网络后重试');
   } finally {

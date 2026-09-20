@@ -31,7 +31,7 @@
 
         <!-- New Script Button - Redesigned -->
         <button 
-          @click="$router.push('/ai-short-drama-creator/new')"
+          @click="$router.push('/new')"
           class="relative group h-10 sm:h-14 pl-3 sm:pl-4 pr-4 sm:pr-8 flex items-center gap-2 sm:gap-4 bg-indigo-600 text-white rounded-xl sm:rounded-[24px] font-black text-sm sm:text-base shadow-2xl shadow-indigo-500/40 hover:shadow-indigo-500/60 hover:-translate-y-1 transition-all duration-500 overflow-hidden flex-1 lg:flex-none justify-center"
         >
           <!-- Animated Background Decoration -->
@@ -311,7 +311,7 @@
         <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-3">暂无短剧作品</h3>
         <p class="text-base font-medium text-slate-400 mb-10 max-w-xs text-center leading-relaxed">还没开始创作吗？快去开启您的第一场 AI 剧本创作之旅吧</p>
         <button 
-          @click="$router.push('/ai-short-drama-creator/new')"
+          @click="$router.push('/new')"
           class="h-14 px-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl text-lg font-bold shadow-2xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-3"
         >
           <el-icon><Plus /></el-icon>
@@ -707,7 +707,7 @@ const getStatusLabel = (status: string) => {
 
 const openWork = (work: any) => {
   // 跳转到剧集规划页
-  router.push('/ai-short-drama-creator/episodes');
+  router.push('/episodes');
 };
 
 const handleCommand = (command: string, work: any) => {

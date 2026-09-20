@@ -39,7 +39,23 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: '/ai-short-drama-creator/new'
+      redirect: '/new'
+    },
+    // 短路径别名(5174 base=/ai-short-drama-creator/ 时,URL=base+短路径;5173 base=/ 时 URL=短路径,两种部署都可用)
+    {
+      path: '/new',
+      name: 'drama-new',
+      component: NewDrama
+    },
+    {
+      path: '/works',
+      name: 'drama-works',
+      component: DramaWorks
+    },
+    {
+      path: '/episodes',
+      name: 'drama-episodes-list',
+      component: EpisodesView
     },
     {
       path: '/home',
@@ -86,19 +102,18 @@ const router = createRouter({
       name: 'convert',
       component: Convert
     },
+    // 全路径兜底路由(5173 base=/ 部署时旧链接 /ai-short-drama-creator/new 仍可用)
+    // name 已合并到上方短路径路由,此处不重复声明 name,避免 vue-router 撞名
     {
       path: '/ai-short-drama-creator/works',
-      name: 'drama-works',
       component: DramaWorks
     },
     {
       path: '/ai-short-drama-creator/new',
-      name: 'drama-new',
       component: NewDrama
     },
     {
       path: '/ai-short-drama-creator/episodes',
-      name: 'drama-episodes-list',
       component: EpisodesView
     },
     {
@@ -136,8 +151,10 @@ const router = createRouter({
       name: 'marketing-agent',
       component: () => import('../views/MarketingAgent/index.vue')
     },
+    // 短路径布局路由(5174 base=/ai-short-drama-creator/ 部署时: /outline /assets /storyboard)
+    // name 合并到此处, 下方全路径兜底路由不再重复声明 name, 避免 vue-router 撞名
     {
-      path: '/ai-short-drama-creator',
+      path: '',
       component: DramaCreatorLayout,
       children: [
         {
@@ -153,6 +170,25 @@ const router = createRouter({
         {
           path: 'storyboard',
           name: 'drama-storyboard',
+          component: StoryboardView
+        }
+      ]
+    },
+    // 全路径布局兜底路由(5173 base=/ 部署时旧链接 /ai-short-drama-creator/outline 等仍可用)
+    {
+      path: '/ai-short-drama-creator',
+      component: DramaCreatorLayout,
+      children: [
+        {
+          path: 'outline',
+          component: OutlineView
+        },
+        {
+          path: 'assets',
+          component: AssetsView
+        },
+        {
+          path: 'storyboard',
           component: StoryboardView
         }
       ]
