@@ -856,19 +856,19 @@ import { useEpisodeStore } from '@/store/episode';
 import AIModelSelector from '@/components/Common/ModelSelector.vue';
 import { Close, MagicStick, Picture, Refresh, Upload, Loading, Delete, Check, Plus, VideoPlay, FullScreen, DocumentChecked, Coin, Headset, Edit, Warning, ArrowDown } from '@element-plus/icons-vue';
 import {
-  optimizePrompt,
   analyzeQuality,
   getQualityDimensions,
   PARAM_EXPLANATIONS,
   DEMO_CASES,
   autoDetectStyleAndShot,
+  optimizePromptSmart,
   type StyleType,
   type ShotType,
   type OptimizedPrompt,
   type QualityReport,
   type OptimizationStep,
   type DramaContext
-} from '@/utils/promptOptimizer';
+} from '@/utils/hermesClient';
 
 const modelStore = useModelStore();
 const dramaStore = useDramaStore();
@@ -1197,13 +1197,12 @@ const handleOptimizePrompt = async () => {
       ? detectResult.shot
       : undefined;
 
-    // 模拟 Hermes Agent 多轮对话优化过程（8轮）
-    await new Promise(resolve => setTimeout(resolve, 800));
-
     // 上下文注入器：自动获取 主体级/剧本级/剧集级 上下文
     const dramaContext = buildDramaContext();
 
-    const result = optimizePrompt({
+    // 真实 image-agent（视觉总监）走 Hermes 网关，按 Skill01 七维七标签规范优化提示词；
+    // 网关不可达 / 超时 / 解析失败 → 自动降级本地确定性引擎（线上不崩）
+    const { result, engine, error } = await optimizePromptSmart({
       name: localSubject.value.name,
       description: localSubject.value.description,
       type: localSubject.value.type as any,
@@ -1211,15 +1210,19 @@ const handleOptimizePrompt = async () => {
       style,
       shot,
       dramaContext
-    });
+    }, 280000);
     optimizedPrompt.value = result;
     customPositivePrompt.value = result.positivePrompt;
     customNegativePrompt.value = result.negativePrompt;
     hasUserEditedPrompt.value = false;
-    if (result.warnings.length > 0) {
-      ElMessage.warning(`Hermes Agent 优化完成，存在${result.warnings.length}条建议`);
+    if (engine === 'agent') {
+      if (result.warnings.length > 0) {
+        ElMessage.warning(`视觉总监 七维优化完成，存在${result.warnings.length}条建议`);
+      } else {
+        ElMessage.success('视觉总监 七维智能优化完成（真实 Hermes Agent）');
+      }
     } else {
-      ElMessage.success('Hermes Agent 八轮智能优化完成');
+      ElMessage.warning(`Hermes 网关不可用（${error || '超时'}），已降级本地规则引擎`);
     }
   } catch (e) {
     ElMessage.error('提示词优化失败，请稍后重试');
