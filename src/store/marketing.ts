@@ -78,6 +78,12 @@ export interface ResourceFile {
   size?: string;
   time: string;
   url?: string;
+  // 视觉卡片扩展字段（营销Agent预览用）
+  gradient?: string;
+  duration?: string;
+  label?: string;
+  iconH?: string | number;
+  iconW?: string | number;
 }
 
 export interface Deliverable {
@@ -95,6 +101,33 @@ export interface ConfirmOption {
   selected: boolean;
 }
 
+export interface MarketingStep {
+  type: string;
+  title: string;
+  expanded: boolean;
+  detail?: string;
+}
+
+export interface MarketingVideoTask {
+  status: 'running' | 'done';
+  duration?: string;
+  ratio?: string;
+  title?: string;
+}
+
+export interface MarketingQuestionCard {
+  title: string;
+  submitted?: boolean;
+  page?: number;
+  total?: number;
+  options: ConfirmOption[];
+}
+
+export interface MarketingCheckItem {
+  label: string;
+  desc: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -105,6 +138,21 @@ export interface ChatMessage {
   confirmPage?: number;
   confirmTotal?: number;
   status?: 'thinking' | 'streaming' | 'done';
+  // 扩展字段：用户消息类型（输入/选项选择/回复）
+  type?: 'input' | 'selection' | 'reply';
+  // 技能标签
+  skillTags?: string[];
+  // AI执行过程
+  steps?: MarketingStep[];
+  // 素材盘点 / 生成前检查
+  materialCheck?: MarketingCheckItem[];
+  preCheck?: MarketingCheckItem[];
+  // 问题卡片（确认/选项）
+  question?: MarketingQuestionCard;
+  // 视频任务卡片
+  videoTask?: MarketingVideoTask;
+  // 产物区折叠状态
+  showDeliverables?: boolean;
 }
 
 const STORAGE_KEY = 'marketing_agent_projects';

@@ -97,7 +97,7 @@
         </div>
 
         <div class="flex-1 relative z-0">
-          <VueFlow :nodes="flowNodes" :edges="flowEdges" :default-viewport="{ zoom: 0.8 }" fit-view-on-init nodes-draggable="true">
+          <VueFlow :nodes="flowNodes" :edges="flowEdges" :default-viewport="{ zoom: 0.8 }" fit-view-on-init :nodes-draggable="true">
             <Background pattern-color="#000" :gap="24" :size="1" :opacity="0.03" />
             <Controls />
 
@@ -229,7 +229,7 @@
                      <el-table-column label="关联资产" width="120" show-overflow-tooltip>
                        <template #default="scope">
                          <span v-for="(tag, index) in scope.row.tags" :key="tag">
-                           {{ getAssetName(tag) }}{{ index < scope.row.tags.length - 1 ? ', ' : '' }}
+                           {{ getAssetName(tag) }}{{ Number(index) < (scope.row.tags || []).length - 1 ? ', ' : '' }}
                          </span>
                        </template>
                      </el-table-column>
@@ -560,7 +560,7 @@ const SHOTS = reactive([
   { id: '2-2', dur: '6s', cam: '推进', desc: '单只生物发出特定频率的光，仿佛在彼此交流。', script: '每一束光，都是生命的奇迹。', tags: ['scene_faguang', 'char_qianshuiyuan'], img: '🎨', vid: '🎬', imgNote: '', vidNote: '', vidStale: false, time: '00:26 - 00:32' },
 ]);
 
-const STALE = reactive({ script: false, asset: false, storyboard: false });
+const STALE = reactive({ script: false, asset: false, storyboard: false, video: false });
 const activeStage = ref('script');
 const assetFilter = ref('全部');
 
@@ -752,7 +752,7 @@ const messages = ref<ChatMessage[]>([]);
 const msgsContainer = ref<HTMLElement | null>(null);
 const currentAgent = ref<AgentType>('director'); // New state for current active agent
 
-const agentKeys = computed(() => Object.keys(agentConfigs));
+const agentKeys = computed<AgentType[]>(() => Object.keys(agentConfigs) as AgentType[]);
 
 
 

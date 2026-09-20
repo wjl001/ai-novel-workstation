@@ -1624,7 +1624,7 @@ const membershipTypes = [
   { id: 'short-drama', name: 'AI短剧会员' }
 ]
 
-const activeTiers = computed(() => {
+const activeTiers = computed<{ id: string; name: string; priceMonthly: number; priceYearly: number; points: number; concurrent: number; badge: string; modelInfo: { name: string; type: 'image' | 'video' | 'text'; costCategory: string; unitPrice: string; usageScenario: string }[] }[]>(() => {
   return [
     {
       id: 'basic',
@@ -2088,7 +2088,8 @@ const saveState = () => {
     planExpireAt: memberState.planExpireAt,
     pointsPool: memberState.pointsPool,
     orders: memberState.orders,
-    invoices: memberState.invoices
+    invoices: memberState.invoices,
+    expiredPoints: memberState.expiredPoints
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
 }

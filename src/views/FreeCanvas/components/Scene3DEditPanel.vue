@@ -157,7 +157,7 @@
           </div>
           <div class="tl-fps">
             <span class="tl-fps-label">FPS</span>
-            <input type="number" :value="fps" @change="fps = Math.max(1, Number($event.target.value))" class="tl-fps-input" />
+            <input type="number" :value="fps" @change="fps = Math.max(1, Number(($event.target as HTMLInputElement).value))" class="tl-fps-input" />
           </div>
           <div class="tl-ease">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><path d="M3 21 Q3 3 21 3"/></svg>
@@ -245,7 +245,7 @@ import type { Scene3DDirectorData, CameraMotion } from '../types'
 const props = defineProps<{ show: boolean; nodeData: Scene3DDirectorData }>()
 const emit = defineEmits<{ close: []; save: [data: Scene3DDirectorData]; 'update:data': [data: Scene3DDirectorData] }>()
 
-const activeTool = ref('select'), activeView = ref('主视图'), activeTab = ref('object'), sidebarExpanded = ref(true), isPlaying = ref(false), timelineZoom = ref(1), viewportZoom = ref(100)
+const activeTool = ref('select'), activeView = ref('主视图'), activeTab = ref('object'), sidebarExpanded = ref(true), isPlaying = ref(false), timelineZoom = ref(1), viewportZoom = ref(100), keyMode = ref(false)
 const selectedRoleIdx = ref(0), showSkeleton = ref(false), collapseTransform = ref(true), collapseMaterial = ref(false), collapsePose = ref(false)
 const rolePos = ref({ x: 0, y: 0, z: 0 }), roleRot = ref({ x: 0, y: 0, z: 0 }), roleScale = ref({ x: 1, y: 1, z: 1 })
 const characterColor = ref('#d8b4fe'), characterOpacity = ref(100), shadowOpacity = ref(60), groundY = ref(0), showGrid = ref(true), showCharacter = ref(true), showGround = ref(true)
